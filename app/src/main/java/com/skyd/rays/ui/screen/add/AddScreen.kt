@@ -3,7 +3,6 @@ package com.skyd.rays.ui.screen.add
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
@@ -34,10 +33,7 @@ import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
-import com.skyd.rays.ui.component.AnimatedPlaceholder
-import com.skyd.rays.ui.component.RaysImage
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.TopBarIcon
+import com.skyd.rays.ui.component.*
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.util.stickerUuidToUri
@@ -177,27 +173,24 @@ fun AddScreen(stickerUuid: String, sticker: Uri?, viewModel: AddViewModel = hilt
                 }
             }
             item {
-                Card(
+                RaysCard(
                     modifier = Modifier.padding(top = 20.dp),
-                    colors = CardDefaults.cardColors(Color.Transparent)
+                    colors = CardDefaults.cardColors(Color.Transparent),
+                    onClick = { pickStickerLauncher.launch("image/*") }
                 ) {
-                    Box(
-                        modifier = Modifier.clickable { pickStickerLauncher.launch("image/*") }
-                    ) {
-                        if (stickerUri == null) {
-                            Box(modifier = Modifier.aspectRatio(1.6f)) {
-                                AnimatedPlaceholder(
-                                    resId = R.raw.lottie_genshin_impact_diona_1,
-                                    sizeFraction = 0.9f,
-                                    tip = stringResource(R.string.add_screen_select_sticker)
-                                )
-                            }
-                        } else {
-                            RaysImage(
-                                uri = stickerUri,
-                                modifier = Modifier.fillMaxWidth()
+                    if (stickerUri == null) {
+                        Box(modifier = Modifier.aspectRatio(1.6f)) {
+                            AnimatedPlaceholder(
+                                resId = R.raw.lottie_genshin_impact_diona_1,
+                                sizeFraction = 0.9f,
+                                tip = stringResource(R.string.add_screen_select_sticker)
                             )
                         }
+                    } else {
+                        RaysImage(
+                            uri = stickerUri,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
                 }
             }

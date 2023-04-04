@@ -114,4 +114,6 @@
     <string name="home_screen_no_search_result_tip">空空如也呢~</string>
     <string name="add_screen_select_sticker">点击选择表情包</string>
     <string name="import_export_screen_name">导入与导出</string>
+    <string name="home_screen_send_sticker">发送</string>
+    <string name="send_sticker">发送表情包</string>
 </resources>

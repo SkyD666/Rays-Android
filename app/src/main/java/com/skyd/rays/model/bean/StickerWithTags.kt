@@ -13,5 +13,3 @@ data class StickerWithTags(
     )
     val tags: List<TagBean>
 )
-
-typealias StickerWithTags1 = StickerWithTags

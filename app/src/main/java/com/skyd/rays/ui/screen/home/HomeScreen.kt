@@ -6,6 +6,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -20,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isContainer
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -31,19 +35,17 @@ import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.screenIsLand
 import com.skyd.rays.model.bean.StickerWithTags
-import com.skyd.rays.model.bean.StickerWithTags1
 import com.skyd.rays.model.preference.QueryPreference
 import com.skyd.rays.model.preference.rememberQuery
 import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysImage
+import com.skyd.rays.ui.component.RaysOutlinedCard
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
-import com.skyd.rays.ui.component.lazyverticalgrid.RaysLazyVerticalGrid
-import com.skyd.rays.ui.component.lazyverticalgrid.adapter.LazyGridAdapter
-import com.skyd.rays.ui.component.lazyverticalgrid.adapter.proxy.StickerWithTags1Proxy
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
+import com.skyd.rays.util.sendSticker
 import kotlinx.coroutines.launch
 
 private var menuExpanded by mutableStateOf(false)
@@ -89,6 +91,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 .fillMaxSize()
         ) {
             RaysSearchBar(query = { query }, onQueryChange = { query = it })
+            Spacer(modifier = Modifier.height(16.dp))
 
             AnimatedVisibility(
                 visible = stickerWithTags != null,
@@ -96,10 +99,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 exit = fadeOut()
             ) {
                 stickerWithTags?.let {
-                    MainCard(
-                        stickerWithTags = it,
-                        snackbarHostState = snackbarHostState
-                    )
+                    MainCard(stickerWithTags = it)
                 }
             }
 
@@ -179,7 +179,6 @@ private fun RaysSearchBar(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(horizontal = searchBarHorizontalPadding)
-                .padding(bottom = 16.dp)
         ) {
             SearchBar(
                 onQueryChange = onQueryChange,
@@ -218,13 +217,15 @@ private fun RaysSearchBar(
                 },
                 trailingIcon = {
                     if (active) {
-                        IconButton(onClick = {
-                            onQueryChange(QueryPreference.default)
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = stringResource(R.string.home_screen_clear_search_text)
-                            )
+                        if (query().isNotEmpty()) {
+                            IconButton(onClick = {
+                                onQueryChange(QueryPreference.default)
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = stringResource(R.string.home_screen_clear_search_text)
+                                )
+                            }
                         }
                     } else {
                         IconButton(onClick = {
@@ -262,8 +263,8 @@ private fun RaysSearchBar(
 
 @Composable
 private fun SearchResultList(
-    dataList: List<Any>,
-    onItemClickListener: ((data: StickerWithTags1) -> Unit)? = null
+    dataList: List<StickerWithTags>,
+    onItemClickListener: ((data: StickerWithTags) -> Unit)? = null
 ) {
     if (dataList.isEmpty()) {
         AnimatedPlaceholder(
@@ -271,20 +272,47 @@ private fun SearchResultList(
             tip = stringResource(id = R.string.home_screen_no_search_result_tip)
         )
     }
-
-    val adapter = remember {
-        LazyGridAdapter(
-            mutableListOf(
-                StickerWithTags1Proxy(onClickListener = onItemClickListener)
-            )
-        )
-    }
-    RaysLazyVerticalGrid(
+    LazyVerticalStaggeredGrid(
         modifier = Modifier.fillMaxSize(),
-        dataList = dataList,
-        adapter = adapter,
-        contentPadding = PaddingValues(vertical = 7.dp)
-    )
+        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
+        columns = StaggeredGridCells.Fixed(if (LocalContext.current.screenIsLand) 4 else 2),
+        verticalItemSpacing = 12.dp,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(items = dataList) {
+            SearchResultItem(data = it, onClickListener = onItemClickListener)
+        }
+    }
+}
+
+@Composable
+fun SearchResultItem(
+    modifier: Modifier = Modifier,
+    data: StickerWithTags,
+    onClickListener: ((data: StickerWithTags) -> Unit)? = null
+) {
+    val context = LocalContext.current
+    RaysOutlinedCard(
+        modifier = modifier.fillMaxWidth(),
+        onLongClick = { context.sendSticker(data.sticker.uuid) },
+        onClick = { onClickListener?.invoke(data) }
+    ) {
+        RaysImage(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 300.dp),
+            uuid = data.sticker.uuid
+        )
+        if (data.sticker.title.isNotBlank()) {
+            Text(
+                modifier = Modifier.padding(vertical = 12.dp, horizontal = 10.dp),
+                text = data.sticker.title,
+                style = MaterialTheme.typography.titleMedium,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 3
+            )
+        }
+    }
 }
 
 @Composable
@@ -354,11 +382,11 @@ private fun HomeMenu(viewModel: HomeViewModel) {
 }
 
 @Composable
-private fun MainCard(stickerWithTags: StickerWithTags, snackbarHostState: SnackbarHostState) {
+private fun MainCard(stickerWithTags: StickerWithTags) {
     val navController = LocalNavController.current
     val currentStickerUuid = LocalCurrentStickerUuid.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
-    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val stickerBean = stickerWithTags.sticker
     val tags = stickerWithTags.tags
@@ -374,6 +402,7 @@ private fun MainCard(stickerWithTags: StickerWithTags, snackbarHostState: Snackb
             modifier = Modifier
                 .combinedClickable(
                     onLongClick = {
+                        context.sendSticker(stickerBean.uuid)
                     },
                     onDoubleClick = {
                         navController.navigate("$ADD_SCREEN_ROUTE?stickerUuid=${currentStickerUuid}")
@@ -381,10 +410,24 @@ private fun MainCard(stickerWithTags: StickerWithTags, snackbarHostState: Snackb
                     onClick = {}
                 )
         ) {
-            RaysImage(
-                modifier = Modifier.fillMaxWidth(),
-                uuid = stickerBean.uuid,
-            )
+            Box {
+                RaysImage(
+                    modifier = Modifier.fillMaxWidth(),
+                    uuid = stickerBean.uuid,
+                )
+                IconButton(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
+                    ),
+                    onClick = { context.sendSticker(stickerBean.uuid) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = stringResource(R.string.home_screen_send_sticker)
+                    )
+                }
+            }
             if (stickerBean.title.isNotBlank()) {
                 Text(
                     modifier = Modifier

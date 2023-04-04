@@ -1,20 +1,20 @@
 <div align="center">
     <div>
-        <img src="image/Raca.svg" style="height: 210px"/>
+        <img src="image/Rays.svg" style="height: 210px"/>
     </div>
-    <h1>🤗 Rays</h1>
+    <h1>🥰 Rays (Android)</h1>
     <p>
-        <a href="https://github.com/SkyD666/Raca-Android/releases/latest" style="text-decoration:none">
-            <img src="https://img.shields.io/github/v/release/SkyD666/Raca-Android?display_name=release&style=for-the-badge" alt="GitHub release (latest by date)"/>
+        <a href="https://github.com/SkyD666/Rays-Android/releases/latest" style="text-decoration:none">
+            <img src="https://img.shields.io/github/v/release/SkyD666/Rays-Android?display_name=release&style=for-the-badge" alt="GitHub release (latest by date)"/>
         </a>
-        <a href="https://github.com/SkyD666/Raca-Android/releases/latest" style="text-decoration:none" >
-            <img src="https://img.shields.io/github/downloads/SkyD666/Raca-Android/total?style=for-the-badge" alt="GitHub all downloads"/>
+        <a href="https://github.com/SkyD666/Rays-Android/releases/latest" style="text-decoration:none" >
+            <img src="https://img.shields.io/github/downloads/SkyD666/Rays-Android/total?style=for-the-badge" alt="GitHub all downloads"/>
         </a>
         <a href="https://www.android.com/versions/nougat-7-0" style="text-decoration:none" >
             <img src="https://img.shields.io/badge/Android 7.0+-brightgreen?style=for-the-badge&logo=android&logoColor=white" alt="Support platform"/>
         </a>
-        <a href="https://github.com/SkyD666/Raca-Android/blob/master/LICENSE" style="text-decoration:none" >
-            <img src="https://img.shields.io/github/license/SkyD666/Raca-Android?style=for-the-badge" alt="GitHub license"/>
+        <a href="https://github.com/SkyD666/Rays-Android/blob/master/LICENSE" style="text-decoration:none" >
+            <img src="https://img.shields.io/github/license/SkyD666/Rays-Android?style=for-the-badge" alt="GitHub license"/>
         </a>
         <a href="https://discord.gg/pEWEjeJTa3" style="text-decoration:none" >
             <img src="https://img.shields.io/discord/982522006819991622?color=5865F2&label=Discord&logo=discord&logoColor=white&style=for-the-badge" alt="Discord"/>
@@ -24,7 +24,7 @@
         <b>Rays (Record All Your Stickers)</b>，一个在本地<b>记录、查找、管理表情包</b>的工具。
     </p>
     <p>
-        🤗您还在为手机中的<b>表情包太多</b>，找不到想要的表情包而苦恼吗？使用这款工具将帮助您<b>管理您存储的表情包</b>，再也不因为找不到表情包而烦恼！😋
+        🥰 您还在为手机中的<b>表情包太多</b>，找不到想要的表情包而苦恼吗？使用这款工具将帮助您<b>管理您存储的表情包</b>，再也不因为找不到表情包而烦恼！😋
     </p>
     <p>
         使用<b> <a href="https://developer.android.com/topic/architecture#recommended-app-arch">MVI</a> </b>架构，完全采用<b> <a href="https://m3.material.io/">Material You</a> </b>设计风格。<b>所有页面均使用 <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a> </b>开发。
@@ -33,27 +33,23 @@
 
 
 
+
 ## 💡主要功能
 
-1. 支持为段落打**标签**
+1. 支持为表情包打**标签**
 2. 支持设置**搜索域**（设置搜索**数据库表的字段**）
 3. 支持使用**正则表达式搜索**
-4. 支持**导入导出数据库**为文件
 5. 支持**使用 WebDAV 同步**数据
-6. 支持根据关键词**自动填充**输入框
-7. 支持通过选中段落后的**上下文菜单快捷添加段落**
-8. 支持转换为**抽象 Emoji 段落**
 9. 支持**更换和自定义主题色**
 10. 支持**深色模式**
 11. ......
 
 ## 🤩应用截图
-![ic_home_screen](image/ic_home_screen.jpg) ![ic_main_screen_search](image/ic_main_screen_search.jpg)
-![ic_add_screen_edit](image/ic_add_screen_edit.jpg) ![ic_search_config_screen](image/ic_search_config_screen.jpg)
-![ic_process_text_menu](image/ic_process_text_menu.jpg) ![ic_auto_fill_menu](image/ic_auto_fill_menu.jpg)
-![ic_import_export_screen](image/ic_import_export_screen.jpg) ![ic_easy_usage_screen](image/ic_easy_usage_screen.jpg)
+![ic_home_screen](image/ic_home_screen.jpg) ![ic_home_screen_search](image/ic_home_screen_search.jpg)
+![ic_add_screen_edit](image/ic_add_screen_edit.jpg) ![ic_home_screen_share](image/ic_home_screen_share.jpg)
 ![ic_appearance_screen](image/ic_appearance_screen.jpg) ![ic_webdav_screen](image/ic_webdav_screen.jpg)
-![ic_abstract_emoji_screen](image/ic_abstract_emoji_screen.jpg) ![ic_more_screen](image/ic_more_screen.jpg)
+![ic_search_config_screen](image/ic_search_config_screen.jpg) ![ic_more_screen](image/ic_more_screen.jpg)
+![ic_about_screen](image/ic_about_screen.jpg)
 
 ## 🔍搜索示例
 
@@ -98,7 +94,6 @@
   </tr>
 </tbody>
 </table>
-
 注：**且** 逻辑使用 **空格、制表符、换行符** 表示，多个上述字符连接在一起时视为一个，输入框文字前后多余空格将被忽略。表格中的 **“内容”** 指的是选择的搜索域（多个搜索域的结果取并集）。
 
 ## 🛠主要技术栈
