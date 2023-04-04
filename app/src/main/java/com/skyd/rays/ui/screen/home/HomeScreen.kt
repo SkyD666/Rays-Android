@@ -432,7 +432,7 @@ private fun MainCard(stickerWithTags: StickerWithTags) {
                 Text(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .padding(top = 16.dp, bottom = if (tags.isEmpty()) 16.dp else 6.dp),
+                        .padding(top = 16.dp, bottom = if (tags.isEmpty()) 16.dp else 0.dp),
                     text = stickerBean.title,
                     style = MaterialTheme.typography.titleLarge
                 )
@@ -440,8 +440,7 @@ private fun MainCard(stickerWithTags: StickerWithTags) {
             if (tags.isNotEmpty()) {
                 FlowRow(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 6.dp)
+                        .padding(vertical = 6.dp, horizontal = 16.dp)
                         .fillMaxWidth()
                         .heightIn(max = 150.dp)
                         .verticalScroll(rememberScrollState()),
