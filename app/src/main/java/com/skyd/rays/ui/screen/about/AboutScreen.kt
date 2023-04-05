@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.screenIsLand
+import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalNavController
@@ -171,13 +172,11 @@ private fun ButtonArea() {
             ),
             contentAlignment = Alignment.Center
         ) {
-            IconButton(
-                onClick = { navController.navigate(LICENSE_SCREEN_ROUTE) }) {
-                Icon(
-                    imageVector = Icons.Default.Balance,
-                    contentDescription = stringResource(id = R.string.license_screen_name)
-                )
-            }
+            RaysIconButton(
+                imageVector = Icons.Default.Balance,
+                contentDescription = stringResource(id = R.string.license_screen_name),
+                onClick = { navController.navigate(LICENSE_SCREEN_ROUTE) }
+            )
         }
         Box(
             modifier = boxModifier.background(
@@ -186,12 +185,11 @@ private fun ButtonArea() {
             ),
             contentAlignment = Alignment.Center
         ) {
-            IconButton(onClick = { openBrowser("https://github.com/SkyD666/Rays-Android") }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_github_24),
-                    contentDescription = stringResource(id = R.string.github)
-                )
-            }
+            RaysIconButton(
+                painter = painterResource(id = R.drawable.ic_github_24),
+                contentDescription = stringResource(id = R.string.about_screen_goto_github_repo),
+                onClick = { openBrowser("https://github.com/SkyD666/Rays-Android") }
+            )
         }
         Box(
             modifier = boxModifier.background(
@@ -200,12 +198,11 @@ private fun ButtonArea() {
             ),
             contentAlignment = Alignment.Center
         ) {
-            IconButton(onClick = { openBrowser("https://discord.gg/pEWEjeJTa3") }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_discord_24),
-                    contentDescription = stringResource(id = R.string.github)
-                )
-            }
+            RaysIconButton(
+                painter = painterResource(id = R.drawable.ic_discord_24),
+                contentDescription = stringResource(id = R.string.about_screen_join_discord),
+                onClick = { openBrowser("https://discord.gg/pEWEjeJTa3") }
+            )
         }
     }
 }

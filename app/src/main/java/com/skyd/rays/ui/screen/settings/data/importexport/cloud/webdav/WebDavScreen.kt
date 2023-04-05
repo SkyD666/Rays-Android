@@ -405,18 +405,16 @@ private fun RecycleBinBottomSheet(
                     },
                     trailingContent = {
                         Row {
-                            IconButton(onClick = { onRestore(list[it].uuid) }) {
-                                Icon(
-                                    Icons.Default.RestoreFromTrash,
-                                    contentDescription = stringResource(R.string.webdav_screen_restore),
-                                )
-                            }
-                            IconButton(onClick = { onDelete(list[it].uuid) }) {
-                                Icon(
-                                    Icons.Default.DeleteForever,
-                                    contentDescription = stringResource(R.string.webdav_screen_delete),
-                                )
-                            }
+                            RaysIconButton(
+                                imageVector = Icons.Default.RestoreFromTrash,
+                                contentDescription = stringResource(R.string.webdav_screen_restore),
+                                onClick = { onRestore(list[it].uuid) }
+                            )
+                            RaysIconButton(
+                                imageVector = Icons.Default.DeleteForever,
+                                contentDescription = stringResource(R.string.webdav_screen_delete),
+                                onClick = { onDelete(list[it].uuid) }
+                            )
                         }
                     }
                 )

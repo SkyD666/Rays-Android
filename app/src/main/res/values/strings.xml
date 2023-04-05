@@ -38,9 +38,10 @@
     <string name="about_screen_description_1">一个在本地记录、查找、管理表情包的工具。</string>
     <string name="about_screen_description_2">您还在为手机中的表情包太多，找不到想要的表情包而苦恼吗？使用这款工具将帮助您管理您存储的表情包，再也不因为找不到表情包而烦恼！\uD83D\uDE0B</string>
     <string name="about_screen_description_3">Rays 使用 MVI 架构，完全采用 Material You 设计风格。所有页面均使用 Jetpack Compose 开发。</string>
+    <string name="about_screen_goto_github_repo">访问 GitHub 仓库</string>
+    <string name="about_screen_join_discord">>加入 Discord 群组一起划水~</string>
     <string name="license_screen_name">开源许可证</string>
     <string name="no_browser_found">找不到浏览器！网址：%s</string>
-    <string name="github">GitHub</string>
     <string name="appearance_screen_name">外观选项</string>
     <string name="setting_screen_appearance_description">设置主题、深色模式等。</string>
     <string name="appearance_screen_dark_mode">深色模式</string>
@@ -116,4 +117,5 @@
     <string name="import_export_screen_name">导入与导出</string>
     <string name="home_screen_send_sticker">发送</string>
     <string name="send_sticker">发送表情包</string>
+    <string name="home_screen_open_menu">显示菜单</string>
 </resources>

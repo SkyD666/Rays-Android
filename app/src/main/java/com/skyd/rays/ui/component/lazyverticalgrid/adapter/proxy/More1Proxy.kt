@@ -1,6 +1,7 @@
 package com.skyd.rays.ui.component.lazyverticalgrid.adapter.proxy
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -65,10 +66,11 @@ fun More1Item(
             Text(
                 modifier = Modifier
                     .padding(horizontal = 5.dp)
-                    .padding(top = 15.dp),
+                    .padding(top = 15.dp)
+                    .basicMarquee(iterations = Int.MAX_VALUE),
                 text = data.title,
                 style = MaterialTheme.typography.titleMedium,
-                maxLines = 2,
+                maxLines = 1,
                 textAlign = TextAlign.Center
             )
         }

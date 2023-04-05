@@ -27,7 +27,7 @@ fun RaysImage(
         modifier = modifier,
         contentDescription = contentDescription,
         contentScale = contentScale,
-        imageLoader = raysImageLoader(),
+        imageLoader = rememberRaysImageLoader(),
     )
 }
 
@@ -44,20 +44,22 @@ fun RaysImage(
         modifier = modifier,
         contentDescription = contentDescription,
         contentScale = contentScale,
-        imageLoader = raysImageLoader(),
+        imageLoader = rememberRaysImageLoader(),
     )
 }
 
 @Composable
-private fun raysImageLoader(): ImageLoader {
+private fun rememberRaysImageLoader(): ImageLoader {
     val context = LocalContext.current
-    return ImageLoader.Builder(context)
-        .components {
-            if (SDK_INT >= 28) {
-                add(ImageDecoderDecoder.Factory())
-            } else {
-                add(GifDecoder.Factory())
+    return remember(context) {
+        ImageLoader.Builder(context)
+            .components {
+                if (SDK_INT >= 28) {
+                    add(ImageDecoderDecoder.Factory())
+                } else {
+                    add(GifDecoder.Factory())
+                }
             }
-        }
-        .build()
+            .build()
+    }
 }

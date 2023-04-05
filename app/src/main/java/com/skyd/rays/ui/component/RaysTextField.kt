@@ -7,7 +7,9 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.ContentPaste
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -63,7 +65,15 @@ fun RaysTextField(
         singleLine = maxLines == 1,
         trailingIcon = {
             if (value.isNotEmpty()) {
-                IconButton(
+                RaysIconButton(
+                    imageVector = if (isPassword) {
+                        if (showPassword) Icons.Rounded.Visibility
+                        else Icons.Rounded.VisibilityOff
+                    } else Icons.Rounded.Close,
+                    contentDescription = if (isPassword) {
+                        if (showPassword) stringResource(R.string.password_visibility_off)
+                        else stringResource(R.string.password_visibility_on)
+                    } else stringResource(R.string.clear_input_text),
                     onClick = {
                         if (isPassword) {
                             showPassword = !showPassword
@@ -71,29 +81,14 @@ fun RaysTextField(
                             onValueChange("")
                         }
                     }
-                ) {
-                    Icon(
-                        imageVector = if (isPassword) {
-                            if (showPassword) Icons.Rounded.Visibility
-                            else Icons.Rounded.VisibilityOff
-                        } else Icons.Rounded.Close,
-                        contentDescription = if (isPassword) {
-                            if (showPassword) stringResource(R.string.password_visibility_off)
-                            else stringResource(R.string.password_visibility_on)
-                        } else stringResource(R.string.clear_input_text),
-                        //tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                    )
-                }
+                )
             } else {
-                IconButton(onClick = {
-                    onValueChange(clipboardManager.getText()?.text.orEmpty())
-                }) {
-                    Icon(
-                        imageVector = Icons.Rounded.ContentPaste,
-                        contentDescription = stringResource(R.string.paste),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
+                RaysIconButton(
+                    imageVector = Icons.Rounded.ContentPaste,
+                    contentDescription = stringResource(R.string.paste),
+                    tint = MaterialTheme.colorScheme.primary,
+                    onClick = { onValueChange(clipboardManager.getText()?.text.orEmpty()) }
+                )
             }
         },
         keyboardOptions = keyboardOptions,

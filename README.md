@@ -109,6 +109,31 @@
 - Navigation
 - Profile Installer
 
+## ✨其他应用
+
+<table>
+<thead>
+  <tr>
+    <th>工具</th>
+    <th>描述</th>
+    <th>传送门</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td><img src="image/Raca.svg" style="height: 100px"/></td>
+    <td><b>Raca (Record All Classic Articles)</b>，一个在本地<b>记录、查找抽象段落/评论区小作文</b>的工具。<br/>🤗 您还在为记不住小作文内容，面临<b>前面、中间、后面都忘了</b>的尴尬处境吗？使用这款工具将<b>帮助您记录您所遇到的小作文</b>，再也不因为忘记而烦恼！😋</td>
+    <td><a href="https://github.com/SkyD666/Raca-Android">https://github.com/SkyD666/Raca-Android</a></td>
+  </tr>
+  <tr>
+    <td><img src="image/NightScreen.svg" style="height: 100px"/></td>
+    <td><b>NightScreen</b>，当您在<b>夜间🌙</b>使用手机时，NightScreen 可以帮助您<b>减少屏幕亮度</b>，减少对眼睛的伤害。</td>
+    <td><a href="https://github.com/SkyD666/NightScreen">https://github.com/SkyD666/NightScreen</a></td>
+  </tr>
+</tbody>
+</table>
+
+
 ## 📃许可证
 
 使用此软件代码需**遵循以下许可证协议**

@@ -1,5 +1,6 @@
 package com.skyd.rays.ui.component.lazyverticalgrid.adapter.proxy
 
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,10 +55,12 @@ fun MiniTool1Item(
                 contentDescription = null,
             )
             Text(
-                modifier = Modifier.padding(horizontal = 10.dp),
+                modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .basicMarquee(iterations = Int.MAX_VALUE),
                 text = data.title,
                 style = MaterialTheme.typography.titleMedium,
-                maxLines = 2,
+                maxLines = 1,
                 textAlign = TextAlign.Center
             )
         }

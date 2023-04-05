@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -18,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isContainer
@@ -37,9 +39,7 @@ import com.skyd.rays.ext.screenIsLand
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.QueryPreference
 import com.skyd.rays.model.preference.rememberQuery
-import com.skyd.rays.ui.component.AnimatedPlaceholder
-import com.skyd.rays.ui.component.RaysImage
-import com.skyd.rays.ui.component.RaysOutlinedCard
+import com.skyd.rays.ui.component.*
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalNavController
@@ -165,7 +165,6 @@ private fun RaysSearchBar(
     val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
     var active by rememberSaveable { mutableStateOf(false) }
-    val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
 
@@ -184,7 +183,6 @@ private fun RaysSearchBar(
                 onQueryChange = onQueryChange,
                 query = query(),
                 onSearch = { keyword ->
-                    focusManager.clearFocus()
                     keyboardController?.hide()
                     QueryPreference.put(context, scope, keyword)
                     viewModel.sendUiIntent(HomeIntent.GetStickerWithTagsList(keyword))
@@ -193,49 +191,38 @@ private fun RaysSearchBar(
                 onActiveChange = {
                     active = it
                     if (!active) {
-                        focusManager.clearFocus()
                         QueryPreference.put(context, scope, query())
                     }
                 },
                 placeholder = { Text(text = stringResource(R.string.home_screen_search_hint)) },
                 leadingIcon = {
                     if (active) {
-                        IconButton(onClick = {
-                            focusManager.clearFocus()
-                            active = false
-                        }) {
-                            Icon(
-                                Icons.Default.ArrowBack,
-                                contentDescription = stringResource(id = R.string.home_screen_close_search)
-                            )
-                        }
+                        RaysIconButton(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(id = R.string.home_screen_close_search),
+                            onClick = { active = false }
+                        )
                     } else {
-                        IconButton(onClick = { menuExpanded = true }) {
-                            Icon(Icons.Default.Menu, contentDescription = null)
-                        }
+                        RaysIconButton(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = stringResource(id = R.string.home_screen_open_menu),
+                            onClick = { menuExpanded = true }
+                        )
                     }
                 },
                 trailingIcon = {
                     if (active) {
                         if (query().isNotEmpty()) {
-                            IconButton(onClick = {
+                            TrailingIcon(showClearButton = query().isNotEmpty()) {
                                 onQueryChange(QueryPreference.default)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = stringResource(R.string.home_screen_clear_search_text)
-                                )
                             }
                         }
                     } else {
-                        IconButton(onClick = {
-                            navController.navigate(ADD_SCREEN_ROUTE)
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = stringResource(R.string.home_screen_add)
-                            )
-                        }
+                        RaysIconButton(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.home_screen_add),
+                            onClick = { navController.navigate(ADD_SCREEN_ROUTE) }
+                        )
                     }
                 },
             ) {
@@ -245,7 +232,6 @@ private fun RaysSearchBar(
                         is SearchResultUiState.Success -> {
                             SearchResultList(dataList = searchResultUiState.stickerWithTagsList,
                                 onItemClickListener = {
-                                    focusManager.clearFocus()
                                     active = false
                                     viewModel.sendUiIntent(
                                         HomeIntent.GetStickerDetails(it.sticker.uuid)
@@ -262,25 +248,50 @@ private fun RaysSearchBar(
 }
 
 @Composable
+private fun TrailingIcon(
+    showClearButton: Boolean = true,
+    onClick: (() -> Unit)? = null
+) {
+    if (showClearButton) {
+        RaysIconButton(
+            imageVector = Icons.Default.Clear,
+            contentDescription = stringResource(R.string.home_screen_clear_search_text),
+            onClick = { onClick?.invoke() }
+        )
+    }
+}
+
+@Composable
 private fun SearchResultList(
     dataList: List<StickerWithTags>,
     onItemClickListener: ((data: StickerWithTags) -> Unit)? = null
 ) {
-    if (dataList.isEmpty()) {
-        AnimatedPlaceholder(
-            resId = R.raw.lottie_genshin_impact_klee_2,
-            tip = stringResource(id = R.string.home_screen_no_search_result_tip)
-        )
-    }
-    LazyVerticalStaggeredGrid(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
-        columns = StaggeredGridCells.Fixed(if (LocalContext.current.screenIsLand) 4 else 2),
-        verticalItemSpacing = 12.dp,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        items(items = dataList) {
-            SearchResultItem(data = it, onClickListener = onItemClickListener)
+    Box {
+        if (dataList.isEmpty()) {
+            AnimatedPlaceholder(
+                resId = R.raw.lottie_genshin_impact_klee_2,
+                tip = stringResource(id = R.string.home_screen_no_search_result_tip)
+            )
+        } else {
+            LazyVerticalStaggeredGrid(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
+                columns = StaggeredGridCells.Fixed(if (LocalContext.current.screenIsLand) 4 else 2),
+                verticalItemSpacing = 12.dp,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(items = dataList, key = { it.sticker.uuid }) {
+                    SearchResultItem(data = it, onClickListener = onItemClickListener)
+                }
+            }
+        }
+
+        Badge(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 10.dp, end = 10.dp),
+        ) {
+            Text(text = dataList.size.toString())
         }
     }
 }
@@ -300,16 +311,20 @@ fun SearchResultItem(
         RaysImage(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(max = 300.dp),
+                .height(150.dp),
+//                .heightIn(max = 300.dp),
+            contentScale = ContentScale.Crop,
             uuid = data.sticker.uuid
         )
         if (data.sticker.title.isNotBlank()) {
             Text(
-                modifier = Modifier.padding(vertical = 12.dp, horizontal = 10.dp),
+                modifier = Modifier
+                    .padding(vertical = 10.dp, horizontal = 10.dp)
+                    .basicMarquee(iterations = Int.MAX_VALUE),
                 text = data.sticker.title,
                 style = MaterialTheme.typography.titleMedium,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 3
+                maxLines = 1
             )
         }
     }
@@ -415,24 +430,21 @@ private fun MainCard(stickerWithTags: StickerWithTags) {
                     modifier = Modifier.fillMaxWidth(),
                     uuid = stickerBean.uuid,
                 )
-                IconButton(
+                RaysIconButton(
+                    // align(Alignment.TopEnd) 无效，貌似是 PlainTooltipBox 的Bug
                     modifier = Modifier.align(Alignment.TopEnd),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
-                    ),
+                    style = RaysIconButtonStyle.FilledTonal,
+                    imageVector = Icons.Default.Share,
+                    contentDescription = stringResource(R.string.home_screen_send_sticker),
                     onClick = { context.sendSticker(stickerBean.uuid) }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = stringResource(R.string.home_screen_send_sticker)
-                    )
-                }
+                )
             }
             if (stickerBean.title.isNotBlank()) {
                 Text(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .padding(top = 16.dp, bottom = if (tags.isEmpty()) 16.dp else 0.dp),
+                        .padding(top = 16.dp, bottom = if (tags.isEmpty()) 16.dp else 0.dp)
+                        .basicMarquee(iterations = Int.MAX_VALUE),
                     text = stickerBean.title,
                     style = MaterialTheme.typography.titleLarge
                 )
