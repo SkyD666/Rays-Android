@@ -2,8 +2,10 @@ package com.skyd.rays.ui.screen.about
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Balance
@@ -21,9 +23,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.skyd.rays.R
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.screenIsLand
+import com.skyd.rays.model.bean.OtherWorksBean
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
@@ -47,6 +51,8 @@ fun AboutScreen() {
             )
         }
     ) { paddingValues ->
+        val otherWorksList = rememberOtherWorksList()
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -66,6 +72,7 @@ fun AboutScreen() {
                         }
                         TextArea(modifier = Modifier.weight(1f))
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             } else {
                 item {
@@ -77,6 +84,16 @@ fun AboutScreen() {
                 item {
                     ButtonArea()
                 }
+            }
+
+            item {
+                Text(
+                    text = stringResource(R.string.about_screen_other_works),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+            itemsIndexed(items = otherWorksList) { _, item ->
+                OtherWorksItem(data = item)
             }
         }
     }
@@ -202,6 +219,65 @@ private fun ButtonArea() {
                 painter = painterResource(id = R.drawable.ic_discord_24),
                 contentDescription = stringResource(id = R.string.about_screen_join_discord),
                 onClick = { openBrowser("https://discord.gg/pEWEjeJTa3") }
+            )
+        }
+    }
+}
+
+@Composable
+private fun rememberOtherWorksList(): List<OtherWorksBean> {
+    val context = LocalContext.current
+    return remember {
+        listOf(
+            OtherWorksBean(
+                name = context.getString(R.string.about_screen_other_works_raca_name),
+                icon = R.drawable.ic_raca,
+                description = context.getString(R.string.about_screen_other_works_raca_description),
+                url = context.getString(R.string.about_screen_other_works_raca_url)
+            ),
+            OtherWorksBean(
+                name = context.getString(R.string.about_screen_other_works_night_screen_name),
+                icon = R.drawable.ic_night_screen,
+                description = context.getString(R.string.about_screen_other_works_night_screen_description),
+                url = context.getString(R.string.about_screen_other_works_night_screen_url)
+            ),
+        )
+    }
+}
+
+@Composable
+private fun OtherWorksItem(
+    modifier: Modifier = Modifier,
+    data: OtherWorksBean,
+) {
+    Card(
+        modifier = modifier
+            .padding(vertical = 10.dp)
+            .fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier
+                .clickable { openBrowser(data.url) }
+                .padding(15.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AsyncImage(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .aspectRatio(1f),
+                    model = data.icon,
+                    contentDescription = data.name
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = data.name,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+            Text(
+                modifier = Modifier.padding(top = 6.dp),
+                text = data.description,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }
