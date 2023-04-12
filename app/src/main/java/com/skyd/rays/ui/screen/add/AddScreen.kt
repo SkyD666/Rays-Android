@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 const val ADD_SCREEN_ROUTE = "addScreen"
 
 @Composable
-fun AddScreen(stickerUuid: String, sticker: Uri?, viewModel: AddViewModel = hiltViewModel()) {
+fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = hiltViewModel()) {
     var openDialog by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -53,12 +53,13 @@ fun AddScreen(stickerUuid: String, sticker: Uri?, viewModel: AddViewModel = hilt
     var titleText by rememberSaveable { mutableStateOf("") }
     var stickerUri by remember { mutableStateOf<Uri?>(null) }
     val tags = remember { mutableStateListOf<TagBean>() }
+    var stickerUuid by remember { mutableStateOf(initStickerUuid) }
 
-    if (stickerUuid.isNotBlank()) {
+    if (initStickerUuid.isNotBlank()) {
         LaunchedEffect(Unit) {
-            viewModel.sendUiIntent(AddIntent.GetStickerWithTags(stickerUuid))
+            viewModel.sendUiIntent(AddIntent.GetStickerWithTags(initStickerUuid))
         }
-    } else {
+    } else if (sticker != null) {
         stickerUri = sticker
     }
 
@@ -213,25 +214,33 @@ fun AddScreen(stickerUuid: String, sticker: Uri?, viewModel: AddViewModel = hilt
                 }
             }
         )
-    }
 
-    viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
-        when (getStickersWithTagsUiState) {
-            is GetStickersWithTagsUiState.Success -> {
-                val stickerBean = getStickersWithTagsUiState.stickerWithTags.sticker
-                titleText = stickerBean.title
-                stickerUri = stickerUuidToUri(stickerBean.uuid)
-                tags.clear()
-                tags.addAll(getStickersWithTagsUiState.stickerWithTags.tags)
+        viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
+            when (getStickersWithTagsUiState) {
+                is GetStickersWithTagsUiState.Success -> {
+                    val stickerBean = getStickersWithTagsUiState.stickerWithTags.sticker
+                    stickerUuid = stickerBean.uuid
+                    titleText = stickerBean.title
+                    stickerUri = stickerUuidToUri(stickerBean.uuid)
+                    tags.clear()
+                    tags.addAll(getStickersWithTagsUiState.stickerWithTags.tags)
+                }
+                GetStickersWithTagsUiState.Failed -> {}
+                GetStickersWithTagsUiState.Init -> {}
             }
-            GetStickersWithTagsUiState.Failed -> {}
-            GetStickersWithTagsUiState.Init -> {}
         }
     }
 
+
     viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null).value?.apply {
         when (addStickersResultUiEvent) {
-            AddStickersResultUiEvent.Failed -> {
+            AddStickersResultUiEvent.Duplicate -> {
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        appContext.getString(R.string.add_screen_sticker_duplicate),
+                        withDismissAction = true
+                    )
+                }
             }
             is AddStickersResultUiEvent.Success -> {
                 refreshStickerData.tryEmit(Unit)

@@ -2,13 +2,13 @@ package com.skyd.rays.ui.screen.add
 
 import androidx.lifecycle.viewModelScope
 import com.skyd.rays.appContext
+import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseViewModel
 import com.skyd.rays.base.IUIChange
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.respository.AddRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,7 +33,14 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
 
         doIsInstance<AddIntent.AddNewStickerWithTags> { intent ->
             addRepository.requestAddStickerWithTags(intent.stickerWithTags, intent.stickerUri)
-                .mapToUIChange { data ->
+                .mapToUIChange(onError = { data ->
+                    if (data.code == -2) {
+                        data.data?.let { sendUiIntent(AddIntent.GetStickerWithTags(it)) }
+                        AddEvent(addStickersResultUiEvent = AddStickersResultUiEvent.Duplicate)
+                    } else {
+                        error(data.msg.toString())
+                    }
+                }) { data ->
                     CurrentStickerUuidPreference.put(
                         context = appContext,
                         scope = viewModelScope,

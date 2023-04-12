@@ -8,6 +8,7 @@ import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get
 import com.skyd.rays.model.bean.STICKER_TABLE_NAME
 import com.skyd.rays.model.bean.StickerBean
+import com.skyd.rays.model.bean.StickerBean.Companion.STICKER_MD5_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.UUID_COLUMN
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
@@ -43,6 +44,14 @@ interface StickerDao {
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN LIKE :stickerUuid")
     fun getStickerWithTags(stickerUuid: String): StickerWithTags?
+
+    @Transaction
+    @Query("SELECT $UUID_COLUMN FROM $STICKER_TABLE_NAME WHERE $STICKER_MD5_COLUMN LIKE :stickerMd5")
+    fun containsByMd5(stickerMd5: String): String?
+
+    @Transaction
+    @Query("SELECT COUNT(*) FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN LIKE :uuid")
+    fun containsByUuid(uuid: String): Int
 
     @Transaction
     fun addStickerWithTags(stickerWithTags: StickerWithTags): String {

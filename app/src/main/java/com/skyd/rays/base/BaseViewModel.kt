@@ -63,7 +63,8 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
      * Flow<BaseData<T>> 转为 Flow<IUIChange>
      */
     protected fun <T> Flow<BaseData<T>>.mapToUIChange(
-        transform: (UiState).(value: T) -> IUIChange
+        onError: (UiState).(value: BaseData<T>) -> IUIChange = { error(it.msg.toString()) },
+        transform: (UiState).(value: T) -> IUIChange,
     ): Flow<IUIChange> = map {
         when (it.state) {
             ReqState.Success -> {
@@ -73,7 +74,7 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
                     uiStateFlow.value.transform(data)
                 } else error(it.msg.toString())
             }
-            else -> error(it.msg.toString())
+            else -> uiStateFlow.value.onError(it)
         }
     }
 

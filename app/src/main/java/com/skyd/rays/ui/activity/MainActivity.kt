@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
                     arguments = listOf(navArgument("stickerUuid") { defaultValue = "" })
                 ) {
                     AddScreen(
-                        stickerUuid = it.arguments?.getString("stickerUuid").orEmpty(),
+                        initStickerUuid = it.arguments?.getString("stickerUuid").orEmpty(),
                         sticker = null//it.arguments?.getString("sticker").orEmpty()
                     )
                 }

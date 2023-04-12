@@ -39,7 +39,7 @@
     <string name="about_screen_description_2">您还在为手机中的表情包太多，找不到想要的表情包而苦恼吗？使用这款工具将帮助您管理您存储的表情包，再也不因为找不到表情包而烦恼！\uD83D\uDE0B</string>
     <string name="about_screen_description_3">Rays 使用 MVI 架构，完全采用 Material You 设计风格。所有页面均使用 Jetpack Compose 开发。</string>
     <string name="about_screen_goto_github_repo">访问 GitHub 仓库</string>
-    <string name="about_screen_join_discord">>加入 Discord 群组一起划水~</string>
+    <string name="about_screen_join_discord">加入 Discord 群组一起划水~</string>
     <string name="license_screen_name">开源许可证</string>
     <string name="no_browser_found">找不到浏览器！网址：%s</string>
     <string name="appearance_screen_name">外观选项</string>
@@ -125,4 +125,5 @@
     <string name="about_screen_other_works_night_screen_description">当您在夜间🌙使用手机时，Night Screen 可以帮助您减少屏幕亮度，减少对眼睛的伤害。</string>
     <string name="about_screen_other_works_night_screen_url">https://github.com/SkyD666/NightScreen</string>
     <string name="about_screen_other_works">其他作品</string>
+    <string name="add_screen_sticker_duplicate">表情包重复，已被添加过，正在展示已添加的信息！</string>
 </resources>

@@ -7,6 +7,6 @@ data class AddEvent(
 ) : IUiEvent
 
 sealed class AddStickersResultUiEvent {
-    object Failed : AddStickersResultUiEvent()
+    object Duplicate : AddStickersResultUiEvent()
     data class Success(val stickerUuid: String) : AddStickersResultUiEvent()
 }
