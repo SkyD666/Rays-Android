@@ -1,6 +1,8 @@
 package com.skyd.rays.ui.activity
 
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -122,7 +124,7 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     AddScreen(
                         initStickerUuid = it.arguments?.getString("stickerUuid").orEmpty(),
-                        sticker = null//it.arguments?.getString("sticker").orEmpty()
+                        sticker = it.arguments?.getParcelable("sticker")
                     )
                 }
                 composable(route = SETTINGS_SCREEN_ROUTE) {
@@ -160,7 +162,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initIntent() {
-        val text = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT) ?: return
-        navController.navigate(ADD_SCREEN_ROUTE, Bundle().apply { putString("sticker", text) })
+        val sticker: Uri = if (Intent.ACTION_SEND == intent.action && intent.type == "image/*") {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+            } else {
+                intent.getParcelableExtra(Intent.EXTRA_STREAM)
+            }
+        } else {
+            null
+        } ?: return
+
+        navController.navigate(
+            ADD_SCREEN_ROUTE,
+            Bundle().apply { putParcelable("sticker", sticker) }
+        )
     }
 }
