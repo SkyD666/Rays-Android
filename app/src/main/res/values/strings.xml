@@ -126,4 +126,5 @@
     <string name="about_screen_other_works_night_screen_url">https://github.com/SkyD666/NightScreen</string>
     <string name="about_screen_other_works">其他作品</string>
     <string name="add_screen_sticker_duplicate">表情包重复，已被添加过，正在展示已添加的信息！</string>
+    <string name="add_screen_suggest_tag">建议标签</string>
 </resources>

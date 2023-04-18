@@ -3,10 +3,14 @@ package com.skyd.rays.ui.screen.add
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.*
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
@@ -54,6 +58,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
     var stickerUri by remember { mutableStateOf<Uri?>(null) }
     val tags = remember { mutableStateListOf<TagBean>() }
     var stickerUuid by remember { mutableStateOf(initStickerUuid) }
+    val stickerTexts = remember { mutableStateListOf<String>() }
 
     if (initStickerUuid.isNotBlank()) {
         LaunchedEffect(Unit) {
@@ -109,6 +114,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
             )
         }
     ) { paddingValues ->
+        var currentTagText by rememberSaveable { mutableStateOf("") }
         val pickStickerLauncher = rememberLauncherForActivityResult(
             ActivityResultContracts.GetContent()
         ) { result ->
@@ -134,7 +140,6 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                 )
             }
             item {
-                var currentTagText by rememberSaveable { mutableStateOf("") }
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -154,22 +159,67 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                         currentTagText = ""
                     })
                 )
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+            }
+            item {
+                AnimatedVisibility(
+                    visible = tags.isNotEmpty(),
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut(),
                 ) {
-                    repeat(tags.size) { index ->
-                        InputChip(
-                            selected = false,
-                            label = { Text(tags[index].tag) },
-                            onClick = { tags.remove(tags[index]) },
-                            trailingIcon = {
-                                Icon(
-                                    modifier = Modifier.size(AssistChipDefaults.IconSize),
-                                    imageVector = Icons.Default.Close, contentDescription = null
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    ) {
+                        repeat(tags.size) { index ->
+                            InputChip(
+                                selected = false,
+                                label = { Text(tags[index].tag) },
+                                onClick = { tags.remove(tags[index]) },
+                                trailingIcon = {
+                                    Icon(
+                                        modifier = Modifier.size(AssistChipDefaults.IconSize),
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            item {
+                AnimatedVisibility(
+                    visible = stickerTexts.isNotEmpty(),
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut(),
+                ) {
+                    Column {
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text(
+                            text = stringResource(R.string.add_screen_suggest_tag),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        FlowRow(
+                            modifier = Modifier
+                                .padding(top = 5.dp)
+                                .fillMaxWidth()
+                                .heightIn(max = 100.dp)
+                                .verticalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        ) {
+                            repeat(stickerTexts.size) { index ->
+                                SuggestionChip(
+                                    modifier = Modifier.combinedClickable {  },
+                                    label = { Text(stickerTexts[index]) },
+                                    onClick = {
+                                        val text = stickerTexts[index]
+                                        stickerTexts.removeAt(index)
+                                        currentTagText = text
+                                        tags.add(TagBean(tag = text))
+                                    },
                                 )
                             }
-                        )
+                        }
                     }
                 }
             }
@@ -188,6 +238,9 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                             )
                         }
                     } else {
+                        LaunchedEffect(stickerUri) {
+                            viewModel.sendUiIntent(AddIntent.GetSuggestTags(stickerUri!!))
+                        }
                         RaysImage(
                             uri = stickerUri,
                             modifier = Modifier.fillMaxWidth()
@@ -245,6 +298,13 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
             is AddStickersResultUiEvent.Success -> {
                 refreshStickerData.tryEmit(Unit)
                 openDialog = true
+            }
+            null -> {}
+        }
+        when (recognizeTextUiEvent) {
+            is RecognizeTextUiEvent.Success -> {
+                stickerTexts.clear()
+                stickerTexts += recognizeTextUiEvent.texts
             }
             null -> {}
         }

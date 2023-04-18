@@ -1,6 +1,14 @@
 package com.skyd.rays.model.respository
 
 import android.net.Uri
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.chinese.ChineseTextRecognizerOptions
+import com.google.mlkit.vision.text.japanese.JapaneseTextRecognizerOptions
+import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.STICKER_DIR
@@ -10,7 +18,10 @@ import com.skyd.rays.ext.md5
 import com.skyd.rays.model.bean.StickerWithTags
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.zip
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -62,5 +73,66 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
                 })
             }
         }
+    }
+
+    suspend fun requestSuggestTags(sticker: Uri): Flow<BaseData<Set<String>>> {
+        val image: InputImage
+        return try {
+            image = InputImage.fromFilePath(appContext, sticker)
+            flow {
+                emit(suspendCancellableCoroutine { cont ->
+                    TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+                        .process(image)
+                        .addOnSuccessListener { cont.resume(getTexts(it), onCancellation = null) }
+                })
+            }.zip(flow {
+                emit(suspendCancellableCoroutine { cont ->
+                    TextRecognition.getClient(ChineseTextRecognizerOptions.Builder().build())
+                        .process(image)
+                        .addOnSuccessListener { cont.resume(getTexts(it), onCancellation = null) }
+                })
+            }) { other, chinese ->
+                other + chinese
+            }.zip(flow {
+                emit(suspendCancellableCoroutine { cont ->
+                    TextRecognition.getClient(JapaneseTextRecognizerOptions.Builder().build())
+                        .process(image)
+                        .addOnSuccessListener { cont.resume(getTexts(it), onCancellation = null) }
+                })
+            }) { other, japanese ->
+                other + japanese
+            }.zip(flow {
+                emit(suspendCancellableCoroutine { cont ->
+                    TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
+                        .process(image)
+                        .addOnSuccessListener { cont.resume(getTexts(it), onCancellation = null) }
+                })
+            }) { other, korean ->
+                checkBaseData(BaseData<Set<String>>().apply {
+                    code = 0
+                    data = (other + korean).toSet()
+                })
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            flow {
+                emitBaseData(BaseData<Set<String>>().apply {
+                    code = -1
+                    msg = e.message
+                })
+            }
+        }
+    }
+
+    private fun getTexts(result: Text): List<String> {
+        val list = mutableListOf<String>()
+        for (block in result.textBlocks) {
+            for (line in block.lines) {
+                for (element in line.elements) {
+                    list += element.text
+                }
+            }
+        }
+        return list
     }
 }

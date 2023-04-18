@@ -9,4 +9,6 @@ sealed class AddIntent : IUiIntent {
         AddIntent()
 
     data class GetStickerWithTags(val stickerUuid: String) : AddIntent()
+
+    data class GetSuggestTags(val sticker: Uri) : AddIntent()
 }

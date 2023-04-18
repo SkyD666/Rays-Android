@@ -68,7 +68,7 @@ android {
             shrinkResources true       // 使用keep.xml，keep住某些资源文件
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             ndk {
-                abiFilters 'armeabi', 'arm64-v8a', 'x86', 'x86_64'
+                abiFilters 'arm64-v8a'
             }
         }
     }
@@ -110,6 +110,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         freeCompilerArgs += "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
         freeCompilerArgs += "-opt-in=kotlinx.coroutines.FlowPreview"
         freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
+        freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
     }
 }
 
@@ -149,6 +150,12 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     implementation "com.github.stuxuhai:jpinyin:1.1.8"
     implementation "com.airbnb.android:lottie-compose:6.0.0"
+
+    // Google ML Kit
+    implementation "com.google.mlkit:text-recognition:$mlkit_recognition_version"
+    implementation "com.google.mlkit:text-recognition-chinese:$mlkit_recognition_version"
+    implementation "com.google.mlkit:text-recognition-japanese:$mlkit_recognition_version"
+    implementation "com.google.mlkit:text-recognition-korean:$mlkit_recognition_version"
 
     debugImplementation "androidx.compose.ui:ui-tooling:$md3_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$md3_version"
