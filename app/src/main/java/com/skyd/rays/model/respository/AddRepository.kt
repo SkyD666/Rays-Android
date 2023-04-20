@@ -1,7 +1,6 @@
 package com.skyd.rays.model.respository
 
 import android.net.Uri
-import androidx.core.net.toUri
 import com.google.mlkit.common.model.LocalModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
@@ -15,6 +14,7 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
+import com.skyd.rays.config.CLASSIFICATION_MODEL_DIR_FILE
 import com.skyd.rays.config.STICKER_DIR
 import com.skyd.rays.db.dao.StickerDao
 import com.skyd.rays.ext.copyTo
@@ -102,7 +102,7 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
                         .addOnFailureListener { cont.resumeWithException(it) }
                 })
             }) { other, chinese ->
-                other + chinese
+                chinese + other
             }.zip(flow {
                 emit(suspendCancellableCoroutine { cont ->
                     TextRecognition.getClient(JapaneseTextRecognizerOptions.Builder().build())
@@ -132,7 +132,7 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
                             if (model.isBlank()) {
                                 setAssetFilePath("sticker_classification.tflite")
                             } else {
-                                setUri(File(model).toUri())
+                                setAbsoluteFilePath(File(CLASSIFICATION_MODEL_DIR_FILE, model).path)
                             }
                         }
                         .build()

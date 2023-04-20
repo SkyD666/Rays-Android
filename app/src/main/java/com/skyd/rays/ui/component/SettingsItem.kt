@@ -1,7 +1,7 @@
 package com.skyd.rays.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -59,6 +59,45 @@ fun SwitchSettingsItem(
 }
 
 @Composable
+fun RadioSettingsItem(
+    icon: ImageVector,
+    text: String,
+    description: String? = null,
+    selected: Boolean = false,
+    onLongClick: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
+) {
+    RadioSettingsItem(
+        icon = rememberVectorPainter(image = icon),
+        text = text,
+        description = description,
+        selected = selected,
+        onLongClick = onLongClick,
+        onClick = onClick
+    )
+}
+
+@Composable
+fun RadioSettingsItem(
+    icon: Painter,
+    text: String,
+    description: String? = null,
+    selected: Boolean = false,
+    onLongClick: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
+) {
+    BaseSettingsItem(
+        icon = icon,
+        text = text,
+        descriptionText = description,
+        onLongClick = onLongClick,
+        onClick = onClick
+    ) {
+        RadioButton(selected = selected, onClick = onClick)
+    }
+}
+
+@Composable
 fun ColorSettingsItem(
     icon: ImageVector,
     text: String,
@@ -108,6 +147,7 @@ fun BaseSettingsItem(
     text: String,
     descriptionText: String? = null,
     onClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
     content: (@Composable () -> Unit)? = null
 ) {
     BaseSettingsItem(
@@ -125,6 +165,7 @@ fun BaseSettingsItem(
             }
         } else null,
         onClick = onClick,
+        onLongClick = onLongClick,
         content = content,
     )
 }
@@ -135,12 +176,16 @@ fun BaseSettingsItem(
     text: String,
     description: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
     content: (@Composable () -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .run { if (onClick != null) clickable { onClick() } else this }
+            .run {
+                if (onClick != null) combinedClickable(onLongClick = onLongClick) { onClick() }
+                else this
+            }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -132,7 +132,9 @@
     <string name="ml_screen_sticker_classification_category">表情包分类</string>
     <string name="ml_screen_sticker_classification_model_description">选择分类表情包使用的机器学习模型。使用默认的分类模型 (EfficientNet-Lite2) 或指定 .tflite / .lite 模型文件</string>
     <string name="classification_model_screen_name">表情包分类模型</string>
-    <string name="classification_model_screen_default">默认 (EfficientNet-Lite2)</string>
+    <string name="classification_model_screen_default">默认</string>
     <string name="classification_model_screen_select">选择外部模型</string>
     <string name="classification_model_screen_select_description">选择外部模型文件 (.tflite 或 .lite)</string>
+    <string name="classification_model_screen_failed">操作失败：%s</string>
+    <string name="classification_model_screen_default_name">EfficientNet-Lite2</string>
 </resources>
