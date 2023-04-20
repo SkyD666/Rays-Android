@@ -23,5 +23,8 @@ fun Preferences.toSettings(): Settings {
 
         // WebDav
         webDavServer = WebDavServerPreference.fromPreferences(this),
+
+        // ML
+        stickerClassificationModel = StickerClassificationModelPreference.fromPreferences(this),
     )
 }

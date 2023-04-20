@@ -127,4 +127,12 @@
     <string name="about_screen_other_works">其他作品</string>
     <string name="add_screen_sticker_duplicate">表情包重复，已被添加过，正在展示已添加的信息！</string>
     <string name="add_screen_suggest_tag">建议标签</string>
+    <string name="ml_screen_name">Ai 选项</string>
+    <string name="setting_screen_ml_description">配置 Ai 相关选项。</string>
+    <string name="ml_screen_sticker_classification_category">表情包分类</string>
+    <string name="ml_screen_sticker_classification_model_description">选择分类表情包使用的机器学习模型。使用默认的分类模型 (EfficientNet-Lite2) 或指定 .tflite / .lite 模型文件</string>
+    <string name="classification_model_screen_name">表情包分类模型</string>
+    <string name="classification_model_screen_default">默认 (EfficientNet-Lite2)</string>
+    <string name="classification_model_screen_select">选择外部模型</string>
+    <string name="classification_model_screen_select_description">选择外部模型文件 (.tflite 或 .lite)</string>
 </resources>

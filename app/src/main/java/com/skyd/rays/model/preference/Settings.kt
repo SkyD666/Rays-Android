@@ -28,6 +28,8 @@ data class Settings(
     val intersectSearchBySpace: Boolean = IntersectSearchBySpacePreference.default,
     // WebDav
     val webDavServer: String = WebDavServerPreference.default,
+    // ML
+    val stickerClassificationModel: String = StickerClassificationModelPreference.default,
 )
 
 @Composable
@@ -52,6 +54,8 @@ fun SettingsProvider(
         LocalIntersectSearchBySpace provides settings.intersectSearchBySpace,
         // WebDav
         LocalWebDavServer provides settings.webDavServer,
+        // ML
+        LocalStickerClassificationModel provides settings.stickerClassificationModel,
     ) {
         content()
     }

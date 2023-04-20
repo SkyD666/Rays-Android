@@ -31,3 +31,7 @@ val LocalIntersectSearchBySpace = compositionLocalOf { IntersectSearchBySpacePre
 
 // WebDav
 val LocalWebDavServer = compositionLocalOf { WebDavServerPreference.default }
+
+// ML
+val LocalStickerClassificationModel =
+    compositionLocalOf { StickerClassificationModelPreference.default }

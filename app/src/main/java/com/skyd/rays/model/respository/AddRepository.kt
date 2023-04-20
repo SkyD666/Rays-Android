@@ -1,7 +1,11 @@
 package com.skyd.rays.model.respository
 
 import android.net.Uri
+import androidx.core.net.toUri
+import com.google.mlkit.common.model.LocalModel
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.label.ImageLabeling
+import com.google.mlkit.vision.label.custom.CustomImageLabelerOptions
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.chinese.ChineseTextRecognizerOptions
@@ -14,8 +18,11 @@ import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.STICKER_DIR
 import com.skyd.rays.db.dao.StickerDao
 import com.skyd.rays.ext.copyTo
+import com.skyd.rays.ext.dataStore
+import com.skyd.rays.ext.get
 import com.skyd.rays.ext.md5
 import com.skyd.rays.model.bean.StickerWithTags
+import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.zip
@@ -23,6 +30,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
+import kotlin.coroutines.resumeWithException
 import kotlin.random.Random
 
 class AddRepository @Inject constructor(private val stickerDao: StickerDao) : BaseRepository() {
@@ -84,12 +92,14 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
                     TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
                         .process(image)
                         .addOnSuccessListener { cont.resume(getTexts(it), onCancellation = null) }
+                        .addOnFailureListener { cont.resumeWithException(it) }
                 })
             }.zip(flow {
                 emit(suspendCancellableCoroutine { cont ->
                     TextRecognition.getClient(ChineseTextRecognizerOptions.Builder().build())
                         .process(image)
                         .addOnSuccessListener { cont.resume(getTexts(it), onCancellation = null) }
+                        .addOnFailureListener { cont.resumeWithException(it) }
                 })
             }) { other, chinese ->
                 other + chinese
@@ -98,6 +108,7 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
                     TextRecognition.getClient(JapaneseTextRecognizerOptions.Builder().build())
                         .process(image)
                         .addOnSuccessListener { cont.resume(getTexts(it), onCancellation = null) }
+                        .addOnFailureListener { cont.resumeWithException(it) }
                 })
             }) { other, japanese ->
                 other + japanese
@@ -106,11 +117,43 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
                     TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
                         .process(image)
                         .addOnSuccessListener { cont.resume(getTexts(it), onCancellation = null) }
+                        .addOnFailureListener { cont.resumeWithException(it) }
                 })
             }) { other, korean ->
+                other + korean
+            }.zip(flow {
+                emit(suspendCancellableCoroutine { cont ->
+                    val model = appContext.dataStore
+                        .get(StickerClassificationModelPreference.key)
+                        .orEmpty()
+
+                    val localModel = LocalModel.Builder()
+                        .apply {
+                            if (model.isBlank()) {
+                                setAssetFilePath("sticker_classification.tflite")
+                            } else {
+                                setUri(File(model).toUri())
+                            }
+                        }
+                        .build()
+
+                    val customImageLabelerOptions = CustomImageLabelerOptions.Builder(localModel)
+                        .setConfidenceThreshold(0.5f)
+                        .setMaxResultCount(3)
+                        .build()
+
+                    ImageLabeling.getClient(customImageLabelerOptions).process(image)
+                        .addOnSuccessListener { labels ->
+                            cont.resume(labels.map { it.text }, onCancellation = null)
+                        }
+                        .addOnFailureListener { e ->
+                            cont.resumeWithException(e)
+                        }
+                })
+            }) { other, classification ->
                 checkBaseData(BaseData<Set<String>>().apply {
                     code = 0
-                    data = (other + korean).toSet()
+                    data = (classification + other).toSet()
                 })
             }
         } catch (e: IOException) {

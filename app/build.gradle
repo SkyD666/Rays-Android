@@ -156,6 +156,7 @@ dependencies {
     implementation "com.google.mlkit:text-recognition-chinese:$mlkit_recognition_version"
     implementation "com.google.mlkit:text-recognition-japanese:$mlkit_recognition_version"
     implementation "com.google.mlkit:text-recognition-korean:$mlkit_recognition_version"
+    implementation 'com.google.mlkit:image-labeling-custom:17.0.1'
 
     debugImplementation "androidx.compose.ui:ui-tooling:$md3_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$md3_version"

@@ -49,6 +49,10 @@ import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WEBDAV_SC
 import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WebDavScreen
 import com.skyd.rays.ui.screen.settings.easyusage.EASY_USAGE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.easyusage.EasyUsageScreen
+import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.MlScreen
+import com.skyd.rays.ui.screen.settings.ml.classification.CLASSIFICATION_MODEL_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.classification.ClassificationModelScreen
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SearchConfigScreen
 import com.skyd.rays.ui.theme.RaysTheme
@@ -130,6 +134,12 @@ class MainActivity : AppCompatActivity() {
                 composable(route = SETTINGS_SCREEN_ROUTE) {
                     SettingsScreen()
                 }
+                composable(route = ML_SCREEN_ROUTE) {
+                    MlScreen()
+                }
+                composable(route = CLASSIFICATION_MODEL_SCREEN_ROUTE) {
+                    ClassificationModelScreen()
+                }
                 composable(route = SEARCH_CONFIG_SCREEN_ROUTE) {
                     SearchConfigScreen()
                 }
@@ -162,7 +172,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initIntent() {
-        val sticker: Uri = if (Intent.ACTION_SEND == intent.action && intent.type == "image/*") {
+        val sticker: Uri = if (Intent.ACTION_SEND == intent.action &&
+            intent.type.orEmpty().startsWith("image/")
+        ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
             } else {

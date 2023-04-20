@@ -3,10 +3,7 @@ package com.skyd.rays.ui.screen.settings
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessibilityNew
-import androidx.compose.material.icons.filled.Dataset
-import androidx.compose.material.icons.filled.ManageSearch
-import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -23,6 +20,7 @@ import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.DATA_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.easyusage.EASY_USAGE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 
 const val SETTINGS_SCREEN_ROUTE = "settingsScreen"
@@ -67,6 +65,14 @@ fun SettingsScreen() {
                     text = stringResource(id = R.string.data_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_data_description),
                     onClick = { navController.navigate(DATA_SCREEN_ROUTE) }
+                )
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(Icons.Default.SmartToy),
+                    text = stringResource(id = R.string.ml_screen_name),
+                    descriptionText = stringResource(id = R.string.setting_screen_ml_description),
+                    onClick = { navController.navigate(ML_SCREEN_ROUTE) }
                 )
             }
             item {
