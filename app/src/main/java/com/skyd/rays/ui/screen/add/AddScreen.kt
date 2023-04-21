@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.config.refreshStickerData
+import com.skyd.rays.ext.addIfAny
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.model.bean.StickerBean
@@ -102,7 +103,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                                 val stickerWithTags = StickerWithTags(
                                     sticker = StickerBean(title = titleText)
                                         .apply { uuid = stickerUuid },
-                                    tags = tags.toList()
+                                    tags = tags.distinct()
                                 )
                                 viewModel.sendUiIntent(
                                     AddIntent.AddNewStickerWithTags(stickerWithTags, stickerUri!!)
@@ -151,7 +152,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
                         if (currentTagText.isNotBlank()) {
-                            tags.add(TagBean(tag = currentTagText))
+                            tags.addIfAny(TagBean(tag = currentTagText)) { it.tag != currentTagText }
                         } else {
                             keyboardController?.hide()
                             focusManager.clearFocus()
@@ -209,13 +210,13 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                         ) {
                             repeat(stickerTexts.size) { index ->
                                 SuggestionChip(
-                                    modifier = Modifier.combinedClickable {  },
+                                    modifier = Modifier.combinedClickable { },
                                     label = { Text(stickerTexts[index]) },
                                     onClick = {
                                         val text = stickerTexts[index]
                                         stickerTexts.removeAt(index)
                                         currentTagText = text
-                                        tags.add(TagBean(tag = text))
+                                        tags.addIfAny(TagBean(tag = text)) { it.tag != text }
                                     },
                                 )
                             }
@@ -225,7 +226,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
             }
             item {
                 RaysCard(
-                    modifier = Modifier.padding(top = 20.dp),
+                    modifier = Modifier.padding(vertical = 20.dp),
                     colors = CardDefaults.cardColors(Color.Transparent),
                     onClick = { pickStickerLauncher.launch("image/*") }
                 ) {
@@ -276,7 +277,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                     titleText = stickerBean.title
                     stickerUri = stickerUuidToUri(stickerBean.uuid)
                     tags.clear()
-                    tags.addAll(getStickersWithTagsUiState.stickerWithTags.tags)
+                    tags.addAll(getStickersWithTagsUiState.stickerWithTags.tags.distinct())
                 }
                 GetStickersWithTagsUiState.Failed -> {}
                 GetStickersWithTagsUiState.Init -> {}

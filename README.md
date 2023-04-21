@@ -19,7 +19,7 @@
         <a href="https://discord.gg/pEWEjeJTa3" style="text-decoration:none" >
             <img src="https://img.shields.io/discord/982522006819991622?color=5865F2&label=Discord&logo=discord&logoColor=white&style=for-the-badge" alt="Discord"/>
         </a>
-	</p>
+    </p>
     <p>
         <b>Rays (Record All Your Stickers)</b>，一个在本地<b>记录、查找、管理表情包</b>的工具。
     </p>
@@ -31,25 +31,26 @@
     </p>
 </div>
 
-
-
-
 ## 💡主要功能
 
 1. 支持为表情包打**标签**
 2. 支持设置**搜索域**（设置搜索**数据库表的字段**）
 3. 支持使用**正则表达式搜索**
-5. 支持**使用 WebDAV 同步**数据
-9. 支持**更换和自定义主题色**
-10. 支持**深色模式**
-11. ......
+4. 支持**识别**表情包中的**文本**
+5. 支持 **Ai 推荐表情包标签**（支持更换模型）
+6. 支持**使用 WebDAV 同步**数据
+7. 支持通过**系统“分享”页面导入**表情包
+8. 支持**更换和自定义主题色**
+9. 支持**深色模式**
+10. ......
 
 ## 🤩应用截图
+
 ![ic_home_screen](image/ic_home_screen.jpg) ![ic_home_screen_search](image/ic_home_screen_search.jpg)
 ![ic_add_screen_edit](image/ic_add_screen_edit.jpg) ![ic_home_screen_share](image/ic_home_screen_share.jpg)
 ![ic_appearance_screen](image/ic_appearance_screen.jpg) ![ic_webdav_screen](image/ic_webdav_screen.jpg)
 ![ic_search_config_screen](image/ic_search_config_screen.jpg) ![ic_more_screen](image/ic_more_screen.jpg)
-![ic_about_screen](image/ic_about_screen.jpg)
+![ic_settings_screen](image/ic_settings_screen.jpg) ![ic_about_screen](image/ic_about_screen.jpg)
 
 ## 🔍搜索示例
 
@@ -69,27 +70,27 @@
   </tr>
   <tr>
     <td>搜索仅为“原神”两个字的内容</td>
-    <td>原神&nbsp;或者&nbsp;^原神$</td>
+    <td>原神 或者 ^原神$</td>
     <td>⚠️无法实现</td>
   </tr>
   <tr>
-    <td>搜索带有“发电”&nbsp;或&nbsp;带有“原神”关键词的内容</td>
+    <td>搜索带有“发电” 或 带有“原神”关键词的内容</td>
     <td>.*发电.*|.*原神.*</td>
     <td>⚠️无法实现</td>
   </tr>
   <tr>
-    <td>搜索仅为“发电”两个字&nbsp;或&nbsp;仅为“原神”两个字的内容</td>
-    <td>发电|原神&nbsp;或者&nbsp;^发电$|^原神$</td>
+    <td>搜索仅为“发电”两个字 或 仅为“原神”两个字的内容</td>
+    <td>发电|原神 或者 ^发电$|^原神$</td>
     <td>⚠️无法实现</td>
   </tr>
   <tr>
-    <td>搜索带有“发电”&nbsp;且&nbsp;带有“原神”关键词的内容</td>
-    <td>.*发电.*&nbsp;&nbsp;&nbsp;.*原神.*</td>
-    <td>发电&nbsp;&nbsp;&nbsp;原神</td>
+    <td>搜索带有“发电” 且 带有“原神”关键词的内容</td>
+    <td>.*发电.*   .*原神.*</td>
+    <td>发电   原神</td>
   </tr>
   <tr>
-    <td>搜索带有（“发电”&nbsp;且&nbsp;带有“原神”）&nbsp;或&nbsp;带有“ikun”关键词的内容</td>
-    <td>.*发电.*|.*ikun.*&nbsp;&nbsp;&nbsp;.*原神.*|.*ikun.*</td>
+    <td>搜索带有（“发电” 且 带有“原神”） 或 带有“ikun”关键词的内容</td>
+    <td>.*发电.*|.*ikun.*   .*原神.*|.*ikun.*</td>
     <td>⚠️无法实现</td>
   </tr>
 </tbody>
@@ -103,6 +104,7 @@
 - **Material You**
 - **ViewModel**
 - **Hilt**
+- **ML Kit** (Machine Learning)
 - **DataStore**
 - Room
 - Splash Screen
@@ -132,7 +134,6 @@
   </tr>
 </tbody>
 </table>
-
 
 ## 📃许可证
 

@@ -75,14 +75,14 @@ fun SettingsScreen() {
                     onClick = { navController.navigate(ML_SCREEN_ROUTE) }
                 )
             }
-            item {
-                BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.AccessibilityNew),
-                    text = stringResource(id = R.string.easy_usage_screen_name),
-                    descriptionText = stringResource(id = R.string.setting_screen_easy_usage_description),
-                    onClick = { navController.navigate(EASY_USAGE_SCREEN_ROUTE) }
-                )
-            }
+//            item {
+//                BaseSettingsItem(
+//                    icon = rememberVectorPainter(Icons.Default.AccessibilityNew),
+//                    text = stringResource(id = R.string.easy_usage_screen_name),
+//                    descriptionText = stringResource(id = R.string.setting_screen_easy_usage_description),
+//                    onClick = { navController.navigate(EASY_USAGE_SCREEN_ROUTE) }
+//                )
+//            }
         }
     }
 }
