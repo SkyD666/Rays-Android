@@ -22,6 +22,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -31,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.appContext
+import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.addIfAny
 import com.skyd.rays.ext.plus
@@ -50,6 +52,7 @@ const val ADD_SCREEN_ROUTE = "addScreen"
 fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = hiltViewModel()) {
     var openDialog by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -243,7 +246,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                             viewModel.sendUiIntent(AddIntent.GetSuggestTags(stickerUri!!))
                         }
                         RaysImage(
-                            uri = stickerUri,
+                            model = stickerUri,
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -285,13 +288,12 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
         }
     }
 
-
     viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null).value?.apply {
         when (addStickersResultUiEvent) {
             AddStickersResultUiEvent.Duplicate -> {
                 scope.launch {
                     snackbarHostState.showSnackbar(
-                        appContext.getString(R.string.add_screen_sticker_duplicate),
+                        context.getString(R.string.add_screen_sticker_duplicate),
                         withDismissAction = true
                     )
                 }
@@ -308,6 +310,21 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                 stickerTexts += recognizeTextUiEvent.texts
             }
             null -> {}
+        }
+    }
+
+    viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null).value?.also {
+        when (it) {
+            is LoadUiIntent.Error -> {
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        context.getString(R.string.add_screen_error, it.msg),
+                        withDismissAction = true
+                    )
+                }
+            }
+            is LoadUiIntent.Loading -> {}
+            LoadUiIntent.ShowMainView -> {}
         }
     }
 }

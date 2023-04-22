@@ -35,3 +35,7 @@ val LocalWebDavServer = compositionLocalOf { WebDavServerPreference.default }
 // ML
 val LocalStickerClassificationModel =
     compositionLocalOf { StickerClassificationModelPreference.default }
+
+// Style
+val LocalStickerScale = compositionLocalOf { StickerScalePreference.default }
+

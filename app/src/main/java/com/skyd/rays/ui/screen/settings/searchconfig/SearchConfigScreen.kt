@@ -73,9 +73,13 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
                     icon = Icons.Default.Code,
                     text = stringResource(id = R.string.search_config_screen_use_regex),
                     description = stringResource(id = R.string.search_config_screen_use_regex_description),
-                    checked = remember { mutableStateOf(useRegexSearch) },
+                    checked = useRegexSearch,
                     onCheckedChange = {
-                        UseRegexSearchPreference.put(context = context, scope = scope, value = it)
+                        UseRegexSearchPreference.put(
+                            context = context,
+                            scope = scope,
+                            value = it
+                        )
                     },
                 )
             }
@@ -84,7 +88,7 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
                     icon = Icons.Default.JoinInner,
                     text = stringResource(id = R.string.search_config_screen_intersect_search_by_space),
                     description = stringResource(id = R.string.search_config_screen_intersect_search_by_space_description),
-                    checked = remember { mutableStateOf(intersectSearchBySpace) },
+                    checked = intersectSearchBySpace,
                     onCheckedChange = {
                         IntersectSearchBySpacePreference.put(
                             context = context, scope = scope, value = it

@@ -26,5 +26,8 @@ fun Preferences.toSettings(): Settings {
 
         // ML
         stickerClassificationModel = StickerClassificationModelPreference.fromPreferences(this),
+
+        // Style
+        stickerScale = StickerScalePreference.fromPreferences(this),
     )
 }

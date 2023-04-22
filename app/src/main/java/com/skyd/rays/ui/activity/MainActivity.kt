@@ -41,6 +41,8 @@ import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.SettingsScreen
 import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.appearance.AppearanceScreen
+import com.skyd.rays.ui.screen.settings.appearance.style.HOME_STYLE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.appearance.style.HomeStyleScreen
 import com.skyd.rays.ui.screen.settings.data.DATA_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.DataScreen
 import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
@@ -145,6 +147,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = APPEARANCE_SCREEN_ROUTE) {
                     AppearanceScreen()
+                }
+                composable(route = HOME_STYLE_SCREEN_ROUTE) {
+                    HomeStyleScreen()
                 }
                 composable(route = ABOUT_SCREEN_ROUTE) {
                     AboutScreen()

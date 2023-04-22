@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,15 +20,17 @@ fun SwitchSettingsItem(
     icon: ImageVector,
     text: String,
     description: String? = null,
-    checked: MutableState<Boolean> = mutableStateOf(false),
+    checked: Boolean = false,
     onCheckedChange: ((Boolean) -> Unit)?,
+    onLongClick: (() -> Unit)? = null,
 ) {
     SwitchSettingsItem(
         icon = rememberVectorPainter(image = icon),
         text = text,
         description = description,
         checked = checked,
-        onCheckedChange = onCheckedChange
+        onCheckedChange = onCheckedChange,
+        onLongClick = onLongClick,
     )
 }
 
@@ -39,22 +39,20 @@ fun SwitchSettingsItem(
     icon: Painter,
     text: String,
     description: String? = null,
-    checked: MutableState<Boolean> = mutableStateOf(false),
+    checked: Boolean = false,
     onCheckedChange: ((Boolean) -> Unit)?,
+    onLongClick: (() -> Unit)? = null,
 ) {
     BaseSettingsItem(
         icon = icon,
         text = text,
         descriptionText = description,
+        onLongClick = onLongClick,
         onClick = {
-            checked.value = !checked.value
-            onCheckedChange?.invoke(checked.value)
-        }
+            onCheckedChange?.invoke(!checked)
+        },
     ) {
-        Switch(checked = checked.value, onCheckedChange = {
-            checked.value = it
-            onCheckedChange?.invoke(it)
-        })
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }
 

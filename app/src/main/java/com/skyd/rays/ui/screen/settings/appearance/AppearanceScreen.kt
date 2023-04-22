@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -41,7 +42,9 @@ import com.skyd.rays.ui.component.*
 import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalDarkMode
+import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalThemeName
+import com.skyd.rays.ui.screen.settings.appearance.style.HOME_STYLE_SCREEN_ROUTE
 import com.skyd.rays.ui.theme.extractTonalPalettes
 import com.skyd.rays.ui.theme.extractTonalPalettesFromWallpaper
 
@@ -50,6 +53,7 @@ const val APPEARANCE_SCREEN_ROUTE = "appearanceScreen"
 @Composable
 fun AppearanceScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val navController = LocalNavController.current
     val themeName = LocalThemeName.current
 
     val tonalPalettes = extractTonalPalettes()
@@ -101,6 +105,17 @@ fun AppearanceScreen() {
                     text = stringResource(id = R.string.appearance_screen_dark_mode),
                     descriptionText = stringResource(id = R.string.appearance_screen_dark_mode_description),
                     onClick = { openDarkBottomSheet = true }
+                )
+            }
+            item {
+                CategorySettingsItem(text = stringResource(R.string.appearance_screen_style_category))
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(image = Icons.Default.Home),
+                    text = stringResource(id = R.string.home_style_screen_name),
+                    descriptionText = null,
+                    onClick = { navController.navigate(HOME_STYLE_SCREEN_ROUTE) }
                 )
             }
         }

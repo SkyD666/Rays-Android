@@ -29,7 +29,6 @@ import com.skyd.rays.ui.component.lazyverticalgrid.adapter.proxy.More1Proxy
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.about.ABOUT_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.minitool.MINI_TOOL_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
 
@@ -41,7 +40,7 @@ fun MoreScreen() {
     Scaffold(
         topBar = {
             RaysTopBar(
-                title = { Text(text = stringResource(id = R.string.navi_bar_more)) },
+                title = { Text(text = stringResource(id = R.string.more_screen_name)) },
                 navigationIcon = {
                     RaysIconButton(imageVector = Icons.Default.Egg, onClick = { })
                 }

@@ -32,23 +32,24 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.appContext
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.screenIsLand
 import com.skyd.rays.model.bean.StickerWithTags
+import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.QueryPreference
-import com.skyd.rays.model.preference.rememberQuery
+import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.ui.component.*
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalNavController
+import com.skyd.rays.ui.local.LocalQuery
+import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.util.sendSticker
 import kotlinx.coroutines.launch
 
-private var menuExpanded by mutableStateOf(false)
 private var openDeleteWarningDialog by mutableStateOf(false)
 
 @Composable
@@ -57,7 +58,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val currentStickerUuid = LocalCurrentStickerUuid.current
-    var query by rememberQuery()
+    val initQuery = LocalQuery.current
+    var query by remember(initQuery) { mutableStateOf(initQuery) }
     var stickerWithTags by remember { mutableStateOf<StickerWithTags?>(null) }
 
     refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
@@ -90,7 +92,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 .padding(innerPaddings)
                 .fillMaxSize()
         ) {
-            RaysSearchBar(query = { query }, onQueryChange = { query = it })
+            RaysSearchBar(query = query, onQueryChange = { query = it })
             Spacer(modifier = Modifier.height(16.dp))
 
             AnimatedVisibility(
@@ -129,7 +131,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 is LoadUiIntent.Error -> {
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            message = appContext.getString(
+                            message = context.getString(
                                 R.string.home_screen_failed, loadUiIntent.msg
                             ),
                             withDismissAction = true
@@ -144,9 +146,9 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
         if (openDeleteWarningDialog && currentStickerUuid.isNotBlank()) {
             DeleteWarningDialog(
                 visible = openDeleteWarningDialog,
-                { openDeleteWarningDialog = false },
-                { openDeleteWarningDialog = false },
-                {
+                onDismissRequest = { openDeleteWarningDialog = false },
+                onDismiss = { openDeleteWarningDialog = false },
+                onConfirm = {
                     openDeleteWarningDialog = false
                     viewModel.sendUiIntent(HomeIntent.DeleteStickerWithTags(currentStickerUuid))
                 }
@@ -157,16 +159,18 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 
 @Composable
 private fun RaysSearchBar(
-    query: () -> String,
+    query: String,
     onQueryChange: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    var menuExpanded by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
     var active by rememberSaveable { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
+    val stickerWithTagsList = remember { mutableStateListOf<StickerWithTags>() }
 
     Box(
         Modifier
@@ -181,7 +185,7 @@ private fun RaysSearchBar(
         ) {
             SearchBar(
                 onQueryChange = onQueryChange,
-                query = query(),
+                query = query,
                 onSearch = { keyword ->
                     keyboardController?.hide()
                     QueryPreference.put(context, scope, keyword)
@@ -189,10 +193,10 @@ private fun RaysSearchBar(
                 },
                 active = active,
                 onActiveChange = {
-                    active = it
-                    if (!active) {
-                        QueryPreference.put(context, scope, query())
+                    if (!it) {
+                        QueryPreference.put(context, scope, query)
                     }
+                    active = it
                 },
                 placeholder = { Text(text = stringResource(R.string.home_screen_search_hint)) },
                 leadingIcon = {
@@ -212,8 +216,8 @@ private fun RaysSearchBar(
                 },
                 trailingIcon = {
                     if (active) {
-                        if (query().isNotEmpty()) {
-                            TrailingIcon(showClearButton = query().isNotEmpty()) {
+                        if (query.isNotEmpty()) {
+                            TrailingIcon(showClearButton = query.isNotEmpty()) {
                                 onQueryChange(QueryPreference.default)
                             }
                         }
@@ -226,29 +230,34 @@ private fun RaysSearchBar(
                     }
                 },
             ) {
-                viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
-                    when (searchResultUiState) {
-                        SearchResultUiState.Init -> {}
-                        is SearchResultUiState.Success -> {
-                            SearchResultList(dataList = searchResultUiState.stickerWithTagsList,
-                                onItemClickListener = {
-                                    active = false
-                                    viewModel.sendUiIntent(
-                                        HomeIntent.GetStickerDetails(it.sticker.uuid)
-                                    )
-                                }
+                if (active) {
+                    SearchResultList(dataList = stickerWithTagsList,
+                        onItemClickListener = {
+                            active = false
+                            viewModel.sendUiIntent(
+                                HomeIntent.GetStickerDetails(it.sticker.uuid)
                             )
                         }
-                    }
+                    )
                 }
             }
-            HomeMenu(viewModel = viewModel)
+            HomeMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false })
+        }
+
+        viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
+            when (searchResultUiState) {
+                SearchResultUiState.Init -> {}
+                is SearchResultUiState.Success -> {
+                    stickerWithTagsList.clear()
+                    stickerWithTagsList.addAll(searchResultUiState.stickerWithTagsList)
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun TrailingIcon(
+fun TrailingIcon(
     showClearButton: Boolean = true,
     onClick: (() -> Unit)? = null
 ) {
@@ -262,7 +271,7 @@ private fun TrailingIcon(
 }
 
 @Composable
-private fun SearchResultList(
+fun SearchResultList(
     dataList: List<StickerWithTags>,
     onItemClickListener: ((data: StickerWithTags) -> Unit)? = null
 ) {
@@ -331,7 +340,11 @@ fun SearchResultItem(
 }
 
 @Composable
-private fun HomeMenu(viewModel: HomeViewModel) {
+private fun HomeMenu(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
     val navController = LocalNavController.current
     val currentStickerUuid = LocalCurrentStickerUuid.current
     var editMenuItemEnabled by remember { mutableStateOf(false) }
@@ -348,15 +361,31 @@ private fun HomeMenu(viewModel: HomeViewModel) {
     }
 
     DropdownMenu(
-        expanded = menuExpanded,
-        onDismissRequest = { menuExpanded = false }
+        expanded = expanded,
+        onDismissRequest = onDismissRequest
     ) {
+        DropdownMenuItem(
+            enabled = editMenuItemEnabled,
+            text = { Text(stringResource(R.string.home_screen_clear_current_sicker)) },
+            onClick = {
+                viewModel.sendUiIntent(
+                    HomeIntent.GetStickerDetails(CurrentStickerUuidPreference.default)
+                )
+                onDismissRequest()
+            },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Replay,
+                    contentDescription = null
+                )
+            }
+        )
         DropdownMenuItem(
             enabled = editMenuItemEnabled,
             text = { Text(stringResource(R.string.home_screen_edit)) },
             onClick = {
                 navController.navigate("$ADD_SCREEN_ROUTE?stickerUuid=${currentStickerUuid}")
-                menuExpanded = false
+                onDismissRequest()
             },
             leadingIcon = {
                 Icon(
@@ -369,7 +398,7 @@ private fun HomeMenu(viewModel: HomeViewModel) {
             enabled = deleteMenuItemEnabled,
             text = { Text(stringResource(R.string.home_screen_delete)) },
             onClick = {
-                menuExpanded = false
+                onDismissRequest()
                 openDeleteWarningDialog = true
             },
             leadingIcon = {
@@ -384,7 +413,7 @@ private fun HomeMenu(viewModel: HomeViewModel) {
             text = { Text(stringResource(R.string.search_config_screen_name)) },
             onClick = {
                 navController.navigate(SEARCH_CONFIG_SCREEN_ROUTE)
-                menuExpanded = false
+                onDismissRequest()
             },
             leadingIcon = {
                 Icon(
@@ -429,6 +458,7 @@ private fun MainCard(stickerWithTags: StickerWithTags) {
                 RaysImage(
                     modifier = Modifier.fillMaxWidth(),
                     uuid = stickerBean.uuid,
+                    contentScale = StickerScalePreference.toContentScale(LocalStickerScale.current),
                 )
                 RaysIconButton(
                     // align(Alignment.TopEnd) 无效，貌似是 PlainTooltipBox 的Bug

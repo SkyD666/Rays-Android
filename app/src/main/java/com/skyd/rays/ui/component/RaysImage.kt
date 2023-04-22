@@ -1,6 +1,5 @@
 package com.skyd.rays.ui.component
 
-import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -17,13 +16,13 @@ import java.io.File
 
 @Composable
 fun RaysImage(
-    uri: Uri?,
+    model: Any?,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
     contentScale: ContentScale = ContentScale.FillWidth,
 ) {
     AsyncImage(
-        model = uri,
+        model = model,
         modifier = modifier,
         contentDescription = contentDescription,
         contentScale = contentScale,

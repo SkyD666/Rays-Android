@@ -1,6 +1,7 @@
 package com.skyd.rays.ui.screen.settings.ml.classification
 
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.appContext
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.ui.component.BaseSettingsItem
@@ -47,10 +47,19 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
     var openDeleteWarningDialog by remember { mutableStateOf<Uri?>(null) }
     val pickModelLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
-    ) { result ->
-        result?.let {
-            modelUri = it
-            viewModel.sendUiIntent(ClassificationModelIntent.ImportModel(it))
+    ) { uri ->
+        if (uri != null) {
+            if (MimeTypeMap.getFileExtensionFromUrl(uri.path) in arrayOf("tflite", "lite")) {
+                modelUri = uri
+                viewModel.sendUiIntent(ClassificationModelIntent.ImportModel(uri))
+            } else {
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = context.getString(R.string.classification_model_screen_file_type_error),
+                        withDismissAction = true
+                    )
+                }
+            }
         }
     }
 
@@ -85,8 +94,9 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
                 is LoadUiIntent.Error -> {
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            message = appContext.getString(
-                                R.string.classification_model_screen_failed, it.msg
+                            message = context.getString(
+                                R.string.classification_model_screen_failed,
+                                it.msg
                             ),
                             withDismissAction = true
                         )
@@ -129,7 +139,7 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
                     descriptionText = stringResource(
                         R.string.classification_model_screen_select_description,
                     ),
-                    onClick = { pickModelLauncher.launch("*/tflite;*/lite") }
+                    onClick = { pickModelLauncher.launch("application/octet-stream") }
                 )
             }
             itemsIndexed(models) { index, item ->

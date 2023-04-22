@@ -30,6 +30,8 @@ data class Settings(
     val webDavServer: String = WebDavServerPreference.default,
     // ML
     val stickerClassificationModel: String = StickerClassificationModelPreference.default,
+    // Style
+    val stickerScale: String = StickerScalePreference.default,
 )
 
 @Composable
@@ -56,6 +58,8 @@ fun SettingsProvider(
         LocalWebDavServer provides settings.webDavServer,
         // ML
         LocalStickerClassificationModel provides settings.stickerClassificationModel,
+        // Style
+        LocalStickerScale provides settings.stickerScale,
     ) {
         content()
     }

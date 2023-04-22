@@ -1,12 +1,10 @@
 package com.skyd.rays.model.preference
 
 import android.content.Context
-import androidx.compose.runtime.*
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.put
-import com.skyd.rays.ui.local.LocalQuery
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,10 +22,4 @@ object QueryPreference {
     }
 
     fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
-}
-
-@Composable
-fun rememberQuery(): MutableState<String> {
-    val query = LocalQuery.current
-    return remember(query) { mutableStateOf(query) }
 }

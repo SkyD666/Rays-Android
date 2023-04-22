@@ -66,7 +66,7 @@ private fun NavigationBarOrRail(
     scrollToPage: (Int) -> Unit
 ) {
     val items = listOf(
-        stringResource(R.string.navi_bar_home), stringResource(R.string.navi_bar_more)
+        stringResource(R.string.home_screen_name), stringResource(R.string.more_screen_name)
     )
     val icons = listOf(
         Icons.Default.Home, Icons.Default.Egg
