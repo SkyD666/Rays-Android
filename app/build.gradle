@@ -18,8 +18,8 @@ android {
         applicationId "com.skyd.rays"
         minSdk 24
         targetSdk 33
-        versionCode 2
-        versionName "1.0-beta02"
+        versionCode 3
+        versionName "1.0"
         flavorDimensions "versionName"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -149,8 +149,10 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
     implementation "com.github.Kyant0:Monet:0.1.0-alpha03"
     implementation "androidx.datastore:datastore-preferences:1.0.0"
-    implementation "com.github.stuxuhai:jpinyin:1.1.8"
     implementation "com.airbnb.android:lottie-compose:6.0.0"
+
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0"
 
     // Google ML Kit
     implementation "com.google.mlkit:text-recognition:$mlkit_recognition_version"

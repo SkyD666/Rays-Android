@@ -6,8 +6,8 @@ import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.allSearchDomain
-import com.skyd.rays.db.dao.StickerDao
-import com.skyd.rays.db.dao.SearchDomainDao
+import com.skyd.rays.model.db.dao.StickerDao
+import com.skyd.rays.model.db.dao.SearchDomainDao
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get
 import com.skyd.rays.model.bean.STICKER_TABLE_NAME

@@ -10,7 +10,17 @@ import com.skyd.rays.ext.toSettings
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
-import com.skyd.rays.ui.local.*
+import com.skyd.rays.ui.local.LocalCurrentStickerUuid
+import com.skyd.rays.ui.local.LocalCustomPrimaryColor
+import com.skyd.rays.ui.local.LocalDarkMode
+import com.skyd.rays.ui.local.LocalIgnoreUpdateVersion
+import com.skyd.rays.ui.local.LocalIntersectSearchBySpace
+import com.skyd.rays.ui.local.LocalQuery
+import com.skyd.rays.ui.local.LocalStickerClassificationModel
+import com.skyd.rays.ui.local.LocalStickerScale
+import com.skyd.rays.ui.local.LocalThemeName
+import com.skyd.rays.ui.local.LocalUseRegexSearch
+import com.skyd.rays.ui.local.LocalWebDavServer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 
@@ -19,7 +29,8 @@ data class Settings(
     val themeName: String = ThemeNamePreference.default,
     val customPrimaryColor: String = CustomPrimaryColorPreference.default,
     val darkMode: Int = DarkModePreference.default,
-
+    // Update
+    val ignoreUpdateVersion: Long = IgnoreUpdateVersionPreference.default,
     // Sticker
     val currentStickerUuid: String = CurrentStickerUuidPreference.default,
     val query: String = QueryPreference.default,
@@ -48,6 +59,8 @@ fun SettingsProvider(
         LocalThemeName provides settings.themeName,
         LocalCustomPrimaryColor provides settings.customPrimaryColor,
         LocalDarkMode provides settings.darkMode,
+        // Update
+        LocalIgnoreUpdateVersion provides settings.ignoreUpdateVersion,
         // Sticker
         LocalCurrentStickerUuid provides settings.currentStickerUuid,
         LocalQuery provides settings.query,

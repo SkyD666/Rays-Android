@@ -41,4 +41,21 @@ object CommonUtil {
         }
         return appVersionName
     }
+
+    fun getAppVersionCode(): Long {
+        var appVersionCode: Long = 0
+        try {
+            val packageInfo = appContext.applicationContext
+                .packageManager
+                .getPackageInfo(appContext.packageName, 0)
+            appVersionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                packageInfo.longVersionCode
+            } else {
+                packageInfo.versionCode.toLong()
+            }
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        return appVersionCode
+    }
 }

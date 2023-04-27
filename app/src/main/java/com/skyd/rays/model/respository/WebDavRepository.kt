@@ -3,7 +3,7 @@ package com.skyd.rays.model.respository
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
-import com.skyd.rays.db.dao.StickerDao
+import com.skyd.rays.model.db.dao.StickerDao
 import com.skyd.rays.ext.saveTo
 import com.skyd.rays.model.bean.*
 import com.skyd.rays.util.md5

@@ -2,18 +2,14 @@
     <string name="app_name">Rays</string>
     <string name="more_screen_name">更多</string>
     <string name="home_screen_name">首页</string>
-    <string name="delete">删除</string>
     <string name="home_screen_search_hint">输入关键词搜索</string>
     <string name="home_screen_add">添加</string>
     <string name="add_screen_add">添加</string>
     <string name="add_screen_title">标题（可选）</string>
-    <string name="add_screen_sticker">表情包</string>
     <string name="add_screen_add_tags">添加标签（可选）</string>
-    <string name="home_screen_tags">标签</string>
     <string name="add_screen_name">添加表情包</string>
     <string name="add_screen_name_edit">修改表情包</string>
     <string name="back">返回</string>
-    <string name="add_screen_add_success">添加成功</string>
     <string name="add_screen_sticker_is_not_set">表情包图片未设置！</string>
     <string name="add_screen_tag_field_hint">按下回车以添加</string>
     <string name="search_config_screen_name">搜索</string>
@@ -50,10 +46,6 @@
     <string name="dark_mode_light">亮色</string>
     <string name="dark_mode_follow_system">跟随系统</string>
     <string name="easy_usage_screen_name">便捷使用</string>
-    <string name="setting_screen_easy_usage_description">一些方便使用的功能。</string>
-    <string name="request_permission_failed">请求权限失败：%s</string>
-    <string name="request_permissions_success">请求权限成功！</string>
-    <string name="global_input_hint">请输入关键词</string>
     <string name="easy_usage_screen_add_category">添加</string>
     <string name="easy_usage_screen_process_text_add">快速添加选中文本</string>
     <string name="easy_usage_screen_process_text_add_description">选中要添加的表情包，在弹出的上下文菜单中选择 %s</string>
@@ -74,8 +66,6 @@
     <string name="webdav_screen_download">从远端拉取</string>
     <string name="webdav_screen_download_description">从远端拉取数据，冲突时会覆盖本地内容。若某表情包既在本地，也在远端回收站内，则本地的该表情包会被删除。若某表情包本地有，而远端没有，则该表情包不会被修改</string>
     <string name="webdav_screen_download_success">拉取成功，耗时 %.2f 秒，更新 %d 条</string>
-    <string name="webdav_screen_sync">同步数据</string>
-    <string name="webdav_screen_sync_description">合并本地和远端数据，使其内容一致。</string>
     <string name="webdav_screen_upload_success">推送成功，耗时 %.2f 秒，更新 %d 条</string>
     <string name="webdav_screen_failed">操作失败：%s</string>
     <string name="webdav_screen_waiting">请稍后…</string>
@@ -129,7 +119,6 @@
     <string name="add_screen_suggest_tag">建议标签</string>
     <string name="ml_screen_name">Ai</string>
     <string name="setting_screen_ml_description">配置 Ai 模型等</string>
-    <string name="ml_screen_sticker_classification_category">表情包分类</string>
     <string name="ml_screen_sticker_classification_model_description">选择分类表情包使用的机器学习模型。使用默认的分类模型 (EfficientNet-Lite2) 或指定 .tflite / .lite 模型文件</string>
     <string name="classification_model_screen_name">表情包分类模型</string>
     <string name="classification_model_screen_default">默认</string>
@@ -145,4 +134,10 @@
     <string name="home_style_screen_sticker_card">表情包卡片</string>
     <string name="home_style_screen_sticker_scale">表情包显示比例</string>
     <string name="sticker_scale_default">（默认）</string>
+    <string name="update_check">检查更新</string>
+    <string name="update_no_update">当前已是最新版！</string>
+    <string name="update_newer">发现新版本</string>
+    <string name="update_newer_text">新版本：%s\n发布时间：%s\n下载数：%s\n日志：\n%s</string>
+    <string name="download_update">下载</string>
+    <string name="update_ignore">忽略本次更新</string>
 </resources>

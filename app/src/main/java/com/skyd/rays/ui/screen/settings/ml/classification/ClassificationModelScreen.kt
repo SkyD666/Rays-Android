@@ -1,7 +1,6 @@
 package com.skyd.rays.ui.screen.settings.ml.classification
 
 import android.net.Uri
-import android.webkit.MimeTypeMap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,8 +10,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CreateNewFolder
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.LightbulbCircle
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -22,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
+import com.skyd.rays.ext.extName
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RadioSettingsItem
@@ -49,7 +60,7 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
         ActivityResultContracts.GetContent()
     ) { uri ->
         if (uri != null) {
-            if (MimeTypeMap.getFileExtensionFromUrl(uri.path) in arrayOf("tflite", "lite")) {
+            if (uri.path?.extName in arrayOf("tflite", "lite")) {
                 modelUri = uri
                 viewModel.sendUiIntent(ClassificationModelIntent.ImportModel(uri))
             } else {
@@ -102,9 +113,11 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
                         )
                     }
                 }
+
                 is LoadUiIntent.Loading -> {
                     openWaitingDialog = it.isShow
                 }
+
                 LoadUiIntent.ShowMainView -> {}
             }
         }
@@ -142,7 +155,7 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
                     onClick = { pickModelLauncher.launch("application/octet-stream") }
                 )
             }
-            itemsIndexed(models) { index, item ->
+            itemsIndexed(models) { _, item ->
                 val path = remember { item.path }
                 val name = remember { path?.substringAfterLast("/").orEmpty() }
                 RadioSettingsItem(

@@ -1,10 +1,10 @@
 package com.skyd.rays.di
 
 import android.content.Context
-import com.skyd.rays.db.AppDatabase
-import com.skyd.rays.db.dao.StickerDao
-import com.skyd.rays.db.dao.SearchDomainDao
-import com.skyd.rays.db.dao.TagDao
+import com.skyd.rays.model.db.AppDatabase
+import com.skyd.rays.model.db.dao.StickerDao
+import com.skyd.rays.model.db.dao.SearchDomainDao
+import com.skyd.rays.model.db.dao.TagDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

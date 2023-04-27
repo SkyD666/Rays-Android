@@ -1,4 +1,4 @@
-package com.skyd.rays.db.dao
+package com.skyd.rays.model.db.dao
 
 import androidx.room.*
 import com.skyd.rays.model.bean.TAG_TABLE_NAME

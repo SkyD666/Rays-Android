@@ -4,7 +4,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
@@ -53,9 +67,17 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
     }
 
     /**
+     * 不需要访问 repository 的空 Flow
+     */
+    protected fun emptyFlow(): Flow<BaseData<Unit>> = flowOf(BaseData<Unit>().apply {
+        state = ReqState.Success
+        data = Unit
+    })
+
+    /**
      * 若 T 是给定的类型则执行...
      */
-    inline fun <reified T> Flow<*>.doIsInstance(
+    protected inline fun <reified T> Flow<*>.doIsInstance(
         crossinline transform: suspend (value: T) -> Flow<IUIChange>
     ): Flow<IUIChange> = filterIsInstance<T>().flatMapConcat { transform(it) }
 
@@ -74,6 +96,7 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
                     uiStateFlow.value.transform(data)
                 } else error(it.msg.toString())
             }
+
             else -> uiStateFlow.value.onError(it)
         }
     }

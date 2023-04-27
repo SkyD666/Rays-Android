@@ -1,11 +1,20 @@
 package com.skyd.rays.ui.screen.about.license
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -141,9 +150,14 @@ private fun getLicenseList(): List<LicenseBean> {
             url = "https://github.com/airbnb/lottie"
         ),
         LicenseBean(
-            name = "Jpinyin",
-            license = "GPL-3.0",
-            url = "https://mvnrepository.com/artifact/com.github.stuxuhai/jpinyin"
+            name = "Retrofit",
+            license = "Apache-2.0",
+            url = "https://github.com/square/retrofit"
         ),
-    )
+        LicenseBean(
+            name = "Kotlin Serialization Converter",
+            license = "Apache-2.0",
+            url = "https://github.com/JakeWharton/retrofit2-kotlinx-serialization-converter"
+        ),
+    ).sortedBy { it.name }
 }

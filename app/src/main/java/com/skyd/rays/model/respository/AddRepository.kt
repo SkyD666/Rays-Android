@@ -16,7 +16,7 @@ import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.CLASSIFICATION_MODEL_DIR_FILE
 import com.skyd.rays.config.STICKER_DIR
-import com.skyd.rays.db.dao.StickerDao
+import com.skyd.rays.model.db.dao.StickerDao
 import com.skyd.rays.ext.copyTo
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get

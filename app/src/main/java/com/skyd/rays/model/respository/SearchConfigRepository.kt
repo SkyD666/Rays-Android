@@ -2,7 +2,7 @@ package com.skyd.rays.model.respository
 
 import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
-import com.skyd.rays.db.dao.SearchDomainDao
+import com.skyd.rays.model.db.dao.SearchDomainDao
 import com.skyd.rays.model.bean.SearchDomainBean
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

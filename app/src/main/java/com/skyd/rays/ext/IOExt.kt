@@ -2,7 +2,11 @@ package com.skyd.rays.ext
 
 import android.net.Uri
 import com.skyd.rays.appContext
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -54,3 +58,6 @@ fun File.md5(): String? {
     }
     return bi?.toString(16)
 }
+
+inline val String.extName: String
+    get() = substringAfterLast(".", missingDelimiterValue = "")

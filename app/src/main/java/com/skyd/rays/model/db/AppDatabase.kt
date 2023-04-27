@@ -1,4 +1,4 @@
-package com.skyd.rays.db
+package com.skyd.rays.model.db
 
 import android.content.Context
 import androidx.room.Database
@@ -6,9 +6,9 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
-import com.skyd.rays.db.dao.StickerDao
-import com.skyd.rays.db.dao.SearchDomainDao
-import com.skyd.rays.db.dao.TagDao
+import com.skyd.rays.model.db.dao.StickerDao
+import com.skyd.rays.model.db.dao.SearchDomainDao
+import com.skyd.rays.model.db.dao.TagDao
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.SearchDomainBean
 import com.skyd.rays.model.bean.TagBean

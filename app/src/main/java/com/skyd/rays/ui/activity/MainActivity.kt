@@ -16,6 +16,10 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
@@ -33,6 +37,7 @@ import com.skyd.rays.ui.screen.about.ABOUT_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.about.AboutScreen
 import com.skyd.rays.ui.screen.about.license.LICENSE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.about.license.LicenseScreen
+import com.skyd.rays.ui.screen.about.update.UpdateDialog
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.add.AddScreen
 import com.skyd.rays.ui.screen.minitool.MINI_TOOL_SCREEN_ROUTE
@@ -83,6 +88,8 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     private fun AppContent() {
+        var openUpdateDialog by rememberSaveable { mutableStateOf(true) }
+
         RaysTheme(darkTheme = LocalDarkMode.current) {
             AnimatedNavHost(
                 modifier = Modifier.background(MaterialTheme.colorScheme.background),
@@ -172,6 +179,10 @@ class MainActivity : AppCompatActivity() {
                 composable(route = MINI_TOOL_SCREEN_ROUTE) {
                     MiniToolScreen()
                 }
+            }
+
+            if (openUpdateDialog) {
+                UpdateDialog(silence = true, onClosed = { openUpdateDialog = false })
             }
         }
     }
