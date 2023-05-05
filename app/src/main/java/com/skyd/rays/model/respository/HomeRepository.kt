@@ -14,8 +14,8 @@ import com.skyd.rays.model.bean.STICKER_TABLE_NAME
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
-import com.skyd.rays.model.preference.IntersectSearchBySpacePreference
-import com.skyd.rays.model.preference.UseRegexSearchPreference
+import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
+import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors

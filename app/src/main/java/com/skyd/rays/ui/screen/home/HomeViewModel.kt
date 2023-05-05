@@ -8,7 +8,10 @@ import com.skyd.rays.base.IUiEvent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get
+import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
+import com.skyd.rays.model.preference.search.SearchResultReversePreference
+import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.respository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +39,11 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
         doIsInstance<HomeIntent.GetStickerWithTagsList> { intent ->
             homeRepo.requestStickerWithTagsList(intent.keyword)
                 .mapToUIChange { data ->
-                    copy(searchResultUiState = SearchResultUiState.Success(data))
+                    copy(
+                        searchResultUiState = SearchResultUiState.Success(
+                            sortSearchResultList(data)
+                        )
+                    )
                 }
                 .defaultFinally()
         },
@@ -80,5 +87,79 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
                     refreshStickerData.tryEmit(Unit)
                 }
         },
+
+        doIsInstance<HomeIntent.SortStickerWithTagsList> { intent ->
+            emptyFlow()
+                .mapToUIChange {
+                    copy(
+                        searchResultUiState = SearchResultUiState.Success(
+                            sortSearchResultList(intent.data)
+                        )
+                    )
+                }
+                .defaultFinally()
+        },
+
+        doIsInstance<HomeIntent.ReverseStickerWithTagsList> { intent ->
+            emptyFlow()
+                .mapToUIChange {
+                    copy(
+                        searchResultUiState = SearchResultUiState.Success(intent.data.reversed())
+                    )
+                }
+                .defaultFinally()
+        },
     )
+
+    private fun sortSearchResultList(
+        unsortedUnreversedData: List<StickerWithTags>,
+        applyReverse: Boolean = true
+    ): List<StickerWithTags> = when (appContext.dataStore.get(SearchResultSortPreference.key)) {
+        "CreateTime" -> unsortedUnreversedData.sortStickers(applyReverse) {
+            it.sticker.createTime
+        }
+
+        "ModifyTime" -> unsortedUnreversedData.sortStickers(applyReverse) {
+            it.sticker.modifyTime
+        }
+
+        "TagCount" -> unsortedUnreversedData.sortStickers(
+            applyReverse,
+            compareBy({ it.tags.size }, { it.sticker.createTime })
+        )
+
+        "Title" -> unsortedUnreversedData.sortStickers(applyReverse) {
+            it.sticker.title
+        }
+
+        else -> unsortedUnreversedData.sortStickers(applyReverse) {
+            it.sticker.createTime
+        }
+    }
+
+    private fun <R : Comparable<R>> List<StickerWithTags>.sortStickers(
+        applyReverse: Boolean = true,
+        selector: (StickerWithTags) -> R?
+    ): List<StickerWithTags> {
+        return if (applyReverse &&
+            appContext.dataStore.get(SearchResultReversePreference.key) == true
+        ) {
+            sortedByDescending(selector)
+        } else {
+            sortedBy(selector)
+        }
+    }
+
+    private fun List<StickerWithTags>.sortStickers(
+        applyReverse: Boolean = true,
+        comparator: Comparator<StickerWithTags>
+    ): List<StickerWithTags> {
+        return if (applyReverse &&
+            appContext.dataStore.get(SearchResultReversePreference.key) == true
+        ) {
+            sortedWith(comparator).reversed()
+        } else {
+            sortedWith(comparator)
+        }
+    }
 }

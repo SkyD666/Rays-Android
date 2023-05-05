@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
-import java.util.*
+import java.util.UUID
 
 const val STICKER_TABLE_NAME = "Sticker"
 
@@ -20,8 +20,8 @@ data class StickerBean(
     var stickerMd5: String,
     @ColumnInfo(name = CREATE_TIME_COLUMN)
     var createTime: Long,
-//    @ColumnInfo(name = MODIFY_TIME_COLUMN)
-//    var modifyTime: Long?,
+    @ColumnInfo(name = MODIFY_TIME_COLUMN)
+    var modifyTime: Long?,
 ) : BaseBean {
     constructor(
         title: String,
@@ -31,15 +31,15 @@ data class StickerBean(
         title = title,
         stickerMd5 = "",
         createTime = createTime,
-//        modifyTime = null,
+        modifyTime = null,
     )
 
-    fun fields(): List<Any> {
-        return listOf(uuid, title, stickerMd5, createTime)
+    fun fields(): List<Any?> {
+        return listOf(uuid, title, stickerMd5, createTime, modifyTime)
     }
 
     override fun toString(): String {
-        return "$uuid,$title,$stickerMd5,$createTime"
+        return "$uuid,$title,$stickerMd5,$createTime,$modifyTime"
     }
 
     companion object {
@@ -47,8 +47,14 @@ data class StickerBean(
         const val TITLE_COLUMN = "title"
         const val STICKER_MD5_COLUMN = "stickerMd5"
         const val CREATE_TIME_COLUMN = "createTime"
+        const val MODIFY_TIME_COLUMN = "modifyTime"
 
-        val columnName: List<Any> =
-            listOf(UUID_COLUMN, TITLE_COLUMN, STICKER_MD5_COLUMN, CREATE_TIME_COLUMN)
+        val columnName: List<Any> = listOf(
+            UUID_COLUMN,
+            TITLE_COLUMN,
+            STICKER_MD5_COLUMN,
+            CREATE_TIME_COLUMN,
+            MODIFY_TIME_COLUMN
+        )
     }
 }

@@ -2,14 +2,17 @@ package com.skyd.rays.ext
 
 import androidx.datastore.preferences.core.Preferences
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
+import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
-import com.skyd.rays.model.preference.IntersectSearchBySpacePreference
-import com.skyd.rays.model.preference.QueryPreference
 import com.skyd.rays.model.preference.Settings
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.model.preference.StickerScalePreference
-import com.skyd.rays.model.preference.UseRegexSearchPreference
 import com.skyd.rays.model.preference.WebDavServerPreference
+import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
+import com.skyd.rays.model.preference.search.QueryPreference
+import com.skyd.rays.model.preference.search.SearchResultReversePreference
+import com.skyd.rays.model.preference.search.SearchResultSortPreference
+import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
@@ -31,6 +34,8 @@ fun Preferences.toSettings(): Settings {
         // Search
         useRegexSearch = UseRegexSearchPreference.fromPreferences(this),
         intersectSearchBySpace = IntersectSearchBySpacePreference.fromPreferences(this),
+        searchResultSort = SearchResultSortPreference.fromPreferences(this),
+        searchResultReverse = SearchResultReversePreference.fromPreferences(this),
 
         // WebDav
         webDavServer = WebDavServerPreference.fromPreferences(this),
@@ -40,5 +45,6 @@ fun Preferences.toSettings(): Settings {
 
         // Style
         stickerScale = StickerScalePreference.fromPreferences(this),
+        homeShareButtonAlignment = HomeShareButtonAlignmentPreference.fromPreferences(this),
     )
 }

@@ -139,4 +139,14 @@
     <string name="update_newer_text">新版本：%s\n发布时间：%s\n下载数：%s\n日志：\n%s</string>
     <string name="download_update">下载</string>
     <string name="update_ignore">忽略本次更新</string>
+    <string name="search_result_sort_create_time">创建时间</string>
+    <string name="search_result_sort_modify_time">修改时间</string>
+    <string name="search_result_sort_tag_count">标签数量</string>
+    <string name="search_result_sort_title">标题</string>
+    <string name="search_result_sort">排序方式</string>
+    <string name="search_result_reverse">逆序</string>
+    <string name="home_screen_search_result_list_to_top">到顶部</string>
+    <string name="home_style_screen_share_button_alignment">分享按钮位置</string>
+    <string name="home_style_screen_share_button_alignment_horiz">水平</string>
+    <string name="home_style_screen_share_button_alignment_vert">竖直</string>
 </resources>

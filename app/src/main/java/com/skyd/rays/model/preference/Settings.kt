@@ -4,18 +4,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.platform.LocalContext
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.toSettings
+import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
+import com.skyd.rays.model.preference.search.QueryPreference
+import com.skyd.rays.model.preference.search.SearchResultReversePreference
+import com.skyd.rays.model.preference.search.SearchResultSortPreference
+import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalDarkMode
+import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
 import com.skyd.rays.ui.local.LocalIgnoreUpdateVersion
 import com.skyd.rays.ui.local.LocalIntersectSearchBySpace
 import com.skyd.rays.ui.local.LocalQuery
+import com.skyd.rays.ui.local.LocalSearchResultReverse
+import com.skyd.rays.ui.local.LocalSearchResultSort
 import com.skyd.rays.ui.local.LocalStickerClassificationModel
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalThemeName
@@ -37,12 +47,15 @@ data class Settings(
     // Search
     val useRegexSearch: Boolean = UseRegexSearchPreference.default,
     val intersectSearchBySpace: Boolean = IntersectSearchBySpacePreference.default,
+    val searchResultSort: String = SearchResultSortPreference.default,
+    val searchResultReverse: Boolean = SearchResultReversePreference.default,
     // WebDav
     val webDavServer: String = WebDavServerPreference.default,
     // ML
     val stickerClassificationModel: String = StickerClassificationModelPreference.default,
     // Style
     val stickerScale: String = StickerScalePreference.default,
+    val homeShareButtonAlignment: BiasAlignment = HomeShareButtonAlignmentPreference.default,
 )
 
 @Composable
@@ -67,12 +80,15 @@ fun SettingsProvider(
         // Search
         LocalUseRegexSearch provides settings.useRegexSearch,
         LocalIntersectSearchBySpace provides settings.intersectSearchBySpace,
+        LocalSearchResultSort provides settings.searchResultSort,
+        LocalSearchResultReverse provides settings.searchResultReverse,
         // WebDav
         LocalWebDavServer provides settings.webDavServer,
         // ML
         LocalStickerClassificationModel provides settings.stickerClassificationModel,
         // Style
         LocalStickerScale provides settings.stickerScale,
+        LocalHomeShareButtonAlignment provides settings.homeShareButtonAlignment,
     ) {
         content()
     }

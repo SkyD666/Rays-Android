@@ -1,4 +1,4 @@
-package com.skyd.rays.model.preference
+package com.skyd.rays.model.preference.search
 
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences
@@ -9,11 +9,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object IntersectSearchBySpacePreference {
-    private const val INTERSECT_SEARCH_BY_SPACE = "intersectSearchBySpace"
-    const val default = true
+object UseRegexSearchPreference {
+    private const val USE_REGEX_SEARCH = "useRegexSearch"
+    const val default = false
 
-    val key = booleanPreferencesKey(INTERSECT_SEARCH_BY_SPACE)
+    val key = booleanPreferencesKey(USE_REGEX_SEARCH)
 
     fun put(context: Context, scope: CoroutineScope, value: Boolean) {
         scope.launch(Dispatchers.IO) {
@@ -21,5 +21,6 @@ object IntersectSearchBySpacePreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): Boolean = preferences[key] ?: default
+    fun fromPreferences(preferences: Preferences): Boolean =
+        preferences[key] ?: default
 }

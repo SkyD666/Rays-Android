@@ -6,13 +6,37 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ManageSearch
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Replay
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +60,7 @@ import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysIconButtonStyle
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
+import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.screen.home.SearchResultList
 import com.skyd.rays.ui.screen.home.TrailingIcon
@@ -223,14 +248,17 @@ fun MainCardPreview() {
                     uuid = stickerWithTags.sticker.uuid,
                     contentScale = StickerScalePreference.toContentScale(LocalStickerScale.current),
                 )
-                RaysIconButton(
-                    // align(Alignment.TopEnd) 无效，貌似是 PlainTooltipBox 的Bug
-                    modifier = Modifier.align(Alignment.TopEnd),
-                    style = RaysIconButtonStyle.FilledTonal,
-                    imageVector = Icons.Default.Share,
-                    contentDescription = stringResource(R.string.home_screen_send_sticker),
-                    onClick = { }
-                )
+                Box(
+                    modifier = Modifier.matchParentSize(),
+                    contentAlignment = LocalHomeShareButtonAlignment.current
+                ) {
+                    RaysIconButton(
+                        style = RaysIconButtonStyle.FilledTonal,
+                        imageVector = Icons.Default.Share,
+                        contentDescription = stringResource(R.string.home_screen_send_sticker),
+                        onClick = { }
+                    )
+                }
             }
             if (stickerBean.title.isNotBlank()) {
                 Text(

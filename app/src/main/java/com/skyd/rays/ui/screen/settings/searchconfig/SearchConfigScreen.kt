@@ -23,8 +23,8 @@ import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.allSearchDomain
 import com.skyd.rays.model.bean.SearchDomainBean
-import com.skyd.rays.model.preference.IntersectSearchBySpacePreference
-import com.skyd.rays.model.preference.UseRegexSearchPreference
+import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
+import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import com.skyd.rays.ui.component.*
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalIntersectSearchBySpace

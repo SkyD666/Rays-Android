@@ -56,6 +56,7 @@ interface StickerDao {
     @Transaction
     fun addStickerWithTags(stickerWithTags: StickerWithTags): String {
         check(stickerWithTags.sticker.stickerMd5.isNotBlank()) { "sticker's md5 is blank!" }
+        stickerWithTags.sticker.modifyTime = System.currentTimeMillis()
         val hiltEntryPoint =
             EntryPointAccessors.fromApplication(appContext, StickerDaoEntryPoint::class.java)
         var stickerUuid = stickerWithTags.sticker.uuid

@@ -1,4 +1,4 @@
-package com.skyd.rays.model.preference
+package com.skyd.rays.model.preference.search
 
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences
