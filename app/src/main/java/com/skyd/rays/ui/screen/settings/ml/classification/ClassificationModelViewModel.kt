@@ -1,23 +1,18 @@
 package com.skyd.rays.ui.screen.settings.ml.classification
 
-import androidx.lifecycle.viewModelScope
-import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseViewModel
 import com.skyd.rays.base.IUIChange
 import com.skyd.rays.base.IUiEvent
-import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.model.respository.ClassificationModelRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flattenConcat
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import javax.inject.Inject
 
 @HiltViewModel
 class ClassificationModelViewModel @Inject constructor(
     private var classificationModelRepo: ClassificationModelRepository
-) : BaseViewModel<ClassificationModelState, IUiEvent, ClassificationModelIntent>() {
+) : BaseViewModel<ClassificationModelState, ClassificationModelEvent, ClassificationModelIntent>() {
     override fun initUiState(): ClassificationModelState {
         return ClassificationModelState(
             GetModelsUiState.Init,
@@ -25,7 +20,7 @@ class ClassificationModelViewModel @Inject constructor(
     }
 
     override fun IUIChange.checkStateOrEvent() =
-        this as? ClassificationModelState? to this as? IUiEvent
+        this as? ClassificationModelState? to this as? ClassificationModelEvent
 
     override fun Flow<ClassificationModelIntent>.handleIntent(): Flow<IUIChange> = merge(
         doIsInstance<ClassificationModelIntent.GetModels> {
@@ -37,41 +32,25 @@ class ClassificationModelViewModel @Inject constructor(
         },
 
         doIsInstance<ClassificationModelIntent.SetModel> { intent ->
-            classificationModelRepo.requestSetModel(intent.modelUri)
-                .mapToUIChange { data ->
-                    StickerClassificationModelPreference.put(
-                        context = appContext,
-                        scope = viewModelScope,
-                        value = data
-                    )
+            classificationModelRepo.requestSetModel(intent.modelBean.uri)
+                .mapToUIChange {
                     object : IUiEvent {}
                 }
                 .defaultFinally()
         },
 
         doIsInstance<ClassificationModelIntent.ImportModel> { intent ->
-            classificationModelRepo.requestImportModel(intent.modelUri)
-                .map {
-                    classificationModelRepo.requestGetModels()
-                }.flattenConcat().mapToUIChange { data ->
-                    copy(getModelsUiState = GetModelsUiState.Success(data))
+            classificationModelRepo.requestImportModel(intent.uri)
+                .mapToUIChange {
+                    ClassificationModelEvent(importUiEvent = ImportUiEvent.Success(intent.uri))
                 }
                 .defaultFinally()
         },
 
         doIsInstance<ClassificationModelIntent.DeleteModel> { intent ->
-            classificationModelRepo.requestDeleteModel(intent.modelUri)
-                .map {
-                    if (it.data == true) {
-                        StickerClassificationModelPreference.put(
-                            context = appContext,
-                            scope = viewModelScope,
-                            value = StickerClassificationModelPreference.default
-                        )
-                    }
-                    classificationModelRepo.requestGetModels()
-                }.flattenConcat().mapToUIChange { data ->
-                    copy(getModelsUiState = GetModelsUiState.Success(data))
+            classificationModelRepo.requestDeleteModel(intent.modelBean.uri)
+                .mapToUIChange {
+                    ClassificationModelEvent(deleteUiEvent = DeleteUiEvent.Success(intent.modelBean.path))
                 }
                 .defaultFinally()
         },

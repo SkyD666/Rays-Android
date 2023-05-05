@@ -1,17 +1,34 @@
 package com.skyd.rays.ui.component
 
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
@@ -85,13 +102,24 @@ fun RadioSettingsItem(
     onClick: (() -> Unit)? = null,
 ) {
     BaseSettingsItem(
+        modifier = Modifier
+            .combinedClickable(
+                role = Role.RadioButton,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = LocalIndication.current,
+                onLongClick = onLongClick,
+                onClick = {
+                    onClick?.invoke()
+                }
+            )
+            .semantics {
+                this.selected = selected
+            },
         icon = icon,
         text = text,
         descriptionText = description,
-        onLongClick = onLongClick,
-        onClick = onClick
     ) {
-        RadioButton(selected = selected, onClick = onClick)
+        RadioButton(selected = selected, onClick = null)
     }
 }
 
@@ -141,6 +169,7 @@ fun ColorSettingsItem(
 
 @Composable
 fun BaseSettingsItem(
+    modifier: Modifier = Modifier,
     icon: Painter,
     text: String,
     descriptionText: String? = null,
@@ -149,6 +178,7 @@ fun BaseSettingsItem(
     content: (@Composable () -> Unit)? = null
 ) {
     BaseSettingsItem(
+        modifier = modifier,
         icon = icon,
         text = text,
         description = if (descriptionText != null) {
@@ -170,6 +200,7 @@ fun BaseSettingsItem(
 
 @Composable
 fun BaseSettingsItem(
+    modifier: Modifier = Modifier,
     icon: Painter,
     text: String,
     description: (@Composable () -> Unit)? = null,
@@ -178,7 +209,7 @@ fun BaseSettingsItem(
     content: (@Composable () -> Unit)? = null
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .run {
                 if (onClick != null) combinedClickable(onLongClick = onLongClick) { onClick() }

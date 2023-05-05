@@ -80,7 +80,6 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                         )
                     }
                 }
-                is LoadUiIntent.ShowMainView -> {}
                 is LoadUiIntent.Loading -> {
                     openWaitingDialog = loadUiIntent.isShow
                 }

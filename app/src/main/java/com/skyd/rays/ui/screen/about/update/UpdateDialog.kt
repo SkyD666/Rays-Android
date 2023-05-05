@@ -63,8 +63,6 @@ fun UpdateDialog(
             is LoadUiIntent.Loading -> {
                 openWaitingDialog = it.isShow
             }
-
-            LoadUiIntent.ShowMainView -> {}
         }
     }
 

@@ -126,7 +126,6 @@
     <string name="classification_model_screen_select_description">选择外部模型文件 (.tflite 或 .lite)</string>
     <string name="classification_model_screen_failed">操作失败：%s</string>
     <string name="classification_model_screen_default_name">EfficientNet-Lite2</string>
-    <string name="classification_model_screen_file_type_error">模型文件类型不正确，请选择 .tflite 或 .lite 格式文件</string>
     <string name="add_screen_error">错误：%s</string>
     <string name="home_screen_clear_current_sicker">清空主屏幕</string>
     <string name="appearance_screen_style_category">样式</string>

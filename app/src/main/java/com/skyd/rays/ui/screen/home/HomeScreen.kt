@@ -18,9 +18,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -189,7 +191,6 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 }
 
                 is LoadUiIntent.Loading -> {}
-                LoadUiIntent.ShowMainView -> {}
             }
         }
 
@@ -221,6 +222,7 @@ private fun RaysSearchBar(
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
     val stickerWithTagsList = remember { mutableStateListOf<StickerWithTags>() }
+    val searchResultListState = rememberLazyStaggeredGridState()
 
     Box(
         Modifier
@@ -281,7 +283,9 @@ private fun RaysSearchBar(
                 },
             ) {
                 if (active) {
-                    SearchResultList(dataList = stickerWithTagsList,
+                    SearchResultList(
+                        state = searchResultListState,
+                        dataList = stickerWithTagsList,
                         onItemClickListener = {
                             active = false
                             viewModel.sendUiIntent(
@@ -322,6 +326,7 @@ fun TrailingIcon(
 
 @Composable
 fun SearchResultList(
+    state: LazyStaggeredGridState,
     dataList: List<StickerWithTags>,
     onItemClickListener: ((data: StickerWithTags) -> Unit)? = null
 ) {
@@ -334,6 +339,7 @@ fun SearchResultList(
         } else {
             LazyVerticalStaggeredGrid(
                 modifier = Modifier.fillMaxSize(),
+                state = state,
                 contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
                 columns = StaggeredGridCells.Fixed(if (LocalContext.current.screenIsLand) 4 else 2),
                 verticalItemSpacing = 12.dp,
@@ -510,14 +516,17 @@ private fun MainCard(stickerWithTags: StickerWithTags) {
                     uuid = stickerBean.uuid,
                     contentScale = StickerScalePreference.toContentScale(LocalStickerScale.current),
                 )
-                RaysIconButton(
-                    // align(Alignment.TopEnd) 无效，貌似是 PlainTooltipBox 的Bug
-                    modifier = Modifier.align(Alignment.TopEnd),
-                    style = RaysIconButtonStyle.FilledTonal,
-                    imageVector = Icons.Default.Share,
-                    contentDescription = stringResource(R.string.home_screen_send_sticker),
-                    onClick = { context.sendSticker(stickerBean.uuid) }
-                )
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    RaysIconButton(
+                        style = RaysIconButtonStyle.FilledTonal,
+                        imageVector = Icons.Default.Share,
+                        contentDescription = stringResource(R.string.home_screen_send_sticker),
+                        onClick = { context.sendSticker(stickerBean.uuid) }
+                    )
+                }
             }
             if (stickerBean.title.isNotBlank()) {
                 Text(

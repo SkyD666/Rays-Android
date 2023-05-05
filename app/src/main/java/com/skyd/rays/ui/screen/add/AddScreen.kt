@@ -324,7 +324,6 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                 }
             }
             is LoadUiIntent.Loading -> {}
-            LoadUiIntent.ShowMainView -> {}
         }
     }
 }

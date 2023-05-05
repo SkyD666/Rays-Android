@@ -20,6 +20,8 @@ data class StickerBean(
     var stickerMd5: String,
     @ColumnInfo(name = CREATE_TIME_COLUMN)
     var createTime: Long,
+//    @ColumnInfo(name = MODIFY_TIME_COLUMN)
+//    var modifyTime: Long?,
 ) : BaseBean {
     constructor(
         title: String,
@@ -29,6 +31,7 @@ data class StickerBean(
         title = title,
         stickerMd5 = "",
         createTime = createTime,
+//        modifyTime = null,
     )
 
     fun fields(): List<Any> {

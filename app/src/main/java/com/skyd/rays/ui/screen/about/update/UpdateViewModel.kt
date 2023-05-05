@@ -30,7 +30,6 @@ class UpdateViewModel @Inject constructor(private var updateRepo: UpdateReposito
         doIsInstance<UpdateIntent.CheckUpdate> {
             updateRepo.checkUpdate()
                 .mapToUIChange { data ->
-                    data.tagName = "4"
                     if (getAppVersionCode() < data.tagName.toLongOrDefault(0L)) {
                         val date = SimpleDateFormat(
                             "yyyy-MM-dd'T'HH:mm:ss'Z'",

@@ -21,5 +21,9 @@ object StickerClassificationModelPreference {
         }
     }
 
+    suspend fun put(context: Context, value: String) {
+        context.dataStore.put(key, value)
+    }
+
     fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
 }

@@ -92,7 +92,6 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
             ReqState.Success -> {
                 val data = it.data
                 if (data != null) {
-                    sendLoadUiIntent(LoadUiIntent.ShowMainView)
                     uiStateFlow.value.transform(data)
                 } else error(it.msg.toString())
             }

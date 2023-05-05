@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -73,6 +74,7 @@ private fun RaysSearchBarPreview() {
     var active by rememberSaveable { mutableStateOf(false) }
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
     val currentStickerUuid = LocalCurrentStickerUuid.current
+    val searchResultListState = rememberLazyStaggeredGridState()
 
     Box(
         Modifier
@@ -123,6 +125,7 @@ private fun RaysSearchBarPreview() {
                 },
             ) {
                 SearchResultList(
+                    state = searchResultListState,
                     dataList = if (currentStickerUuid.isBlank()) {
                         emptyList()
                     } else {

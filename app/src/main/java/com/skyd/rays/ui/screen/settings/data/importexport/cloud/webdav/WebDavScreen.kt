@@ -224,7 +224,6 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                         )
                     }
                 }
-                is LoadUiIntent.ShowMainView -> {}
                 is LoadUiIntent.Loading -> {
                     openWaitingDialog = loadUiIntent.isShow
                     waitingDialogCurrent = null

@@ -121,7 +121,6 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
                 is LoadUiIntent.Loading -> {
                     openWaitingDialog = it.isShow
                 }
-                is LoadUiIntent.ShowMainView -> {}
             }
         }
         viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
