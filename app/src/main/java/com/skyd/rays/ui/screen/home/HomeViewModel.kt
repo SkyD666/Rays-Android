@@ -119,18 +119,20 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
             it.sticker.createTime
         }
 
-        "ModifyTime" -> unsortedUnreversedData.sortStickers(applyReverse) {
-            it.sticker.modifyTime
-        }
+        "ModifyTime" -> unsortedUnreversedData.sortStickers(
+            applyReverse,
+            compareBy({ it.sticker.modifyTime }, { it.sticker.createTime })
+        )
 
         "TagCount" -> unsortedUnreversedData.sortStickers(
             applyReverse,
             compareBy({ it.tags.size }, { it.sticker.createTime })
         )
 
-        "Title" -> unsortedUnreversedData.sortStickers(applyReverse) {
-            it.sticker.title
-        }
+        "Title" -> unsortedUnreversedData.sortStickers(
+            applyReverse,
+            compareBy({ it.sticker.title }, { it.sticker.createTime })
+        )
 
         else -> unsortedUnreversedData.sortStickers(applyReverse) {
             it.sticker.createTime
