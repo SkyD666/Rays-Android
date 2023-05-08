@@ -145,6 +145,10 @@ class WebDavRepository @Inject constructor(
                     .use { inputStream ->
                         waitToAddList += json.decodeFromStream<StickerWithTags>(inputStream)
                     }
+                if (waitToAddList.size > 10) {
+                    stickerDao.webDavImportData(waitToAddList)
+                    waitToAddList.clear()
+                }
                 emitProgressData(
                     current = ++currentCount,
                     total = totalCount,
@@ -211,6 +215,15 @@ class WebDavRepository @Inject constructor(
                 val file = toFile(it)
                 sardine.put(website + APP_DIR + BACKUP_DATA_DIR + file.name, file, "text/*")
                 file.deleteRecursively()
+                val md5 = it.md5()
+                val uuid = it.sticker.uuid
+                backupInfoMap[uuid] = BackupInfo(
+                    uuid = uuid,
+                    contentMd5 = md5,
+                    stickerMd5 = it.sticker.stickerMd5,
+                    modifiedTime = System.currentTimeMillis(),
+                    isDeleted = false
+                )
                 emitProgressData(
                     current = ++currentCount,
                     total = totalCount,
@@ -247,7 +260,7 @@ class WebDavRepository @Inject constructor(
                 code = 0
                 data = WebDavResultInfo(
                     time = System.currentTimeMillis() - startTime,
-                    count = excludedList.size + willBeDeletedMap.size
+                    count = totalCount
                 )
             })
         }

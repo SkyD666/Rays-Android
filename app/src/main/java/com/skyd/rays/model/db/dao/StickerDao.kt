@@ -54,9 +54,14 @@ interface StickerDao {
     fun containsByUuid(uuid: String): Int
 
     @Transaction
-    fun addStickerWithTags(stickerWithTags: StickerWithTags): String {
+    fun addStickerWithTags(
+        stickerWithTags: StickerWithTags,
+        updateModifyTime: Boolean = true
+    ): String {
         check(stickerWithTags.sticker.stickerMd5.isNotBlank()) { "sticker's md5 is blank!" }
-        stickerWithTags.sticker.modifyTime = System.currentTimeMillis()
+        if (updateModifyTime) {
+            stickerWithTags.sticker.modifyTime = System.currentTimeMillis()
+        }
         val hiltEntryPoint =
             EntryPointAccessors.fromApplication(appContext, StickerDaoEntryPoint::class.java)
         var stickerUuid = stickerWithTags.sticker.uuid
@@ -111,7 +116,7 @@ interface StickerDao {
     @Transaction
     fun webDavImportData(stickerWithTagsList: List<StickerWithTags>) {
         stickerWithTagsList.forEach {
-            addStickerWithTags(it)
+            addStickerWithTags(stickerWithTags = it, updateModifyTime = false)
         }
     }
 

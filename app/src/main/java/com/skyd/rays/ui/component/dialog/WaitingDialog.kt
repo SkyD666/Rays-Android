@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
 import com.skyd.rays.ui.component.RaysLottieAnimation
@@ -56,7 +57,8 @@ fun WaitingDialog(
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = msg,
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge,
+                        textAlign = TextAlign.Center,
                     )
                 }
             }
