@@ -149,4 +149,11 @@
     <string name="home_style_screen_share_button_alignment">分享按钮位置</string>
     <string name="home_style_screen_share_button_alignment_horiz">水平</string>
     <string name="home_style_screen_share_button_alignment_vert">竖直</string>
+    <string name="webdav_screen_progress_upload_data_sticker">更新远端数据 + 表情包</string>
+    <string name="webdav_screen_progress_logical_delete_remote">移动到远端回收站</string>
+    <string name="webdav_screen_progress_upload_data">更新远端数据</string>
+    <string name="webdav_screen_progress_download_data_sticker">更新本地数据 + 表情包</string>
+    <string name="webdav_screen_progress_download_data">更新本地数据</string>
+    <string name="webdav_screen_progress_delete">删除本地数据 + 表情包</string>
+    <string name="webdav_screen_warning">请勿在推送和拉取时强制杀死应用或断开网络，否则可能会损坏数据！</string>
 </resources>

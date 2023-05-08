@@ -1,7 +1,12 @@
 package com.skyd.rays.ui.component.dialog
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -21,6 +26,7 @@ fun WaitingDialog(
     visible: Boolean,
     currentValue: Int? = null,
     totalValue: Int? = null,
+    msg: String? = null,
     title: String = stringResource(R.string.webdav_screen_waiting)
 ) {
     if (currentValue == null || totalValue == null) {
@@ -46,6 +52,13 @@ fun WaitingDialog(
                     text = "$currentValue / $totalValue",
                     style = MaterialTheme.typography.labelLarge
                 )
+                if (msg != null) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = msg,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
             }
         }
     }

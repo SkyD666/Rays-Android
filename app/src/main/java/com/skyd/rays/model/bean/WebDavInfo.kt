@@ -16,4 +16,5 @@ data class WebDavResultInfo(
 data class WebDavWaitingInfo(
     var current: Int,
     var total: Int,
+    var msg: String,
 ) : WebDavInfo

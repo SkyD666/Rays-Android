@@ -1,11 +1,16 @@
 package com.skyd.rays.model.respository
 
+import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
-import com.skyd.rays.model.db.dao.StickerDao
 import com.skyd.rays.ext.saveTo
-import com.skyd.rays.model.bean.*
+import com.skyd.rays.model.bean.BackupInfo
+import com.skyd.rays.model.bean.StickerWithTags
+import com.skyd.rays.model.bean.WebDavInfo
+import com.skyd.rays.model.bean.WebDavResultInfo
+import com.skyd.rays.model.bean.WebDavWaitingInfo
+import com.skyd.rays.model.db.dao.StickerDao
 import com.skyd.rays.util.md5
 import com.skyd.rays.util.stickerUuidToFile
 import com.thegrizzlylabs.sardineandroid.Sardine
@@ -20,7 +25,10 @@ import java.io.File
 import javax.inject.Inject
 
 
-class WebDavRepository @Inject constructor(private val stickerDao: StickerDao) : BaseRepository() {
+class WebDavRepository @Inject constructor(
+    private val stickerDao: StickerDao,
+    private val json: Json
+) : BaseRepository() {
     companion object {
         const val APP_DIR = "Rays/"
         const val BACKUP_DATA_DIR = "BackupData/"
@@ -120,24 +128,47 @@ class WebDavRepository @Inject constructor(private val stickerDao: StickerDao) :
             val backupInfoMap: MutableMap<String, BackupInfo> =
                 getMd5UuidKeyBackupInfoMap(sardine, website).toMutableMap()
             val waitToAddList = mutableListOf<StickerWithTags>()
-            val (excludedMap, willBeDeletedList) =
+            val (excludedMap, onlyBeanChangedMap, willBeDeletedList) =
                 excludeRemoteUnchanged(backupInfoMap, allStickerWithTagsList)
-            val totalCount = excludedMap.size + willBeDeletedList.size
+            val totalCount = excludedMap.size + onlyBeanChangedMap.size + willBeDeletedList.size
             var currentCount = 0
             willBeDeletedList.forEach {
                 stickerDao.deleteStickerWithTags(stickerUuid = it)
-                emitProgressData(current = ++currentCount, total = totalCount)
+                emitProgressData(
+                    current = ++currentCount,
+                    total = totalCount,
+                    msg = appContext.getString(R.string.webdav_screen_progress_delete),
+                )
+            }
+            onlyBeanChangedMap.forEach { entry ->
+                sardine.get(website + APP_DIR + BACKUP_DATA_DIR + entry.value.uuid)
+                    .use { inputStream ->
+                        waitToAddList += json.decodeFromStream<StickerWithTags>(inputStream)
+                    }
+                emitProgressData(
+                    current = ++currentCount,
+                    total = totalCount,
+                    msg = appContext.getString(R.string.webdav_screen_progress_download_data),
+                )
             }
             excludedMap.forEach { entry ->
                 sardine.get(website + APP_DIR + BACKUP_DATA_DIR + entry.value.uuid)
                     .use { inputStream ->
-                        waitToAddList += Json.decodeFromStream<StickerWithTags>(inputStream)
+                        waitToAddList += json.decodeFromStream<StickerWithTags>(inputStream)
                     }
                 sardine.get(website + APP_DIR + BACKUP_STICKER_DIR + entry.value.uuid)
                     .use { inputStream ->
                         inputStream.saveTo(stickerUuidToFile(entry.value.uuid))
                     }
-                emitProgressData(current = ++currentCount, total = totalCount)
+                if (waitToAddList.size > 10) {
+                    stickerDao.webDavImportData(waitToAddList)
+                    waitToAddList.clear()
+                }
+                emitProgressData(
+                    current = ++currentCount,
+                    total = totalCount,
+                    msg = appContext.getString(R.string.webdav_screen_progress_download_data_sticker),
+                )
             }
             stickerDao.webDavImportData(waitToAddList)
             emitBaseData(BaseData<WebDavInfo>().apply {
@@ -161,16 +192,30 @@ class WebDavRepository @Inject constructor(private val stickerDao: StickerDao) :
             val sardine: Sardine = initWebDav(website, username, password)
             var backupInfoMap: MutableMap<String, BackupInfo> =
                 getMd5UuidKeyBackupInfoMap(sardine, website).toMutableMap()
-            val (excludedList, willBeDeletedMap) = excludeLocalUnchanged(
+            val (excludedList, onlyBeanChanged, willBeDeletedMap) = excludeLocalUnchanged(
                 backupInfoMap,      // 这里需要md5+uuid map
                 allStickerWithTagsList
             )
             backupInfoMap = backupInfoMap.values.associateBy { it.uuid }.toMutableMap()
-            val totalCount = excludedList.size + willBeDeletedMap.size
+            val totalCount = excludedList.size + onlyBeanChanged.size + willBeDeletedMap.size
             var currentCount = 0
             willBeDeletedMap.forEach { (_, u) ->
                 backupInfoMap[/*u.contentMd5 + */u.uuid]?.isDeleted = true
-                emitProgressData(current = ++currentCount, total = totalCount)
+                emitProgressData(
+                    current = ++currentCount,
+                    total = totalCount,
+                    msg = appContext.getString(R.string.webdav_screen_progress_logical_delete_remote),
+                )
+            }
+            onlyBeanChanged.forEach {
+                val file = toFile(it)
+                sardine.put(website + APP_DIR + BACKUP_DATA_DIR + file.name, file, "text/*")
+                file.deleteRecursively()
+                emitProgressData(
+                    current = ++currentCount,
+                    total = totalCount,
+                    msg = appContext.getString(R.string.webdav_screen_progress_upload_data),
+                )
             }
             excludedList.forEach {
                 val file = toFile(it)
@@ -187,10 +232,15 @@ class WebDavRepository @Inject constructor(private val stickerDao: StickerDao) :
                 backupInfoMap[uuid] = BackupInfo(
                     uuid = uuid,
                     contentMd5 = md5,
+                    stickerMd5 = it.sticker.stickerMd5,
                     modifiedTime = System.currentTimeMillis(),
                     isDeleted = false
                 )
-                emitProgressData(current = ++currentCount, total = totalCount)
+                emitProgressData(
+                    current = ++currentCount,
+                    total = totalCount,
+                    msg = appContext.getString(R.string.webdav_screen_progress_upload_data_sticker),
+                )
             }
             updateBackupInfo(sardine, website, backupInfoMap.values.toList())
             emitBaseData(BaseData<WebDavInfo>().apply {
@@ -206,45 +256,73 @@ class WebDavRepository @Inject constructor(private val stickerDao: StickerDao) :
     private fun excludeRemoteUnchanged(
         backupInfoMap: Map<String, BackupInfo>,
         allStickerWithTagsList: List<StickerWithTags>
-    ): Pair<Map<String, BackupInfo>, List<String>> {
+    ): Triple<Map<String, BackupInfo>, Map<String, BackupInfo>, List<String>> {
         val md5UuidKeyMap = backupInfoMap.toMutableMap()
+        val uuidStickerMd5KeyMap = backupInfoMap.values
+            .associateBy { it.uuid + it.stickerMd5 }.toMutableMap()
         val willBeDeletedList = mutableListOf<String>()
+        val onlyBeanChanged = mutableMapOf<String, BackupInfo>()
         allStickerWithTagsList.forEach {
             val md5 = it.md5()
             val uuid = it.sticker.uuid
-            val backupInfo = backupInfoMap[md5 + uuid]
+            var backupInfo = backupInfoMap[md5 + uuid]
             if (backupInfo != null) {
                 if (backupInfo.isDeleted) {
                     // 在本地但在远端回收站的段落，稍后会在本地被移除
                     willBeDeletedList.add(it.sticker.uuid)
                 }
                 md5UuidKeyMap.remove(md5 + uuid)
+            } else {
+                backupInfo = uuidStickerMd5KeyMap[uuid + it.sticker.stickerMd5]
+                if (backupInfo != null) {
+                    if (backupInfo.isDeleted) {
+                        // 在本地但在远端回收站的段落，稍后会在本地被移除
+                        willBeDeletedList.add(it.sticker.uuid)
+                    }
+                    onlyBeanChanged[backupInfo.contentMd5 + uuid] = backupInfo
+                    md5UuidKeyMap.remove(backupInfo.contentMd5 + uuid)
+                }
             }
         }
         // 过滤除掉不在本地但在远端回收站的段落
-        return md5UuidKeyMap.filter { !it.value.isDeleted } to willBeDeletedList
+        return Triple(
+            md5UuidKeyMap.filter { !it.value.isDeleted },
+            onlyBeanChanged,
+            willBeDeletedList
+        )
     }
 
     private fun excludeLocalUnchanged(
         md5UuidKeyBackupInfoMap: Map<String, BackupInfo>,
         allStickerWithTagsList: List<StickerWithTags>
-    ): Pair<List<StickerWithTags>, Map<String, BackupInfo>> {
+    ): Triple<List<StickerWithTags>, List<StickerWithTags>, Map<String, BackupInfo>> {
         // logical delete
         val uuidKeyMap = md5UuidKeyBackupInfoMap.values.associateBy { it.uuid }.toMutableMap()
+        val uuidStickerMd5KeyMap = md5UuidKeyBackupInfoMap.values
+            .associateBy { it.uuid + it.stickerMd5 }.toMutableMap()
         val mutableList = allStickerWithTagsList.toMutableList()
+        val onlyBeanChanged = mutableListOf<StickerWithTags>()
         var md5: String
         allStickerWithTagsList.forEach {
             md5 = it.md5()
             val uuid = it.sticker.uuid
-            val backupInfo = md5UuidKeyBackupInfoMap[md5 + uuid]
+            var backupInfo = md5UuidKeyBackupInfoMap[md5 + uuid]
             if (backupInfo != null) {
                 if (backupInfo.uuid == uuid && !backupInfo.isDeleted) {
                     mutableList.remove(it)
                 }
+            } else {
+                backupInfo = uuidStickerMd5KeyMap[uuid + it.sticker.stickerMd5]
+                if (backupInfo != null) {
+                    if (!backupInfo.isDeleted) {
+                        mutableList.remove(it)
+                        onlyBeanChanged.add(it)
+                    }
+                }
             }
             uuidKeyMap.remove(uuid)
         }
-        return mutableList to uuidKeyMap.filter { !it.value.isDeleted }
+        return Triple(mutableList, onlyBeanChanged, uuidKeyMap.filter { !it.value.isDeleted })
     }
 
     private fun getMd5UuidKeyBackupInfoMap(
@@ -253,7 +331,7 @@ class WebDavRepository @Inject constructor(private val stickerDao: StickerDao) :
     ): Map<String, BackupInfo> {
         return if (sardine.exists(website + APP_DIR + BACKUP_INFO_FILE)) {
             sardine.get(website + APP_DIR + BACKUP_INFO_FILE).use { inputStream ->
-                Json.decodeFromStream<List<BackupInfo>>(inputStream)
+                json.decodeFromStream<List<BackupInfo>>(inputStream)
                     .distinctBy { it.uuid }             // 保证uuid唯一
                     .associateBy { it.contentMd5 + it.uuid }
             }
@@ -267,7 +345,7 @@ class WebDavRepository @Inject constructor(private val stickerDao: StickerDao) :
     ) {
         val file = File(appContext.filesDir, BACKUP_INFO_FILE)
         file.printWriter().use { out ->
-            out.println(Json.encodeToString(backupInfoList))
+            out.println(json.encodeToString(backupInfoList))
         }
         sardine.put(website + APP_DIR + BACKUP_INFO_FILE, file, "text/*")
     }
@@ -275,7 +353,7 @@ class WebDavRepository @Inject constructor(private val stickerDao: StickerDao) :
     private fun toFile(stickerWithTags: StickerWithTags): File {
         val file = File(appContext.filesDir, stickerWithTags.sticker.uuid)
         file.printWriter().use { out ->
-            out.println(Json.encodeToString(stickerWithTags))
+            out.println(json.encodeToString(stickerWithTags))
         }
         return file
     }
@@ -299,11 +377,12 @@ class WebDavRepository @Inject constructor(private val stickerDao: StickerDao) :
 
     private suspend fun FlowCollector<BaseData<WebDavInfo>>.emitProgressData(
         current: Int,
-        total: Int
+        total: Int,
+        msg: String
     ) {
         emitBaseData(BaseData<WebDavInfo>().apply {
             code = 0
-            data = WebDavWaitingInfo(current = current, total = total)
+            data = WebDavWaitingInfo(current = current, total = total, msg = msg)
         })
     }
 }

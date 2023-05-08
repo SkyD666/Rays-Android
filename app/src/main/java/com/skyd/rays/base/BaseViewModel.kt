@@ -107,6 +107,7 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
         sendLoadUiIntent(LoadUiIntent.Loading(false))
     }.catch {
         it.printStackTrace()
+        sendLoadUiIntent(LoadUiIntent.Loading(false))
         sendLoadUiIntent(LoadUiIntent.Error(it.message.toString()))
     }
 

@@ -1,12 +1,42 @@
 package com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.CloudDownload
+import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Dns
+import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.Recycling
+import androidx.compose.material.icons.filled.RestoreFromTrash
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -27,8 +57,14 @@ import com.skyd.rays.model.bean.BackupInfo
 import com.skyd.rays.model.bean.WebDavResultInfo
 import com.skyd.rays.model.bean.WebDavWaitingInfo
 import com.skyd.rays.model.preference.WebDavServerPreference
-import com.skyd.rays.ui.component.*
+import com.skyd.rays.ui.component.BaseSettingsItem
+import com.skyd.rays.ui.component.CategorySettingsItem
+import com.skyd.rays.ui.component.RaysIconButton
+import com.skyd.rays.ui.component.RaysLottieAnimation
+import com.skyd.rays.ui.component.RaysTopBar
+import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
+import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalWebDavServer
@@ -42,9 +78,9 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    var openWarningDialog by remember { mutableStateOf(false) }
     var openWaitingDialog by remember { mutableStateOf(false) }
-    var waitingDialogCurrent by remember { mutableStateOf<Int?>(null) }
-    var waitingDialogTotal by remember { mutableStateOf<Int?>(null) }
+    var waitingDialogData by remember { mutableStateOf<WebDavWaitingInfo?>(null) }
     var openDeleteWarningDialog by rememberSaveable { mutableStateOf<String?>(null) }
     var openInputDialog by remember { mutableStateOf(false) }
     var inputDialogInfo by remember {
@@ -60,6 +96,12 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 style = RaysTopBarStyle.Large,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.webdav_screen_name)) },
+                actions = {
+                    RaysIconButton(
+                        onClick = { openWarningDialog = true },
+                        imageVector = Icons.Default.Warning
+                    )
+                },
             )
         }
     ) { paddingValues ->
@@ -223,19 +265,24 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                             withDismissAction = true
                         )
                     }
+                    openWaitingDialog = false
+                    waitingDialogData = null
                 }
+
                 is LoadUiIntent.Loading -> {
                     openWaitingDialog = loadUiIntent.isShow
-                    waitingDialogCurrent = null
-                    waitingDialogTotal = null
+                    if (!openWaitingDialog) {
+                        waitingDialogData = null
+                    }
                 }
             }
         }
 
         WaitingDialog(
             visible = openWaitingDialog,
-            currentValue = waitingDialogCurrent,
-            totalValue = waitingDialogTotal
+            currentValue = waitingDialogData?.current,
+            totalValue = waitingDialogData?.total,
+            msg = waitingDialogData?.msg + "\n\n" + stringResource(id = R.string.webdav_screen_warning),
         )
         DeleteWarningDialog(
             visible = openDeleteWarningDialog != null,
@@ -259,6 +306,21 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                     )
                 }
                 openDeleteWarningDialog = null
+            }
+        )
+        RaysDialog(
+            visible = openWarningDialog,
+            onDismissRequest = { openWarningDialog = false },
+            title = {
+                Text(text = stringResource(id = R.string.dialog_warning))
+            },
+            text = {
+                Text(text = stringResource(id = R.string.webdav_screen_warning))
+            },
+            confirmButton = {
+                TextButton(onClick = { openWarningDialog = false }) {
+                    Text(text = stringResource(id = R.string.dialog_ok))
+                }
             }
         )
         TextFieldDialog(
@@ -303,32 +365,36 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                             )
                         }
                     }
+
                     is WebDavWaitingInfo -> {
-                        waitingDialogCurrent = result.current
-                        waitingDialogTotal = result.total
+                        waitingDialogData = result
                     }
                 }
             }
+
             null -> {}
         }
         when (downloadResultUiEvent) {
             is DownloadResultUiEvent.Success -> {
-                val state = downloadResultUiEvent.result
-                if (state is WebDavResultInfo) {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = appContext.getString(
-                                R.string.webdav_screen_download_success,
-                                state.time / 1000.0f, state.count
-                            ),
-                            withDismissAction = true
-                        )
+                when (val result = downloadResultUiEvent.result) {
+                    is WebDavResultInfo -> {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = appContext.getString(
+                                    R.string.webdav_screen_download_success,
+                                    result.time / 1000.0f, result.count
+                                ),
+                                withDismissAction = true
+                            )
+                        }
                     }
-                } else if (state is WebDavWaitingInfo) {
-                    waitingDialogCurrent = state.current
-                    waitingDialogTotal = state.total
+
+                    is WebDavWaitingInfo -> {
+                        waitingDialogData = result
+                    }
                 }
             }
+
             null -> {}
         }
     }
