@@ -10,8 +10,16 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Egg
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.*
+import androidx.compose.material.icons.outlined.Egg
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -68,17 +76,21 @@ private fun NavigationBarOrRail(
     val items = listOf(
         stringResource(R.string.home_screen_name), stringResource(R.string.more_screen_name)
     )
-    val icons = listOf(
-        Icons.Default.Home, Icons.Default.Egg
-    )
+    val icons = remember {
+        mapOf(
+            true to listOf(Icons.Filled.Home, Icons.Filled.Egg),
+            false to listOf(Icons.Outlined.Home, Icons.Outlined.Egg),
+        )
+    }
 
     if (LocalContext.current.screenIsLand) {
         NavigationRail {
             items.forEachIndexed { index, item ->
+                val selected = currentPage == index
                 NavigationRailItem(
-                    icon = { Icon(icons[index], contentDescription = item) },
+                    icon = { Icon(icons[selected]!![index], contentDescription = item) },
                     label = { Text(item) },
-                    selected = currentPage == index,
+                    selected = selected,
                     onClick = { scrollToPage(index) }
                 )
             }
@@ -86,10 +98,11 @@ private fun NavigationBarOrRail(
     } else {
         NavigationBar {
             items.forEachIndexed { index, item ->
+                val selected = currentPage == index
                 NavigationBarItem(
-                    icon = { Icon(icons[index], contentDescription = item) },
+                    icon = { Icon(icons[selected]!![index], contentDescription = item) },
                     label = { Text(item) },
-                    selected = currentPage == index,
+                    selected = selected,
                     onClick = { scrollToPage(index) }
                 )
             }
@@ -110,6 +123,7 @@ private fun ContentPager(pagerState: PagerState) {
                 0 -> {
                     HomeScreen()
                 }
+
                 1 -> {
                     MoreScreen()
                 }

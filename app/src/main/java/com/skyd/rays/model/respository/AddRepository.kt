@@ -16,12 +16,12 @@ import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.CLASSIFICATION_MODEL_DIR_FILE
 import com.skyd.rays.config.STICKER_DIR
-import com.skyd.rays.model.db.dao.StickerDao
 import com.skyd.rays.ext.copyTo
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get
 import com.skyd.rays.ext.md5
 import com.skyd.rays.model.bean.StickerWithTags
+import com.skyd.rays.model.db.dao.StickerDao
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -172,7 +172,9 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
         for (block in result.textBlocks) {
             for (line in block.lines) {
                 for (element in line.elements) {
-                    list += element.text
+                    if (element.confidence > 0.4f) {
+                        list += element.text
+                    }
                 }
             }
         }
