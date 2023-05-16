@@ -78,20 +78,20 @@ fun MoreScreen() {
             More1Bean(
                 title = stringResource(R.string.settings),
                 icon = Icons.Default.Settings,
-                iconTint = MaterialTheme.colorScheme.onTertiary,
+                iconTint = MaterialTheme.colorScheme.onSecondary,
                 shape = CircleShape,
-                shapeColor = MaterialTheme.colorScheme.tertiary,
+                shapeColor = MaterialTheme.colorScheme.secondary,
                 action = { navController.navigate(SETTINGS_SCREEN_ROUTE) }
             ),
             More1Bean(
                 title = stringResource(R.string.about),
                 icon = Icons.Default.Info,
-                iconTint = MaterialTheme.colorScheme.onPrimary,
+                iconTint = MaterialTheme.colorScheme.onTertiary,
                 shape = CurlyCornerShape(
                     amp = with(LocalDensity.current) { 2.dp.toPx() },
                     count = 10
                 ),
-                shapeColor = MaterialTheme.colorScheme.primary,
+                shapeColor = MaterialTheme.colorScheme.tertiary,
                 action = { navController.navigate(ABOUT_SCREEN_ROUTE) }
             )
         )

@@ -12,14 +12,16 @@ apply from: secret
 
 android {
     namespace 'com.skyd.rays'
-    compileSdk 33
+//    compileSdk 34
+    compileSdkPreview "UpsideDownCake"
 
     defaultConfig {
         applicationId "com.skyd.rays"
         minSdk 24
-        targetSdk 33
-        versionCode 4
-        versionName "1.1"
+//        targetSdk 34
+        targetSdkPreview "UpsideDownCake"
+        versionCode 5
+        versionName "1.1-rc02"
         flavorDimensions "versionName"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

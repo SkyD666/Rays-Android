@@ -97,15 +97,22 @@ fun extractTonalPalettes(): Map<String, TonalPalettes> {
 
 @Composable
 fun extractTonalPalettesFromWallpaper(): Map<String, TonalPalettes> {
+    val context = LocalContext.current
     val preset = mutableMapOf<String, TonalPalettes>()
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 && !LocalView.current.isInEditMode) {
-        val colors = WallpaperManager.getInstance(LocalContext.current)
+        val colors = WallpaperManager.getInstance(context)
             .getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
         val primary = colors?.primaryColor?.toArgb()
         val secondary = colors?.secondaryColor?.toArgb()
         val tertiary = colors?.tertiaryColor?.toArgb()
-        if (primary != null) preset["WallpaperPrimary"] = Color(primary).toTonalPalettes()
+        if (primary != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                preset["WallpaperPrimary"] = context.getSystemTonalPalettes()
+            } else {
+                preset["WallpaperPrimary"] = (Color(primary).toTonalPalettes())
+            }
+        }
         if (secondary != null) preset["WallpaperSecondary"] = Color(secondary).toTonalPalettes()
         if (tertiary != null) preset["WallpaperTertiary"] = Color(tertiary).toTonalPalettes()
     }
