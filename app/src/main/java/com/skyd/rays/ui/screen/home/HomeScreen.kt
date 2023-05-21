@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ManageSearch
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Replay
@@ -58,6 +59,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -89,6 +91,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.refreshStickerData
+import com.skyd.rays.ext.dateTime
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.screenIsLand
 import com.skyd.rays.model.bean.StickerWithTags
@@ -104,6 +107,7 @@ import com.skyd.rays.ui.component.RaysIconButtonStyle
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysOutlinedCard
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
+import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
 import com.skyd.rays.ui.local.LocalNavController
@@ -158,7 +162,11 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 .padding(innerPaddings)
                 .fillMaxSize()
         ) {
-            RaysSearchBar(query = query, onQueryChange = { query = it })
+            RaysSearchBar(
+                query = query,
+                onQueryChange = { query = it },
+                stickerWithTags = stickerWithTags
+            )
             Spacer(modifier = Modifier.height(16.dp))
 
             AnimatedVisibility(
@@ -228,6 +236,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 private fun RaysSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
+    stickerWithTags: StickerWithTags?,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     var menuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -239,6 +248,7 @@ private fun RaysSearchBar(
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
     val stickerWithTagsList = remember { mutableStateListOf<StickerWithTags>() }
     val searchResultListState = rememberLazyStaggeredGridState()
+    var openStickerInfoDialog by remember { mutableStateOf(false) }
 
     Box(
         Modifier
@@ -309,8 +319,33 @@ private fun RaysSearchBar(
                     }
                 )
             }
-            HomeMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false })
+            HomeMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false },
+                onStickerInfoClick = { openStickerInfoDialog = true }
+            )
         }
+
+        RaysDialog(
+            visible = openStickerInfoDialog && stickerWithTags != null,
+            title = { Text(text = stringResource(id = R.string.home_screen_sticker_info)) },
+            text = {
+                val createTime = dateTime(stickerWithTags!!.sticker.createTime)
+                Text(
+                    text = stringResource(
+                        id = R.string.home_screen_sticker_info_desc,
+                        createTime,
+                        stickerWithTags.sticker.modifyTime?.let { dateTime(it) } ?: createTime,
+                    )
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { openStickerInfoDialog = false }) {
+                    Text(text = stringResource(id = R.string.dialog_ok))
+                }
+            },
+            onDismissRequest = { openStickerInfoDialog = false }
+        )
 
         viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
             when (searchResultUiState) {
@@ -530,21 +565,15 @@ private fun SearchResultSortMenu(
 private fun HomeMenu(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
+    onStickerInfoClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
     val currentStickerUuid = LocalCurrentStickerUuid.current
-    var editMenuItemEnabled by remember { mutableStateOf(false) }
-    var deleteMenuItemEnabled by remember { mutableStateOf(false) }
+    var stickerMenuItemEnabled by remember { mutableStateOf(false) }
 
     viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
-        if (stickerDetailUiState is StickerDetailUiState.Success) {
-            editMenuItemEnabled = true
-            deleteMenuItemEnabled = true
-        } else {
-            editMenuItemEnabled = false
-            deleteMenuItemEnabled = false
-        }
+        stickerMenuItemEnabled = stickerDetailUiState is StickerDetailUiState.Success
     }
 
     DropdownMenu(
@@ -552,7 +581,7 @@ private fun HomeMenu(
         onDismissRequest = onDismissRequest
     ) {
         DropdownMenuItem(
-            enabled = editMenuItemEnabled,
+            enabled = stickerMenuItemEnabled,
             text = { Text(stringResource(R.string.home_screen_clear_current_sicker)) },
             onClick = {
                 viewModel.sendUiIntent(
@@ -568,7 +597,7 @@ private fun HomeMenu(
             }
         )
         DropdownMenuItem(
-            enabled = editMenuItemEnabled,
+            enabled = stickerMenuItemEnabled,
             text = { Text(stringResource(R.string.home_screen_edit)) },
             onClick = {
                 navController.navigate("$ADD_SCREEN_ROUTE?stickerUuid=${currentStickerUuid}")
@@ -582,7 +611,7 @@ private fun HomeMenu(
             }
         )
         DropdownMenuItem(
-            enabled = deleteMenuItemEnabled,
+            enabled = stickerMenuItemEnabled,
             text = { Text(stringResource(R.string.home_screen_delete)) },
             onClick = {
                 onDismissRequest()
@@ -591,6 +620,20 @@ private fun HomeMenu(
             leadingIcon = {
                 Icon(
                     Icons.Default.Delete,
+                    contentDescription = null
+                )
+            }
+        )
+        DropdownMenuItem(
+            enabled = stickerMenuItemEnabled,
+            text = { Text(stringResource(R.string.home_screen_sticker_info)) },
+            onClick = {
+                onDismissRequest()
+                onStickerInfoClick()
+            },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Info,
                     contentDescription = null
                 )
             }

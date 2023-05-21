@@ -1,13 +1,15 @@
 package com.skyd.rays.ext
 
 import androidx.compose.ui.layout.ContentScale
+import com.skyd.rays.R
+import com.skyd.rays.appContext
 
 fun ContentScale.toDisplayName(): String = when (this) {
-    ContentScale.Crop -> "裁剪填充"
-    ContentScale.Inside -> "内部"
-    ContentScale.FillWidth -> "填充宽度"
-    ContentScale.FillHeight -> "填充高度"
-    ContentScale.Fit -> "合适"
-    ContentScale.FillBounds -> "拉伸填充"
+    ContentScale.Crop -> appContext.getString(R.string.image_scale_crop)
+    ContentScale.Inside -> appContext.getString(R.string.image_scale_inside)
+    ContentScale.FillWidth -> appContext.getString(R.string.image_scale_fill_width)
+    ContentScale.FillHeight -> appContext.getString(R.string.image_scale_fill_height)
+    ContentScale.Fit -> appContext.getString(R.string.image_scale_fit)
+    ContentScale.FillBounds -> appContext.getString(R.string.image_scale_fill_bounds)
     else -> ""
 }

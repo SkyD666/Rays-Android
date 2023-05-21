@@ -1,14 +1,30 @@
 package com.skyd.rays.ui.screen.settings.searchconfig
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Domain
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.JoinInner
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -25,7 +41,11 @@ import com.skyd.rays.config.allSearchDomain
 import com.skyd.rays.model.bean.SearchDomainBean
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
-import com.skyd.rays.ui.component.*
+import com.skyd.rays.ui.component.BaseSettingsItem
+import com.skyd.rays.ui.component.CategorySettingsItem
+import com.skyd.rays.ui.component.RaysTopBar
+import com.skyd.rays.ui.component.RaysTopBarStyle
+import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalIntersectSearchBySpace
 import com.skyd.rays.ui.local.LocalUseRegexSearch
@@ -129,6 +149,7 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
                     searchDomainMap.clear()
                     searchDomainMap.putAll(searchDomainResultUiState.searchDomainMap)
                 }
+
                 SearchDomainResultUiState.Init -> {}
             }
         }
@@ -139,7 +160,7 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
 @Composable
 fun SearchDomainItem(
     selected: SnapshotStateMap<Int, Boolean>,
-    table: Pair<String, String>,
+    table: Pair<String, Int>,
     searchDomain: Map<String, Boolean>,
     onSetSearchDomain: (SearchDomainBean) -> Unit,
     icon: Painter = rememberVectorPainter(image = Icons.Default.Domain),
@@ -147,7 +168,7 @@ fun SearchDomainItem(
     val (tableName, tableDisplayName) = table
     BaseSettingsItem(
         icon = icon,
-        text = tableDisplayName,
+        text = stringResource(id = tableDisplayName),
         onClick = {},
         description = {
             val columns = allSearchDomain[table].orEmpty()
@@ -171,7 +192,7 @@ fun SearchDomainItem(
                                 )
                             )
                         },
-                        label = { Text(columnDisplayName) },
+                        label = { Text(text = stringResource(id = columnDisplayName)) },
                         leadingIcon = if (selected[columnIndex] == true) {
                             {
                                 Icon(

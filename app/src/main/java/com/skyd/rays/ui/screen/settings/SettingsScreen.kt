@@ -3,7 +3,10 @@ package com.skyd.rays.ui.screen.settings
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Dataset
+import androidx.compose.material.icons.filled.ManageSearch
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -19,7 +22,6 @@ import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.DATA_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.easyusage.EASY_USAGE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 

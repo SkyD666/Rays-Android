@@ -19,13 +19,15 @@ interface SearchDomainDao {
     )
     fun getSearchDomainOrNull(tableName: String, columnName: String): Boolean?
 
+    // 被选择的搜索域的个数
+    @Transaction
+    @Query("SELECT COUNT(*) FROM $SEARCH_DOMAIN_TABLE_NAME WHERE $SEARCH_COLUMN = 1")
+    fun selectedSearchDomainCount(): Int
+
     @Transaction
     fun getSearchDomain(tableName: String, columnName: String): Boolean {
-        return getSearchDomainOrNull(tableName, columnName)
-            ?: if (tableName == STICKER_TABLE_NAME &&
-                (columnName == StickerBean.TITLE_COLUMN ||
-                        columnName == StickerBean.UUID_COLUMN)
-            ) true else tableName == TAG_TABLE_NAME && columnName == TagBean.TAG_COLUMN
+        val result = getSearchDomainOrNull(tableName, columnName)
+        return result == true || selectedSearchDomainCount() == 0
     }
 
     @Transaction

@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ManageSearch
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Replay
@@ -203,6 +204,16 @@ private fun HomeMenuPreview(expanded: Boolean, onDismissRequest: () -> Unit) {
             leadingIcon = {
                 Icon(
                     Icons.Default.Delete,
+                    contentDescription = null
+                )
+            }
+        )
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.home_screen_sticker_info)) },
+            onClick = onDismissRequest,
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Info,
                     contentDescription = null
                 )
             }

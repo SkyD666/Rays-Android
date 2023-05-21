@@ -29,7 +29,11 @@
     <p>
         使用<b> <a href="https://developer.android.com/topic/architecture#recommended-app-arch">MVI</a> </b>架构，完全采用<b> <a href="https://m3.material.io/">Material You</a> </b>设计风格。<b>所有页面均使用 <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a> </b>开发。
     </p>
+    <p>
+        <b><a href="doc/README/README-en.md">English</a></b>
+    </p>
 </div>
+
 
 ## 💡主要功能
 
@@ -46,11 +50,11 @@
 
 ## 🤩应用截图
 
-![ic_home_screen](image/ic_home_screen.jpg) ![ic_home_screen_search](image/ic_home_screen_search.jpg)
-![ic_add_screen_edit](image/ic_add_screen_edit.jpg) ![ic_home_screen_share](image/ic_home_screen_share.jpg)
-![ic_appearance_screen](image/ic_appearance_screen.jpg) ![ic_webdav_screen](image/ic_webdav_screen.jpg)
-![ic_search_config_screen](image/ic_search_config_screen.jpg) ![ic_more_screen](image/ic_more_screen.jpg)
-![ic_settings_screen](image/ic_settings_screen.jpg) ![ic_about_screen](image/ic_about_screen.jpg)
+![ic_home_screen](image/zh-rCN/ic_home_screen.jpg) ![ic_home_screen_search](image/zh-rCN/ic_home_screen_search.jpg)
+![ic_add_screen_edit](image/zh-rCN/ic_add_screen_edit.jpg) ![ic_home_screen_share](image/zh-rCN/ic_home_screen_share.jpg)
+![ic_appearance_screen](image/zh-rCN/ic_appearance_screen.jpg) ![ic_webdav_screen](image/zh-rCN/ic_webdav_screen.jpg)
+![ic_search_config_screen](image/zh-rCN/ic_search_config_screen.jpg) ![ic_more_screen](image/zh-rCN/ic_more_screen.jpg)
+![ic_settings_screen](image/zh-rCN/ic_settings_screen.jpg) ![ic_about_screen](image/zh-rCN/ic_about_screen.jpg)
 
 ## 🔍搜索示例
 

@@ -210,6 +210,14 @@ class WebDavRepository @Inject constructor(
                     total = totalCount,
                     msg = appContext.getString(R.string.webdav_screen_progress_logical_delete_remote),
                 )
+                if (currentCount % 10 == 0) {
+                    emitProgressData(
+                        current = currentCount,
+                        total = totalCount,
+                        msg = appContext.getString(R.string.webdav_screen_progress_refresh_backup_info),
+                    )
+                    updateBackupInfo(sardine, website, backupInfoMap.values.toList())
+                }
             }
             onlyBeanChanged.forEach {
                 val file = toFile(it)
@@ -229,6 +237,14 @@ class WebDavRepository @Inject constructor(
                     total = totalCount,
                     msg = appContext.getString(R.string.webdav_screen_progress_upload_data),
                 )
+                if (currentCount % 10 == 0) {
+                    emitProgressData(
+                        current = currentCount,
+                        total = totalCount,
+                        msg = appContext.getString(R.string.webdav_screen_progress_refresh_backup_info),
+                    )
+                    updateBackupInfo(sardine, website, backupInfoMap.values.toList())
+                }
             }
             excludedList.forEach {
                 val file = toFile(it)
@@ -254,6 +270,14 @@ class WebDavRepository @Inject constructor(
                     total = totalCount,
                     msg = appContext.getString(R.string.webdav_screen_progress_upload_data_sticker),
                 )
+                if (currentCount % 10 == 0) {
+                    emitProgressData(
+                        current = currentCount,
+                        total = totalCount,
+                        msg = appContext.getString(R.string.webdav_screen_progress_refresh_backup_info),
+                    )
+                    updateBackupInfo(sardine, website, backupInfoMap.values.toList())
+                }
             }
             updateBackupInfo(sardine, website, backupInfoMap.values.toList())
             emitBaseData(BaseData<WebDavInfo>().apply {

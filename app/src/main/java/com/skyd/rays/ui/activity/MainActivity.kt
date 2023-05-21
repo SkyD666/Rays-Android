@@ -40,8 +40,6 @@ import com.skyd.rays.ui.screen.about.license.LicenseScreen
 import com.skyd.rays.ui.screen.about.update.UpdateDialog
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.add.AddScreen
-import com.skyd.rays.ui.screen.minitool.MINI_TOOL_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.minitool.MiniToolScreen
 import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.SettingsScreen
 import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
@@ -54,8 +52,6 @@ import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_R
 import com.skyd.rays.ui.screen.settings.data.importexport.ImportExportScreen
 import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WEBDAV_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WebDavScreen
-import com.skyd.rays.ui.screen.settings.easyusage.EASY_USAGE_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.easyusage.EasyUsageScreen
 import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.ml.MlScreen
 import com.skyd.rays.ui.screen.settings.ml.classification.CLASSIFICATION_MODEL_SCREEN_ROUTE
@@ -167,17 +163,11 @@ class MainActivity : AppCompatActivity() {
                 composable(route = IMPORT_EXPORT_SCREEN_ROUTE) {
                     ImportExportScreen()
                 }
-                composable(route = EASY_USAGE_SCREEN_ROUTE) {
-                    EasyUsageScreen()
-                }
                 composable(route = WEBDAV_SCREEN_ROUTE) {
                     WebDavScreen()
                 }
                 composable(route = DATA_SCREEN_ROUTE) {
                     DataScreen()
-                }
-                composable(route = MINI_TOOL_SCREEN_ROUTE) {
-                    MiniToolScreen()
                 }
             }
 

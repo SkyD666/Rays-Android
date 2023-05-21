@@ -10,6 +10,7 @@ package com.skyd.rays.ui.component.dialog
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -23,9 +24,18 @@ fun RaysDialog(
     properties: DialogProperties = DialogProperties(),
     onDismissRequest: () -> Unit = {},
     icon: @Composable (() -> Unit)? = {
+        val res = remember {
+            arrayOf(
+                R.raw.lottie_genshin_impact_venti_1,
+                R.raw.lottie_genshin_impact_qiqi_1,
+                R.raw.lottie_genshin_impact_paimon_1,
+                R.raw.lottie_genshin_impact_klee_1,
+                R.raw.lottie_genshin_impact_diona_1
+            )
+        }
         RaysLottieAnimation(
             modifier = Modifier.size(48.dp),
-            resId = R.raw.lottie_genshin_impact_venti_1
+            resId = res.random()
         )
     },
     title: @Composable (() -> Unit)? = null,
