@@ -53,11 +53,11 @@ class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : B
         }
     }
 
-    suspend fun requestAddClickCount(uuid: String, count: Int = 1): Flow<BaseData<Int>> {
+    suspend fun requestAddClickCount(stickerUuid: String, count: Int = 1): Flow<BaseData<Int>> {
         return flow {
             emitBaseData(BaseData<Int>().apply {
                 code = 0
-                data = stickerDao.addClickCount(uuid = uuid, count = count)
+                data = stickerDao.addClickCount(uuid = stickerUuid, count = count)
             })
         }
     }

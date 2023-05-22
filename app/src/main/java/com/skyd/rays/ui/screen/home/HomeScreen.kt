@@ -63,6 +63,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -245,9 +246,9 @@ private fun RaysSearchBar(
     var active by rememberSaveable { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
-    var stickerWithTagsList by remember { mutableStateOf<List<StickerWithTags>>(listOf()) }
+    var stickerWithTagsList = remember { mutableStateListOf<StickerWithTags>() }
     val searchResultListState = rememberLazyStaggeredGridState()
-    var openStickerInfoDialog by remember { mutableStateOf(false) }
+    var openStickerInfoDialog by rememberSaveable { mutableStateOf(false) }
 
     Box(
         Modifier
@@ -313,7 +314,7 @@ private fun RaysSearchBar(
                     onItemClickListener = {
                         active = false
                         viewModel.sendUiIntent(
-                            HomeIntent.GetStickerDetails(it.sticker.uuid)
+                            HomeIntent.AddClickCountAndGetStickerDetails(stickerUuid = it.sticker.uuid)
                         )
                     }
                 )
@@ -335,6 +336,7 @@ private fun RaysSearchBar(
                     text = stringResource(
                         id = R.string.home_screen_sticker_info_desc,
                         sticker.uuid,
+                        sticker.stickerMd5,
                         sticker.clickCount,
                         sticker.shareCount,
                         createTime,
@@ -354,7 +356,8 @@ private fun RaysSearchBar(
             when (searchResultUiState) {
                 SearchResultUiState.Init -> {}
                 is SearchResultUiState.Success -> {
-                    stickerWithTagsList = searchResultUiState.stickerWithTagsList
+                    stickerWithTagsList.clear()
+                    stickerWithTagsList.addAll(searchResultUiState.stickerWithTagsList)
                 }
             }
         }
@@ -496,8 +499,7 @@ fun SearchResultList(
 fun SearchResultItem(
     modifier: Modifier = Modifier,
     data: StickerWithTags,
-    onClickListener: ((data: StickerWithTags) -> Unit)? = null,
-    viewModel: HomeViewModel = hiltViewModel()
+    onClickListener: ((data: StickerWithTags) -> Unit)? = null
 ) {
     val context = LocalContext.current
     RaysOutlinedCard(
@@ -509,15 +511,13 @@ fun SearchResultItem(
             )
         },
         onClick = {
-            onClickListener?.invoke(data.apply { sticker.clickCount++ })
-            viewModel.sendUiIntent(HomeIntent.AddClickCount(uuid = data.sticker.uuid))
+            onClickListener?.invoke(data)
         }
     ) {
         RaysImage(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(150.dp),
-//                .heightIn(max = 300.dp),
             contentScale = ContentScale.Crop,
             uuid = data.sticker.uuid
         )
@@ -581,7 +581,7 @@ private fun HomeMenu(
 ) {
     val navController = LocalNavController.current
     val currentStickerUuid = LocalCurrentStickerUuid.current
-    var stickerMenuItemEnabled by remember { mutableStateOf(false) }
+    var stickerMenuItemEnabled by rememberSaveable { mutableStateOf(false) }
 
     viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
         stickerMenuItemEnabled = stickerDetailUiState is StickerDetailUiState.Success

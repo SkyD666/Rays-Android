@@ -20,8 +20,8 @@ android {
         minSdk 24
         targetSdk 33
 //        targetSdkPreview "UpsideDownCake"
-        versionCode 6
-        versionName "1.1-rc03"
+        versionCode 7
+        versionName "1.1-rc04"
         flavorDimensions "versionName"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

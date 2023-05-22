@@ -153,7 +153,7 @@
     <string name="webdav_screen_progress_refresh_backup_info">更新备份信息</string>
     <string name="webdav_screen_warning">请勿在推送和拉取时强制杀死应用或断开网络，否则可能会损坏数据！</string>
     <string name="home_screen_sticker_info">表情包信息</string>
-    <string name="home_screen_sticker_info_desc">UUID：%s\n\n点击数：%s\n\n分享数：%s\n\n创建时间：\n%s\n\n上次修改时间：\n%s</string>
+    <string name="home_screen_sticker_info_desc">UUID：%s\n\n表情包 MD5：\n%s\n\n点击数：%s\n\n分享数：%s\n\n创建时间：\n%s\n\n上次修改时间：\n%s</string>
     <string name="db_sticker_table">表情包表</string>
     <string name="db_sticker_table_uuid">UUID</string>
     <string name="db_sticker_table_title">标题</string>

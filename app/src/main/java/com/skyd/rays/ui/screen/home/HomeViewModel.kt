@@ -15,6 +15,7 @@ import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.respository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onCompletion
@@ -112,9 +113,14 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
                 .defaultFinally()
         },
 
-        doIsInstance<HomeIntent.AddClickCount> { intent ->
-            homeRepo.requestAddClickCount(uuid = intent.uuid, count = intent.count)
-                .mapToUIChange { this }
+        doIsInstance<HomeIntent.AddClickCountAndGetStickerDetails> { intent ->
+            homeRepo.requestAddClickCount(stickerUuid = intent.stickerUuid, count = intent.count)
+                .flatMapConcat {
+                    homeRepo.requestStickerWithTagsDetail(stickerUuid = intent.stickerUuid)
+                }
+                .mapToUIChange { data ->
+                    copy(stickerDetailUiState = StickerDetailUiState.Success(data))
+                }
                 .defaultFinally()
         },
     )
