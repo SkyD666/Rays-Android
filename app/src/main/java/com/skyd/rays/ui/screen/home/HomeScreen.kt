@@ -63,7 +63,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -246,7 +245,7 @@ private fun RaysSearchBar(
     var active by rememberSaveable { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
-    val stickerWithTagsList = remember { mutableStateListOf<StickerWithTags>() }
+    var stickerWithTagsList by remember { mutableStateOf<List<StickerWithTags>>(listOf()) }
     val searchResultListState = rememberLazyStaggeredGridState()
     var openStickerInfoDialog by remember { mutableStateOf(false) }
 
@@ -330,10 +329,14 @@ private fun RaysSearchBar(
             visible = openStickerInfoDialog && stickerWithTags != null,
             title = { Text(text = stringResource(id = R.string.home_screen_sticker_info)) },
             text = {
-                val createTime = dateTime(stickerWithTags!!.sticker.createTime)
+                val sticker = stickerWithTags!!.sticker
+                val createTime = dateTime(sticker.createTime)
                 Text(
                     text = stringResource(
                         id = R.string.home_screen_sticker_info_desc,
+                        sticker.uuid,
+                        sticker.clickCount,
+                        sticker.shareCount,
                         createTime,
                         stickerWithTags.sticker.modifyTime?.let { dateTime(it) } ?: createTime,
                     )
@@ -351,8 +354,7 @@ private fun RaysSearchBar(
             when (searchResultUiState) {
                 SearchResultUiState.Init -> {}
                 is SearchResultUiState.Success -> {
-                    stickerWithTagsList.clear()
-                    stickerWithTagsList.addAll(searchResultUiState.stickerWithTagsList)
+                    stickerWithTagsList = searchResultUiState.stickerWithTagsList
                 }
             }
         }
@@ -494,13 +496,22 @@ fun SearchResultList(
 fun SearchResultItem(
     modifier: Modifier = Modifier,
     data: StickerWithTags,
-    onClickListener: ((data: StickerWithTags) -> Unit)? = null
+    onClickListener: ((data: StickerWithTags) -> Unit)? = null,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     RaysOutlinedCard(
         modifier = modifier.fillMaxWidth(),
-        onLongClick = { context.sendSticker(data.sticker.uuid) },
-        onClick = { onClickListener?.invoke(data) }
+        onLongClick = {
+            context.sendSticker(
+                uuid = data.sticker.uuid,
+                onSuccess = { data.sticker.shareCount++ }
+            )
+        },
+        onClick = {
+            onClickListener?.invoke(data.apply { sticker.clickCount++ })
+            viewModel.sendUiIntent(HomeIntent.AddClickCount(uuid = data.sticker.uuid))
+        }
     ) {
         RaysImage(
             modifier = Modifier
@@ -676,7 +687,10 @@ private fun MainCard(stickerWithTags: StickerWithTags) {
             modifier = Modifier
                 .combinedClickable(
                     onLongClick = {
-                        context.sendSticker(stickerBean.uuid)
+                        context.sendSticker(
+                            uuid = stickerBean.uuid,
+                            onSuccess = { stickerBean.shareCount++ }
+                        )
                     },
                     onDoubleClick = {
                         navController.navigate("$ADD_SCREEN_ROUTE?stickerUuid=${currentStickerUuid}")
@@ -698,7 +712,12 @@ private fun MainCard(stickerWithTags: StickerWithTags) {
                         style = RaysIconButtonStyle.FilledTonal,
                         imageVector = Icons.Default.Share,
                         contentDescription = stringResource(R.string.home_screen_send_sticker),
-                        onClick = { context.sendSticker(stickerBean.uuid) }
+                        onClick = {
+                            context.sendSticker(
+                                uuid = stickerBean.uuid,
+                                onSuccess = { stickerBean.shareCount++ }
+                            )
+                        }
                     )
                 }
             }

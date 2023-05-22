@@ -8,6 +8,8 @@ import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get
 import com.skyd.rays.model.bean.STICKER_TABLE_NAME
 import com.skyd.rays.model.bean.StickerBean
+import com.skyd.rays.model.bean.StickerBean.Companion.CLICK_COUNT_COLUMN
+import com.skyd.rays.model.bean.StickerBean.Companion.SHARE_COUNT_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.STICKER_MD5_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.UUID_COLUMN
 import com.skyd.rays.model.bean.StickerWithTags
@@ -52,6 +54,22 @@ interface StickerDao {
     @Transaction
     @Query("SELECT COUNT(*) FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN LIKE :uuid")
     fun containsByUuid(uuid: String): Int
+
+    @Transaction
+    @Query(
+        """UPDATE $STICKER_TABLE_NAME
+           SET $CLICK_COUNT_COLUMN = $CLICK_COUNT_COLUMN + :count
+           WHERE $UUID_COLUMN = :uuid"""
+    )
+    fun addClickCount(uuid: String, count: Int = 1): Int
+
+    @Transaction
+    @Query(
+        """UPDATE $STICKER_TABLE_NAME
+           SET $SHARE_COUNT_COLUMN = $SHARE_COUNT_COLUMN + :count
+           WHERE $UUID_COLUMN = :uuid"""
+    )
+    fun addShareCount(uuid: String, count: Int = 1): Int
 
     @Transaction
     fun addStickerWithTags(

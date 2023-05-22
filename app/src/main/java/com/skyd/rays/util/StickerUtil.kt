@@ -7,12 +7,17 @@ import androidx.core.content.FileProvider
 import com.skyd.rays.R
 import com.skyd.rays.config.STICKER_DIR
 import com.skyd.rays.model.bean.StickerWithTags
+import com.skyd.rays.model.db.AppDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
 
+private val scope = CoroutineScope(Dispatchers.IO)
 
-fun Context.sendSticker(uuid: String) {
+fun Context.sendSticker(uuid: String, onSuccess: (() -> Unit)? = null) {
     val contentUri = FileProvider
         .getUriForFile(this, "${packageName}.fileprovider", stickerUuidToFile(uuid))
     val shareIntent: Intent = Intent().apply {
@@ -22,6 +27,10 @@ fun Context.sendSticker(uuid: String) {
         type = "image/*"
     }
     startActivity(Intent.createChooser(shareIntent, resources.getText(R.string.send_sticker)))
+    scope.launch {
+        AppDatabase.getInstance(this@sendSticker).stickerDao().addShareCount(uuid = uuid)
+    }
+    onSuccess?.invoke()
 }
 
 fun StickerWithTags.md5(): String {

@@ -104,9 +104,17 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
             emptyFlow()
                 .mapToUIChange {
                     copy(
-                        searchResultUiState = SearchResultUiState.Success(intent.data.reversed())
+                        searchResultUiState = SearchResultUiState.Success(
+                            sortSearchResultList(intent.data)
+                        )
                     )
                 }
+                .defaultFinally()
+        },
+
+        doIsInstance<HomeIntent.AddClickCount> { intent ->
+            homeRepo.requestAddClickCount(uuid = intent.uuid, count = intent.count)
+                .mapToUIChange { this }
                 .defaultFinally()
         },
     )
@@ -132,6 +140,16 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
         "Title" -> unsortedUnreversedData.sortStickers(
             applyReverse,
             compareBy({ it.sticker.title }, { it.sticker.createTime })
+        )
+
+        "ClickCount" -> unsortedUnreversedData.sortStickers(
+            applyReverse,
+            compareBy({ it.sticker.clickCount }, { it.sticker.createTime })
+        )
+
+        "ShareCount" -> unsortedUnreversedData.sortStickers(
+            applyReverse,
+            compareBy({ it.sticker.shareCount }, { it.sticker.createTime })
         )
 
         else -> unsortedUnreversedData.sortStickers(applyReverse) {

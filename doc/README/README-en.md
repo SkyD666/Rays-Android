@@ -21,7 +21,7 @@
         </a>
     </p>
     <p>
-        <b>Rays (Record All Your Stickers)</b>, A tool to <b>record, find and manage stickers</b> on your phone.
+        <b>Rays (Record All Your Stickers)</b>, A tool to <b>record, search and manage stickers</b> on your phone.
     </p>
     <p>
         🥰 Are you still struggling with <b>too many stickers on your phone</b> and having trouble finding the ones you want? This tool will help you <b>manage your stickers</b>! 😋
@@ -128,7 +128,7 @@ Note: **and** logic is represented by **space, tab, line break**, multiple of th
 <tbody>
   <tr>
     <td><img src="../../image/Raca.svg" style="height: 100px"/></td>
-    <td><b>Raca (Record All Classic Articles)</b>, a tool to <b>record and find abstract passages and mini-essays</b> in the comments section locally. 🤗 Are you still having trouble remembering the content of your mini-essay and facing the embarrassing situation of forgetting the front, middle and back? Using this tool will help you <b>record the mini-essays</b> you come across and never worry about forgetting them again! 😋</td>
+    <td><b>Raca (Record All Classic Articles)</b>, a tool to <b>record and search abstract passages and mini-essays</b> in the comments section locally. 🤗 Are you still having trouble remembering the content of your mini-essay and facing the embarrassing situation of forgetting the front, middle and back? Using this tool will help you <b>record the mini-essays</b> you come across and never worry about forgetting them again! 😋</td>
     <td><a href="https://github.com/SkyD666/Raca-Android">https://github.com/SkyD666/Raca-Android</a></td>
   </tr>
   <tr>
@@ -138,6 +138,7 @@ Note: **and** logic is represented by **space, tab, line break**, multiple of th
   </tr>
 </tbody>
 </table>
+
 
 
 ## 📃 License

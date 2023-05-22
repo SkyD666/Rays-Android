@@ -22,6 +22,8 @@ object SearchResultSortPreference {
         "ModifyTime",
         "TagCount",
         "Title",
+        "ClickCount",
+        "ShareCount",
     )
 
     fun put(context: Context, scope: CoroutineScope, value: String) {
@@ -37,6 +39,8 @@ object SearchResultSortPreference {
         "ModifyTime" -> appContext.getString(R.string.search_result_sort_modify_time)
         "TagCount" -> appContext.getString(R.string.search_result_sort_tag_count)
         "Title" -> appContext.getString(R.string.search_result_sort_title)
+        "ClickCount" -> appContext.getString(R.string.search_result_sort_click_count)
+        "ShareCount" -> appContext.getString(R.string.search_result_sort_share_count)
         else -> appContext.getString(R.string.search_result_sort_create_time)
     }
 }

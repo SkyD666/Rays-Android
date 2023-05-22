@@ -6,14 +6,14 @@ import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.allSearchDomain
-import com.skyd.rays.model.db.dao.StickerDao
-import com.skyd.rays.model.db.dao.SearchDomainDao
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get
 import com.skyd.rays.model.bean.STICKER_TABLE_NAME
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
+import com.skyd.rays.model.db.dao.SearchDomainDao
+import com.skyd.rays.model.db.dao.StickerDao
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import dagger.hilt.EntryPoint
@@ -49,6 +49,15 @@ class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : B
             emitBaseData(BaseData<Int>().apply {
                 code = 0
                 data = stickerDao.deleteStickerWithTags(stickerUuid)
+            })
+        }
+    }
+
+    suspend fun requestAddClickCount(uuid: String, count: Int = 1): Flow<BaseData<Int>> {
+        return flow {
+            emitBaseData(BaseData<Int>().apply {
+                code = 0
+                data = stickerDao.addClickCount(uuid = uuid, count = count)
             })
         }
     }
