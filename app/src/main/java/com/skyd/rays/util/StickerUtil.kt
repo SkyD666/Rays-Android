@@ -1,8 +1,11 @@
 package com.skyd.rays.util
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.skyd.rays.R
 import com.skyd.rays.config.STICKER_DIR
@@ -26,6 +29,7 @@ fun Context.sendSticker(uuid: String, onSuccess: (() -> Unit)? = null) {
         putExtra(Intent.EXTRA_STREAM, contentUri)
         type = "image/*"
     }
+    contentUri.wechatStickerUriString(context = this)
     startActivity(Intent.createChooser(shareIntent, resources.getText(R.string.send_sticker)))
     scope.launch {
         AppDatabase.getInstance(this@sendSticker).stickerDao().addShareCount(uuid = uuid)
@@ -46,3 +50,14 @@ fun StickerWithTags.md5(): String {
 fun stickerUuidToFile(uuid: String) = File(STICKER_DIR, uuid)
 
 fun stickerUuidToUri(uuid: String) = Uri.fromFile(stickerUuidToFile(uuid))
+
+/**
+ * 微信聊天框输入图片 uri 自动识别图片的功能
+ */
+private fun Uri.wechatStickerUriString(context: Context) {
+    context.grantUriPermission(
+        "com.tencent.mm", this, Intent.FLAG_GRANT_READ_URI_PERMISSION
+    )
+    val clipboard = ContextCompat.getSystemService(context, ClipboardManager::class.java)
+    clipboard?.setPrimaryClip(ClipData.newPlainText("Share sticker", this.toString()))
+}
