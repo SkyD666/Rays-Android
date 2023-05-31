@@ -43,6 +43,7 @@ fun RaysDialog(
     },
     title: @Composable (() -> Unit)? = null,
     text: @Composable (() -> Unit)? = null,
+    selectable: Boolean = true,
     confirmButton: @Composable () -> Unit,
     dismissButton: @Composable (() -> Unit)? = null,
 ) {
@@ -54,7 +55,11 @@ fun RaysDialog(
             icon = icon,
             title = title,
             text = {
-                SelectionContainer(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                if (selectable) {
+                    SelectionContainer(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                        text?.invoke()
+                    }
+                } else {
                     text?.invoke()
                 }
             },

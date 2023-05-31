@@ -131,7 +131,7 @@
     <string name="update_check">Check updates</string>
     <string name="update_no_update">This is the latest version!</string>
     <string name="update_newer">Found new version</string>
-    <string name="update_newer_text">New version: %s\nPublished on: %s\nDownloads: %s\nLogs: \n%s</string>
+    <string name="update_newer_text">New version: %s\nPublished on: %s\nDownloads: %s\n</string>
     <string name="download_update">Download</string>
     <string name="update_ignore">Ignore this update</string>
     <string name="search_result_sort_create_time">Create time</string>

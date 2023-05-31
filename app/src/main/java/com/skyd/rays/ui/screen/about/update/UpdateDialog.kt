@@ -1,5 +1,8 @@
 package com.skyd.rays.ui.screen.about.update
 
+import android.text.Html
+import android.text.method.LinkMovementMethod
+import android.widget.TextView
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
@@ -115,18 +119,33 @@ private fun NewerDialog(
         title = {
             Text(text = stringResource(R.string.update_newer))
         },
+        selectable = false,
         text = {
             Column {
-                SelectionContainer(modifier = Modifier.weight(weight = 1f, fill = false)) {
-                    Text(
-                        modifier = Modifier.verticalScroll(rememberScrollState()),
-                        text = stringResource(
-                            R.string.update_newer_text,
-                            updateBean!!.name,
-                            updateBean.publishedAt,
-                            updateBean.assets.firstOrNull()?.downloadCount.toString(),
-                            updateBean.body,
+                Column(
+                    modifier = Modifier
+                        .weight(weight = 1f, fill = false)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    SelectionContainer {
+                        Text(
+                            text = stringResource(
+                                R.string.update_newer_text,
+                                updateBean!!.name,
+                                updateBean.publishedAt,
+                                updateBean.assets.firstOrNull()?.downloadCount.toString(),
+                            )
                         )
+                    }
+                    AndroidView(
+                        factory = { context ->
+                            TextView(context).apply {
+                                setTextIsSelectable(true)
+                                movementMethod = LinkMovementMethod.getInstance()
+                                isSingleLine = false
+                                text = Html.fromHtml(updateBean!!.body, Html.FROM_HTML_MODE_COMPACT)
+                            }
+                        }
                     )
                 }
                 val checked = ignoreUpdateVersion == updateBean!!.tagName.toLongOrDefault(0L)

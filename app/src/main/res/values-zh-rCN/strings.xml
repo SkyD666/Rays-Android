@@ -131,7 +131,7 @@
     <string name="update_check">检查更新</string>
     <string name="update_no_update">当前已是最新版！</string>
     <string name="update_newer">发现新版本</string>
-    <string name="update_newer_text">新版本：%s\n发布时间：%s\n下载数：%s\n日志：\n%s</string>
+    <string name="update_newer_text">新版本：%s\n发布时间：%s\n下载数：%s\n</string>
     <string name="download_update">下载</string>
     <string name="update_ignore">忽略本次更新</string>
     <string name="search_result_sort_create_time">创建时间</string>

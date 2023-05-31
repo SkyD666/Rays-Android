@@ -46,7 +46,6 @@ class UpdateViewModel @Inject constructor(private var updateRepo: UpdateReposito
                         copy(
                             updateUiState = UpdateUiState.OpenNewerDialog(
                                 data.copy(
-                                    body = data.body.readable(),
                                     publishedAt = publishedAt
                                 )
                             ),
