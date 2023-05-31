@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -137,9 +139,11 @@ private fun NewerDialog(
                             )
                         )
                     }
+                    val textColor = LocalContentColor.current
                     AndroidView(
                         factory = { context ->
                             TextView(context).apply {
+                                setTextColor(textColor.toArgb())
                                 setTextIsSelectable(true)
                                 movementMethod = LinkMovementMethod.getInstance()
                                 isSingleLine = false
