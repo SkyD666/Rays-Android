@@ -18,14 +18,14 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.skyd.rays.R
-import com.skyd.rays.ext.screenIsLand
+import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.home.HomeScreen
 import com.skyd.rays.ui.screen.more.MoreScreen
 import kotlinx.coroutines.launch
@@ -34,24 +34,11 @@ const val MAIN_SCREEN_ROUTE = "mainScreen"
 
 @Composable
 fun MainScreen() {
+    val windowSizeClass = LocalWindowSizeClass.current
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
 
-    if (LocalContext.current.screenIsLand) {
-        Row(modifier = Modifier.fillMaxSize()) {
-            NavigationBarOrRail(
-                currentPage = pagerState.currentPage,
-                scrollToPage = {
-                    coroutineScope.launch {
-                        pagerState.scrollToPage(it)
-                    }
-                }
-            )
-            Box(modifier = Modifier.weight(1f)) {
-                ContentPager(pagerState = pagerState)
-            }
-        }
-    } else {
+    if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(modifier = Modifier.weight(1f)) {
                 ContentPager(pagerState = pagerState)
@@ -64,6 +51,20 @@ fun MainScreen() {
                     }
                 }
             )
+        }
+    } else {
+        Row(modifier = Modifier.fillMaxSize()) {
+            NavigationBarOrRail(
+                currentPage = pagerState.currentPage,
+                scrollToPage = {
+                    coroutineScope.launch {
+                        pagerState.scrollToPage(it)
+                    }
+                }
+            )
+            Box(modifier = Modifier.weight(1f)) {
+                ContentPager(pagerState = pagerState)
+            }
         }
     }
 }
@@ -82,12 +83,13 @@ private fun NavigationBarOrRail(
             false to listOf(Icons.Outlined.Home, Icons.Outlined.Egg),
         )
     }
+    val windowSizeClass = LocalWindowSizeClass.current
 
-    if (LocalContext.current.screenIsLand) {
-        NavigationRail {
+    if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
+        NavigationBar {
             items.forEachIndexed { index, item ->
                 val selected = currentPage == index
-                NavigationRailItem(
+                NavigationBarItem(
                     icon = { Icon(icons[selected]!![index], contentDescription = item) },
                     label = { Text(item) },
                     selected = selected,
@@ -96,10 +98,10 @@ private fun NavigationBarOrRail(
             }
         }
     } else {
-        NavigationBar {
+        NavigationRail {
             items.forEachIndexed { index, item ->
                 val selected = currentPage == index
-                NavigationBarItem(
+                NavigationRailItem(
                     icon = { Icon(icons[selected]!![index], contentDescription = item) },
                     label = { Text(item) },
                     selected = selected,

@@ -34,7 +34,7 @@ fun AnimatedPlaceholder(
                 resId = resId,
             )
             Text(
-                modifier = Modifier.padding(top = 5.dp),
+                modifier = Modifier.padding(top = 10.dp),
                 text = tip,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelLarge

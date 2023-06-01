@@ -103,6 +103,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
                 .nestedScroll(scrollBehavior.nestedScrollConnection), contentPadding = paddingValues
         ) {
             item {
+                Spacer(modifier = Modifier.height(16.dp))
                 CompositionLocalProvider(LocalBackgroundRoundedShape provides true) {
                     SwitchSettingsItem(
                         icon = Icons.Default.Link,

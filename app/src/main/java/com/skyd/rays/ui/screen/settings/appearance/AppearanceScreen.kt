@@ -2,6 +2,12 @@ package com.skyd.rays.ui.screen.settings.appearance
 
 import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -40,7 +46,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -88,7 +93,7 @@ fun AppearanceScreen() {
 
     val tonalPalettes = extractTonalPalettes()
     val tonalPalettesFromWallpaper = extractTonalPalettesFromWallpaper()
-    var wallpaperOrBasicThemeSelected by remember {
+    var wallpaperOrBasicThemeSelected by rememberSaveable {
         mutableStateOf(if (tonalPalettesFromWallpaper.containsKey(themeName)) 0 else 1)
     }
     var openDarkBottomSheet by rememberSaveable { mutableStateOf(false) }
@@ -220,8 +225,8 @@ fun Palettes(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val tonalPalettes = (customPrimaryColor.toColorOrNull() ?: Color.Transparent).toTonalPalettes()
-    var addDialogVisible by remember { mutableStateOf(false) }
-    var customColorValue by remember { mutableStateOf(customPrimaryColor) }
+    var addDialogVisible by rememberSaveable { mutableStateOf(false) }
+    var customColorValue by rememberSaveable { mutableStateOf(customPrimaryColor) }
 
     if (palettes.isEmpty()) {
         Row(
@@ -311,24 +316,29 @@ fun SelectableMiniPalette(
             modifier = Modifier
                 .clickable { onClick() }
                 .padding(12.dp)
-                .size(48.dp),
+                .size(50.dp),
             shape = CircleShape,
             color = palette accent1 90.0,
         ) {
             Box {
                 Surface(
                     modifier = Modifier
-                        .size(48.dp)
-                        .offset((-24).dp, 24.dp),
+                        .size(50.dp)
+                        .offset((-25).dp, 25.dp),
                     color = palette accent3 90.0,
                 ) {}
                 Surface(
                     modifier = Modifier
-                        .size(48.dp)
-                        .offset(24.dp, 24.dp),
+                        .size(50.dp)
+                        .offset(25.dp, 25.dp),
                     color = palette accent2 60.0,
                 ) {}
-                AnimatedVisibility(visible = selected) {
+                val animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium)
+                AnimatedVisibility(
+                    visible = selected,
+                    enter = scaleIn(animationSpec) + fadeIn(animationSpec),
+                    exit = scaleOut(animationSpec) + fadeOut(animationSpec),
+                ) {
                     Box(
                         modifier = Modifier
                             .padding(10.dp)

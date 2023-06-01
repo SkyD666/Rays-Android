@@ -1,9 +1,7 @@
 package com.skyd.rays.ui.screen.home
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -60,6 +58,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -115,6 +114,7 @@ import com.skyd.rays.ui.local.LocalQuery
 import com.skyd.rays.ui.local.LocalSearchResultReverse
 import com.skyd.rays.ui.local.LocalSearchResultSort
 import com.skyd.rays.ui.local.LocalStickerScale
+import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.util.sendSticker
@@ -169,14 +169,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            AnimatedVisibility(
-                visible = stickerWithTags != null,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                stickerWithTags?.let {
-                    MainCard(stickerWithTags = it)
-                }
+            stickerWithTags?.let {
+                MainCard(stickerWithTags = it)
             }
 
             viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
@@ -184,7 +178,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     is StickerDetailUiState.Init -> {
                         stickerWithTags = null
                         AnimatedPlaceholder(
-                            resId = R.raw.lottie_genshin_impact_klee_1,
+                            resId = R.raw.lottie_genshin_impact_venti_1,
                             tip = stringResource(id = R.string.home_screen_empty_tip)
                         )
                         if (stickerDetailUiState.stickerUuid.isNotBlank()) {
@@ -375,7 +369,9 @@ fun SearchResultConfigBar(size: Int) {
         Badge(
             modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
         ) {
-            Text(text = size.toString())
+            AnimatedContent(targetState = size) { targetCount ->
+                Text(text = targetCount.toString())
+            }
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -454,13 +450,13 @@ fun SearchResultList(
     }
 
     Column {
+        SearchResultConfigBar(size = dataList.size)
         if (dataList.isEmpty()) {
             AnimatedPlaceholder(
                 resId = R.raw.lottie_genshin_impact_klee_2,
                 tip = stringResource(id = R.string.home_screen_no_search_result_tip)
             )
         } else {
-            SearchResultConfigBar(size = dataList.size)
             Scaffold(
                 floatingActionButton = {
                     RaysFloatingActionButton(
@@ -475,13 +471,16 @@ fun SearchResultList(
                 },
                 contentWindowInsets = WindowInsets(0.dp),
             ) { paddingValues ->
+                val windowSizeClass = LocalWindowSizeClass.current
                 LazyVerticalStaggeredGrid(
                     modifier = Modifier.fillMaxSize(),
                     state = state,
                     contentPadding = paddingValues +
                             PaddingValues(horizontal = 16.dp) +
                             PaddingValues(bottom = 16.dp),
-                    columns = StaggeredGridCells.Fixed(if (LocalContext.current.screenIsLand) 4 else 2),
+                    columns = StaggeredGridCells.Fixed(
+                        if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) 2 else 4
+                    ),
                     verticalItemSpacing = 12.dp,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -73,6 +74,11 @@ fun SwitchSettingsItem(
     onLongClick: (() -> Unit)? = null,
 ) {
     BaseSettingsItem(
+        modifier = Modifier.toggleable(
+            value = checked,
+            onValueChange = { onCheckedChange?.invoke(it) },
+            role = Role.Switch
+        ),
         icon = icon,
         text = text,
         descriptionText = description,
@@ -82,7 +88,7 @@ fun SwitchSettingsItem(
             onCheckedChange?.invoke(!checked)
         },
     ) {
-        Switch(checked = checked, enabled = enabled, onCheckedChange = onCheckedChange)
+        Switch(checked = checked, enabled = enabled, onCheckedChange = null)
     }
 }
 
@@ -235,7 +241,7 @@ fun BaseSettingsItem(
                 .run {
                     if (LocalBackgroundRoundedShape.current) {
                         padding(horizontal = 16.dp)
-                            .clip(RoundedCornerShape(34))
+                            .clip(RoundedCornerShape(36))
                             .background(MaterialTheme.colorScheme.primaryContainer alwaysLight true)
                     } else this
                 }
@@ -244,7 +250,11 @@ fun BaseSettingsItem(
                         combinedClickable(onLongClick = onLongClick) { onClick() }
                     } else this
                 }
-                .padding(16.dp),
+                .run {
+                    if (LocalBackgroundRoundedShape.current) {
+                        padding(horizontal = 16.dp, vertical = 12.dp)
+                    } else padding(16.dp)
+                },
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (LocalUseColorfulIcon.current) {

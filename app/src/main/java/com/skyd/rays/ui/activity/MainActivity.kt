@@ -14,6 +14,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -31,6 +32,7 @@ import com.skyd.rays.ext.navigate
 import com.skyd.rays.model.preference.SettingsProvider
 import com.skyd.rays.ui.local.LocalDarkMode
 import com.skyd.rays.ui.local.LocalNavController
+import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.MAIN_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.MainScreen
 import com.skyd.rays.ui.screen.about.ABOUT_SCREEN_ROUTE
@@ -78,7 +80,10 @@ class MainActivity : AppCompatActivity() {
         setContent {
             navController = rememberAnimatedNavController()
             SettingsProvider {
-                CompositionLocalProvider(LocalNavController provides navController) {
+                CompositionLocalProvider(
+                    LocalNavController provides navController,
+                    LocalWindowSizeClass provides calculateWindowSizeClass(this)
+                ) {
                     AppContent()
                     initIntent()
                 }

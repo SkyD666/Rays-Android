@@ -30,6 +30,8 @@ class UriStringShareRepository @Inject constructor(
                     appName = info.applicationInfo?.loadLabel(pm).toString(),
                     appIcon = info.applicationInfo?.loadIcon(pm)
                 )
+            }.onFailure {
+                it.printStackTrace()
             }.getOrNull() ?: EmptyUriStringShareDataBean(
                 msg = appContext.getString(
                     R.string.uri_string_share_repo_no_package,
@@ -64,6 +66,7 @@ class UriStringShareRepository @Inject constructor(
                         appIcon = info.applicationInfo?.loadIcon(pm)
                     )
                 }.onFailure {
+                    it.printStackTrace()
                     if (it is PackageManager.NameNotFoundException) {
                         uriStringSharePackageDao.deletePackage(pkgName = bean.packageName)
                     }

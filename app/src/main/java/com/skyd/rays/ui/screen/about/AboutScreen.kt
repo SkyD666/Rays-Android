@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,12 +51,12 @@ import coil.compose.AsyncImage
 import com.skyd.rays.R
 import com.skyd.rays.config.GITHUB_REPO
 import com.skyd.rays.ext.plus
-import com.skyd.rays.ext.screenIsLand
 import com.skyd.rays.model.bean.OtherWorksBean
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalNavController
+import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.about.license.LICENSE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.about.update.UpdateDialog
 import com.skyd.rays.util.CommonUtil
@@ -67,7 +68,7 @@ const val ABOUT_SCREEN_ROUTE = "aboutScreen"
 fun AboutScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     var openUpdateDialog by rememberSaveable { mutableStateOf(false) }
-    val context = LocalContext.current
+
     Scaffold(
         topBar = {
             RaysTopBar(
@@ -84,6 +85,7 @@ fun AboutScreen() {
             )
         }
     ) { paddingValues ->
+        val windowSizeClass = LocalWindowSizeClass.current
         val otherWorksList = rememberOtherWorksList()
 
         LazyColumn(
@@ -93,7 +95,17 @@ fun AboutScreen() {
             contentPadding = paddingValues + PaddingValues(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (context.screenIsLand) {
+            if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
+                item {
+                    IconArea()
+                }
+                item {
+                    TextArea()
+                }
+                item {
+                    ButtonArea()
+                }
+            } else {
                 item {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Column(
@@ -106,16 +118,6 @@ fun AboutScreen() {
                         TextArea(modifier = Modifier.weight(1f))
                     }
                     Spacer(modifier = Modifier.height(10.dp))
-                }
-            } else {
-                item {
-                    IconArea()
-                }
-                item {
-                    TextArea()
-                }
-                item {
-                    ButtonArea()
                 }
             }
 
