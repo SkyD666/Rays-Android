@@ -167,4 +167,13 @@
     <string name="image_scale_fill_bounds">拉伸填充</string>
     <string name="search_result_sort_click_count">点击数</string>
     <string name="search_result_sort_share_count">分享数</string>
+    <string name="conv_feat_screen_name">便捷功能</string>
+    <string name="uri_string_share_screen_name">URI 字符串分享</string>
+    <string name="uri_string_share_screen_description">分享时复制贴纸 URI 字符串</string>
+    <string name="uri_string_share_screen_enable">启用</string>
+    <string name="uri_string_share_screen_add_app_package">添加包名</string>
+    <string name="uri_string_share_screen_add_app_package_example">例如 com.skyd.example</string>
+    <string name="uri_string_share_repo_no_package">包名不可用：%s</string>
+    <string name="uri_string_share_screen_failed">错误：%s</string>
+    <string name="setting_screen_conv_feat_description">一些方便使用的功能</string>
 </resources>

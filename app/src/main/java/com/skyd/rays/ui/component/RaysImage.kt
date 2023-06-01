@@ -10,6 +10,7 @@ import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import coil.request.ImageRequest
 import com.skyd.rays.config.STICKER_DIR
 import java.io.File
 
@@ -19,14 +20,18 @@ fun RaysImage(
     model: Any?,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
+    imageLoader: ImageLoader = rememberRaysImageLoader(),
     contentScale: ContentScale = ContentScale.FillWidth,
 ) {
     AsyncImage(
-        model = model,
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(model)
+            .crossfade(true)
+            .build(),
         modifier = modifier,
         contentDescription = contentDescription,
         contentScale = contentScale,
-        imageLoader = rememberRaysImageLoader(),
+        imageLoader = imageLoader,
     )
 }
 
@@ -35,15 +40,16 @@ fun RaysImage(
     uuid: String,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
+    imageLoader: ImageLoader = rememberRaysImageLoader(),
     contentScale: ContentScale = ContentScale.FillWidth,
 ) {
     val file = remember(uuid) { File(STICKER_DIR, uuid) }
-    AsyncImage(
+    RaysImage(
         model = file,
         modifier = modifier,
         contentDescription = contentDescription,
         contentScale = contentScale,
-        imageLoader = rememberRaysImageLoader(),
+        imageLoader = imageLoader,
     )
 }
 

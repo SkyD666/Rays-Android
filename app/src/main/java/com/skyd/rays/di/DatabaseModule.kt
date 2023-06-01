@@ -2,9 +2,10 @@ package com.skyd.rays.di
 
 import android.content.Context
 import com.skyd.rays.model.db.AppDatabase
-import com.skyd.rays.model.db.dao.StickerDao
 import com.skyd.rays.model.db.dao.SearchDomainDao
+import com.skyd.rays.model.db.dao.StickerDao
 import com.skyd.rays.model.db.dao.TagDao
+import com.skyd.rays.model.db.dao.UriStringSharePackageDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,5 +32,10 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideGroupDao(database: AppDatabase): SearchDomainDao = database.searchDomainDao()
+    fun provideSearchDomainDao(database: AppDatabase): SearchDomainDao = database.searchDomainDao()
+
+    @Provides
+    @Singleton
+    fun provideUriStringSharePackageDao(database: AppDatabase): UriStringSharePackageDao =
+        database.uriStringSharePackageDao()
 }

@@ -246,7 +246,7 @@ private fun RaysSearchBar(
     var active by rememberSaveable { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
-    var stickerWithTagsList = remember { mutableStateListOf<StickerWithTags>() }
+    val stickerWithTagsList = remember { mutableStateListOf<StickerWithTags>() }
     val searchResultListState = rememberLazyStaggeredGridState()
     var openStickerInfoDialog by rememberSaveable { mutableStateOf(false) }
 

@@ -3,6 +3,7 @@ package com.skyd.rays.ui.screen.settings
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessibilityNew
 import androidx.compose.material.icons.filled.Dataset
 import androidx.compose.material.icons.filled.ManageSearch
 import androidx.compose.material.icons.filled.Palette
@@ -21,6 +22,7 @@ import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.convfeat.CONV_FEAT_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.DATA_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
@@ -77,14 +79,14 @@ fun SettingsScreen() {
                     onClick = { navController.navigate(ML_SCREEN_ROUTE) }
                 )
             }
-//            item {
-//                BaseSettingsItem(
-//                    icon = rememberVectorPainter(Icons.Default.AccessibilityNew),
-//                    text = stringResource(id = R.string.easy_usage_screen_name),
-//                    descriptionText = stringResource(id = R.string.setting_screen_easy_usage_description),
-//                    onClick = { navController.navigate(EASY_USAGE_SCREEN_ROUTE) }
-//                )
-//            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(Icons.Default.AccessibilityNew),
+                    text = stringResource(id = R.string.conv_feat_screen_name),
+                    descriptionText = stringResource(id = R.string.setting_screen_conv_feat_description),
+                    onClick = { navController.navigate(CONV_FEAT_SCREEN_ROUTE) }
+                )
+            }
         }
     }
 }

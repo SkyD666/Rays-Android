@@ -119,6 +119,11 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
                     homeRepo.requestStickerWithTagsDetail(stickerUuid = intent.stickerUuid)
                 }
                 .mapToUIChange { data ->
+                    CurrentStickerUuidPreference.put(
+                        context = appContext,
+                        scope = viewModelScope,
+                        value = intent.stickerUuid
+                    )
                     copy(stickerDetailUiState = StickerDetailUiState.Success(data))
                 }
                 .defaultFinally()

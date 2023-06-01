@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.platform.LocalContext
 import com.skyd.rays.ext.dataStore
@@ -29,6 +28,7 @@ import com.skyd.rays.ui.local.LocalSearchResultSort
 import com.skyd.rays.ui.local.LocalStickerClassificationModel
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalThemeName
+import com.skyd.rays.ui.local.LocalUriStringShare
 import com.skyd.rays.ui.local.LocalUseRegexSearch
 import com.skyd.rays.ui.local.LocalWebDavServer
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +56,8 @@ data class Settings(
     // Style
     val stickerScale: String = StickerScalePreference.default,
     val homeShareButtonAlignment: BiasAlignment = HomeShareButtonAlignmentPreference.default,
+    // Copy URI when sharing
+    val uriStringShare: Boolean = UriStringSharePreference.default,
 )
 
 @Composable
@@ -89,6 +91,7 @@ fun SettingsProvider(
         // Style
         LocalStickerScale provides settings.stickerScale,
         LocalHomeShareButtonAlignment provides settings.homeShareButtonAlignment,
+        LocalUriStringShare provides settings.uriStringShare,
     ) {
         content()
     }

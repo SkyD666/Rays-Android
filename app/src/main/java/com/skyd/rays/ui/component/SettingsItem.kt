@@ -1,5 +1,6 @@
 package com.skyd.rays.ui.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -14,14 +15,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,6 +36,10 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.skyd.rays.ext.alwaysLight
+
+val LocalUseColorfulIcon = compositionLocalOf { false }
+val LocalBackgroundRoundedShape = compositionLocalOf { false }
 
 @Composable
 fun SwitchSettingsItem(
@@ -38,6 +47,7 @@ fun SwitchSettingsItem(
     text: String,
     description: String? = null,
     checked: Boolean = false,
+    enabled: Boolean = true,
     onCheckedChange: ((Boolean) -> Unit)?,
     onLongClick: (() -> Unit)? = null,
 ) {
@@ -46,6 +56,7 @@ fun SwitchSettingsItem(
         text = text,
         description = description,
         checked = checked,
+        enabled = enabled,
         onCheckedChange = onCheckedChange,
         onLongClick = onLongClick,
     )
@@ -57,6 +68,7 @@ fun SwitchSettingsItem(
     text: String,
     description: String? = null,
     checked: Boolean = false,
+    enabled: Boolean = true,
     onCheckedChange: ((Boolean) -> Unit)?,
     onLongClick: (() -> Unit)? = null,
 ) {
@@ -64,12 +76,13 @@ fun SwitchSettingsItem(
         icon = icon,
         text = text,
         descriptionText = description,
+        enabled = enabled,
         onLongClick = onLongClick,
         onClick = {
             onCheckedChange?.invoke(!checked)
         },
     ) {
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Switch(checked = checked, enabled = enabled, onCheckedChange = onCheckedChange)
     }
 }
 
@@ -173,6 +186,7 @@ fun BaseSettingsItem(
     icon: Painter,
     text: String,
     descriptionText: String? = null,
+    enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
     content: (@Composable () -> Unit)? = null
@@ -192,8 +206,8 @@ fun BaseSettingsItem(
                 )
             }
         } else null,
-        onClick = onClick,
-        onLongClick = onLongClick,
+        onClick = if (enabled) onClick else null,
+        onLongClick = if (enabled) onLongClick else null,
         content = content,
     )
 }
@@ -204,46 +218,72 @@ fun BaseSettingsItem(
     icon: Painter,
     text: String,
     description: (@Composable () -> Unit)? = null,
+    enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
     content: (@Composable () -> Unit)? = null
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .run {
-                if (onClick != null) combinedClickable(onLongClick = onLongClick) { onClick() }
-                else this
-            }
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            modifier = Modifier
-                .padding(10.dp)
-                .size(24.dp),
-            painter = icon,
-            contentDescription = null
-        )
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 10.dp)
+    val contentColor = if (LocalBackgroundRoundedShape.current) {
+        LocalContentColor.current alwaysLight true
+    } else {
+        LocalContentColor.current
+    }
+    CompositionLocalProvider(LocalContentColor provides contentColor) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .run {
+                    if (LocalBackgroundRoundedShape.current) {
+                        padding(horizontal = 16.dp)
+                            .clip(RoundedCornerShape(34))
+                            .background(MaterialTheme.colorScheme.primaryContainer alwaysLight true)
+                    } else this
+                }
+                .run {
+                    if (onClick != null && enabled) {
+                        combinedClickable(onLongClick = onLongClick) { onClick() }
+                    } else this
+                }
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-            )
-            if (description != null) {
-                Box(modifier = Modifier.padding(top = 5.dp)) {
-                    description.invoke()
+            if (LocalUseColorfulIcon.current) {
+                Image(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .size(24.dp),
+                    painter = icon,
+                    contentDescription = null
+                )
+            } else {
+                Icon(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .size(24.dp),
+                    painter = icon,
+                    contentDescription = null,
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 10.dp)
+            ) {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (description != null) {
+                    Box(modifier = Modifier.padding(top = 5.dp)) {
+                        description.invoke()
+                    }
                 }
             }
-        }
-        content?.let {
-            Box(modifier = Modifier.padding(end = 5.dp)) { it.invoke() }
+            content?.let {
+                Box(modifier = Modifier.padding(end = 5.dp)) { it.invoke() }
+            }
         }
     }
 }

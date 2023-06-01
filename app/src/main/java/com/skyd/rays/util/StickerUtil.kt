@@ -29,10 +29,15 @@ fun Context.sendSticker(uuid: String, onSuccess: (() -> Unit)? = null) {
         putExtra(Intent.EXTRA_STREAM, contentUri)
         type = "image/*"
     }
-    contentUri.wechatStickerUriString(context = this)
     startActivity(Intent.createChooser(shareIntent, resources.getText(R.string.send_sticker)))
     scope.launch {
-        AppDatabase.getInstance(this@sendSticker).stickerDao().addShareCount(uuid = uuid)
+        with(AppDatabase.getInstance(this@sendSticker)) {
+            contentUri.shareStickerUriString(
+                context = this@sendSticker,
+                packages = uriStringSharePackageDao().getAllPackage().map { it.packageName }
+            )
+            stickerDao().addShareCount(uuid = uuid)
+        }
     }
     onSuccess?.invoke()
 }
@@ -54,10 +59,10 @@ fun stickerUuidToUri(uuid: String) = Uri.fromFile(stickerUuidToFile(uuid))
 /**
  * 微信聊天框输入图片 uri 自动识别图片的功能
  */
-private fun Uri.wechatStickerUriString(context: Context) {
-    context.grantUriPermission(
-        "com.tencent.mm", this, Intent.FLAG_GRANT_READ_URI_PERMISSION
-    )
+private fun Uri.shareStickerUriString(context: Context, packages: List<String>) {
+    packages.forEach {
+        context.grantUriPermission(it, this, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
     val clipboard = ContextCompat.getSystemService(context, ClipboardManager::class.java)
     clipboard?.setPrimaryClip(ClipData.newPlainText("Share sticker", this.toString()))
 }
