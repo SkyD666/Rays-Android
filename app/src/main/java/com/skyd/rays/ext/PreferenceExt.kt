@@ -7,13 +7,14 @@ import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
 import com.skyd.rays.model.preference.Settings
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.model.preference.StickerScalePreference
-import com.skyd.rays.model.preference.UriStringSharePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
+import com.skyd.rays.model.preference.share.StickerExtNamePreference
+import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
@@ -48,7 +49,8 @@ fun Preferences.toSettings(): Settings {
         stickerScale = StickerScalePreference.fromPreferences(this),
         homeShareButtonAlignment = HomeShareButtonAlignmentPreference.fromPreferences(this),
 
-        // Copy URI when sharing
+        // Share
         uriStringShare = UriStringSharePreference.fromPreferences(this),
+        stickerExtName = StickerExtNamePreference.fromPreferences(this),
     )
 }

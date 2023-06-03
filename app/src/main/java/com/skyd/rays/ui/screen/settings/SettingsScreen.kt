@@ -3,10 +3,10 @@ package com.skyd.rays.ui.screen.settings
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessibilityNew
 import androidx.compose.material.icons.filled.Dataset
 import androidx.compose.material.icons.filled.ManageSearch
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,7 +22,7 @@ import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.convfeat.CONV_FEAT_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.shareconfig.SHARE_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.DATA_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
@@ -65,6 +65,14 @@ fun SettingsScreen() {
             }
             item {
                 BaseSettingsItem(
+                    icon = rememberVectorPainter(Icons.Default.Share),
+                    text = stringResource(id = R.string.share_config_screen_name),
+                    descriptionText = stringResource(id = R.string.setting_screen_share_config_description),
+                    onClick = { navController.navigate(SHARE_CONFIG_SCREEN_ROUTE) }
+                )
+            }
+            item {
+                BaseSettingsItem(
                     icon = rememberVectorPainter(Icons.Default.Dataset),
                     text = stringResource(id = R.string.data_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_data_description),
@@ -77,14 +85,6 @@ fun SettingsScreen() {
                     text = stringResource(id = R.string.ml_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_ml_description),
                     onClick = { navController.navigate(ML_SCREEN_ROUTE) }
-                )
-            }
-            item {
-                BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.AccessibilityNew),
-                    text = stringResource(id = R.string.conv_feat_screen_name),
-                    descriptionText = stringResource(id = R.string.setting_screen_conv_feat_description),
-                    onClick = { navController.navigate(CONV_FEAT_SCREEN_ROUTE) }
                 )
             }
         }

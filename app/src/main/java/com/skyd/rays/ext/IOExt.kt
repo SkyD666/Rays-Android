@@ -59,13 +59,5 @@ fun File.md5(): String? {
     return bi?.toString(16)
 }
 
-fun File.copyToTempFile(target: File, bufferSize: Int = DEFAULT_BUFFER_SIZE) {
-    this.inputStream().use { input ->
-        target.outputStream().use { output ->
-            input.copyTo(output, bufferSize)
-        }
-    }
-}
-
 inline val String.extName: String
     get() = substringAfterLast(".", missingDelimiterValue = "")

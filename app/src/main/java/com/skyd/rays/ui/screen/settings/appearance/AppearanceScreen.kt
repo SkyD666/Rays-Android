@@ -233,7 +233,7 @@ fun Palettes(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .fillMaxWidth()
-                .height(80.dp)
+                .height(74.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .clickable {},
             horizontalArrangement = Arrangement.Center,

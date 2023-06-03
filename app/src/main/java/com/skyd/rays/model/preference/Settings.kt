@@ -13,6 +13,8 @@ import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
+import com.skyd.rays.model.preference.share.StickerExtNamePreference
+import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
@@ -26,6 +28,7 @@ import com.skyd.rays.ui.local.LocalQuery
 import com.skyd.rays.ui.local.LocalSearchResultReverse
 import com.skyd.rays.ui.local.LocalSearchResultSort
 import com.skyd.rays.ui.local.LocalStickerClassificationModel
+import com.skyd.rays.ui.local.LocalStickerExtName
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalThemeName
 import com.skyd.rays.ui.local.LocalUriStringShare
@@ -56,8 +59,9 @@ data class Settings(
     // Style
     val stickerScale: String = StickerScalePreference.default,
     val homeShareButtonAlignment: BiasAlignment = HomeShareButtonAlignmentPreference.default,
-    // Copy URI when sharing
+    // Share
     val uriStringShare: Boolean = UriStringSharePreference.default,
+    val stickerExtName: Boolean = StickerExtNamePreference.default,
 )
 
 @Composable
@@ -91,7 +95,9 @@ fun SettingsProvider(
         // Style
         LocalStickerScale provides settings.stickerScale,
         LocalHomeShareButtonAlignment provides settings.homeShareButtonAlignment,
+        // Share
         LocalUriStringShare provides settings.uriStringShare,
+        LocalStickerExtName provides settings.stickerExtName,
     ) {
         content()
     }

@@ -1,4 +1,4 @@
-package com.skyd.rays.ui.screen.settings.convfeat.uristringshare
+package com.skyd.rays.ui.screen.settings.shareconfig.uristringshare
 
 import com.skyd.rays.base.IUiEvent
 

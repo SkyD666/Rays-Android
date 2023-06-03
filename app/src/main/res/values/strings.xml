@@ -167,7 +167,7 @@
     <string name="image_scale_fill_bounds">Fill bounds</string>
     <string name="search_result_sort_click_count">Click count</string>
     <string name="search_result_sort_share_count">Share count</string>
-    <string name="conv_feat_screen_name">Conv Features</string>
+    <string name="share_config_screen_name">Share</string>
     <string name="uri_string_share_screen_name">URI string share</string>
     <string name="uri_string_share_screen_description">Copy sticker URI string when sharing</string>
     <string name="uri_string_share_screen_enable">Enable</string>
@@ -175,5 +175,7 @@
     <string name="uri_string_share_screen_add_app_package_example">e.g., com.skyd.example</string>
     <string name="uri_string_share_repo_no_package">No such package is available: %s</string>
     <string name="uri_string_share_screen_failed">Error: %s</string>
-    <string name="setting_screen_conv_feat_description">Some convenient features</string>
+    <string name="setting_screen_share_config_description">Sticker file extension, URI string share</string>
+    <string name="share_config_screen_file_extension">File extension</string>
+    <string name="share_config_screen_file_extension_description">Add the file extension name when sharing a sticker</string>
 </resources>

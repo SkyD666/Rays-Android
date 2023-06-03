@@ -76,8 +76,9 @@ fun SwitchSettingsItem(
     BaseSettingsItem(
         modifier = Modifier.toggleable(
             value = checked,
+            enabled = enabled,
+            role = Role.Switch,
             onValueChange = { onCheckedChange?.invoke(it) },
-            role = Role.Switch
         ),
         icon = icon,
         text = text,

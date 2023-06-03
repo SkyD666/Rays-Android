@@ -1,4 +1,4 @@
-package com.skyd.rays.ui.screen.settings.convfeat.uristringshare
+package com.skyd.rays.ui.screen.settings.shareconfig.uristringshare
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,7 +35,7 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.skyd.rays.R
 import com.skyd.rays.model.bean.UriStringShareDataBean
 import com.skyd.rays.model.bean.UriStringSharePackageBean
-import com.skyd.rays.model.preference.UriStringSharePreference
+import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.ui.component.LocalBackgroundRoundedShape
 import com.skyd.rays.ui.component.LocalUseColorfulIcon
 import com.skyd.rays.ui.component.RaysIconButton
@@ -58,6 +59,10 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
     var openAddDialog by rememberSaveable { mutableStateOf(false) }
     var openDeleteDialog by rememberSaveable { mutableStateOf<String?>(null) }
     var inputPackageName by rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        viewModel.sendUiIntent(UriStringShareIntent.GetAllUriStringShare)
+    }
 
     viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null).value?.apply {
         when (addPackageNameUiEvent) {
@@ -96,6 +101,16 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
     ) { paddingValues ->
         val uriStringShare = LocalUriStringShare.current
         var dataList by remember { mutableStateOf(listOf<UriStringShareDataBean>()) }
+
+        viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
+            when (uriStringShareResultUiState) {
+                UriStringShareResultUiState.Init -> {}
+
+                is UriStringShareResultUiState.Success -> {
+                    dataList = uriStringShareResultUiState.data
+                }
+            }
+        }
 
         LazyColumn(
             modifier = Modifier
@@ -144,18 +159,6 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
                             openDeleteDialog = item.uriStringSharePackageBean.packageName
                         }
                     )
-                }
-            }
-        }
-
-        viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
-            when (uriStringShareResultUiState) {
-                UriStringShareResultUiState.Init -> {
-                    viewModel.sendUiIntent(UriStringShareIntent.GetAllUriStringShare)
-                }
-
-                is UriStringShareResultUiState.Success -> {
-                    dataList = uriStringShareResultUiState.data
                 }
             }
         }

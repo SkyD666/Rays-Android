@@ -1,4 +1,4 @@
-package com.skyd.rays.model.preference
+package com.skyd.rays.model.preference.share
 
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences
@@ -9,11 +9,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object UriStringSharePreference {
-    private const val URI_STRING_SHARE = "uriStringShare"
-    const val default = false
+object StickerExtNamePreference {
+    private const val STICKER_EXT_NAME = "stickerExtName"
+    const val default = true
 
-    val key = booleanPreferencesKey(URI_STRING_SHARE)
+    val key = booleanPreferencesKey(STICKER_EXT_NAME)
 
     fun put(context: Context, scope: CoroutineScope, value: Boolean) {
         scope.launch(Dispatchers.IO) {
