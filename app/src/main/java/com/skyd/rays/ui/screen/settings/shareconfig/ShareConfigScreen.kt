@@ -52,14 +52,6 @@ fun ShareConfigScreen() {
                 .nestedScroll(scrollBehavior.nestedScrollConnection), contentPadding = paddingValues
         ) {
             item {
-                BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Link),
-                    text = stringResource(id = R.string.uri_string_share_screen_name),
-                    descriptionText = stringResource(id = R.string.uri_string_share_screen_description),
-                    onClick = { navController.navigate(URI_STRING_SHARE_SCREEN_ROUTE) }
-                )
-            }
-            item {
                 SwitchSettingsItem(
                     icon = Icons.Default.Description,
                     checked = stickerExtName,
@@ -72,6 +64,14 @@ fun ShareConfigScreen() {
                             value = it
                         )
                     }
+                )
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(image = Icons.Default.Link),
+                    text = stringResource(id = R.string.uri_string_share_screen_name),
+                    descriptionText = stringResource(id = R.string.uri_string_share_screen_description),
+                    onClick = { navController.navigate(URI_STRING_SHARE_SCREEN_ROUTE) }
                 )
             }
         }

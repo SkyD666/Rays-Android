@@ -30,9 +30,11 @@
         使用<b> <a href="https://developer.android.com/topic/architecture#recommended-app-arch">MVI</a> </b>架构，完全采用<b> <a href="https://m3.material.io/">Material You</a> </b>设计风格。<b>所有页面均使用 <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a> </b>开发。
     </p>
     <p>
-        <b><a href="doc/README/README-en.md">English</a></b>
+        <b><a href="doc/README/README-en.md">English</a></b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+        <b><a href="https://github.com/SkyD666/Rays-Android/issues/4">帮助我们翻译</a></b>
     </p>
 </div>
+
 
 
 ## 💡主要功能
