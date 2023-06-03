@@ -6,8 +6,11 @@ import java.io.InputStream
 
 object ImageFormatChecker {
     fun check(tested: InputStream): ImageFormat {
+        var readByteArray: ByteArray? = null
         formatStandards.forEach {
-            if (it.check(tested)) {
+            val result = it.check(tested, readByteArray)
+            readByteArray = result.second
+            if (result.first) {
                 return it.format
             }
         }

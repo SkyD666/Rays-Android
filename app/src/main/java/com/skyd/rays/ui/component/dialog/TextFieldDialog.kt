@@ -7,7 +7,6 @@
  */
 package com.skyd.rays.ui.component.dialog
 
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -18,10 +17,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
 import com.skyd.rays.ui.component.ClipboardTextField
-import com.skyd.rays.ui.component.RaysLottieAnimation
 
 @Composable
 fun TextFieldDialog(
@@ -30,12 +27,6 @@ fun TextFieldDialog(
     readOnly: Boolean = false,
     maxLines: Int = Int.MAX_VALUE,
     title: String = "",
-    icon: @Composable (() -> Unit)? = {
-        RaysLottieAnimation(
-            modifier = Modifier.size(48.dp),
-            resId = R.raw.lottie_genshin_impact_venti_1
-        )
-    },
     value: String = "",
     placeholder: String = "",
     isPassword: Boolean = false,
@@ -53,7 +44,6 @@ fun TextFieldDialog(
         modifier = modifier,
         visible = visible,
         onDismissRequest = onDismissRequest,
-        icon = icon,
         title = {
             Text(text = title, maxLines = 2, overflow = TextOverflow.Ellipsis)
         },

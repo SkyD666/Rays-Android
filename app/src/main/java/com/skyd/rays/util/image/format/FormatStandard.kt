@@ -17,10 +17,22 @@ sealed class FormatStandard(
 
     abstract fun check(tested: ByteArray): Boolean
 
-    fun check(tested: InputStream): Boolean {
-        val buffer = ByteArray(requiredByteArraySize)
-        tested.read(buffer)
-        return check(buffer)
+    fun check(tested: InputStream, readByteArray: ByteArray?): Pair<Boolean, ByteArray> {
+        require(requiredByteArraySize > 0)
+        val delta = requiredByteArraySize - (readByteArray?.size ?: 0)
+        val buffer: ByteArray = if (delta > 0) {
+            val newBuffer = ByteArray(delta)
+            tested.read(newBuffer)
+            if (readByteArray == null) {
+                newBuffer
+            } else {
+                readByteArray + newBuffer
+            }
+        } else {
+            // 当 requiredByteArraySize > 0 时，这里 readByteArray 一定不为 null
+            readByteArray!!
+        }
+        return check(buffer) to buffer
     }
 
     object PngFormat : FormatStandard(

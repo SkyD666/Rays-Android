@@ -81,10 +81,10 @@ fun StickerWithTags.md5(): String {
  * 针对外部应用
  */
 fun externalStickerUuidToFile(uuid: String): File {
-    val originFile = File(STICKER_DIR, uuid)
+    val originFile = stickerUuidToFile(uuid)
     val outputDir = File(appContext.cacheDir, "TempSticker")
     if (appContext.dataStore.get(StickerExtNamePreference.key) == false ||
-        !outputDir.exists() && !outputDir.mkdirs()
+        (!outputDir.exists() && !outputDir.mkdirs())
     ) {
         return originFile
     }

@@ -29,11 +29,12 @@ fun RaysDialog(
     icon: @Composable (() -> Unit)? = {
         val res = remember {
             arrayOf(
-                R.raw.lottie_genshin_impact_venti_1,
-                R.raw.lottie_genshin_impact_qiqi_1,
-                R.raw.lottie_genshin_impact_paimon_1,
+                R.raw.lottie_genshin_impact_diona_1,
                 R.raw.lottie_genshin_impact_klee_1,
-                R.raw.lottie_genshin_impact_diona_1
+                R.raw.lottie_genshin_impact_klee_2,
+                R.raw.lottie_genshin_impact_klee_3,
+                R.raw.lottie_genshin_impact_paimon_1,
+                R.raw.lottie_genshin_impact_venti_1,
             )
         }
         RaysLottieAnimation(
