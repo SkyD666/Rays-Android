@@ -4,14 +4,13 @@ import com.skyd.rays.util.image.format.FormatStandardUtil.baseCheck
 import java.io.InputStream
 
 
-@Suppress("unused")
 sealed class FormatStandard(
     val format: ImageFormat,
     val requiredByteArraySize: Int
 ) {
     companion object {
         val formatStandards by lazy {
-            FormatStandard::class.sealedSubclasses.mapNotNull { it.objectInstance }
+            arrayOf(PngFormat, JpgFormat, GifFormat, BmpFormat, WebpFormat)
         }
     }
 

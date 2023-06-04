@@ -110,7 +110,7 @@ fun externalStickerUuidToFile(uuid: String): File {
 /**
  * 针对内部操作，针对原图片本身
  */
-fun stickerUuidToFile(uuid: String): File  = File(STICKER_DIR, uuid)
+fun stickerUuidToFile(uuid: String): File = File(STICKER_DIR, uuid)
 
 fun externalStickerUuidToUri(uuid: String) = Uri.fromFile(externalStickerUuidToFile(uuid))
 
