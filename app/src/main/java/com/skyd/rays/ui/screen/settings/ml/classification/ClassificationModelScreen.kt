@@ -16,11 +16,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -32,7 +33,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
-import com.skyd.rays.ext.addIfAny
 import com.skyd.rays.model.bean.ModelBean
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.ui.component.BaseSettingsItem
@@ -55,7 +55,32 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
     val snackbarHostState = remember { SnackbarHostState() }
     var openWaitingDialog by remember { mutableStateOf(false) }
     var openDeleteWarningDialog by remember { mutableStateOf<ModelBean?>(null) }
-    val models = remember { mutableStateListOf<ModelBean>() }
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
+    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+
+    LaunchedEffect(Unit) {
+        if (uiState.getModelsUiState is GetModelsUiState.Init) {
+            viewModel.sendUiIntent(ClassificationModelIntent.GetModels)
+        }
+    }
+
+    uiEvent?.apply {
+        when (importUiEvent) {
+            is ImportUiEvent.Success -> {
+                viewModel.sendUiIntent(ClassificationModelIntent.GetModels)
+            }
+
+            null -> Unit
+        }
+        when (deleteUiEvent) {
+            is DeleteUiEvent.Success -> {
+                viewModel.sendUiIntent(ClassificationModelIntent.GetModels)
+            }
+
+            null -> Unit
+        }
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -72,45 +97,11 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = paddingValues,
-            models = models,
+            classificationModelState = uiState,
             onDelete = { openDeleteWarningDialog = it }
         )
 
-        viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
-            when (getModelsUiState) {
-                GetModelsUiState.Init -> {
-                    viewModel.sendUiIntent(ClassificationModelIntent.GetModels)
-                }
-
-                is GetModelsUiState.Success -> {
-                    getModelsUiState.models.forEach { newModel ->
-                        models.addIfAny(newModel) { it.path != newModel.path }
-                    }
-                    models.removeIf { model ->
-                        getModelsUiState.models.firstOrNull { it.path == model.path } == null
-                    }
-                }
-            }
-        }
-
-        viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null).value?.apply {
-            when (importUiEvent) {
-                is ImportUiEvent.Success -> {
-                    viewModel.sendUiIntent(ClassificationModelIntent.GetModels)
-                }
-
-                null -> {}
-            }
-            when (deleteUiEvent) {
-                is DeleteUiEvent.Success -> {
-                    viewModel.sendUiIntent(ClassificationModelIntent.GetModels)
-                }
-
-                null -> {}
-            }
-        }
-
-        viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null).value?.also {
+        loadUiIntent?.also {
             when (it) {
                 is LoadUiIntent.Error -> {
                     scope.launch {
@@ -148,20 +139,28 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
 private fun ModelList(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    models: List<ModelBean>,
+    classificationModelState: ClassificationModelState,
     onDelete: (ModelBean) -> Unit,
     viewModel: ClassificationModelViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val classificationModel = LocalStickerClassificationModel.current
-    val classificationModelName = classificationModel.substringAfterLast("/")
+    val classificationModelName = rememberSaveable(classificationModel) {
+        classificationModel.substringAfterLast("/")
+    }
     val pickModelLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri ->
         if (uri != null) {
             viewModel.sendUiIntent(ClassificationModelIntent.ImportModel(uri))
         }
+    }
+    val getModelsUiState = classificationModelState.getModelsUiState
+    val models = if (getModelsUiState is GetModelsUiState.Success) {
+        getModelsUiState.models
+    } else {
+        emptyList()
     }
     LazyColumn(
         modifier = modifier,

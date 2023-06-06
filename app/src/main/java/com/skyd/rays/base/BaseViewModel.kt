@@ -60,7 +60,7 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
     /**
      * 发送当前加载状态：Loading、Error、Normal
      */
-    private fun sendLoadUiIntent(loadUiIntent: LoadUiIntent) {
+    protected fun sendLoadUiIntent(loadUiIntent: LoadUiIntent) {
         viewModelScope.launch {
             _loadUiIntentFlow.emit(loadUiIntent)
         }

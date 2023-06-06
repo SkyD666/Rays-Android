@@ -54,7 +54,8 @@ fun UpdateDialog(
     viewModel: UpdateViewModel = hiltViewModel()
 ) {
     var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
-    val uiStateFlow by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
 
     LaunchedEffect(Unit) {
         viewModel.sendUiIntent(UpdateIntent.CheckUpdate)
@@ -62,9 +63,9 @@ fun UpdateDialog(
 
     WaitingDialog(visible = openWaitingDialog && !silence)
 
-    viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null).value?.also {
+    loadUiIntent?.also {
         when (it) {
-            is LoadUiIntent.Error -> {}
+            is LoadUiIntent.Error -> Unit
 
             is LoadUiIntent.Loading -> {
                 openWaitingDialog = it.isShow
@@ -72,8 +73,8 @@ fun UpdateDialog(
         }
     }
 
-    when (val updateUiState = uiStateFlow.updateUiState) {
-        UpdateUiState.Init -> {}
+    when (val updateUiState = uiState.updateUiState) {
+        UpdateUiState.Init -> Unit
         is UpdateUiState.OpenNewerDialog -> {
             NewerDialog(
                 updateBean = updateUiState.data,

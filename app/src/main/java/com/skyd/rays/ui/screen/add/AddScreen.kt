@@ -100,6 +100,9 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
     val tags = remember { mutableStateListOf<TagBean>() }
     var stickerUuid by remember { mutableStateOf(initStickerUuid) }
     val stickerTexts = remember { mutableStateListOf<String>() }
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
 
     if (initStickerUuid.isNotBlank()) {
         LaunchedEffect(Unit) {
@@ -310,7 +313,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
             }
         )
 
-        viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
+        uiState.apply {
             when (getStickersWithTagsUiState) {
                 is GetStickersWithTagsUiState.Success -> {
                     val stickerBean = getStickersWithTagsUiState.stickerWithTags.sticker
@@ -321,13 +324,13 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                     tags.addAll(getStickersWithTagsUiState.stickerWithTags.tags.distinct())
                 }
 
-                GetStickersWithTagsUiState.Failed -> {}
-                GetStickersWithTagsUiState.Init -> {}
+                GetStickersWithTagsUiState.Failed,
+                GetStickersWithTagsUiState.Init -> Unit
             }
         }
     }
 
-    viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null).value?.apply {
+    uiEvent?.apply {
         when (addStickersResultUiEvent) {
             AddStickersResultUiEvent.Duplicate -> {
                 scope.launch {
@@ -343,7 +346,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                 openDialog = true
             }
 
-            null -> {}
+            null -> Unit
         }
         when (recognizeTextUiEvent) {
             is RecognizeTextUiEvent.Success -> {
@@ -351,11 +354,11 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                 stickerTexts += recognizeTextUiEvent.texts
             }
 
-            null -> {}
+            null -> Unit
         }
     }
 
-    viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null).value?.also {
+    loadUiIntent?.also {
         when (it) {
             is LoadUiIntent.Error -> {
                 scope.launch {
@@ -366,7 +369,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                 }
             }
 
-            is LoadUiIntent.Loading -> {}
+            is LoadUiIntent.Loading -> Unit
         }
     }
 }

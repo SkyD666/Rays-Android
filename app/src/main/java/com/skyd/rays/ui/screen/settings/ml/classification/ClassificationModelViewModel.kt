@@ -3,9 +3,11 @@ package com.skyd.rays.ui.screen.settings.ml.classification
 import com.skyd.rays.base.BaseViewModel
 import com.skyd.rays.base.IUIChange
 import com.skyd.rays.base.IUiEvent
+import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.model.respository.ClassificationModelRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.merge
 import javax.inject.Inject
 
@@ -44,7 +46,10 @@ class ClassificationModelViewModel @Inject constructor(
                 .mapToUIChange {
                     ClassificationModelEvent(importUiEvent = ImportUiEvent.Success(intent.uri))
                 }
-                .defaultFinally()
+                .catch {
+                    it.printStackTrace()
+                    sendLoadUiIntent(LoadUiIntent.Error(it.message.toString()))
+                }
         },
 
         doIsInstance<ClassificationModelIntent.DeleteModel> { intent ->
@@ -52,7 +57,10 @@ class ClassificationModelViewModel @Inject constructor(
                 .mapToUIChange {
                     ClassificationModelEvent(deleteUiEvent = DeleteUiEvent.Success(intent.modelBean.path))
                 }
-                .defaultFinally()
+                .catch {
+                    it.printStackTrace()
+                    sendLoadUiIntent(LoadUiIntent.Error(it.message.toString()))
+                }
         },
     )
 }

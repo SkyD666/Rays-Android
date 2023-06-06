@@ -13,17 +13,9 @@ import java.security.NoSuchAlgorithmException
 
 
 fun Uri.copyTo(target: File): File {
-    appContext.contentResolver.openInputStream(this)!!.use {
-        val parentFile = target.parentFile
-        if (parentFile?.exists() == false) {
-            parentFile.mkdirs()
-        }
-        if (!target.exists()) {
-            target.createNewFile()
-        }
-        it.copyTo(FileOutputStream(target))
+    return appContext.contentResolver.openInputStream(this)!!.use {
+        it.saveTo(target)
     }
-    return target
 }
 
 fun InputStream.saveTo(target: File): File {

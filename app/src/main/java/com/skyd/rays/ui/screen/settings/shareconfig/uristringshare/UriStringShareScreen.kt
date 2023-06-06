@@ -33,7 +33,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.skyd.rays.R
-import com.skyd.rays.model.bean.UriStringShareDataBean
 import com.skyd.rays.model.bean.UriStringSharePackageBean
 import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.ui.component.LocalBackgroundRoundedShape
@@ -59,12 +58,14 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
     var openAddDialog by rememberSaveable { mutableStateOf(false) }
     var openDeleteDialog by rememberSaveable { mutableStateOf<String?>(null) }
     var inputPackageName by rememberSaveable { mutableStateOf("") }
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
 
     LaunchedEffect(Unit) {
         viewModel.sendUiIntent(UriStringShareIntent.GetAllUriStringShare)
     }
 
-    viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null).value?.apply {
+    uiEvent?.apply {
         when (addPackageNameUiEvent) {
             is AddPackageNameUiEvent.Failed -> {
                 scope.launch {
@@ -77,8 +78,8 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
                 }
             }
 
-            AddPackageNameUiEvent.Success -> {}
-            null -> {}
+            AddPackageNameUiEvent.Success,
+            null -> Unit
         }
     }
 
@@ -100,18 +101,6 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
         }
     ) { paddingValues ->
         val uriStringShare = LocalUriStringShare.current
-        var dataList by remember { mutableStateOf(listOf<UriStringShareDataBean>()) }
-
-        viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
-            when (uriStringShareResultUiState) {
-                UriStringShareResultUiState.Init -> {}
-
-                is UriStringShareResultUiState.Success -> {
-                    dataList = uriStringShareResultUiState.data
-                }
-            }
-        }
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -135,30 +124,33 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            itemsIndexed(dataList) { _, item ->
-                CompositionLocalProvider(
-                    LocalContentColor provides
-                            if (uriStringShare) MaterialTheme.colorScheme.onSurface
-                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-                    LocalUseColorfulIcon provides true,
-                ) {
-                    SwitchSettingsItem(
-                        icon = rememberDrawablePainter(drawable = item.appIcon),
-                        checked = item.uriStringSharePackageBean.enabled,
-                        enabled = uriStringShare,
-                        text = item.appName,
-                        description = item.uriStringSharePackageBean.packageName,
-                        onCheckedChange = {
-                            viewModel.sendUiIntent(
-                                UriStringShareIntent.UpdateUriStringShare(
-                                    item.uriStringSharePackageBean.copy(enabled = it)
+            val uriStringShareResultUiState = uiState.uriStringShareResultUiState
+            if (uriStringShareResultUiState is UriStringShareResultUiState.Success) {
+                itemsIndexed(uriStringShareResultUiState.data) { _, item ->
+                    CompositionLocalProvider(
+                        LocalContentColor provides
+                                if (uriStringShare) MaterialTheme.colorScheme.onSurface
+                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                        LocalUseColorfulIcon provides true,
+                    ) {
+                        SwitchSettingsItem(
+                            icon = rememberDrawablePainter(drawable = item.appIcon),
+                            checked = item.uriStringSharePackageBean.enabled,
+                            enabled = uriStringShare,
+                            text = item.appName,
+                            description = item.uriStringSharePackageBean.packageName,
+                            onCheckedChange = {
+                                viewModel.sendUiIntent(
+                                    UriStringShareIntent.UpdateUriStringShare(
+                                        item.uriStringSharePackageBean.copy(enabled = it)
+                                    )
                                 )
-                            )
-                        },
-                        onLongClick = {
-                            openDeleteDialog = item.uriStringSharePackageBean.packageName
-                        }
-                    )
+                            },
+                            onLongClick = {
+                                openDeleteDialog = item.uriStringSharePackageBean.packageName
+                            }
+                        )
+                    }
                 }
             }
         }

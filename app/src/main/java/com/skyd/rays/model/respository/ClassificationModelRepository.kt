@@ -41,20 +41,20 @@ class ClassificationModelRepository @Inject constructor() : BaseRepository() {
         }
     }
 
-    suspend fun requestImportModel(modelUri: Uri): Flow<BaseData<Unit>> {
+    suspend fun requestImportModel(modelUri: Uri): Flow<BaseData<List<ModelBean>>> {
         return flow {
             val name = modelUri.path?.substringAfterLast("/")
                 ?: System.currentTimeMillis().toString()
             val file = File(CLASSIFICATION_MODEL_DIR_FILE, name)
             modelUri.copyTo(file)
-            emitBaseData(BaseData<Unit>().apply {
+            emitBaseData(BaseData<List<ModelBean>>().apply {
                 code = 0
-                data = Unit
+                data = getModels()
             })
         }
     }
 
-    suspend fun requestDeleteModel(modelUri: Uri): Flow<BaseData<Unit>> {
+    suspend fun requestDeleteModel(modelUri: Uri): Flow<BaseData<List<ModelBean>>> {
         return flow {
             val name = modelUri.path?.substringAfterLast("/")
                 ?: System.currentTimeMillis().toString()
@@ -66,18 +66,15 @@ class ClassificationModelRepository @Inject constructor() : BaseRepository() {
                     value = StickerClassificationModelPreference.default
                 )
             }
-            emitBaseData(BaseData<Unit>().apply {
+            emitBaseData(BaseData<List<ModelBean>>().apply {
                 code = 0
-                data = Unit
+                data = getModels()
             })
         }
     }
 
     private fun getModels(): List<ModelBean> {
-        val models: Array<File> = CLASSIFICATION_MODEL_DIR_FILE.listFiles { _, name ->
-            name.endsWith(suffix = ".tflite", ignoreCase = true) ||
-                    name.endsWith(suffix = ".lite", ignoreCase = true)
-        } ?: arrayOf()
+        val models = CLASSIFICATION_MODEL_DIR_FILE.listFiles().orEmpty()
         return models.map {
             ModelBean(
                 uri = it.toUri(),

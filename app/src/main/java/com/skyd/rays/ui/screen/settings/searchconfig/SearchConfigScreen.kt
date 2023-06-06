@@ -59,8 +59,9 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val useRegexSearch = LocalUseRegexSearch.current
     val intersectSearchBySpace = LocalIntersectSearchBySpace.current
-    val searchDomainMap = remember { mutableStateMapOf<String, Boolean>() }
     var openWaitingDialog by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
 
     LaunchedEffect(Unit) {
         viewModel.sendUiIntent(SearchConfigIntent.GetSearchDomain)
@@ -121,36 +122,29 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
                     text = stringResource(id = R.string.search_config_screen_domain_category)
                 )
             }
-            repeat(tables.size) { tableIndex ->
-                selected[tableIndex] = mutableStateMapOf()
-                item {
-                    SearchDomainItem(
-                        selected = selected[tableIndex]!!,
-                        table = tables[tableIndex],
-                        searchDomain = searchDomainMap,
-                        onSetSearchDomain = {
-                            viewModel.sendUiIntent(SearchConfigIntent.SetSearchDomain(it))
-                        }
-                    )
+            val searchDomainResultUiState = uiState.searchDomainResultUiState
+            if (searchDomainResultUiState is SearchDomainResultUiState.Success) {
+                repeat(tables.size) { tableIndex ->
+                    selected[tableIndex] = mutableStateMapOf()
+                    item {
+                        SearchDomainItem(
+                            selected = selected[tableIndex]!!,
+                            table = tables[tableIndex],
+                            searchDomain = searchDomainResultUiState.searchDomainMap,
+                            onSetSearchDomain = {
+                                viewModel.sendUiIntent(SearchConfigIntent.SetSearchDomain(it))
+                            }
+                        )
+                    }
                 }
             }
         }
-        viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null).value?.also {
+        loadUiIntent?.also {
             when (it) {
-                is LoadUiIntent.Error -> {}
+                is LoadUiIntent.Error -> Unit
                 is LoadUiIntent.Loading -> {
                     openWaitingDialog = it.isShow
                 }
-            }
-        }
-        viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
-            when (searchDomainResultUiState) {
-                is SearchDomainResultUiState.Success -> {
-                    searchDomainMap.clear()
-                    searchDomainMap.putAll(searchDomainResultUiState.searchDomainMap)
-                }
-
-                SearchDomainResultUiState.Init -> {}
             }
         }
         WaitingDialog(visible = openWaitingDialog)

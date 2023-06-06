@@ -88,6 +88,8 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
     }
     var inputDialogIsPassword by remember { mutableStateOf(false) }
     var openRecycleBinBottomSheet by rememberSaveable { mutableStateOf(false) }
+    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -253,7 +255,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             }
         }
 
-        viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null).value?.also { loadUiIntent ->
+        loadUiIntent?.also { loadUiIntent ->
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
                     scope.launch {
@@ -350,7 +352,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             )
         }
     }
-    viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null).value?.apply {
+    uiEvent?.apply {
         when (uploadResultUiEvent) {
             is UploadResultUiEvent.Success -> {
                 when (val result = uploadResultUiEvent.result) {
@@ -372,7 +374,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 }
             }
 
-            null -> {}
+            null -> Unit
         }
         when (downloadResultUiEvent) {
             is DownloadResultUiEvent.Success -> {
@@ -395,7 +397,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 }
             }
 
-            null -> {}
+            null -> Unit
         }
     }
 }
@@ -408,14 +410,7 @@ private fun RecycleBinBottomSheet(
     onClear: () -> Unit,
     viewModel: WebDavViewModel = hiltViewModel()
 ) {
-    var list: List<BackupInfo>
-
-    viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
-        list = when (getRemoteRecycleBinResultUiState) {
-            GetRemoteRecycleBinResultUiState.Init -> emptyList()
-            is GetRemoteRecycleBinResultUiState.Success -> getRemoteRecycleBinResultUiState.result
-        }
-    }
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
 
     ModalBottomSheet(onDismissRequest = onDismissRequest) {
         Row(
@@ -436,7 +431,40 @@ private fun RecycleBinBottomSheet(
             }
         }
         LazyColumn(contentPadding = PaddingValues(vertical = 10.dp)) {
-            if (list.isEmpty()) {
+            val getRemoteRecycleBinResultUiState = uiState.getRemoteRecycleBinResultUiState
+            if (getRemoteRecycleBinResultUiState is GetRemoteRecycleBinResultUiState.Success &&
+                getRemoteRecycleBinResultUiState.result.isNotEmpty()
+            ) {
+                val list: List<BackupInfo> = getRemoteRecycleBinResultUiState.result
+                items(list.size) {
+                    ListItem(
+                        headlineContent = { Text(text = list[it].uuid) },
+                        supportingContent = {
+                            Text(
+                                text = stringResource(
+                                    R.string.webdav_screen_last_modified_time,
+                                    dateTime(list[it].modifiedTime)
+                                )
+                            )
+                        },
+                        trailingContent = {
+                            Row {
+                                RaysIconButton(
+                                    imageVector = Icons.Default.RestoreFromTrash,
+                                    contentDescription = stringResource(R.string.webdav_screen_restore),
+                                    onClick = { onRestore(list[it].uuid) }
+                                )
+                                RaysIconButton(
+                                    imageVector = Icons.Default.DeleteForever,
+                                    contentDescription = stringResource(R.string.webdav_screen_delete),
+                                    onClick = { onDelete(list[it].uuid) }
+                                )
+                            }
+                        }
+                    )
+                    Divider(modifier = Modifier.padding(horizontal = 16.dp))
+                }
+            } else {
                 item {
                     Row(
                         modifier = Modifier
@@ -456,34 +484,6 @@ private fun RecycleBinBottomSheet(
                         )
                     }
                 }
-            }
-            items(list.size) {
-                ListItem(
-                    headlineContent = { Text(text = list[it].uuid) },
-                    supportingContent = {
-                        Text(
-                            text = stringResource(
-                                R.string.webdav_screen_last_modified_time,
-                                dateTime(list[it].modifiedTime)
-                            )
-                        )
-                    },
-                    trailingContent = {
-                        Row {
-                            RaysIconButton(
-                                imageVector = Icons.Default.RestoreFromTrash,
-                                contentDescription = stringResource(R.string.webdav_screen_restore),
-                                onClick = { onRestore(list[it].uuid) }
-                            )
-                            RaysIconButton(
-                                imageVector = Icons.Default.DeleteForever,
-                                contentDescription = stringResource(R.string.webdav_screen_delete),
-                                onClick = { onDelete(list[it].uuid) }
-                            )
-                        }
-                    }
-                )
-                Divider(modifier = Modifier.padding(horizontal = 16.dp))
             }
         }
     }

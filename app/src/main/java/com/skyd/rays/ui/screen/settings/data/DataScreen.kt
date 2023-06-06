@@ -5,9 +5,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ImportExport
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -36,6 +45,8 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     var openDeleteWarningDialog by rememberSaveable { mutableStateOf(false) }
     var openWaitingDialog by remember { mutableStateOf(false) }
+    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
+    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -68,7 +79,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             }
         }
 
-        viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null).value?.also { loadUiIntent ->
+        loadUiIntent?.also { loadUiIntent ->
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
                     scope.launch {
@@ -80,12 +91,13 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                         )
                     }
                 }
+
                 is LoadUiIntent.Loading -> {
                     openWaitingDialog = loadUiIntent.isShow
                 }
             }
         }
-        viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null).value?.apply {
+        uiEvent?.apply {
             when (deleteAllResultUiEvent) {
                 is DeleteAllResultUiEvent.Success -> {
                     scope.launch {
@@ -98,7 +110,8 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                         )
                     }
                 }
-                null -> {}
+
+                null -> Unit
             }
         }
 

@@ -62,7 +62,6 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -130,7 +129,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val currentStickerUuid = LocalCurrentStickerUuid.current
     val initQuery = LocalQuery.current
     var query by rememberSaveable(initQuery) { mutableStateOf(initQuery) }
-    var stickerWithTags by remember { mutableStateOf<StickerWithTags?>(null) }
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
 
     refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
         value ?: return@apply
@@ -156,27 +156,20 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             WindowInsets(0.dp)
         }
     ) { innerPaddings ->
-
         Column(
             modifier = Modifier
                 .padding(innerPaddings)
                 .fillMaxSize()
         ) {
-            RaysSearchBar(
-                query = query,
-                onQueryChange = { query = it },
-                stickerWithTags = stickerWithTags
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            stickerWithTags?.let {
-                MainCard(stickerWithTags = it)
-            }
-
-            viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
+            uiState.apply {
                 when (stickerDetailUiState) {
                     is StickerDetailUiState.Init -> {
-                        stickerWithTags = null
+                        RaysSearchBar(
+                            query = query,
+                            onQueryChange = { query = it },
+                            stickerWithTags = null,
+                            uiState = uiState,
+                        )
                         AnimatedPlaceholder(
                             resId = R.raw.lottie_genshin_impact_venti_1,
                             tip = stringResource(id = R.string.home_screen_empty_tip)
@@ -189,13 +182,21 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     }
 
                     is StickerDetailUiState.Success -> {
-                        stickerWithTags = stickerDetailUiState.stickerWithTags
+                        val stickerWithTags = stickerDetailUiState.stickerWithTags
+                        RaysSearchBar(
+                            query = query,
+                            onQueryChange = { query = it },
+                            stickerWithTags = stickerWithTags,
+                            uiState = uiState,
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        MainCard(stickerWithTags = stickerWithTags)
                     }
                 }
             }
         }
 
-        viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null).value?.also { loadUiIntent ->
+        loadUiIntent?.also { loadUiIntent ->
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
                     scope.launch {
@@ -208,7 +209,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     }
                 }
 
-                is LoadUiIntent.Loading -> {}
+                is LoadUiIntent.Loading -> Unit
             }
         }
 
@@ -231,6 +232,7 @@ private fun RaysSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
     stickerWithTags: StickerWithTags?,
+    uiState: HomeState,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     var menuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -240,7 +242,6 @@ private fun RaysSearchBar(
     var active by rememberSaveable { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
-    val stickerWithTagsList = remember { mutableStateListOf<StickerWithTags>() }
     val searchResultListState = rememberLazyStaggeredGridState()
     var openStickerInfoDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -302,19 +303,23 @@ private fun RaysSearchBar(
                     }
                 },
             ) {
-                SearchResultList(
-                    state = searchResultListState,
-                    dataList = stickerWithTagsList,
-                    onItemClickListener = {
-                        active = false
-                        viewModel.sendUiIntent(
-                            HomeIntent.AddClickCountAndGetStickerDetails(stickerUuid = it.sticker.uuid)
-                        )
-                    }
-                )
+                val searchResultUiState = uiState.searchResultUiState
+                if (searchResultUiState is SearchResultUiState.Success) {
+                    SearchResultList(
+                        state = searchResultListState,
+                        dataList = searchResultUiState.stickerWithTagsList,
+                        onItemClickListener = {
+                            active = false
+                            viewModel.sendUiIntent(
+                                HomeIntent.AddClickCountAndGetStickerDetails(stickerUuid = it.sticker.uuid)
+                            )
+                        }
+                    )
+                }
             }
             HomeMenu(
                 expanded = menuExpanded,
+                stickerMenuItemEnabled = uiState.stickerDetailUiState is StickerDetailUiState.Success,
                 onDismissRequest = { menuExpanded = false },
                 onStickerInfoClick = { openStickerInfoDialog = true }
             )
@@ -345,16 +350,6 @@ private fun RaysSearchBar(
             },
             onDismissRequest = { openStickerInfoDialog = false }
         )
-
-        viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
-            when (searchResultUiState) {
-                SearchResultUiState.Init -> {}
-                is SearchResultUiState.Success -> {
-                    stickerWithTagsList.clear()
-                    stickerWithTagsList.addAll(searchResultUiState.stickerWithTagsList)
-                }
-            }
-        }
     }
 }
 
@@ -488,7 +483,6 @@ fun SearchResultList(
                         SearchResultItem(data = it, onClickListener = onItemClickListener)
                     }
                 }
-
             }
         }
     }
@@ -574,17 +568,13 @@ private fun SearchResultSortMenu(
 @Composable
 private fun HomeMenu(
     expanded: Boolean,
+    stickerMenuItemEnabled: Boolean,
     onDismissRequest: () -> Unit,
     onStickerInfoClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
     val currentStickerUuid = LocalCurrentStickerUuid.current
-    var stickerMenuItemEnabled by rememberSaveable { mutableStateOf(false) }
-
-    viewModel.uiStateFlow.collectAsStateWithLifecycle().value.apply {
-        stickerMenuItemEnabled = stickerDetailUiState is StickerDetailUiState.Success
-    }
 
     DropdownMenu(
         expanded = expanded,
