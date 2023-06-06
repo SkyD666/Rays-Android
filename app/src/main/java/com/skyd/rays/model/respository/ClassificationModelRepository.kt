@@ -58,8 +58,11 @@ class ClassificationModelRepository @Inject constructor() : BaseRepository() {
         return flow {
             val name = modelUri.path?.substringAfterLast("/")
                 ?: System.currentTimeMillis().toString()
-            val result = File(CLASSIFICATION_MODEL_DIR_FILE, name).delete()
-            check(result) { "delete model ${modelUri.path} failed!" }
+            val stickerFile = File(CLASSIFICATION_MODEL_DIR_FILE, name)
+            if (stickerFile.exists()) {
+                val result = stickerFile.delete()
+                check(result) { "delete model ${modelUri.path} failed!" }
+            }
             if (name == appContext.dataStore.get(StickerClassificationModelPreference.key)) {
                 StickerClassificationModelPreference.put(
                     context = appContext,

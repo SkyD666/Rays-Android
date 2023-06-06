@@ -13,9 +13,7 @@ import java.security.NoSuchAlgorithmException
 
 
 fun Uri.copyTo(target: File): File {
-    return appContext.contentResolver.openInputStream(this)!!.use {
-        it.saveTo(target)
-    }
+    return appContext.contentResolver.openInputStream(this)!!.use { it.saveTo(target) }
 }
 
 fun InputStream.saveTo(target: File): File {
@@ -26,7 +24,7 @@ fun InputStream.saveTo(target: File): File {
     if (!target.exists()) {
         target.createNewFile()
     }
-    copyTo(FileOutputStream(target))
+    FileOutputStream(target).use { copyTo(it) }
     return target
 }
 
@@ -36,11 +34,11 @@ fun File.md5(): String? {
         val buffer = ByteArray(4096)
         var len: Int
         val md = MessageDigest.getInstance("MD5")
-        val fis = FileInputStream(this)
-        while (fis.read(buffer).also { len = it } != -1) {
-            md.update(buffer, 0, len)
+        FileInputStream(this).use { fis ->
+            while (fis.read(buffer).also { len = it } != -1) {
+                md.update(buffer, 0, len)
+            }
         }
-        fis.close()
         val b = md.digest()
         bi = BigInteger(1, b)
     } catch (e: NoSuchAlgorithmException) {
