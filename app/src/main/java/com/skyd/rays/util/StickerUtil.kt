@@ -4,9 +4,11 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.documentfile.provider.DocumentFile
 import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.config.STICKER_DIR
@@ -22,15 +24,34 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
 import java.math.BigInteger
 import java.security.MessageDigest
 import kotlin.random.Random
 
+
 private val scope = CoroutineScope(Dispatchers.IO)
 
+
 fun Context.sendSticker(uuid: String, onSuccess: (() -> Unit)? = null) {
+    val context = this
     scope.launch(Dispatchers.IO) {
-        val stickerFile = externalStickerUuidToFile(uuid)
+        val stickerFile = externalShareStickerUuidToFile(uuid)
+        sendSticker(stickerFile = stickerFile, onSuccess = {
+            AppDatabase.getInstance(context).stickerDao().addShareCount(uuid = uuid)
+            onSuccess?.invoke()
+        })
+    }
+}
+
+fun Context.sendSticker(bitmap: Bitmap, onSuccess: (() -> Unit)? = null) {
+    scope.launch(Dispatchers.IO) {
+        sendSticker(stickerFile = bitmap.shareToFile(), onSuccess = onSuccess)
+    }
+}
+
+fun Context.sendSticker(stickerFile: File, onSuccess: (() -> Unit)? = null) {
+    scope.launch(Dispatchers.IO) {
         val contentUri = FileProvider.getUriForFile(
             this@sendSticker,
             "${packageName}.fileprovider", stickerFile
@@ -58,7 +79,6 @@ fun Context.sendSticker(uuid: String, onSuccess: (() -> Unit)? = null) {
                     packages = uriStringSharePackageDao().getAllPackage().map { it.packageName }
                 )
             }
-            stickerDao().addShareCount(uuid = uuid)
         }
 
         withContext(Dispatchers.IO) {
@@ -77,10 +97,31 @@ fun StickerWithTags.md5(): String {
         .toString(16).padStart(32, '0')
 }
 
+fun Bitmap.shareToFile(outputDir: File = File(appContext.cacheDir, "TempSticker")): File {
+    if (!outputDir.exists()) {
+        outputDir.mkdirs()
+    }
+    val resultFileName = "${System.currentTimeMillis()}_${Random.nextInt(0, Int.MAX_VALUE)}.jpg"
+    val tempFile = File(outputDir, resultFileName)
+
+    FileOutputStream(tempFile).use {
+        compress(Bitmap.CompressFormat.JPEG, 100, it)
+    }
+    scope.launch {
+        // > 5MB
+        if (outputDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum() > 5_242_880) {
+            outputDir.walkBottomUp().fold(true) { res, it ->
+                (it.name == resultFileName || it.delete() || !it.exists()) && res
+            }
+        }
+    }
+    return tempFile
+}
+
 /**
  * 针对外部应用
  */
-fun externalStickerUuidToFile(uuid: String): File {
+fun externalShareStickerUuidToFile(uuid: String): File {
     val originFile = stickerUuidToFile(uuid)
     val outputDir = File(appContext.cacheDir, "TempSticker")
     if (appContext.dataStore.get(StickerExtNamePreference.key) == false ||
@@ -112,9 +153,27 @@ fun externalStickerUuidToFile(uuid: String): File {
  */
 fun stickerUuidToFile(uuid: String): File = File(STICKER_DIR, uuid)
 
-fun externalStickerUuidToUri(uuid: String) = Uri.fromFile(externalStickerUuidToFile(uuid))
+fun externalShareStickerUuidToUri(uuid: String) = Uri.fromFile(externalShareStickerUuidToFile(uuid))
 
 fun stickerUuidToUri(uuid: String) = Uri.fromFile(stickerUuidToFile(uuid))
+
+fun exportSticker(uuid: String, outputDir: Uri) {
+    val originFile = stickerUuidToFile(uuid)
+    val extensionName = originFile.inputStream().use { inputStream ->
+        ImageFormatChecker.check(inputStream).toString()
+    }
+    val resultFileName = uuid + "_" + Random.nextInt(0, Int.MAX_VALUE) + extensionName
+
+    val documentFile = DocumentFile.fromTreeUri(appContext, outputDir)!!
+    val stickerUri: Uri = documentFile.createFile(
+        "image/*",
+        uuid
+    )?.apply { renameTo(resultFileName) }?.uri!!
+    val stickerOutputStream = appContext.contentResolver.openOutputStream(stickerUri)!!
+    stickerOutputStream.use { outputStream ->
+        originFile.inputStream().copyTo(outputStream)
+    }
+}
 
 /**
  * 微信聊天框输入图片 uri 自动识别图片的功能

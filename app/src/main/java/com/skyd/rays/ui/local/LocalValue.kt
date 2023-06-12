@@ -4,6 +4,7 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.compositionLocalOf
 import androidx.navigation.NavHostController
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
+import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
@@ -39,6 +40,7 @@ val LocalIgnoreUpdateVersion = compositionLocalOf { IgnoreUpdateVersionPreferenc
 // Sticker
 val LocalCurrentStickerUuid = compositionLocalOf { CurrentStickerUuidPreference.default }
 val LocalQuery = compositionLocalOf { QueryPreference.default }
+val LocalExportStickerDir = compositionLocalOf { ExportStickerDirPreference.default }
 
 // Search
 val LocalUseRegexSearch = compositionLocalOf { UseRegexSearchPreference.default }

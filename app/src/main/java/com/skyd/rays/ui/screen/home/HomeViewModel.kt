@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseViewModel
 import com.skyd.rays.base.IUIChange
-import com.skyd.rays.base.IUiEvent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get
@@ -23,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
-    BaseViewModel<HomeState, IUiEvent, HomeIntent>() {
+    BaseViewModel<HomeState, HomeEvent, HomeIntent>() {
     override fun initUiState(): HomeState {
         return HomeState(
             StickerDetailUiState.Init(
@@ -34,7 +33,7 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
         )
     }
 
-    override fun IUIChange.checkStateOrEvent() = this as? HomeState? to this as? IUiEvent
+    override fun IUIChange.checkStateOrEvent() = this as? HomeState? to this as? HomeEvent
 
     override fun Flow<HomeIntent>.handleIntent(): Flow<IUIChange> = merge(
         doIsInstance<HomeIntent.GetStickerWithTagsList> { intent ->
@@ -125,6 +124,14 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
                         value = intent.stickerUuid
                     )
                     copy(stickerDetailUiState = StickerDetailUiState.Success(data))
+                }
+                .defaultFinally()
+        },
+
+        doIsInstance<HomeIntent.ExportStickers> { intent ->
+            homeRepo.requestExportStickers(intent.stickerUuids)
+                .mapToUIChange { data ->
+                    HomeEvent(homeResultUiEvent = HomeResultUiEvent.Success(data))
                 }
                 .defaultFinally()
         },

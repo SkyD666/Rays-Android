@@ -9,5 +9,8 @@ sealed class HomeIntent : IUiIntent {
     data class GetStickerWithTagsList(val keyword: String) : HomeIntent()
     data class SortStickerWithTagsList(val data: List<StickerWithTags>) : HomeIntent()
     data class ReverseStickerWithTagsList(val data: List<StickerWithTags>) : HomeIntent()
-    data class AddClickCountAndGetStickerDetails(val stickerUuid: String, val count: Int = 1) : HomeIntent()
+    data class AddClickCountAndGetStickerDetails(
+        val stickerUuid: String, val count: Int = 1
+    ) : HomeIntent()
+    data class ExportStickers(val stickerUuids: List<String>) : HomeIntent()
 }

@@ -21,6 +21,7 @@
     <string name="search_config_screen_domain_category">搜索域（未选择默认搜索全部）</string>
     <string name="home_screen_edit">编辑当前项</string>
     <string name="home_screen_delete">删除当前项</string>
+    <string name="home_screen_export">导出当前项</string>
     <string name="dialog_tip">提示</string>
     <string name="dialog_ok">确定</string>
     <string name="add_screen_success">操作成功</string>
@@ -95,6 +96,7 @@
     <string name="search_config_screen_intersect_search_by_space">交集搜索</string>
     <string name="search_config_screen_intersect_search_by_space_description">使用空格分割多个搜索关键字以实现“并且”条件，即对这些关键字的结果进行交集操作</string>
     <string name="home_screen_failed">操作失败：%s</string>
+    <string name="home_screen_export_result">导出了 %d 个表情包</string>
     <string name="webdav_screen_restore">还原</string>
     <string name="home_screen_empty_tip">新建表情包或从搜索结果中选择一个表情包吧~</string>
     <string name="home_screen_no_search_result_tip">空空如也呢~</string>
@@ -178,4 +180,7 @@
     <string name="setting_screen_share_config_description">表情包文件扩展名、URI 字符串分享等</string>
     <string name="share_config_screen_file_extension">文件扩展名</string>
     <string name="share_config_screen_file_extension_description">分享表情包时为文件添加扩展名</string>
+    <string name="mini_tool_screen_name">小工具</string>
+    <string name="style_transfer_screen_name">风格转移 (Beta)</string>
+    <string name="style_transfer_screen_transfer">转移</string>
 </resources>

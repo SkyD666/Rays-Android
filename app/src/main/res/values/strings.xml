@@ -19,8 +19,9 @@
     <string name="search_config_screen_use_regex">Regular expression</string>
     <string name="search_config_screen_use_regex_description">Consider search keywords as regular expression</string>
     <string name="search_config_screen_domain_category">Search domain (search all when not selected)</string>
-    <string name="home_screen_edit">Edit current sticker</string>
-    <string name="home_screen_delete">Delete current sticker</string>
+    <string name="home_screen_edit">Edit</string>
+    <string name="home_screen_delete">Delete</string>
+    <string name="home_screen_export">Export</string>
     <string name="dialog_tip">Info</string>
     <string name="dialog_ok">OK</string>
     <string name="add_screen_success">Operation successful</string>
@@ -95,6 +96,7 @@
     <string name="search_config_screen_intersect_search_by_space">Intersection search</string>
     <string name="search_config_screen_intersect_search_by_space_description">Use spaces to split multiple keywords to achieve the \"and\" condition</string>
     <string name="home_screen_failed">Operation failed: %s</string>
+    <string name="home_screen_export_result">Export %d stickers</string>
     <string name="webdav_screen_restore">Restore</string>
     <string name="home_screen_empty_tip">Create a new sticker or select a sticker from the search results~</string>
     <string name="home_screen_no_search_result_tip">It\'s empty~</string>
@@ -178,4 +180,7 @@
     <string name="setting_screen_share_config_description">Sticker file extension, URI string share</string>
     <string name="share_config_screen_file_extension">File extension</string>
     <string name="share_config_screen_file_extension_description">Add the file extension name when sharing a sticker</string>
+    <string name="mini_tool_screen_name">Mini Tool</string>
+    <string name="style_transfer_screen_name">Style Transfer (Beta)</string>
+    <string name="style_transfer_screen_transfer">Transfer</string>
 </resources>

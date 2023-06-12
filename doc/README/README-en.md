@@ -110,6 +110,7 @@ Note: **and** logic is represented by **space, tab, line break**, multiple of th
 - **Material You**
 - **ViewModel**
 - **Hilt**
+- **TensorFlow** Lite
 - **ML Kit** (Machine Learning)
 - **DataStore**
 - Room

@@ -42,16 +42,16 @@ import com.skyd.rays.ui.screen.about.license.LicenseScreen
 import com.skyd.rays.ui.screen.about.update.UpdateDialog
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.add.AddScreen
+import com.skyd.rays.ui.screen.minitool.MINI_TOOL_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.minitool.MiniToolScreen
+import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.minitool.styletransfer.StyleTransferScreen
 import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.SettingsScreen
 import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.appearance.AppearanceScreen
 import com.skyd.rays.ui.screen.settings.appearance.style.HOME_STYLE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.appearance.style.HomeStyleScreen
-import com.skyd.rays.ui.screen.settings.shareconfig.SHARE_CONFIG_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.shareconfig.ShareConfigScreen
-import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.URI_STRING_SHARE_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.UriStringShareScreen
 import com.skyd.rays.ui.screen.settings.data.DATA_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.DataScreen
 import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
@@ -64,6 +64,10 @@ import com.skyd.rays.ui.screen.settings.ml.classification.CLASSIFICATION_MODEL_S
 import com.skyd.rays.ui.screen.settings.ml.classification.ClassificationModelScreen
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SearchConfigScreen
+import com.skyd.rays.ui.screen.settings.shareconfig.SHARE_CONFIG_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.shareconfig.ShareConfigScreen
+import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.URI_STRING_SHARE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.UriStringShareScreen
 import com.skyd.rays.ui.theme.RaysTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -183,6 +187,12 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = URI_STRING_SHARE_SCREEN_ROUTE) {
                     UriStringShareScreen()
+                }
+                composable(route = MINI_TOOL_SCREEN_ROUTE) {
+                    MiniToolScreen()
+                }
+                composable(route = STYLE_TRANSFER_SCREEN_ROUTE) {
+                    StyleTransferScreen()
                 }
             }
 

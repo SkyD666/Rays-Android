@@ -27,8 +27,10 @@ import com.skyd.rays.ui.component.lazyverticalgrid.RaysLazyVerticalGrid
 import com.skyd.rays.ui.component.lazyverticalgrid.adapter.LazyGridAdapter
 import com.skyd.rays.ui.component.lazyverticalgrid.adapter.proxy.More1Proxy
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
+import com.skyd.rays.ui.component.shape.PolygonShape
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.about.ABOUT_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.minitool.MINI_TOOL_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
 
@@ -67,14 +69,14 @@ fun MoreScreen() {
                 shapeColor = MaterialTheme.colorScheme.primary,
                 action = { navController.navigate(IMPORT_EXPORT_SCREEN_ROUTE) }
             ),
-//            More1Bean(
-//                title = stringResource(R.string.mini_tool_screen_name),
-//                icon = Icons.Default.Extension,
-//                iconTint = MaterialTheme.colorScheme.onSecondary,
-//                shape = RoundedCornerShape(30),
-//                shapeColor = MaterialTheme.colorScheme.secondary,
-//                action = { navController.navigate(MINI_TOOL_SCREEN_ROUTE) }
-//            ),
+            More1Bean(
+                title = stringResource(R.string.mini_tool_screen_name),
+                icon = Icons.Default.Extension,
+                iconTint = MaterialTheme.colorScheme.onSecondary,
+                shape = PolygonShape(10),
+                shapeColor = MaterialTheme.colorScheme.secondary,
+                action = { navController.navigate(MINI_TOOL_SCREEN_ROUTE) }
+            ),
             More1Bean(
                 title = stringResource(R.string.settings),
                 icon = Icons.Default.Settings,

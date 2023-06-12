@@ -1,5 +1,8 @@
 package com.skyd.rays.ui.screen.home
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.basicMarquee
@@ -35,10 +38,12 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ManageSearch
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Replay
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -94,6 +99,7 @@ import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.screenIsLand
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
+import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
@@ -107,6 +113,7 @@ import com.skyd.rays.ui.component.RaysOutlinedCard
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
+import com.skyd.rays.ui.local.LocalExportStickerDir
 import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalQuery
@@ -119,7 +126,6 @@ import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.util.sendSticker
 import kotlinx.coroutines.launch
 
-private var openDeleteWarningDialog by mutableStateOf(false)
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
@@ -130,6 +136,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val initQuery = LocalQuery.current
     var query by rememberSaveable(initQuery) { mutableStateOf(initQuery) }
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
 
     refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
@@ -196,6 +203,26 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             }
         }
 
+        uiEvent?.apply {
+            when (homeResultUiEvent) {
+                is HomeResultUiEvent.Success -> {
+                    LaunchedEffect(this) {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = context.getString(
+                                    R.string.home_screen_export_result,
+                                    homeResultUiEvent.successCount
+                                ),
+                                withDismissAction = true
+                            )
+                        }
+                    }
+                }
+
+                null -> Unit
+            }
+        }
+
         loadUiIntent?.also { loadUiIntent ->
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
@@ -212,18 +239,6 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 is LoadUiIntent.Loading -> Unit
             }
         }
-
-        if (openDeleteWarningDialog && currentStickerUuid.isNotBlank()) {
-            DeleteWarningDialog(
-                visible = openDeleteWarningDialog,
-                onDismissRequest = { openDeleteWarningDialog = false },
-                onDismiss = { openDeleteWarningDialog = false },
-                onConfirm = {
-                    openDeleteWarningDialog = false
-                    viewModel.sendUiIntent(HomeIntent.DeleteStickerWithTags(currentStickerUuid))
-                }
-            )
-        }
     }
 }
 
@@ -239,10 +254,13 @@ private fun RaysSearchBar(
     val context = LocalContext.current
     val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
+    val currentStickerUuid = LocalCurrentStickerUuid.current
     var active by rememberSaveable { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
     val searchResultListState = rememberLazyStaggeredGridState()
+    var openDeleteWarningDialog by rememberSaveable { mutableStateOf(false) }
+    var openExportPathDialog by rememberSaveable { mutableStateOf(false) }
     var openStickerInfoDialog by rememberSaveable { mutableStateOf(false) }
 
     Box(
@@ -321,7 +339,9 @@ private fun RaysSearchBar(
                 expanded = menuExpanded,
                 stickerMenuItemEnabled = uiState.stickerDetailUiState is StickerDetailUiState.Success,
                 onDismissRequest = { menuExpanded = false },
-                onStickerInfoClick = { openStickerInfoDialog = true }
+                onDeleteClick = { openDeleteWarningDialog = true },
+                onExportClick = { openExportPathDialog = true },
+                onStickerInfoClick = { openStickerInfoDialog = true },
             )
         }
 
@@ -349,6 +369,61 @@ private fun RaysSearchBar(
                 }
             },
             onDismissRequest = { openStickerInfoDialog = false }
+        )
+
+        if (currentStickerUuid.isNotBlank()) {
+            DeleteWarningDialog(
+                visible = openDeleteWarningDialog,
+                onDismissRequest = { openDeleteWarningDialog = false },
+                onDismiss = { openDeleteWarningDialog = false },
+                onConfirm = {
+                    openDeleteWarningDialog = false
+                    viewModel.sendUiIntent(HomeIntent.DeleteStickerWithTags(currentStickerUuid))
+                }
+            )
+        }
+
+        val exportStickerDir = LocalExportStickerDir.current
+        val pickExportDirLauncher = rememberLauncherForActivityResult(
+            ActivityResultContracts.OpenDocumentTree()
+        ) { uri ->
+            if (uri != null) {
+                ExportStickerDirPreference.put(
+                    context = context,
+                    scope = scope,
+                    value = uri.toString()
+                )
+            }
+        }
+        RaysDialog(
+            visible = openExportPathDialog,
+            title = { Text(text = stringResource(R.string.home_screen_export)) },
+            text = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(modifier = Modifier.weight(1f), text = exportStickerDir)
+                    RaysIconButton(onClick = {
+                        pickExportDirLauncher.launch(Uri.parse(exportStickerDir))
+                    }, imageVector = Icons.Default.Folder)
+                }
+            },
+            onDismissRequest = {
+                openExportPathDialog = false
+            },
+            dismissButton = {
+                TextButton(onClick = { openExportPathDialog = false }) {
+                    Text(text = stringResource(id = R.string.dialog_cancel))
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        openExportPathDialog = false
+                        viewModel.sendUiIntent(HomeIntent.ExportStickers(listOf(currentStickerUuid)))
+                    }
+                ) {
+                    Text(text = stringResource(id = R.string.dialog_ok))
+                }
+            }
         )
     }
 }
@@ -570,6 +645,8 @@ private fun HomeMenu(
     expanded: Boolean,
     stickerMenuItemEnabled: Boolean,
     onDismissRequest: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onExportClick: () -> Unit,
     onStickerInfoClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -615,11 +692,25 @@ private fun HomeMenu(
             text = { Text(stringResource(R.string.home_screen_delete)) },
             onClick = {
                 onDismissRequest()
-                openDeleteWarningDialog = true
+                onDeleteClick()
             },
             leadingIcon = {
                 Icon(
                     Icons.Default.Delete,
+                    contentDescription = null
+                )
+            }
+        )
+        DropdownMenuItem(
+            enabled = stickerMenuItemEnabled,
+            text = { Text(stringResource(R.string.home_screen_export)) },
+            onClick = {
+                onDismissRequest()
+                onExportClick()
+            },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Save,
                     contentDescription = null
                 )
             }

@@ -110,6 +110,7 @@
 - **Material You**
 - **ViewModel**
 - **Hilt**
+- **TensorFlow** Lite
 - **ML Kit** (Machine Learning)
 - **DataStore**
 - Room

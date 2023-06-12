@@ -21,6 +21,7 @@ import com.skyd.rays.model.preference.theme.ThemeNamePreference
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalDarkMode
+import com.skyd.rays.ui.local.LocalExportStickerDir
 import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
 import com.skyd.rays.ui.local.LocalIgnoreUpdateVersion
 import com.skyd.rays.ui.local.LocalIntersectSearchBySpace
@@ -47,6 +48,7 @@ data class Settings(
     // Sticker
     val currentStickerUuid: String = CurrentStickerUuidPreference.default,
     val query: String = QueryPreference.default,
+    val exportStickerDir: String = ExportStickerDirPreference.default,
     // Search
     val useRegexSearch: Boolean = UseRegexSearchPreference.default,
     val intersectSearchBySpace: Boolean = IntersectSearchBySpacePreference.default,
@@ -83,6 +85,7 @@ fun SettingsProvider(
         // Sticker
         LocalCurrentStickerUuid provides settings.currentStickerUuid,
         LocalQuery provides settings.query,
+        LocalExportStickerDir provides settings.exportStickerDir,
         // Search
         LocalUseRegexSearch provides settings.useRegexSearch,
         LocalIntersectSearchBySpace provides settings.intersectSearchBySpace,

@@ -2,6 +2,7 @@ package com.skyd.rays.ext
 
 import androidx.datastore.preferences.core.Preferences
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
+import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
 import com.skyd.rays.model.preference.Settings
@@ -32,6 +33,7 @@ fun Preferences.toSettings(): Settings {
         // Sticker
         currentStickerUuid = CurrentStickerUuidPreference.fromPreferences(this),
         query = QueryPreference.fromPreferences(this),
+        exportStickerDir = ExportStickerDirPreference.fromPreferences(this),
 
         // Search
         useRegexSearch = UseRegexSearchPreference.fromPreferences(this),

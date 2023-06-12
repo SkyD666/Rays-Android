@@ -1,6 +1,7 @@
 package com.skyd.rays.model.respository
 
 import android.database.DatabaseUtils
+import android.net.Uri
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseData
@@ -14,8 +15,10 @@ import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.db.dao.SearchDomainDao
 import com.skyd.rays.model.db.dao.StickerDao
+import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
+import com.skyd.rays.util.exportSticker
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -58,6 +61,27 @@ class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : B
             emitBaseData(BaseData<Int>().apply {
                 code = 0
                 data = stickerDao.addClickCount(uuid = stickerUuid, count = count)
+            })
+        }
+    }
+
+    suspend fun requestExportStickers(stickerUuids: List<String>): Flow<BaseData<Int>> {
+        return flow {
+            val exportStickerDir = appContext.dataStore.get(ExportStickerDirPreference.key)
+            check(exportStickerDir != null) { "exportStickerDir is null" }
+            var successCount = 0
+            stickerUuids.forEach {
+                runCatching {
+                    exportSticker(uuid = it, outputDir = Uri.parse(exportStickerDir))
+                }.onSuccess {
+                    successCount++
+                }.onFailure {
+                    it.printStackTrace()
+                }
+            }
+            emitBaseData(BaseData<Int>().apply {
+                code = 0
+                data = successCount
             })
         }
     }
