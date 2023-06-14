@@ -400,10 +400,19 @@ private fun RaysSearchBar(
             title = { Text(text = stringResource(R.string.home_screen_export)) },
             text = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(modifier = Modifier.weight(1f), text = exportStickerDir)
-                    RaysIconButton(onClick = {
-                        pickExportDirLauncher.launch(Uri.parse(exportStickerDir))
-                    }, imageVector = Icons.Default.Folder)
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = exportStickerDir.ifBlank {
+                            stringResource(id = R.string.home_screen_select_export_folder_tip)
+                        }
+                    )
+                    RaysIconButton(
+                        onClick = {
+                            pickExportDirLauncher.launch(Uri.parse(exportStickerDir))
+                        },
+                        imageVector = Icons.Default.Folder,
+                        contentDescription = stringResource(R.string.home_screen_select_export_folder)
+                    )
                 }
             },
             onDismissRequest = {
@@ -416,6 +425,7 @@ private fun RaysSearchBar(
             },
             confirmButton = {
                 TextButton(
+                    enabled = exportStickerDir.isNotBlank(),
                     onClick = {
                         openExportPathDialog = false
                         viewModel.sendUiIntent(HomeIntent.ExportStickers(listOf(currentStickerUuid)))

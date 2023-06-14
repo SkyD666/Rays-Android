@@ -21,89 +21,90 @@
         </a>
     </p>
     <p>
-        <b>Rays (Record All Your Stickers)</b>，一个在本地<b>记录、查找、管理表情包</b>的工具。
+        <b>Rays (Record All Your Stickers)</b>, A tool to <b>record, search and manage stickers</b> on your phone.
     </p>
     <p>
-        🥰 您还在为手机中的<b>表情包太多</b>，找不到想要的表情包而苦恼吗？使用这款工具将帮助您<b>管理您存储的表情包</b>，再也不因为找不到表情包而烦恼！😋
+        🥰 Are you still struggling with <b>too many stickers on your phone</b> and having trouble finding the ones you want? This tool will help you <b>manage your stickers</b>! 😋
     </p>
     <p>
-        使用<b> <a href="https://developer.android.com/topic/architecture#recommended-app-arch">MVI</a> </b>架构，完全采用<b> <a href="https://m3.material.io/">Material You</a> </b>设计风格。<b>所有页面均使用 <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a> </b>开发。
+        Rays utilizes the <b><a href="https://developer.android.com/topic/architecture#recommended-app-arch">MVI</a></b> architecture and fully adopts the <b><a href="https://m3.material.io/">Material You</a></b> design style. All pages are developed using <b> <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a></b>.
     </p>
     <p>
-        <b><a href="doc/README/README-en.md">English</a></b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-        <b><a href="https://github.com/SkyD666/Rays-Android/issues/4">帮助我们翻译</a></b>
+        <b><a href="doc/README/README-zh-rCN.md">中文</a></b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+        <b><a href="https://github.com/SkyD666/Rays-Android/issues/4">Help us translate</a></b>
     </p>
 </div>
 
 
 
-## 💡主要功能
 
-1. 支持为表情包打**标签**
-2. 支持设置**搜索域**（设置搜索**数据库表的字段**）
-3. 支持使用**正则表达式搜索**
-4. 支持**识别**表情包中的**文本**
-5. 支持 **Ai 推荐表情包标签**（支持更换模型）
-6. 支持**使用 WebDAV 同步**数据
-7. 支持通过**系统“分享”页面导入**表情包
-8. 支持**更换和自定义主题色**
-9. 支持**深色模式**
+## 💡 Features
+
+1. Support **tagging** for stickers
+2. Support setting **search domains** (set the **fields of the database tables** to be searched)
+3. Support searching using **regular expressions**
+4. Support **recognizing text** in stickers
+5. Support **recommending sticker tags** using **Ai** (support change models)
+6. Support **syncing data using WebDAV**
+7. Support importing a sticker through the **system "Share" page**
+8. Support **changing and customizing theme colors**
+9. Support **dark color mode**
 10. ......
 
-## 🤩应用截图
+## 🤩 Screenshots
 
-![ic_home_screen](image/zh-rCN/ic_home_screen.jpg) ![ic_home_screen_search](image/zh-rCN/ic_home_screen_search.jpg)
-![ic_add_screen_edit](image/zh-rCN/ic_add_screen_edit.jpg) ![ic_home_screen_share](image/zh-rCN/ic_home_screen_share.jpg)
-![ic_appearance_screen](image/zh-rCN/ic_appearance_screen.jpg) ![ic_webdav_screen](image/zh-rCN/ic_webdav_screen.jpg)
-![ic_search_config_screen](image/zh-rCN/ic_search_config_screen.jpg) ![ic_more_screen](image/zh-rCN/ic_more_screen.jpg)
-![ic_settings_screen](image/zh-rCN/ic_settings_screen.jpg) ![ic_about_screen](image/zh-rCN/ic_about_screen.jpg)
+![ic_home_screen](image/en/ic_home_screen.jpg) ![ic_home_screen_search](image/en/ic_home_screen_search.jpg)
+![ic_add_screen_edit](image/en/ic_add_screen_edit.jpg) ![ic_home_screen_share](image/en/ic_home_screen_share.jpg)
+![ic_appearance_screen](image/en/ic_appearance_screen.jpg) ![ic_webdav_screen](image/en/ic_webdav_screen.jpg)
+![ic_search_config_screen](image/en/ic_search_config_screen.jpg) ![ic_more_screen](image/en/ic_more_screen.jpg)
+![ic_settings_screen](image/en/ic_settings_screen.jpg) ![ic_about_screen](image/en/ic_about_screen.jpg)
 
-## 🔍搜索示例
+## 🔍 Search examples
 
 <table>
 <thead>
   <tr>
-    <th>意图</th>
-    <th>使用正则表达式时搜索栏输入的文字</th>
-    <th>不使用正则表达式时搜索栏输入的文字</th>
+    <th>Intent</th>
+    <th>Text input in the search bar when using regular expression</th>
+    <th>Text input in the search bar when regular expression is not used</th>
   </tr>
 </thead>
 <tbody>
   <tr>
-    <td>搜索带有“原神”关键词的内容</td>
-    <td>.*原神.*</td>
-    <td>原神</td>
+    <td>Search for content with the keyword "Genshin"</td>
+    <td>.*Genshin.*</td>
+    <td>Genshin</td>
   </tr>
   <tr>
-    <td>搜索仅为“原神”两个字的内容</td>
-    <td>原神 或者 ^原神$</td>
-    <td>⚠️无法实现</td>
+    <td>Search only for the word "Genshin"</td>
+    <td>Genshin or ^Genshin$</td>
+    <td>⚠️Impossible</td>
   </tr>
   <tr>
-    <td>搜索带有“发电” 或 带有“原神”关键词的内容</td>
-    <td>.*发电.*|.*原神.*</td>
-    <td>⚠️无法实现</td>
+    <td>Search for content with the keywords "crazy" or "Genshin"</td>
+    <td>.*crazy.*|.*Genshin.*</td>
+    <td>⚠️Impossible</td>
   </tr>
   <tr>
-    <td>搜索仅为“发电”两个字 或 仅为“原神”两个字的内容</td>
-    <td>发电|原神 或者 ^发电$|^原神$</td>
-    <td>⚠️无法实现</td>
+    <td>Search only for the word "crazy" or only for the word "Genshin"</td>
+    <td>crazy|Genshin or ^crazy$|^Genshin$</td>
+    <td>⚠️Impossible</td>
   </tr>
   <tr>
-    <td>搜索带有“发电” 且 带有“原神”关键词的内容</td>
-    <td>.*发电.*   .*原神.*</td>
-    <td>发电   原神</td>
+    <td>Search for content with the keywords "crazy" and "Genshin"</td>
+    <td>.*crazy.*   .*Genshin.*</td>
+    <td>crazy   Genshin</td>
   </tr>
   <tr>
-    <td>搜索带有（“发电” 且 带有“原神”） 或 带有“ikun”关键词的内容</td>
-    <td>.*发电.*|.*ikun.*   .*原神.*|.*ikun.*</td>
-    <td>⚠️无法实现</td>
+    <td>Search for content with the keywords ("crazy" and with "Genshin") or "ikun"</td>
+    <td>.*crazy.*|.*ikun.*   .*Genshin.*|.*ikun.*</td>
+    <td>⚠️Impossible</td>
   </tr>
 </tbody>
 </table>
-注：**且** 逻辑使用 **空格、制表符、换行符** 表示，多个上述字符连接在一起时视为一个，输入框文字前后多余空格将被忽略。表格中的 **“内容”** 指的是选择的搜索域（多个搜索域的结果取并集）。
+Note: **and** logic is represented by **space, tab, line break**, multiple of the above characters together are considered as one, extra spaces before and after the input box text will be ignored. The **"content "** in the form refers to the selected search domain (the results of multiple search domains are combined).
 
-## 🛠主要技术栈
+## 🛠 Primary technology stack
 
 - Jetpack **Compose**
 - **MVI** Architecture
@@ -118,32 +119,35 @@
 - Navigation
 - Profile Installer
 
-## ✨其他应用
+## ✨ Other works
 
 <table>
 <thead>
   <tr>
-    <th>工具</th>
-    <th>描述</th>
-    <th>传送门</th>
+    <th>Work</th>
+    <th>Description</th>
+    <th>Link</th>
   </tr>
 </thead>
 <tbody>
   <tr>
     <td><img src="image/Raca.svg" style="height: 100px"/></td>
-    <td><b>Raca (Record All Classic Articles)</b>，一个在本地<b>记录、查找抽象段落/评论区小作文</b>的工具。<br/>🤗 您还在为记不住小作文内容，面临<b>前面、中间、后面都忘了</b>的尴尬处境吗？使用这款工具将<b>帮助您记录您所遇到的小作文</b>，再也不因为忘记而烦恼！😋</td>
+    <td><b>Raca (Record All Classic Articles)</b>, a tool to <b>record and search abstract passages and mini-essays</b> in the comments section locally. 🤗 Are you still having trouble remembering the content of your mini-essay and facing the embarrassing situation of forgetting the front, middle and back? Using this tool will help you <b>record the mini-essays</b> you come across and never worry about forgetting them again! 😋</td>
     <td><a href="https://github.com/SkyD666/Raca-Android">https://github.com/SkyD666/Raca-Android</a></td>
   </tr>
   <tr>
     <td><img src="image/NightScreen.svg" style="height: 100px"/></td>
-    <td><b>NightScreen</b>，当您在<b>夜间🌙</b>使用手机时，NightScreen 可以帮助您<b>减少屏幕亮度</b>，减少对眼睛的伤害。</td>
+    <td><b>NightScreen</b>, when you <b>use your phone at night</b> 🌙, Night Screen can help you <b>reduce the brightness</b> of the screen and <b>reduce the damage to your eyes</b>.</td>
     <td><a href="https://github.com/SkyD666/NightScreen">https://github.com/SkyD666/NightScreen</a></td>
   </tr>
 </tbody>
 </table>
 
-## 📃许可证
 
-使用此软件代码需**遵循以下许可证协议**
+
+
+## 📃 License
+
+This software code is available under the following **license**
 
 [**GNU General Public License v3.0**](LICENSE)

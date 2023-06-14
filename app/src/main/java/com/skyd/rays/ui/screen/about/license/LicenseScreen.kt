@@ -159,5 +159,10 @@ private fun getLicenseList(): List<LicenseBean> {
             license = "Apache-2.0",
             url = "https://github.com/JakeWharton/retrofit2-kotlinx-serialization-converter"
         ),
+        LicenseBean(
+            name = "TensorFlow Lite",
+            license = "Apache-2.0",
+            url = "https://www.tensorflow.org/lite/"
+        ),
     ).sortedBy { it.name }
 }
