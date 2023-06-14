@@ -120,6 +120,10 @@
 - Navigation
 - Profile Installer
 
+## 🤖机器学习
+
+- 表情包分类：https://github.com/SkyD666/StickerClassification
+
 ## ✨其他应用
 
 <table>

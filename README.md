@@ -119,6 +119,10 @@ Note: **and** logic is represented by **space, tab, line break**, multiple of th
 - Navigation
 - Profile Installer
 
+## 🤖 Machine learning
+
+- Sticker classification: https://github.com/SkyD666/StickerClassification
+
 ## ✨ Other works
 
 <table>
