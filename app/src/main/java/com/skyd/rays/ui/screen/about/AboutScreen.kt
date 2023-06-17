@@ -161,7 +161,7 @@ private fun TextArea(modifier: Modifier = Modifier) {
         BadgedBox(
             badge = {
                 Badge {
-                    val badgeNumber = remember { CommonUtil.getAppVersionName() }
+                    val badgeNumber = rememberSaveable { CommonUtil.getAppVersionName() }
                     Text(
                         text = badgeNumber,
                         modifier = Modifier.semantics { contentDescription = badgeNumber }

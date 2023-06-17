@@ -1,13 +1,16 @@
 package com.skyd.rays.model.bean
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import java.util.UUID
 
 const val STICKER_TABLE_NAME = "Sticker"
 
+@Parcelize
 @Serializable
 @Entity(tableName = STICKER_TABLE_NAME)
 data class StickerBean(
@@ -26,7 +29,7 @@ data class StickerBean(
     var createTime: Long,
     @ColumnInfo(name = MODIFY_TIME_COLUMN)
     var modifyTime: Long?,
-) : BaseBean {
+) : BaseBean, Parcelable {
     constructor(
         title: String,
         createTime: Long = System.currentTimeMillis(),

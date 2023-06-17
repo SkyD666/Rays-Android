@@ -78,15 +78,15 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var openWarningDialog by remember { mutableStateOf(false) }
-    var openWaitingDialog by remember { mutableStateOf(false) }
-    var waitingDialogData by remember { mutableStateOf<WebDavWaitingInfo?>(null) }
+    var openWarningDialog by rememberSaveable { mutableStateOf(false) }
+    var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
+    var waitingDialogData by rememberSaveable { mutableStateOf<WebDavWaitingInfo?>(null) }
     var openDeleteWarningDialog by rememberSaveable { mutableStateOf<String?>(null) }
-    var openInputDialog by remember { mutableStateOf(false) }
+    var openInputDialog by rememberSaveable { mutableStateOf(false) }
     var inputDialogInfo by remember {
         mutableStateOf<Triple<String, String, (String) -> Unit>>(Triple("", "") {})
     }
-    var inputDialogIsPassword by remember { mutableStateOf(false) }
+    var inputDialogIsPassword by rememberSaveable { mutableStateOf(false) }
     var openRecycleBinBottomSheet by rememberSaveable { mutableStateOf(false) }
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
     val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
@@ -108,8 +108,8 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
         }
     ) { paddingValues ->
         val server = LocalWebDavServer.current
-        var account by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
+        var account by rememberSaveable { mutableStateOf("") }
+        var password by rememberSaveable { mutableStateOf("") }
 
         LaunchedEffect(Unit) {
             account = secretSharedPreferences().getString("webDavAccount", null).orEmpty()

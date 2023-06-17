@@ -44,7 +44,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var openDeleteWarningDialog by rememberSaveable { mutableStateOf(false) }
-    var openWaitingDialog by remember { mutableStateOf(false) }
+    var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
     val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
 

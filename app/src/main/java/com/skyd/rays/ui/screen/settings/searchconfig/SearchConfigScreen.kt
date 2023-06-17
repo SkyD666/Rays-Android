@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
@@ -59,7 +60,7 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val useRegexSearch = LocalUseRegexSearch.current
     val intersectSearchBySpace = LocalIntersectSearchBySpace.current
-    var openWaitingDialog by remember { mutableStateOf(false) }
+    var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
 

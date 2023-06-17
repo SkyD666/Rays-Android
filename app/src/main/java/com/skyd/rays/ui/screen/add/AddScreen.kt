@@ -97,6 +97,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
     val navController = LocalNavController.current
     var titleText by rememberSaveable { mutableStateOf("") }
     var stickerUri by remember { mutableStateOf<Uri?>(null) }
+    var stickerCreateTime by remember { mutableStateOf(System.currentTimeMillis()) }
     val tags = remember { mutableStateListOf<TagBean>() }
     var stickerUuid by remember { mutableStateOf(initStickerUuid) }
     val stickerTexts = remember { mutableStateListOf<String>() }
@@ -144,8 +145,10 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                                 keyboardController?.hide()
                                 focusManager.clearFocus()
                                 val stickerWithTags = StickerWithTags(
-                                    sticker = StickerBean(title = titleText)
-                                        .apply { uuid = stickerUuid },
+                                    sticker = StickerBean(
+                                        title = titleText,
+                                        createTime = stickerCreateTime
+                                    ).apply { uuid = stickerUuid },
                                     tags = tags.distinct()
                                 )
                                 viewModel.sendUiIntent(
@@ -320,6 +323,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                     stickerUuid = stickerBean.uuid
                     titleText = stickerBean.title
                     stickerUri = stickerUuidToUri(stickerBean.uuid)
+                    stickerCreateTime = stickerBean.createTime
                     tags.clear()
                     tags.addAll(getStickersWithTagsUiState.stickerWithTags.tags.distinct())
                 }

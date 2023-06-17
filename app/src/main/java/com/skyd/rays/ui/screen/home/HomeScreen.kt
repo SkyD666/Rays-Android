@@ -359,7 +359,7 @@ private fun RaysSearchBar(
                         sticker.clickCount,
                         sticker.shareCount,
                         createTime,
-                        stickerWithTags.sticker.modifyTime?.let { dateTime(it) } ?: createTime,
+                        sticker.modifyTime?.let { dateTime(it) } ?: createTime,
                     )
                 )
             },
