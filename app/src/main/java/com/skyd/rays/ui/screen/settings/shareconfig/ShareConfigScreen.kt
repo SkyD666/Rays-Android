@@ -49,7 +49,8 @@ fun ShareConfigScreen() {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection), contentPadding = paddingValues
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
+            contentPadding = paddingValues,
         ) {
             item {
                 SwitchSettingsItem(

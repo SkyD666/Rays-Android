@@ -1,15 +1,15 @@
-package com.skyd.rays.ui.screen.settings.shareconfig.uristringshare
+package com.skyd.rays.ui.screen.settings.api.apigrant
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -30,8 +30,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.skyd.rays.R
-import com.skyd.rays.model.bean.UriStringSharePackageBean
-import com.skyd.rays.model.preference.share.UriStringSharePreference
+import com.skyd.rays.model.bean.ApiGrantPackageBean
+import com.skyd.rays.model.preference.ApiGrantPreference
 import com.skyd.rays.ui.component.BannerItem
 import com.skyd.rays.ui.component.LocalUseColorfulIcon
 import com.skyd.rays.ui.component.RaysIconButton
@@ -40,14 +40,14 @@ import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.TextFieldDialog
-import com.skyd.rays.ui.local.LocalUriStringShare
+import com.skyd.rays.ui.local.LocalApiGrant
 import kotlinx.coroutines.launch
 
 
-const val URI_STRING_SHARE_SCREEN_ROUTE = "uriStringShareScreen"
+const val API_GRANT_SCREEN_ROUTE = "apiGrantScreen"
 
 @Composable
-fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
+fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -59,7 +59,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
     val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
 
     LaunchedEffect(Unit) {
-        viewModel.sendUiIntent(UriStringShareIntent.GetAllUriStringShare)
+        viewModel.sendUiIntent(ApiGrantIntent.GetAllApiGrant)
     }
 
     uiEvent?.apply {
@@ -81,12 +81,11 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             RaysTopBar(
                 style = RaysTopBarStyle.Large,
                 scrollBehavior = scrollBehavior,
-                title = { Text(text = stringResource(R.string.uri_string_share_screen_name)) },
+                title = { Text(text = stringResource(R.string.api_grant_screen_name)) },
                 actions = {
                     RaysIconButton(
                         onClick = { openAddDialog = true },
@@ -97,7 +96,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
             )
         }
     ) { paddingValues ->
-        val uriStringShare = LocalUriStringShare.current
+        val apiGrant = LocalApiGrant.current
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -107,11 +106,11 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
             item {
                 BannerItem {
                     SwitchSettingsItem(
-                        icon = Icons.Default.Link,
-                        text = stringResource(id = R.string.uri_string_share_screen_enable),
-                        checked = uriStringShare,
+                        icon = if (apiGrant) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        text = stringResource(id = R.string.api_grant_screen_enable),
+                        checked = apiGrant,
                         onCheckedChange = {
-                            UriStringSharePreference.put(
+                            ApiGrantPreference.put(
                                 context = context,
                                 scope = scope,
                                 value = it
@@ -120,30 +119,30 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
                     )
                 }
             }
-            val uriStringShareResultUiState = uiState.uriStringShareResultUiState
-            if (uriStringShareResultUiState is UriStringShareResultUiState.Success) {
+            val uriStringShareResultUiState = uiState.apiGrantResultUiState
+            if (uriStringShareResultUiState is ApiGrantResultUiState.Success) {
                 itemsIndexed(uriStringShareResultUiState.data) { _, item ->
                     CompositionLocalProvider(
                         LocalContentColor provides
-                                if (uriStringShare) MaterialTheme.colorScheme.onSurface
+                                if (apiGrant) MaterialTheme.colorScheme.onSurface
                                 else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
                         LocalUseColorfulIcon provides true,
                     ) {
                         SwitchSettingsItem(
                             icon = rememberDrawablePainter(drawable = item.appIcon),
-                            checked = item.uriStringSharePackageBean.enabled,
-                            enabled = uriStringShare,
+                            checked = item.apiGrantPackageBean.enabled,
+                            enabled = apiGrant,
                             text = item.appName,
-                            description = item.uriStringSharePackageBean.packageName,
+                            description = item.apiGrantPackageBean.packageName,
                             onCheckedChange = {
                                 viewModel.sendUiIntent(
-                                    UriStringShareIntent.UpdateUriStringShare(
-                                        item.uriStringSharePackageBean.copy(enabled = it)
+                                    ApiGrantIntent.UpdateApiGrant(
+                                        item.apiGrantPackageBean.copy(enabled = it)
                                     )
                                 )
                             },
                             onLongClick = {
-                                openDeleteDialog = item.uriStringSharePackageBean.packageName
+                                openDeleteDialog = item.apiGrantPackageBean.packageName
                             }
                         )
                     }
@@ -161,8 +160,8 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
             onValueChange = { inputPackageName = it },
             onConfirm = {
                 viewModel.sendUiIntent(
-                    UriStringShareIntent.UpdateUriStringShare(
-                        UriStringSharePackageBean(packageName = it, enabled = true)
+                    ApiGrantIntent.UpdateApiGrant(
+                        ApiGrantPackageBean(packageName = it, enabled = true)
                     )
                 )
                 inputPackageName = ""
@@ -176,7 +175,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
             onDismiss = { openDeleteDialog = null },
             onConfirm = {
                 viewModel.sendUiIntent(
-                    UriStringShareIntent.DeleteUriStringShare(openDeleteDialog!!)
+                    ApiGrantIntent.DeleteApiGrant(openDeleteDialog!!)
                 )
                 openDeleteDialog = null
             }

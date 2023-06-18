@@ -185,4 +185,10 @@
     <string name="mini_tool_screen_name">Mini Tool</string>
     <string name="style_transfer_screen_name">Style Transfer (Beta)</string>
     <string name="style_transfer_screen_transfer">Transfer</string>
+    <string name="api_screen_name">API</string>
+    <string name="api_grant_screen_name">API Grant</string>
+    <string name="setting_screen_api_description">Application Programming Interface</string>
+    <string name="api_grant_repo_no_package">No such package is available: %s</string>
+    <string name="api_grant_screen_description">Manage API permissions for external applications</string>
+    <string name="api_grant_screen_enable">Enable API</string>
 </resources>

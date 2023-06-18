@@ -5,39 +5,39 @@ import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
-import com.skyd.rays.model.bean.EmptyUriStringShareDataBean
-import com.skyd.rays.model.bean.IUriStringShareData
-import com.skyd.rays.model.bean.UriStringShareDataBean
-import com.skyd.rays.model.bean.UriStringSharePackageBean
-import com.skyd.rays.model.db.dao.UriStringSharePackageDao
+import com.skyd.rays.model.bean.ApiGrantDataBean
+import com.skyd.rays.model.bean.ApiGrantPackageBean
+import com.skyd.rays.model.bean.EmptyApiGrantDataBean
+import com.skyd.rays.model.bean.IApiGrantData
+import com.skyd.rays.model.db.dao.ApiGrantPackageDao
 import com.skyd.rays.util.CommonUtil.getAppInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class UriStringShareRepository @Inject constructor(
-    private val uriStringSharePackageDao: UriStringSharePackageDao
+class ApiGrantRepository @Inject constructor(
+    private val apiGrantPackageDao: ApiGrantPackageDao
 ) : BaseRepository() {
-    suspend fun requestUpdate(bean: UriStringSharePackageBean): Flow<BaseData<IUriStringShareData>> {
+    suspend fun requestUpdate(bean: ApiGrantPackageBean): Flow<BaseData<IApiGrantData>> {
         return flow {
             val pm: PackageManager = appContext.packageManager
             val data = runCatching {
                 val info = getAppInfo(pm = pm, packageName = bean.packageName)
-                uriStringSharePackageDao.updatePackage(bean)
-                UriStringShareDataBean(
-                    uriStringSharePackageBean = bean,
+                apiGrantPackageDao.updatePackage(bean)
+                ApiGrantDataBean(
+                    apiGrantPackageBean = bean,
                     appName = info.applicationInfo?.loadLabel(pm).toString(),
                     appIcon = info.applicationInfo?.loadIcon(pm)
                 )
             }.onFailure {
                 it.printStackTrace()
-            }.getOrNull() ?: EmptyUriStringShareDataBean(
+            }.getOrNull() ?: EmptyApiGrantDataBean(
                 msg = appContext.getString(
-                    R.string.uri_string_share_repo_no_package,
+                    R.string.api_grant_repo_no_package,
                     bean.packageName
                 )
             )
-            emitBaseData(BaseData<IUriStringShareData>().apply {
+            emitBaseData(BaseData<IApiGrantData>().apply {
                 this.code = 0
                 this.data = data
             })
@@ -48,30 +48,30 @@ class UriStringShareRepository @Inject constructor(
         return flow {
             emitBaseData(BaseData<Int>().apply {
                 this.code = 0
-                this.data = uriStringSharePackageDao.deletePackage(pkgName = packageName)
+                this.data = apiGrantPackageDao.deletePackage(pkgName = packageName)
             })
         }
     }
 
-    suspend fun requestAllPackages(): Flow<BaseData<List<UriStringShareDataBean>>> {
+    suspend fun requestAllPackages(): Flow<BaseData<List<ApiGrantDataBean>>> {
         return flow {
             val pm: PackageManager = appContext.packageManager
-            val data = uriStringSharePackageDao.getAllPackage().mapNotNull { bean ->
+            val data = apiGrantPackageDao.getAllPackage().mapNotNull { bean ->
                 runCatching {
                     val info = getAppInfo(pm = pm, packageName = bean.packageName)
-                    UriStringShareDataBean(
-                        uriStringSharePackageBean = bean,
+                    ApiGrantDataBean(
+                        apiGrantPackageBean = bean,
                         appName = info.applicationInfo?.loadLabel(pm).toString(),
                         appIcon = info.applicationInfo?.loadIcon(pm)
                     )
                 }.onFailure {
                     it.printStackTrace()
                     if (it is PackageManager.NameNotFoundException) {
-                        uriStringSharePackageDao.deletePackage(pkgName = bean.packageName)
+                        apiGrantPackageDao.deletePackage(pkgName = bean.packageName)
                     }
                 }.getOrNull()
             }
-            emitBaseData(BaseData<List<UriStringShareDataBean>>().apply {
+            emitBaseData(BaseData<List<ApiGrantDataBean>>().apply {
                 code = 0
                 this.data = data
             })

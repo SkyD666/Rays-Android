@@ -48,6 +48,10 @@ import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUT
 import com.skyd.rays.ui.screen.minitool.styletransfer.StyleTransferScreen
 import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.SettingsScreen
+import com.skyd.rays.ui.screen.settings.api.apigrant.API_GRANT_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.api.API_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.api.apigrant.ApiGrantScreen
+import com.skyd.rays.ui.screen.settings.api.ApiScreen
 import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.appearance.AppearanceScreen
 import com.skyd.rays.ui.screen.settings.appearance.style.HOME_STYLE_SCREEN_ROUTE
@@ -193,6 +197,12 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = STYLE_TRANSFER_SCREEN_ROUTE) {
                     StyleTransferScreen()
+                }
+                composable(route = API_SCREEN_ROUTE) {
+                    ApiScreen()
+                }
+                composable(route = API_GRANT_SCREEN_ROUTE) {
+                    ApiGrantScreen()
                 }
             }
 

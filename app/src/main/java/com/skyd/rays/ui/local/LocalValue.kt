@@ -3,6 +3,7 @@ package com.skyd.rays.ui.local
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.compositionLocalOf
 import androidx.navigation.NavHostController
+import com.skyd.rays.model.preference.ApiGrantPreference
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
@@ -62,3 +63,6 @@ val LocalHomeShareButtonAlignment = compositionLocalOf { HomeShareButtonAlignmen
 // Share
 val LocalUriStringShare = compositionLocalOf { UriStringSharePreference.default }
 val LocalStickerExtName = compositionLocalOf { StickerExtNamePreference.default }
+
+// Api
+val LocalApiGrant = compositionLocalOf { ApiGrantPreference.default }

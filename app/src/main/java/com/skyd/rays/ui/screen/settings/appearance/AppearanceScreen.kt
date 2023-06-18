@@ -110,7 +110,8 @@ fun AppearanceScreen() {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection), contentPadding = paddingValues
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
+            contentPadding = paddingValues,
         ) {
             item {
                 Spacer(modifier = Modifier.height(16.dp))

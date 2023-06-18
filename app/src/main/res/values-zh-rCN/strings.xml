@@ -185,4 +185,10 @@
     <string name="mini_tool_screen_name">小工具</string>
     <string name="style_transfer_screen_name">风格转移 (Beta)</string>
     <string name="style_transfer_screen_transfer">转移</string>
+    <string name="api_screen_name">API</string>
+    <string name="api_grant_screen_name">API 授权</string>
+    <string name="setting_screen_api_description">对外开发接口</string>
+    <string name="api_grant_repo_no_package">包名不可用：%s</string>
+    <string name="api_grant_screen_description">管理外部应用使用 API 的权限</string>
+    <string name="api_grant_screen_enable">启用 API</string>
 </resources>

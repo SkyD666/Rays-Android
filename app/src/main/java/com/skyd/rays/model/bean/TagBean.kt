@@ -1,12 +1,15 @@
 package com.skyd.rays.model.bean
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 const val TAG_TABLE_NAME = "Tag"
 
+@Parcelize
 @Serializable
 @Entity(
     tableName = TAG_TABLE_NAME,
@@ -27,7 +30,7 @@ data class TagBean(
     var tag: String,
     @ColumnInfo(name = CREATE_TIME_COLUMN)
     var createTime: Long,
-) : BaseBean {
+) : BaseBean, Parcelable {
     constructor(
         tag: String,
     ) : this(

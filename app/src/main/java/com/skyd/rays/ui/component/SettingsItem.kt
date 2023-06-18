@@ -8,8 +8,10 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
@@ -41,6 +43,15 @@ import com.skyd.rays.ext.alwaysLight
 
 val LocalUseColorfulIcon = compositionLocalOf { false }
 val LocalBackgroundRoundedShape = compositionLocalOf { false }
+
+@Composable
+fun BannerItem(content: @Composable () -> Unit) {
+    Spacer(modifier = Modifier.height(16.dp))
+    CompositionLocalProvider(LocalBackgroundRoundedShape provides true) {
+        content()
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+}
 
 @Composable
 fun SwitchSettingsItem(

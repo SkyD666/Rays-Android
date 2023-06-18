@@ -34,6 +34,15 @@
             </intent-filter>
         </activity>
 
+        <receiver
+            android:name=".api.ApiEventReceiver"
+            android:exported="true"
+            android:permission="rays.permission.api">
+            <intent-filter>
+                <action android:name="rays.api" />
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

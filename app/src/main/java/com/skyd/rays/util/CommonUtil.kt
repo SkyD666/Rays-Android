@@ -2,6 +2,7 @@ package com.skyd.rays.util
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -57,5 +58,18 @@ object CommonUtil {
             e.printStackTrace()
         }
         return appVersionCode
+    }
+
+    fun getAppInfo(pm: PackageManager, packageName: String): PackageInfo {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            pm.getPackageInfo(
+                packageName,
+                PackageManager.PackageInfoFlags
+                    .of(PackageManager.MATCH_UNINSTALLED_PACKAGES.toLong())
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            pm.getPackageInfo(packageName, PackageManager.MATCH_UNINSTALLED_PACKAGES)
+        }
     }
 }

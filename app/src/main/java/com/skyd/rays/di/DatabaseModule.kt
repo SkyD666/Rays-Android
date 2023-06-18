@@ -2,6 +2,7 @@ package com.skyd.rays.di
 
 import android.content.Context
 import com.skyd.rays.model.db.AppDatabase
+import com.skyd.rays.model.db.dao.ApiGrantPackageDao
 import com.skyd.rays.model.db.dao.SearchDomainDao
 import com.skyd.rays.model.db.dao.StickerDao
 import com.skyd.rays.model.db.dao.TagDao
@@ -38,4 +39,9 @@ object DatabaseModule {
     @Singleton
     fun provideUriStringSharePackageDao(database: AppDatabase): UriStringSharePackageDao =
         database.uriStringSharePackageDao()
+
+    @Provides
+    @Singleton
+    fun provideApiGrantPackageDao(database: AppDatabase): ApiGrantPackageDao =
+        database.apiGrantPackageDao()
 }

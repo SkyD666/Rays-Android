@@ -18,6 +18,7 @@ import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
+import com.skyd.rays.ui.local.LocalApiGrant
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalDarkMode
@@ -64,6 +65,8 @@ data class Settings(
     // Share
     val uriStringShare: Boolean = UriStringSharePreference.default,
     val stickerExtName: Boolean = StickerExtNamePreference.default,
+    // Api
+    val apiGrant: Boolean = ApiGrantPreference.default,
 )
 
 @Composable
@@ -101,6 +104,8 @@ fun SettingsProvider(
         // Share
         LocalUriStringShare provides settings.uriStringShare,
         LocalStickerExtName provides settings.stickerExtName,
+        // Api
+        LocalApiGrant provides settings.apiGrant,
     ) {
         content()
     }

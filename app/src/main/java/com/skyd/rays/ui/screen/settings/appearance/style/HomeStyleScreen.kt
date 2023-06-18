@@ -77,7 +77,8 @@ fun HomeStyleScreen() {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection), contentPadding = paddingValues
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
+            contentPadding = paddingValues,
         ) {
             item {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
