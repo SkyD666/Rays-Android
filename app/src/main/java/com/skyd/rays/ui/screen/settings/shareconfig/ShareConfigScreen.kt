@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.MoveDown
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -23,6 +24,7 @@ import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerExtName
+import com.skyd.rays.ui.screen.settings.shareconfig.autoshare.AUTO_SHARE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.URI_STRING_SHARE_SCREEN_ROUTE
 
 
@@ -73,6 +75,14 @@ fun ShareConfigScreen() {
                     text = stringResource(id = R.string.uri_string_share_screen_name),
                     descriptionText = stringResource(id = R.string.uri_string_share_screen_description),
                     onClick = { navController.navigate(URI_STRING_SHARE_SCREEN_ROUTE) }
+                )
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(image = Icons.Default.MoveDown),
+                    text = stringResource(id = R.string.auto_share_screen_name),
+                    descriptionText = stringResource(id = R.string.auto_share_screen_description),
+                    onClick = { navController.navigate(AUTO_SHARE_SCREEN_ROUTE) }
                 )
             }
         }

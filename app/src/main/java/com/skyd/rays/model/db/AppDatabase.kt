@@ -48,7 +48,7 @@ abstract class AppDatabase : RoomDatabase() {
         private var instance: AppDatabase? = null
 
         private val migrations = arrayOf(
-            Migration1To2(), Migration2To3(), Migration3To4(), Migration4To5(), Migration5To6()
+            Migration1To2(), Migration2To3(), Migration3To4(), Migration4To5(), Migration5To6(),
         )
 
         fun getInstance(context: Context): AppDatabase {

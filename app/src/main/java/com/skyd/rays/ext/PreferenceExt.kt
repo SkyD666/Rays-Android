@@ -2,6 +2,7 @@ package com.skyd.rays.ext
 
 import androidx.datastore.preferences.core.Preferences
 import com.skyd.rays.model.preference.ApiGrantPreference
+import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
@@ -55,6 +56,7 @@ fun Preferences.toSettings(): Settings {
         // Share
         uriStringShare = UriStringSharePreference.fromPreferences(this),
         stickerExtName = StickerExtNamePreference.fromPreferences(this),
+        autoShareIgnoreStrategy = AutoShareIgnoreStrategyPreference.fromPreferences(this),
 
         // Api
         apiGrant = ApiGrantPreference.fromPreferences(this),

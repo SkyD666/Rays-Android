@@ -108,7 +108,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
                 BannerItem {
                     SwitchSettingsItem(
                         icon = Icons.Default.Link,
-                        text = stringResource(id = R.string.uri_string_share_screen_enable),
+                        text = stringResource(id = R.string.enable),
                         checked = uriStringShare,
                         onCheckedChange = {
                             UriStringSharePreference.put(

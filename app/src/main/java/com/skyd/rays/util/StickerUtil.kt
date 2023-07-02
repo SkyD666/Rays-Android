@@ -9,7 +9,6 @@ import android.net.Uri
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
-import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.config.STICKER_DIR
 import com.skyd.rays.ext.dataStore
@@ -18,7 +17,9 @@ import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.db.AppDatabase
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
+import com.skyd.rays.ui.service.RaysAccessibilityService
 import com.skyd.rays.util.image.ImageFormatChecker
+import com.skyd.rays.util.share.ShareUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,24 +34,44 @@ import kotlin.random.Random
 private val scope = CoroutineScope(Dispatchers.IO)
 
 
-fun Context.sendSticker(uuid: String, onSuccess: (() -> Unit)? = null) {
+fun Context.sendSticker(
+    uuid: String,
+    topActivityFullName: String = RaysAccessibilityService.topActivityFullName,
+    onSuccess: (() -> Unit)? = null
+) {
     val context = this
     scope.launch(Dispatchers.IO) {
         val stickerFile = externalShareStickerUuidToFile(uuid)
-        sendSticker(stickerFile = stickerFile, onSuccess = {
-            AppDatabase.getInstance(context).stickerDao().addShareCount(uuid = uuid)
-            onSuccess?.invoke()
-        })
+        sendSticker(
+            stickerFile = stickerFile,
+            topActivityFullName = topActivityFullName,
+            onSuccess = {
+                AppDatabase.getInstance(context).stickerDao().addShareCount(uuid = uuid)
+                onSuccess?.invoke()
+            }
+        )
     }
 }
 
-fun Context.sendSticker(bitmap: Bitmap, onSuccess: (() -> Unit)? = null) {
+fun Context.sendSticker(
+    bitmap: Bitmap,
+    topActivityFullName: String = RaysAccessibilityService.topActivityFullName,
+    onSuccess: (() -> Unit)? = null
+) {
     scope.launch(Dispatchers.IO) {
-        sendSticker(stickerFile = bitmap.shareToFile(), onSuccess = onSuccess)
+        sendSticker(
+            stickerFile = bitmap.shareToFile(),
+            topActivityFullName = topActivityFullName,
+            onSuccess = onSuccess
+        )
     }
 }
 
-fun Context.sendSticker(stickerFile: File, onSuccess: (() -> Unit)? = null) {
+fun Context.sendSticker(
+    stickerFile: File,
+    topActivityFullName: String = RaysAccessibilityService.topActivityFullName,
+    onSuccess: (() -> Unit)? = null
+) {
     scope.launch(Dispatchers.IO) {
         val contentUri = FileProvider.getUriForFile(
             this@sendSticker,
@@ -58,17 +79,10 @@ fun Context.sendSticker(stickerFile: File, onSuccess: (() -> Unit)? = null) {
         )
 
         withContext(Dispatchers.Main) {
-            val shareIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                putExtra(Intent.EXTRA_STREAM, contentUri)
-                type = "image/*"
-            }
-            startActivity(
-                Intent.createChooser(
-                    shareIntent,
-                    resources.getText(R.string.send_sticker)
-                )
+            ShareUtil.share(
+                context = this@sendSticker,
+                uri = contentUri,
+                topActivityFullName = topActivityFullName,
             )
         }
 
@@ -81,9 +95,7 @@ fun Context.sendSticker(stickerFile: File, onSuccess: (() -> Unit)? = null) {
             }
         }
 
-        withContext(Dispatchers.IO) {
-            onSuccess?.invoke()
-        }
+        onSuccess?.invoke()
     }
 }
 

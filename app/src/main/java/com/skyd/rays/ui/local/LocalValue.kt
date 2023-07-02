@@ -4,13 +4,13 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.compositionLocalOf
 import androidx.navigation.NavHostController
 import com.skyd.rays.model.preference.ApiGrantPreference
+import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.model.preference.StickerScalePreference
-import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
@@ -18,6 +18,7 @@ import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
+import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
@@ -58,11 +59,13 @@ val LocalStickerClassificationModel =
 
 // Style
 val LocalStickerScale = compositionLocalOf { StickerScalePreference.default }
-val LocalHomeShareButtonAlignment = compositionLocalOf { HomeShareButtonAlignmentPreference.default }
+val LocalHomeShareButtonAlignment =
+    compositionLocalOf { HomeShareButtonAlignmentPreference.default }
 
 // Share
 val LocalUriStringShare = compositionLocalOf { UriStringSharePreference.default }
 val LocalStickerExtName = compositionLocalOf { StickerExtNamePreference.default }
+val LocalAutoShareIgnoreStrategy = compositionLocalOf { AutoShareIgnoreStrategyPreference.default }
 
 // Api
 val LocalApiGrant = compositionLocalOf { ApiGrantPreference.default }

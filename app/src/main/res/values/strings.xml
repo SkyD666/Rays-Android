@@ -174,7 +174,7 @@
     <string name="share_config_screen_name">Share</string>
     <string name="uri_string_share_screen_name">URI string share</string>
     <string name="uri_string_share_screen_description">Copy sticker URI string when sharing</string>
-    <string name="uri_string_share_screen_enable">Enable</string>
+    <string name="enable">Enable</string>
     <string name="uri_string_share_screen_add_app_package">Add package</string>
     <string name="uri_string_share_screen_add_app_package_example">e.g., com.skyd.example</string>
     <string name="uri_string_share_repo_no_package">No such package is available: %s</string>
@@ -191,4 +191,15 @@
     <string name="api_grant_repo_no_package">No such package is available: %s</string>
     <string name="api_grant_screen_description">Manage API permissions for external applications</string>
     <string name="api_grant_screen_enable">Enable API</string>
+    <string name="accessibility_service_label">Rays</string>
+    <string name="accessibility_service_description">It is recommended that Rays should be allowed to launch on startup, launch by other apps and keep running in background.\n\nThe following features of Rays are required for accessibility:\n\nAuto share</string>
+    <string name="auto_share_screen_name">Auto share</string>
+    <string name="auto_share_screen_description">Share sticker to the previous page automatically</string>
+    <string name="auto_share_screen_ignore">Ignore strategy</string>
+    <string name="auto_share_screen_ignore_description">Ignore the existence of the matched pages</string>
+    <string name="auto_share_screen_ignore_input_dialog_title">Ignore strategy regex</string>
+    <string name="auto_share_screen_ignore_regex_format_error">Regex format invalid</string>
+    <string name="auto_share_screen_accessibility_granted">Accessibility permission granted now</string>
+    <string name="auto_share_screen_accessibility_not_granted">No accessibility permission granted now</string>
+    <string name="auto_share_screen_supported_app">Auto share allows you to share a sticker directly to the application corresponding to the previous page.\n\nThis feature requires accessibility permission. After killing the Rays process, upgrading or reinstalling Rays, Auto share will be disabled and needs to be enabled by manually granting accessibility permission. \n\nIt is recommended that Rays should be allowed to launch on startup, launch by other apps and keep running in background.\n\nSupported apps:\nTelegram\nDiscord\nWeChat\nInstagram\nQQ\nWhatsApp\nWeibo</string>
 </resources>

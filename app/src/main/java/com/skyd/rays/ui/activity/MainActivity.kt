@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -48,10 +49,10 @@ import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUT
 import com.skyd.rays.ui.screen.minitool.styletransfer.StyleTransferScreen
 import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.SettingsScreen
-import com.skyd.rays.ui.screen.settings.api.apigrant.API_GRANT_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.api.API_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.api.apigrant.ApiGrantScreen
 import com.skyd.rays.ui.screen.settings.api.ApiScreen
+import com.skyd.rays.ui.screen.settings.api.apigrant.API_GRANT_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.api.apigrant.ApiGrantScreen
 import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.appearance.AppearanceScreen
 import com.skyd.rays.ui.screen.settings.appearance.style.HOME_STYLE_SCREEN_ROUTE
@@ -70,6 +71,8 @@ import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SearchConfigScreen
 import com.skyd.rays.ui.screen.settings.shareconfig.SHARE_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.shareconfig.ShareConfigScreen
+import com.skyd.rays.ui.screen.settings.shareconfig.autoshare.AUTO_SHARE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.shareconfig.autoshare.AutoShareScreen
 import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.URI_STRING_SHARE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.UriStringShareScreen
 import com.skyd.rays.ui.theme.RaysTheme
@@ -93,7 +96,9 @@ class MainActivity : AppCompatActivity() {
                     LocalWindowSizeClass provides calculateWindowSizeClass(this)
                 ) {
                     AppContent()
-                    initIntent()
+                    LaunchedEffect(Unit) {
+                        initIntent()
+                    }
                 }
             }
         }
@@ -203,6 +208,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = API_GRANT_SCREEN_ROUTE) {
                     ApiGrantScreen()
+                }
+                composable(route = AUTO_SHARE_SCREEN_ROUTE) {
+                    AutoShareScreen()
                 }
             }
 

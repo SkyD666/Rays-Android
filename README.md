@@ -36,8 +36,6 @@
 </div>
 
 
-
-
 ## 💡 Features
 
 1. Support **tagging** for stickers
@@ -146,10 +144,6 @@ Note: **and** logic is represented by **space, tab, line break**, multiple of th
   </tr>
 </tbody>
 </table>
-
-
-
-
 ## 📃 License
 
 This software code is available under the following **license**

@@ -174,7 +174,7 @@
     <string name="share_config_screen_name">分享</string>
     <string name="uri_string_share_screen_name">URI 字符串分享</string>
     <string name="uri_string_share_screen_description">分享时复制贴纸 URI 字符串</string>
-    <string name="uri_string_share_screen_enable">启用</string>
+    <string name="enable">启用</string>
     <string name="uri_string_share_screen_add_app_package">添加包名</string>
     <string name="uri_string_share_screen_add_app_package_example">例如 com.skyd.example</string>
     <string name="uri_string_share_repo_no_package">包名不可用：%s</string>
@@ -187,8 +187,19 @@
     <string name="style_transfer_screen_transfer">转移</string>
     <string name="api_screen_name">API</string>
     <string name="api_grant_screen_name">API 授权</string>
-    <string name="setting_screen_api_description">对外开发接口</string>
+    <string name="setting_screen_api_description">对外开放接口</string>
     <string name="api_grant_repo_no_package">包名不可用：%s</string>
     <string name="api_grant_screen_description">管理外部应用使用 API 的权限</string>
     <string name="api_grant_screen_enable">启用 API</string>
+    <string name="accessibility_service_label">Rays</string>
+    <string name="accessibility_service_description">建议允许 Rays 自启动、关联启动和后台运行。\n\nRays 的以下功能需要使用无障碍：\n\n自动分享</string>
+    <string name="auto_share_screen_name">自动分享</string>
+    <string name="auto_share_screen_description">自动分享表情包到上一个页面</string>
+    <string name="auto_share_screen_ignore">忽略策略</string>
+    <string name="auto_share_screen_ignore_description">无视所匹配页面的存在</string>
+    <string name="auto_share_screen_ignore_input_dialog_title">忽略策略正则表达式</string>
+    <string name="auto_share_screen_ignore_regex_format_error">正则表达式格式非法</string>
+    <string name="auto_share_screen_accessibility_granted">当前已授予无障碍权限</string>
+    <string name="auto_share_screen_accessibility_not_granted">当前未授予无障碍权限</string>
+    <string name="auto_share_screen_supported_app">自动分享可以直接将表情包分享到上一个页面对应的应用。\n\n该功能需要无障碍权限。在杀死 Rays 后台、升级或重安装 Rays 后，自动分享将被禁用，需手动打开无障碍权限才可再次启用。\n\n建议允许 Rays 自启动、关联启动和后台运行。\n\n目前支持的应用:\nQQ\n微信\n微博\nTelegram\nInstagram\nDiscord\nWhatsApp</string>
 </resources>

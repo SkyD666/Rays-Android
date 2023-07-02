@@ -807,7 +807,7 @@ private fun MainCard(stickerWithTags: StickerWithTags) {
                                 uuid = stickerBean.uuid,
                                 onSuccess = { stickerBean.shareCount++ }
                             )
-                        }
+                        },
                     )
                 }
             }

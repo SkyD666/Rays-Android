@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -325,4 +327,15 @@ fun CategorySettingsItem(text: String) {
         maxLines = 3,
         overflow = TextOverflow.Ellipsis,
     )
+}
+
+@Composable
+fun TipSettingsItem(text: String) {
+    Column(
+        modifier = Modifier.padding(horizontal = 16.dp + 10.dp, vertical = 10.dp)
+    ) {
+        Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(text = text, style = MaterialTheme.typography.bodyMedium)
+    }
 }
