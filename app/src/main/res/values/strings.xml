@@ -183,9 +183,9 @@
     <string name="share_config_screen_file_extension">File extension</string>
     <string name="share_config_screen_file_extension_description">Add the file extension name when sharing a sticker</string>
     <string name="mini_tool_screen_name">Mini Tool</string>
-    <string name="style_transfer_screen_name">Style Transfer (Beta)</string>
+    <string name="style_transfer_screen_name">Style Transfer (Experimental)</string>
     <string name="style_transfer_screen_transfer">Transfer</string>
-    <string name="api_screen_name">API</string>
+    <string name="api_screen_name">API (Experimental)</string>
     <string name="api_grant_screen_name">API Grant</string>
     <string name="setting_screen_api_description">Application Programming Interface</string>
     <string name="api_grant_repo_no_package">No such package is available: %s</string>
@@ -201,5 +201,5 @@
     <string name="auto_share_screen_ignore_regex_format_error">Regex format invalid</string>
     <string name="auto_share_screen_accessibility_granted">Accessibility permission granted now</string>
     <string name="auto_share_screen_accessibility_not_granted">No accessibility permission granted now</string>
-    <string name="auto_share_screen_supported_app">Auto share allows you to share a sticker directly to the application corresponding to the previous page.\n\nThis feature requires accessibility permission. After killing the Rays process, upgrading or reinstalling Rays, Auto share will be disabled and needs to be enabled by manually granting accessibility permission. \n\nIt is recommended that Rays should be allowed to launch on startup, launch by other apps and keep running in background.\n\nSupported apps:\nTelegram\nDiscord\nWeChat\nInstagram\nQQ\nWhatsApp\nWeibo</string>
+    <string name="auto_share_screen_supported_app">Auto share allows you to share a sticker directly to the application corresponding to the previous page.\n\nThis feature requires accessibility permission. After killing the Rays process, upgrading or reinstalling Rays, Auto share may be disabled and needs to be enabled by manually granting accessibility permission. \n\nIt is recommended that Rays should be allowed to launch on startup, launch by other apps and keep running in background.\n\nSupported apps:\nTelegram\nDiscord\nWeChat\nInstagram\nQQ\nWhatsApp\nWeibo</string>
 </resources>

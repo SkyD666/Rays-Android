@@ -183,9 +183,9 @@
     <string name="share_config_screen_file_extension">文件扩展名</string>
     <string name="share_config_screen_file_extension_description">分享表情包时为文件添加扩展名</string>
     <string name="mini_tool_screen_name">小工具</string>
-    <string name="style_transfer_screen_name">风格转移 (Beta)</string>
+    <string name="style_transfer_screen_name">风格转移（实验性）</string>
     <string name="style_transfer_screen_transfer">转移</string>
-    <string name="api_screen_name">API</string>
+    <string name="api_screen_name">API（实验性）</string>
     <string name="api_grant_screen_name">API 授权</string>
     <string name="setting_screen_api_description">对外开放接口</string>
     <string name="api_grant_repo_no_package">包名不可用：%s</string>
@@ -201,5 +201,5 @@
     <string name="auto_share_screen_ignore_regex_format_error">正则表达式格式非法</string>
     <string name="auto_share_screen_accessibility_granted">当前已授予无障碍权限</string>
     <string name="auto_share_screen_accessibility_not_granted">当前未授予无障碍权限</string>
-    <string name="auto_share_screen_supported_app">自动分享可以直接将表情包分享到上一个页面对应的应用。\n\n该功能需要无障碍权限。在杀死 Rays 后台、升级或重安装 Rays 后，自动分享将被禁用，需手动打开无障碍权限才可再次启用。\n\n建议允许 Rays 自启动、关联启动和后台运行。\n\n目前支持的应用:\nQQ\n微信\n微博\nTelegram\nInstagram\nDiscord\nWhatsApp</string>
+    <string name="auto_share_screen_supported_app">自动分享可以直接将表情包分享到上一个页面对应的应用。\n\n该功能需要无障碍权限。在杀死 Rays 后台、升级或重安装 Rays 后，自动分享可能会被禁用，需手动打开无障碍权限才可再次启用。\n\n建议允许 Rays 自启动、关联启动和后台运行。\n\n目前支持的应用:\nQQ\n微信\n微博\nTelegram\nInstagram\nDiscord\nWhatsApp</string>
 </resources>

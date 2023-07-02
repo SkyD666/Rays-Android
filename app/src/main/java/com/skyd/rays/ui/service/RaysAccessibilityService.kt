@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.provider.Settings
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get
@@ -44,11 +45,13 @@ class RaysAccessibilityService : AccessibilityService() {
                     ComponentName(event.packageName.toString(), event.className.toString())
                 val activityInfo = tryGetActivity(componentName)
                 scope.launch {
-                    val strategy = dataStore.get(AutoShareIgnoreStrategyPreference.key).orEmpty()
+                    val strategy = dataStore.get(AutoShareIgnoreStrategyPreference.key)
+                        ?: AutoShareIgnoreStrategyPreference.default
                     val name = activityInfo?.name ?: return@launch
-                    if (!name.startsWith(packageName.substringBeforeLast(".")) &&
+                    if (!name.startsWith(packageName.substringBeforeLast(".debug")) &&
                         runCatching { !name.matches(Regex(strategy)) }.getOrElse { true }
                     ) {
+                        Log.i("topActivityFullName", "$name $strategy")
                         mutex.withLock {
                             topActivityFullName = activityInfo.name
                         }
