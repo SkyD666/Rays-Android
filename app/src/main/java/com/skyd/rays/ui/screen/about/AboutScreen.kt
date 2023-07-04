@@ -21,10 +21,13 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Balance
+import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -103,6 +106,7 @@ fun AboutScreen() {
                     TextArea()
                 }
                 item {
+                    SponsorArea()
                     ButtonArea()
                 }
             } else {
@@ -113,6 +117,7 @@ fun AboutScreen() {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             IconArea()
+                            SponsorArea()
                             ButtonArea()
                         }
                         TextArea(modifier = Modifier.weight(1f))
@@ -142,7 +147,7 @@ fun AboutScreen() {
 private fun IconArea() {
     Image(
         modifier = Modifier
-            .padding(20.dp)
+            .padding(16.dp)
             .fillMaxWidth(0.4f)
             .aspectRatio(1f),
         contentScale = ContentScale.Crop,
@@ -181,7 +186,7 @@ private fun TextArea(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center
         )
         Card(
-            modifier = Modifier.padding(top = 20.dp),
+            modifier = Modifier.padding(top = 16.dp),
             shape = RoundedCornerShape(10)
         ) {
             Column(
@@ -194,19 +199,29 @@ private fun TextArea(modifier: Modifier = Modifier) {
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(top = 12.dp),
                     text = stringResource(id = R.string.about_screen_description_2),
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(top = 12.dp),
                     text = stringResource(id = R.string.about_screen_description_3),
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun SponsorArea() {
+    Spacer(modifier = Modifier.height(16.dp))
+    Button(onClick = { openBrowser("https://afdian.net/a/SkyD666") }) {
+        Icon(imageVector = Icons.Default.Coffee, contentDescription = null)
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(text = stringResource(id = R.string.sponsor))
     }
 }
 
@@ -218,7 +233,7 @@ private fun ButtonArea() {
         modifier = Modifier.fillMaxWidth(0.8f),
         horizontalArrangement = Arrangement.Center
     ) {
-        val boxModifier = Modifier.padding(vertical = 20.dp, horizontal = 10.dp)
+        val boxModifier = Modifier.padding(vertical = 16.dp, horizontal = 10.dp)
         Box(
             modifier = boxModifier.background(
                 color = MaterialTheme.colorScheme.primaryContainer,

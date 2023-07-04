@@ -27,7 +27,7 @@ fun NavController.navigate(
 }
 
 fun NavBackStackEntry.lifecycleIsResumed() =
-    this.getLifecycle().currentState == Lifecycle.State.RESUMED
+    this.lifecycle.currentState == Lifecycle.State.RESUMED
 
 fun NavController.popBackStackWithLifecycle() {
     if (currentBackStackEntry?.lifecycleIsResumed() == true) {

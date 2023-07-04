@@ -120,11 +120,6 @@ private fun getLicenseList(): List<LicenseBean> {
             url = "https://github.com/Kotlin/kotlinx.coroutines"
         ),
         LicenseBean(
-            name = "kotlin-csv",
-            license = "Apache-2.0",
-            url = "https://github.com/doyaaaaaken/kotlin-csv"
-        ),
-        LicenseBean(
             name = "sardine-android",
             license = "Apache-2.0",
             url = "https://github.com/thegrizzlylabs/sardine-android"

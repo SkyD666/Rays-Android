@@ -202,4 +202,5 @@
     <string name="auto_share_screen_accessibility_granted">当前已授予无障碍权限</string>
     <string name="auto_share_screen_accessibility_not_granted">当前未授予无障碍权限</string>
     <string name="auto_share_screen_supported_app">自动分享可以直接将表情包分享到上一个页面对应的应用。\n\n该功能需要无障碍权限。在杀死 Rays 后台、升级或重安装 Rays 后，自动分享可能会被禁用，需手动打开无障碍权限才可再次启用。\n\n建议允许 Rays 自启动、关联启动和后台运行。\n\n目前支持的应用:\nQQ\n微信\n微博\nTelegram\nInstagram\nDiscord\nWhatsApp</string>
+    <string name="sponsor">赞助作者</string>
 </resources>

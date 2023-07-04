@@ -202,4 +202,5 @@
     <string name="auto_share_screen_accessibility_granted">Accessibility permission granted now</string>
     <string name="auto_share_screen_accessibility_not_granted">No accessibility permission granted now</string>
     <string name="auto_share_screen_supported_app">Auto share allows you to share a sticker directly to the application corresponding to the previous page.\n\nThis feature requires accessibility permission. After killing the Rays process, upgrading or reinstalling Rays, Auto share may be disabled and needs to be enabled by manually granting accessibility permission. \n\nIt is recommended that Rays should be allowed to launch on startup, launch by other apps and keep running in background.\n\nSupported apps:\nTelegram\nDiscord\nWeChat\nInstagram\nQQ\nWhatsApp\nWeibo</string>
+    <string name="sponsor">Sponsor</string>
 </resources>
