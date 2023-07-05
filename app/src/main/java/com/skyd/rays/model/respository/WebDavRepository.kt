@@ -133,7 +133,7 @@ class WebDavRepository @Inject constructor(
             val totalCount = excludedMap.size + onlyBeanChangedMap.size + willBeDeletedList.size
             var currentCount = 0
             willBeDeletedList.forEach {
-                stickerDao.deleteStickerWithTags(stickerUuid = it)
+                stickerDao.deleteStickerWithTags(stickerUuids = listOf(it))
                 emitProgressData(
                     current = ++currentCount,
                     total = totalCount,

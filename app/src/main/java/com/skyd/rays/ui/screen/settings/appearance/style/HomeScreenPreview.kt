@@ -63,8 +63,8 @@ import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
 import com.skyd.rays.ui.local.LocalStickerScale
-import com.skyd.rays.ui.screen.home.SearchResultList
-import com.skyd.rays.ui.screen.home.TrailingIcon
+import com.skyd.rays.ui.screen.home.searchbar.SearchResultList
+import com.skyd.rays.ui.screen.home.searchbar.TrailingIcon
 
 @Composable
 fun HomeScreenPreview() {
@@ -164,7 +164,10 @@ private fun RaysSearchBarPreview() {
                             )
                         )
                     },
-                    onItemClickListener = { active = false }
+                    onItemClickListener = { _, _ -> active = false },
+                    multiSelect = false,
+                    onMultiSelectChanged = {},
+                    selectedStickers = emptyList()
                 )
             }
             HomeMenuPreview(expanded = menuExpanded, onDismissRequest = { menuExpanded = false })

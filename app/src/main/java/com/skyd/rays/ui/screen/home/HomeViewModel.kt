@@ -73,14 +73,18 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
         },
 
         doIsInstance<HomeIntent.DeleteStickerWithTags> { intent ->
-            homeRepo.requestDeleteStickerWithTagsDetail(intent.stickerUuid)
+            homeRepo.requestDeleteStickerWithTagsDetail(intent.stickerUuids)
                 .mapToUIChange {
-                    CurrentStickerUuidPreference.put(
-                        context = appContext,
-                        scope = viewModelScope,
-                        value = CurrentStickerUuidPreference.default
-                    )
-                    copy(stickerDetailUiState = StickerDetailUiState.Init())
+                    if (searchResultUiState is SearchResultUiState.Success) {
+                        copy(
+                            searchResultUiState = searchResultUiState.copy(
+                                stickerWithTagsList = searchResultUiState.stickerWithTagsList
+                                    .filter { !intent.stickerUuids.contains(it.sticker.uuid) }
+                            )
+                        )
+                    } else {
+                        this
+                    }
                 }
                 .defaultFinally()
                 .onCompletion {

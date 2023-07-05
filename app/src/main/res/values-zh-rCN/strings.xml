@@ -142,6 +142,7 @@
     <string name="search_result_sort_title">标题</string>
     <string name="search_result_sort">排序方式</string>
     <string name="search_result_reverse">逆序</string>
+    <string name="search_result_multi_select">多选</string>
     <string name="home_screen_search_result_list_to_top">到顶部</string>
     <string name="home_style_screen_share_button_alignment">分享按钮位置</string>
     <string name="home_style_screen_share_button_alignment_horiz">水平</string>

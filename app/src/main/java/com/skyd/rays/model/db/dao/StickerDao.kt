@@ -67,9 +67,9 @@ interface StickerDao {
     @Query(
         """UPDATE $STICKER_TABLE_NAME
            SET $SHARE_COUNT_COLUMN = $SHARE_COUNT_COLUMN + :count
-           WHERE $UUID_COLUMN = :uuid"""
+           WHERE $UUID_COLUMN IN (:uuids)"""
     )
-    fun addShareCount(uuid: String, count: Int = 1): Int
+    fun addShareCount(uuids: List<String>, count: Int = 1): Int
 
     @Transaction
     fun addStickerWithTags(
@@ -105,17 +105,19 @@ interface StickerDao {
     fun innerAddSticker(stickerBean: StickerBean)
 
     @Transaction
-    fun deleteStickerWithTags(stickerUuid: String): Int {
+    fun deleteStickerWithTags(stickerUuids: List<String>): Int {
         val scope = CoroutineScope(Dispatchers.IO)
         val currentStickerUuid = appContext.dataStore.get(CurrentStickerUuidPreference.key)
-        if (currentStickerUuid == stickerUuid) {
-            CurrentStickerUuidPreference.put(
-                appContext, scope, CurrentStickerUuidPreference.default
-            )
+        stickerUuids.forEach { stickerUuid ->
+            if (currentStickerUuid == stickerUuid) {
+                CurrentStickerUuidPreference.put(
+                    appContext, scope, CurrentStickerUuidPreference.default
+                )
+            }
+            File(STICKER_DIR, stickerUuid).deleteRecursively()
         }
-        File(STICKER_DIR, stickerUuid).deleteRecursively()
         // 设置了外键，ForeignKey.CASCADE，因此会自动deleteTags
-        return innerDeleteSticker(stickerUuid)
+        return innerDeleteStickers(stickerUuids)
     }
 
     @Transaction
@@ -126,6 +128,10 @@ interface StickerDao {
         // 设置了外键，ForeignKey.CASCADE，因此会自动deleteTags
         innerDeleteAllStickers()
     }
+
+    @Transaction
+    @Query("DELETE FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN IN (:stickerUuids)")
+    fun innerDeleteStickers(stickerUuids: List<String>): Int
 
     @Transaction
     @Query("DELETE FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN LIKE :stickerUuid")

@@ -37,33 +37,32 @@ fun MainScreen() {
     val windowSizeClass = LocalWindowSizeClass.current
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
+    val navigationBarOrRail = @Composable {
+        NavigationBarOrRail(
+            currentPage = pagerState.currentPage,
+            scrollToPage = {
+                coroutineScope.launch {
+                    pagerState.scrollToPage(it)
+                }
+            }
+        )
+    }
+    val contentPager = @Composable {
+        ContentPager(pagerState = pagerState)
+    }
 
     if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(modifier = Modifier.weight(1f)) {
-                ContentPager(pagerState = pagerState)
+                contentPager()
             }
-            NavigationBarOrRail(
-                currentPage = pagerState.currentPage,
-                scrollToPage = {
-                    coroutineScope.launch {
-                        pagerState.scrollToPage(it)
-                    }
-                }
-            )
+            navigationBarOrRail()
         }
     } else {
         Row(modifier = Modifier.fillMaxSize()) {
-            NavigationBarOrRail(
-                currentPage = pagerState.currentPage,
-                scrollToPage = {
-                    coroutineScope.launch {
-                        pagerState.scrollToPage(it)
-                    }
-                }
-            )
+            navigationBarOrRail()
             Box(modifier = Modifier.weight(1f)) {
-                ContentPager(pagerState = pagerState)
+                contentPager()
             }
         }
     }
@@ -114,21 +113,19 @@ private fun NavigationBarOrRail(
 
 @Composable
 private fun ContentPager(pagerState: PagerState) {
-    Column {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize(),
-            pageCount = 2,
-            userScrollEnabled = false
-        ) { page ->
-            when (page) {
-                0 -> {
-                    HomeScreen()
-                }
+    HorizontalPager(
+        state = pagerState,
+        modifier = Modifier.fillMaxSize(),
+        pageCount = 2,
+        userScrollEnabled = false
+    ) { page ->
+        when (page) {
+            0 -> {
+                HomeScreen()
+            }
 
-                1 -> {
-                    MoreScreen()
-                }
+            1 -> {
+                MoreScreen()
             }
         }
     }

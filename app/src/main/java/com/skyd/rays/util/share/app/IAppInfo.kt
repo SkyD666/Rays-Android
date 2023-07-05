@@ -6,5 +6,5 @@ import android.net.Uri
 interface IAppInfo {
     val packageName: String
 
-    fun share(context: Context, topActivityFullName: String, uri: Uri): Boolean
+    fun share(context: Context, topActivityFullName: String, uris: List<Uri>): Boolean
 }

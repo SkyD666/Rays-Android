@@ -47,11 +47,11 @@ class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : B
         }
     }
 
-    suspend fun requestDeleteStickerWithTagsDetail(stickerUuid: String): Flow<BaseData<Int>> {
+    suspend fun requestDeleteStickerWithTagsDetail(stickerUuids: List<String>): Flow<BaseData<Int>> {
         return flow {
             emitBaseData(BaseData<Int>().apply {
                 code = 0
-                data = stickerDao.deleteStickerWithTags(stickerUuid)
+                data = stickerDao.deleteStickerWithTags(stickerUuids)
             })
         }
     }

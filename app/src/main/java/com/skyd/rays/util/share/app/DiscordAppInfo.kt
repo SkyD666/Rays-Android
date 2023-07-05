@@ -8,11 +8,11 @@ class DiscordAppInfo : IAppInfo {
     override val packageName: String
         get() = "com.discord"
 
-    override fun share(context: Context, topActivityFullName: String, uri: Uri): Boolean {
+    override fun share(context: Context, topActivityFullName: String, uris: List<Uri>): Boolean {
         if (!topActivityFullName.startsWith(packageName)) return false
         ShareUtil.startShare(
             context = context,
-            uri = uri,
+            uris = uris,
             packageName = packageName,
             className = "com.discord.share.ShareActivity"
         )

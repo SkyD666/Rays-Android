@@ -34,7 +34,7 @@ import kotlin.random.Random
 private val scope = CoroutineScope(Dispatchers.IO)
 
 
-fun Context.sendSticker(
+fun Context.sendStickerByUuid(
     uuid: String,
     topActivityFullName: String = RaysAccessibilityService.topActivityFullName,
     onSuccess: (() -> Unit)? = null
@@ -42,11 +42,30 @@ fun Context.sendSticker(
     val context = this
     scope.launch(Dispatchers.IO) {
         val stickerFile = externalShareStickerUuidToFile(uuid)
-        sendSticker(
-            stickerFile = stickerFile,
+        sendStickersByFiles(
+            stickerFiles = listOf(stickerFile),
             topActivityFullName = topActivityFullName,
             onSuccess = {
-                AppDatabase.getInstance(context).stickerDao().addShareCount(uuid = uuid)
+                AppDatabase.getInstance(context).stickerDao().addShareCount(uuids = listOf(uuid))
+                onSuccess?.invoke()
+            }
+        )
+    }
+}
+
+fun Context.sendStickersByUuids(
+    uuids: List<String>,
+    topActivityFullName: String = RaysAccessibilityService.topActivityFullName,
+    onSuccess: (() -> Unit)? = null
+) {
+    val context = this
+    scope.launch(Dispatchers.IO) {
+        val stickerFiles = uuids.map { externalShareStickerUuidToFile(it) }
+        sendStickersByFiles(
+            stickerFiles = stickerFiles,
+            topActivityFullName = topActivityFullName,
+            onSuccess = {
+                AppDatabase.getInstance(context).stickerDao().addShareCount(uuids = uuids)
                 onSuccess?.invoke()
             }
         )
@@ -59,40 +78,42 @@ fun Context.sendSticker(
     onSuccess: (() -> Unit)? = null
 ) {
     scope.launch(Dispatchers.IO) {
-        sendSticker(
-            stickerFile = bitmap.shareToFile(),
+        sendStickersByFiles(
+            stickerFiles = listOf(bitmap.shareToFile()),
             topActivityFullName = topActivityFullName,
             onSuccess = onSuccess
         )
     }
 }
 
-fun Context.sendSticker(
-    stickerFile: File,
+fun Context.sendStickersByFiles(
+    stickerFiles: List<File>,
     topActivityFullName: String = RaysAccessibilityService.topActivityFullName,
     onSuccess: (() -> Unit)? = null
 ) {
     scope.launch(Dispatchers.IO) {
-        val contentUri = FileProvider.getUriForFile(
-            this@sendSticker,
-            "${packageName}.fileprovider", stickerFile
-        )
-
-        withContext(Dispatchers.Main) {
-            ShareUtil.share(
-                context = this@sendSticker,
-                uri = contentUri,
-                topActivityFullName = topActivityFullName,
+        val contentUris = stickerFiles.map {
+            FileProvider.getUriForFile(
+                this@sendStickersByFiles,
+                "${packageName}.fileprovider", it
             )
         }
 
-        with(AppDatabase.getInstance(this@sendSticker)) {
+        with(AppDatabase.getInstance(this@sendStickersByFiles)) {
             if (dataStore.get(UriStringSharePreference.key) == true) {
-                contentUri.shareStickerUriString(
-                    context = this@sendSticker,
+                contentUris.shareStickerUriString(
+                    context = this@sendStickersByFiles,
                     packages = uriStringSharePackageDao().getAllPackage().map { it.packageName }
                 )
             }
+        }
+
+        withContext(Dispatchers.Main) {
+            ShareUtil.share(
+                context = this@sendStickersByFiles,
+                uris = contentUris,
+                topActivityFullName = topActivityFullName,
+            )
         }
 
         onSuccess?.invoke()
@@ -190,9 +211,11 @@ fun exportSticker(uuid: String, outputDir: Uri) {
 /**
  * 微信聊天框输入图片 uri 自动识别图片的功能
  */
-private fun Uri.shareStickerUriString(context: Context, packages: List<String>) {
+private fun List<Uri>.shareStickerUriString(context: Context, packages: List<String>) {
     packages.forEach {
-        context.grantUriPermission(it, this, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        forEach { uri ->
+            context.grantUriPermission(it, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
     }
     val clipboard = ContextCompat.getSystemService(context, ClipboardManager::class.java)
     clipboard?.setPrimaryClip(ClipData.newPlainText("Share sticker", this.toString()))

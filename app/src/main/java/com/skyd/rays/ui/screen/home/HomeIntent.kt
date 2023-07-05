@@ -5,7 +5,7 @@ import com.skyd.rays.model.bean.StickerWithTags
 
 sealed class HomeIntent : IUiIntent {
     data class GetStickerDetails(val stickerUuid: String) : HomeIntent()
-    data class DeleteStickerWithTags(val stickerUuid: String) : HomeIntent()
+    data class DeleteStickerWithTags(val stickerUuids: List<String>) : HomeIntent()
     data class GetStickerWithTagsList(val keyword: String) : HomeIntent()
     data class SortStickerWithTagsList(val data: List<StickerWithTags>) : HomeIntent()
     data class ReverseStickerWithTagsList(val data: List<StickerWithTags>) : HomeIntent()

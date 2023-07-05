@@ -34,36 +34,41 @@ object ShareUtil {
         return packageInfo != null
     }
 
-    fun share(context: Context, uri: Uri, topActivityFullName: String) {
+    fun share(context: Context, uris: List<Uri>, topActivityFullName: String) {
         if (topActivityFullName.isBlank()) {
-            startShare(context, uri)
+            startShare(context, uris)
             return
         }
         apps.forEach {
-            if (share(context, topActivityFullName, uri, it)) {
+            if (share(context, topActivityFullName, uris, it)) {
                 return
             }
         }
-        startShare(context, uri)
+        startShare(context, uris)
     }
 
-    fun share(context: Context, topActivityFullName: String, uri: Uri, appInfo: IAppInfo): Boolean {
+    fun share(context: Context, topActivityFullName: String, uris: List<Uri>, appInfo: IAppInfo): Boolean {
         if (!isInstalled(appInfo.packageName)) return false
-        return appInfo.share(context, topActivityFullName, uri)
+        return appInfo.share(context, topActivityFullName, uris)
     }
 
     fun startShare(
         context: Context,
-        uri: Uri,
+        uris: List<Uri>,
         packageName: String? = null,
         className: String? = null,
     ) {
         Log.i("startShare", "$packageName $className")
         val shareIntent: Intent = Intent().apply {
-            action = Intent.ACTION_SEND
+            if (uris.size == 1) {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, uris.first())
+            } else {
+                action = Intent.ACTION_SEND_MULTIPLE
+                putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(uris))
+            }
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
-            putExtra(Intent.EXTRA_STREAM, uri)
             type = "image/*"
             if (!packageName.isNullOrBlank() && !className.isNullOrBlank()) {
                 setClassName(packageName, className)

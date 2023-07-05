@@ -142,6 +142,7 @@
     <string name="search_result_sort_title">Title</string>
     <string name="search_result_sort">Sort by</string>
     <string name="search_result_reverse">Reverse</string>
+    <string name="search_result_multi_select">Multi-select</string>
     <string name="home_screen_search_result_list_to_top">To the top</string>
     <string name="home_style_screen_share_button_alignment">Share button position</string>
     <string name="home_style_screen_share_button_alignment_horiz">Horizontal</string>
