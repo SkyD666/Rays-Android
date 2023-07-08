@@ -42,7 +42,7 @@ jobs:
         cd secret/Rays-Android
         cp key.jks ../..
         cp secret.gradle ../..
-        cp -r "./Rays-Android/assets" "../../app/src/main/assets"
+        cp -r assets ../../app/src/main/assets
     # 清理secret文件
     - name: Clean Temp Secret Files
       run: |
@@ -50,10 +50,10 @@ jobs:
     # 打包
     - name: Build with Gradle
       run: |
-        bash ./gradlew assembleGithub
+        bash ./gradlew assembleGitHub
     # 存档打包的文件
     - name: Upload Pre-Release Apk
       uses: actions/upload-artifact@v3
       with:
         name: Pre-Release Apk
-        path: app/build/outputs/apk/Github/release/*.apk
+        path: app/build/outputs/apk/GitHub/release/*.apk

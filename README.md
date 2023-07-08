@@ -4,6 +4,9 @@
     </div>
     <h1>🥰 Rays (Android)</h1>
     <p>
+        <a href="https://github.com/SkyD666/Rays-Android/actions" style="text-decoration:none">
+            <img src="https://img.shields.io/github/actions/workflow/status/SkyD666/Rays-Android/pre_release.yml?branch=master&style=for-the-badge" alt="GitHub Workflow Status"  />
+        </a>
         <a href="https://github.com/SkyD666/Rays-Android/releases/latest" style="text-decoration:none">
             <img src="https://img.shields.io/github/v/release/SkyD666/Rays-Android?display_name=release&style=for-the-badge" alt="GitHub release (latest by date)"/>
         </a>
@@ -34,6 +37,8 @@
         <b><a href="https://github.com/SkyD666/Rays-Android/issues/4">Help us translate</a></b>
     </p>
 </div>
+
+
 
 
 ## 💡 Features
@@ -144,6 +149,7 @@ Note: **and** logic is represented by **space, tab, line break**, multiple of th
   </tr>
 </tbody>
 </table>
+
 ## 📃 License
 
 This software code is available under the following **license**
