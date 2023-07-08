@@ -218,5 +218,10 @@ private fun List<Uri>.shareStickerUriString(context: Context, packages: List<Str
         }
     }
     val clipboard = ContextCompat.getSystemService(context, ClipboardManager::class.java)
-    clipboard?.setPrimaryClip(ClipData.newPlainText("Share sticker", this.toString()))
+    clipboard?.setPrimaryClip(
+        ClipData.newPlainText(
+            "Share sticker",
+            if (size == 1) first().toString() else this.toString()
+        )
+    )
 }

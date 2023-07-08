@@ -25,6 +25,7 @@
     <string name="dialog_tip">Info</string>
     <string name="dialog_ok">OK</string>
     <string name="add_screen_success">Operation successful</string>
+    <string name="add_screen_waiting_uris">Waiting list (Click to remove)</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="home_screen_delete_warning">Are you sure to delete? The operation is irreversible!</string>
     <string name="dialog_warning">Warning</string>

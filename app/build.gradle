@@ -19,8 +19,8 @@ android {
         applicationId "com.skyd.rays"
         minSdk 24
         targetSdk 33
-        versionCode 20
-        versionName "1.4-beta01"
+        versionCode 21
+        versionName "1.4-beta02"
         flavorDimensions "versionName"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

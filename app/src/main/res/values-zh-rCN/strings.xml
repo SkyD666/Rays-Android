@@ -25,6 +25,7 @@
     <string name="dialog_tip">提示</string>
     <string name="dialog_ok">确定</string>
     <string name="add_screen_success">操作成功</string>
+    <string name="add_screen_waiting_uris">待添加（点击可移除）</string>
     <string name="dialog_cancel">取消</string>
     <string name="home_screen_delete_warning">确定要删除吗？操作不可逆！</string>
     <string name="dialog_warning">警告</string>

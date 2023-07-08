@@ -86,6 +86,9 @@ fun RaysSearchBar(
     var openDeleteWarningDialog by rememberSaveable { mutableStateOf(false) }
     var openExportPathDialog by rememberSaveable { mutableStateOf(false) }
     var openStickerInfoDialog by rememberSaveable { mutableStateOf(false) }
+    var openDeleteMultiStickersDialog by rememberSaveable {
+        mutableStateOf<Set<StickerWithTags>?>(null)
+    }
 
     Box(
         Modifier
@@ -175,17 +178,6 @@ fun RaysSearchBar(
                             selectedStickers = selectedStickers,
                         )
                     }
-                    val onDeleteClick = remember {
-                        {
-                            viewModel.sendUiIntent(
-                                HomeIntent.DeleteStickerWithTags(
-                                    selectedStickers.map { it.sticker.uuid }
-                                )
-                            )
-                            // 去除所有被删除了，但还在selectedStickers中的数据
-                            selectedStickers -= searchResultUiState.stickerWithTagsList.toSet()
-                        }
-                    }
                     val multiSelectBar: @Composable (compact: Boolean) -> Unit =
                         @Composable { compact ->
                             AnimatedVisibility(
@@ -195,7 +187,10 @@ fun RaysSearchBar(
                             ) {
                                 MultiSelectBar(
                                     selectedStickers = selectedStickers,
-                                    onDeleteClick = onDeleteClick
+                                    onDeleteClick = {
+                                        openDeleteMultiStickersDialog =
+                                            searchResultUiState.stickerWithTagsList.toSet()
+                                    }
                                 )
                             }
                         }
@@ -261,6 +256,23 @@ fun RaysSearchBar(
                 }
             )
         }
+
+        // 删除多选的表情包警告
+        DeleteWarningDialog(
+            visible = openDeleteMultiStickersDialog != null,
+            onDismissRequest = { openDeleteMultiStickersDialog = null },
+            onDismiss = { openDeleteMultiStickersDialog = null },
+            onConfirm = {
+                viewModel.sendUiIntent(
+                    HomeIntent.DeleteStickerWithTags(
+                        selectedStickers.map { it.sticker.uuid }
+                    )
+                )
+                // 去除所有被删除了，但还在selectedStickers中的数据
+                selectedStickers -= openDeleteMultiStickersDialog!!
+                openDeleteMultiStickersDialog = null
+            }
+        )
 
         val exportStickerDir = LocalExportStickerDir.current
         val pickExportDirLauncher = rememberLauncherForActivityResult(

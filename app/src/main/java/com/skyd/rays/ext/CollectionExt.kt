@@ -5,3 +5,11 @@ inline fun <T> MutableCollection<T>.addIfAny(data: T, predicate: (T) -> Boolean)
         this += data
     }
 }
+
+fun <T> MutableCollection<T>.addAllDistinctly(newData: Collection<T>) {
+    newData.forEach { item ->
+        if (!contains(item)) {
+            add(item)
+        }
+    }
+}
