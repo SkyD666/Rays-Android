@@ -12,6 +12,8 @@ import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
+import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
+import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
@@ -69,3 +71,7 @@ val LocalAutoShareIgnoreStrategy = compositionLocalOf { AutoShareIgnoreStrategyP
 
 // Api
 val LocalApiGrant = compositionLocalOf { ApiGrantPreference.default }
+
+// Ai
+val LocalClassificationThreshold = compositionLocalOf { ClassificationThresholdPreference.default }
+val LocalTextRecognizeThreshold = compositionLocalOf { TextRecognizeThresholdPreference.default }

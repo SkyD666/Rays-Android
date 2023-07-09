@@ -1,4 +1,4 @@
-package com.skyd.rays.ui.screen.settings.ml.classification
+package com.skyd.rays.ui.screen.settings.ml.classification.model
 
 import android.net.Uri
 import com.skyd.rays.base.IUiIntent

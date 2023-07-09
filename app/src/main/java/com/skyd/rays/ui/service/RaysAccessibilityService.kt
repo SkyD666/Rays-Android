@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.provider.Settings
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import com.skyd.rays.BuildConfig
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get
 import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
@@ -83,5 +84,14 @@ fun isAccessibilityServiceRunning(context: Context): Boolean {
         Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
     )
 
-    return prefString != null && prefString.contains(RaysAccessibilityService::class.java.name)
+    val raysAccessibilityServiceName = RaysAccessibilityService::class.java.name
+
+    val patterns = arrayOf(
+        "${BuildConfig.APPLICATION_ID}/${raysAccessibilityServiceName}",
+        raysAccessibilityServiceName.replaceFirst(
+            context.packageName.substringBeforeLast(".debug"),
+            "${BuildConfig.APPLICATION_ID}/"
+        )
+    )
+    return prefString != null && patterns.any { prefString.contains(it) }
 }

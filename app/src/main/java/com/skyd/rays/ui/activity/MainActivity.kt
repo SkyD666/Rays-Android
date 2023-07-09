@@ -65,8 +65,12 @@ import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WEBDAV_SC
 import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WebDavScreen
 import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.ml.MlScreen
-import com.skyd.rays.ui.screen.settings.ml.classification.CLASSIFICATION_MODEL_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.ml.classification.ClassificationModelScreen
+import com.skyd.rays.ui.screen.settings.ml.classification.CLASSIFICATION_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.classification.ClassificationScreen
+import com.skyd.rays.ui.screen.settings.ml.classification.model.CLASSIFICATION_MODEL_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.classification.model.ClassificationModelScreen
+import com.skyd.rays.ui.screen.settings.ml.textrecognize.TEXT_RECOGNIZE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.textrecognize.TextRecognizeScreen
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SearchConfigScreen
 import com.skyd.rays.ui.screen.settings.shareconfig.SHARE_CONFIG_SCREEN_ROUTE
@@ -164,8 +168,14 @@ class MainActivity : AppCompatActivity() {
                 composable(route = ML_SCREEN_ROUTE) {
                     MlScreen()
                 }
+                composable(route = CLASSIFICATION_SCREEN_ROUTE) {
+                    ClassificationScreen()
+                }
                 composable(route = CLASSIFICATION_MODEL_SCREEN_ROUTE) {
                     ClassificationModelScreen()
+                }
+                composable(route = TEXT_RECOGNIZE_SCREEN_ROUTE) {
+                    TextRecognizeScreen()
                 }
                 composable(route = SEARCH_CONFIG_SCREEN_ROUTE) {
                     SearchConfigScreen()

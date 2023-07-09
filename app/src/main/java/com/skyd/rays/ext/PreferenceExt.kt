@@ -11,6 +11,8 @@ import com.skyd.rays.model.preference.Settings
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
+import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
+import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
@@ -60,5 +62,9 @@ fun Preferences.toSettings(): Settings {
 
         // Api
         apiGrant = ApiGrantPreference.fromPreferences(this),
+
+        // Ai
+        classificationThreshold = ClassificationThresholdPreference.fromPreferences(this),
+        textRecognizeThreshold = TextRecognizeThresholdPreference.fromPreferences(this),
     )
 }

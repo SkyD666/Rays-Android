@@ -1,4 +1,4 @@
-package com.skyd.rays.ui.screen.settings.ml.classification
+package com.skyd.rays.ui.screen.settings.ml.classification.model
 
 import com.skyd.rays.base.BaseViewModel
 import com.skyd.rays.base.IUIChange

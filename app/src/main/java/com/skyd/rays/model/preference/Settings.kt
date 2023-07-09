@@ -8,6 +8,8 @@ import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.platform.LocalContext
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.toSettings
+import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
+import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
@@ -20,6 +22,7 @@ import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
 import com.skyd.rays.ui.local.LocalApiGrant
 import com.skyd.rays.ui.local.LocalAutoShareIgnoreStrategy
+import com.skyd.rays.ui.local.LocalClassificationThreshold
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalDarkMode
@@ -33,6 +36,7 @@ import com.skyd.rays.ui.local.LocalSearchResultSort
 import com.skyd.rays.ui.local.LocalStickerClassificationModel
 import com.skyd.rays.ui.local.LocalStickerExtName
 import com.skyd.rays.ui.local.LocalStickerScale
+import com.skyd.rays.ui.local.LocalTextRecognizeThreshold
 import com.skyd.rays.ui.local.LocalThemeName
 import com.skyd.rays.ui.local.LocalUriStringShare
 import com.skyd.rays.ui.local.LocalUseRegexSearch
@@ -69,6 +73,9 @@ data class Settings(
     val autoShareIgnoreStrategy: String = AutoShareIgnoreStrategyPreference.default,
     // Api
     val apiGrant: Boolean = ApiGrantPreference.default,
+    // Ai
+    val classificationThreshold: Float = ClassificationThresholdPreference.default,
+    val textRecognizeThreshold: Float = TextRecognizeThresholdPreference.default,
 )
 
 @Composable
@@ -109,6 +116,9 @@ fun SettingsProvider(
         LocalAutoShareIgnoreStrategy provides settings.autoShareIgnoreStrategy,
         // Api
         LocalApiGrant provides settings.apiGrant,
+        // Ai
+        LocalClassificationThreshold provides settings.classificationThreshold,
+        LocalTextRecognizeThreshold provides settings.textRecognizeThreshold,
     ) {
         content()
     }

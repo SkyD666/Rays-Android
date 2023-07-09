@@ -3,7 +3,9 @@ package com.skyd.rays.ui.screen.settings.ml
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.HotelClass
 import androidx.compose.material.icons.filled.ModelTraining
+import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -17,7 +19,8 @@ import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.screen.settings.ml.classification.CLASSIFICATION_MODEL_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.classification.CLASSIFICATION_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.textrecognize.TEXT_RECOGNIZE_SCREEN_ROUTE
 
 
 const val ML_SCREEN_ROUTE = "mlScreen"
@@ -44,12 +47,18 @@ fun MlScreen() {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.ModelTraining),
-                    text = stringResource(id = R.string.classification_model_screen_name),
-                    descriptionText = stringResource(
-                        R.string.ml_screen_sticker_classification_model_description,
-                    ),
-                    onClick = { navController.navigate(CLASSIFICATION_MODEL_SCREEN_ROUTE) }
+                    icon = rememberVectorPainter(image = Icons.Default.HotelClass),
+                    text = stringResource(id = R.string.classification_screen_name),
+                    descriptionText = stringResource(R.string.classification_screen_description),
+                    onClick = { navController.navigate(CLASSIFICATION_SCREEN_ROUTE) }
+                )
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(image = Icons.Default.TextFields),
+                    text = stringResource(id = R.string.text_recognize_screen_name),
+                    descriptionText = stringResource(R.string.text_recognize_screen_description),
+                    onClick = { navController.navigate(TEXT_RECOGNIZE_SCREEN_ROUTE) }
                 )
             }
         }

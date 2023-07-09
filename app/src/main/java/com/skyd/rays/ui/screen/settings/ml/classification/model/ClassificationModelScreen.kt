@@ -1,4 +1,4 @@
-package com.skyd.rays.ui.screen.settings.ml.classification
+package com.skyd.rays.ui.screen.settings.ml.classification.model
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts

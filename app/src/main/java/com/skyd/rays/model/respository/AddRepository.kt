@@ -23,6 +23,8 @@ import com.skyd.rays.ext.md5
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.db.dao.StickerDao
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
+import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
+import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.zip
@@ -87,18 +89,30 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
         val image: InputImage
         return try {
             image = InputImage.fromFilePath(appContext, sticker)
+            val dataStore = appContext.dataStore
+            val textRecognizeThreshold = dataStore.get(TextRecognizeThresholdPreference.key)
+                ?: TextRecognizeThresholdPreference.default
+
             flow {
                 emit(suspendCancellableCoroutine { cont ->
                     TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
                         .process(image)
-                        .addOnSuccessListener { cont.resume(getTexts(it), onCancellation = null) }
+                        .addOnSuccessListener {
+                            cont.resume(
+                                getTexts(it, textRecognizeThreshold), onCancellation = null
+                            )
+                        }
                         .addOnFailureListener { cont.resumeWithException(it) }
                 })
             }.zip(flow {
                 emit(suspendCancellableCoroutine { cont ->
                     TextRecognition.getClient(ChineseTextRecognizerOptions.Builder().build())
                         .process(image)
-                        .addOnSuccessListener { cont.resume(getTexts(it), onCancellation = null) }
+                        .addOnSuccessListener {
+                            cont.resume(
+                                getTexts(it, textRecognizeThreshold), onCancellation = null
+                            )
+                        }
                         .addOnFailureListener { cont.resumeWithException(it) }
                 })
             }) { other, chinese ->
@@ -107,7 +121,11 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
                 emit(suspendCancellableCoroutine { cont ->
                     TextRecognition.getClient(JapaneseTextRecognizerOptions.Builder().build())
                         .process(image)
-                        .addOnSuccessListener { cont.resume(getTexts(it), onCancellation = null) }
+                        .addOnSuccessListener {
+                            cont.resume(
+                                getTexts(it, textRecognizeThreshold), onCancellation = null
+                            )
+                        }
                         .addOnFailureListener { cont.resumeWithException(it) }
                 })
             }) { other, japanese ->
@@ -116,16 +134,21 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
                 emit(suspendCancellableCoroutine { cont ->
                     TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
                         .process(image)
-                        .addOnSuccessListener { cont.resume(getTexts(it), onCancellation = null) }
+                        .addOnSuccessListener {
+                            cont.resume(
+                                getTexts(it, textRecognizeThreshold), onCancellation = null
+                            )
+                        }
                         .addOnFailureListener { cont.resumeWithException(it) }
                 })
             }) { other, korean ->
                 other + korean
             }.zip(flow {
                 emit(suspendCancellableCoroutine { cont ->
-                    val model = appContext.dataStore
-                        .get(StickerClassificationModelPreference.key)
-                        .orEmpty()
+                    val model = dataStore.get(StickerClassificationModelPreference.key).orEmpty()
+                    val classificationThreshold =
+                        dataStore.get(ClassificationThresholdPreference.key)
+                            ?: ClassificationThresholdPreference.default
 
                     val localModel = LocalModel.Builder()
                         .apply {
@@ -138,7 +161,7 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
                         .build()
 
                     val customImageLabelerOptions = CustomImageLabelerOptions.Builder(localModel)
-                        .setConfidenceThreshold(0.5f)
+                        .setConfidenceThreshold(classificationThreshold)
                         .setMaxResultCount(3)
                         .build()
 
@@ -167,12 +190,12 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
         }
     }
 
-    private fun getTexts(result: Text): List<String> {
+    private fun getTexts(result: Text, confidence: Float): List<String> {
         val list = mutableListOf<String>()
         for (block in result.textBlocks) {
             for (line in block.lines) {
                 for (element in line.elements) {
-                    if (element.confidence > 0.4f) {
+                    if (element.confidence > confidence) {
                         list += element.text
                     }
                 }

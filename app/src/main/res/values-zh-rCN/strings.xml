@@ -117,8 +117,10 @@
     <string name="add_screen_suggest_tag">建议标签</string>
     <string name="ml_screen_name">Ai</string>
     <string name="setting_screen_ml_description">配置 Ai 模型等</string>
-    <string name="ml_screen_sticker_classification_model_description">选择分类表情包使用的机器学习模型。使用默认的分类模型 (EfficientNet-Lite2) 或指定 .tflite / .lite 模型文件</string>
-    <string name="classification_model_screen_name">表情包分类模型</string>
+    <string name="classification_screen_name">表情包分类</string>
+    <string name="classification_screen_description">设置表情包分类模型、置信度阈值等</string>
+    <string name="classification_model_screen_name">分类模型</string>
+    <string name="classification_model_screen_description">选择分类表情包使用的机器学习模型。使用默认的分类模型 (EfficientNet-Lite2) 或指定 .tflite / .lite 模型文件</string>
     <string name="classification_model_screen_default">默认</string>
     <string name="classification_model_screen_select">选择外部模型</string>
     <string name="classification_model_screen_select_description">选择外部模型文件 (.tflite 或 .lite)</string>
@@ -203,6 +205,12 @@
     <string name="auto_share_screen_ignore_regex_format_error">正则表达式格式非法</string>
     <string name="auto_share_screen_accessibility_granted">当前已授予无障碍权限</string>
     <string name="auto_share_screen_accessibility_not_granted">当前未授予无障碍权限</string>
-    <string name="auto_share_screen_supported_app">自动分享可以直接将表情包分享到上一个页面对应的应用。\n\n该功能需要无障碍权限。在杀死 Rays 后台、升级或重安装 Rays 后，自动分享可能会被禁用，需手动打开无障碍权限才可再次启用。\n\n建议允许 Rays 自启动、关联启动和后台运行。\n\n目前支持的应用:\nQQ\n微信\n微博\nTelegram\nInstagram\nDiscord\nWhatsApp</string>
+    <string name="auto_share_screen_supported_app">自动分享可以直接将表情包分享到上一个页面对应的应用。\n\n该功能需要无障碍权限。在杀死 Rays 后台、升级或重安装 Rays 后，自动分享可能会被禁用，需手动打开无障碍权限才可再次启用。\n\n建议允许 Rays 自启动、关联启动和后台运行。\n\n目前支持的应用：\nQQ\n微信\n微博\nTelegram\nInstagram\nDiscord\nWhatsApp</string>
     <string name="sponsor">赞助作者</string>
+    <string name="classification_screen_threshold">置信度阈值</string>
+    <string name="classification_screen_threshold_description">只有置信度高于此阈值的分类标签才会被推荐，建议设置为 0.5 左右。</string>
+    <string name="text_recognize_screen_name">文字识别</string>
+    <string name="text_recognize_screen_description">识别表情包中的文字</string>
+    <string name="text_recognize_screen_threshold">置信度阈值</string>
+    <string name="text_recognize_screen_threshold_description">只有置信度高于此阈值的文本才会被推荐，建议设置为 0.4 左右。</string>
 </resources>
