@@ -7,8 +7,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -122,12 +120,7 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
             val uriStringShareResultUiState = uiState.apiGrantResultUiState
             if (uriStringShareResultUiState is ApiGrantResultUiState.Success) {
                 itemsIndexed(uriStringShareResultUiState.data) { _, item ->
-                    CompositionLocalProvider(
-                        LocalContentColor provides
-                                if (apiGrant) MaterialTheme.colorScheme.onSurface
-                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-                        LocalUseColorfulIcon provides true,
-                    ) {
+                    CompositionLocalProvider(LocalUseColorfulIcon provides true) {
                         SwitchSettingsItem(
                             icon = rememberDrawablePainter(drawable = item.appIcon),
                             checked = item.apiGrantPackageBean.enabled,

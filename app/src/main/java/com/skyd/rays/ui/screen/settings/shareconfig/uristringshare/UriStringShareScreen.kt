@@ -6,8 +6,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -123,12 +121,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
             val uriStringShareResultUiState = uiState.uriStringShareResultUiState
             if (uriStringShareResultUiState is UriStringShareResultUiState.Success) {
                 itemsIndexed(uriStringShareResultUiState.data) { _, item ->
-                    CompositionLocalProvider(
-                        LocalContentColor provides
-                                if (uriStringShare) MaterialTheme.colorScheme.onSurface
-                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-                        LocalUseColorfulIcon provides true,
-                    ) {
+                    CompositionLocalProvider(LocalUseColorfulIcon provides true) {
                         SwitchSettingsItem(
                             icon = rememberDrawablePainter(drawable = item.appIcon),
                             checked = item.uriStringSharePackageBean.enabled,
