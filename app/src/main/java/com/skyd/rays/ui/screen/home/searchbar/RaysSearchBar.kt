@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -34,6 +35,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -151,6 +153,7 @@ fun RaysSearchBar(
                 val searchResultUiState = uiState.searchResultUiState
                 if (searchResultUiState is SearchResultUiState.Success) {
                     val searchResultList = @Composable {
+                        val primaryColor = MaterialTheme.colorScheme.primary
                         SearchResultList(
                             state = searchResultListState,
                             dataList = searchResultUiState.stickerWithTagsList,
@@ -164,7 +167,10 @@ fun RaysSearchBar(
                                 } else {
                                     active = false
                                     viewModel.sendUiIntent(
-                                        HomeIntent.AddClickCountAndGetStickerDetails(stickerUuid = data.sticker.uuid)
+                                        HomeIntent.AddClickCountAndGetStickerDetails(
+                                            stickerUuid = data.sticker.uuid,
+                                            primaryColor = primaryColor.toArgb(),
+                                        )
                                     )
                                 }
                             },

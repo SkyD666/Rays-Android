@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -37,22 +38,32 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.skyd.rays.ext.alwaysLight
 
 val LocalUseColorfulIcon = compositionLocalOf { false }
-val LocalBackgroundRoundedShape = compositionLocalOf { false }
+val LocalVerticalPadding = compositionLocalOf { 16.dp }
 
 @Composable
 fun BannerItem(content: @Composable () -> Unit) {
-    Spacer(modifier = Modifier.height(16.dp))
-    CompositionLocalProvider(LocalBackgroundRoundedShape provides true) {
-        content()
+    Column {
+        Spacer(modifier = Modifier.height(16.dp))
+        CompositionLocalProvider(
+            LocalContentColor provides (LocalContentColor.current alwaysLight true),
+            LocalVerticalPadding provides 12.dp
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .clip(RoundedCornerShape(36))
+                    .background(MaterialTheme.colorScheme.primaryContainer alwaysLight true)
+            ) {
+                content()
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
     }
-    Spacer(modifier = Modifier.height(16.dp))
 }
 
 @Composable
@@ -86,9 +97,12 @@ fun SwitchSettingsItem(
     onCheckedChange: ((Boolean) -> Unit)?,
     onLongClick: (() -> Unit)? = null,
 ) {
+    val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     BaseSettingsItem(
         modifier = Modifier.toggleable(
             value = checked,
+            interactionSource = interactionSource,
+            indication = LocalIndication.current,
             enabled = enabled,
             role = Role.Switch,
             onValueChange = { onCheckedChange?.invoke(it) },
@@ -98,11 +112,13 @@ fun SwitchSettingsItem(
         descriptionText = description,
         enabled = enabled,
         onLongClick = onLongClick,
-        onClick = {
-            onCheckedChange?.invoke(!checked)
-        },
     ) {
-        Switch(checked = checked, enabled = enabled, onCheckedChange = null)
+        Switch(
+            checked = checked,
+            enabled = enabled,
+            onCheckedChange = onCheckedChange,
+            interactionSource = interactionSource
+        )
     }
 }
 
@@ -112,6 +128,7 @@ fun RadioSettingsItem(
     text: String,
     description: String? = null,
     selected: Boolean = false,
+    enabled: Boolean = true,
     onLongClick: (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
 ) {
@@ -120,6 +137,7 @@ fun RadioSettingsItem(
         text = text,
         description = description,
         selected = selected,
+        enabled = enabled,
         onLongClick = onLongClick,
         onClick = onClick
     )
@@ -131,28 +149,32 @@ fun RadioSettingsItem(
     text: String,
     description: String? = null,
     selected: Boolean = false,
+    enabled: Boolean = true,
     onLongClick: (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
 ) {
+    val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     BaseSettingsItem(
         modifier = Modifier
-            .combinedClickable(
-                role = Role.RadioButton,
-                interactionSource = remember { MutableInteractionSource() },
+            .selectable(
+                selected = selected,
+                interactionSource = interactionSource,
                 indication = LocalIndication.current,
-                onLongClick = onLongClick,
-                onClick = {
-                    onClick?.invoke()
-                }
-            )
-            .semantics {
-                this.selected = selected
-            },
+                enabled = enabled,
+                role = Role.RadioButton,
+                onClick = { onClick?.invoke() },
+            ),
         icon = icon,
         text = text,
         descriptionText = description,
+        onLongClick = onLongClick,
     ) {
-        RadioButton(selected = selected, onClick = null)
+        RadioButton(
+            selected = selected,
+            onClick = onClick,
+            enabled = enabled,
+            interactionSource = interactionSource
+        )
     }
 }
 
@@ -243,71 +265,53 @@ fun BaseSettingsItem(
     onLongClick: (() -> Unit)? = null,
     content: (@Composable () -> Unit)? = null
 ) {
-    val contentColor = if (LocalBackgroundRoundedShape.current) {
-        LocalContentColor.current alwaysLight true
-    } else {
-        LocalContentColor.current
-    }
-    CompositionLocalProvider(LocalContentColor provides contentColor) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .run {
-                    if (LocalBackgroundRoundedShape.current) {
-                        padding(horizontal = 16.dp)
-                            .clip(RoundedCornerShape(36))
-                            .background(MaterialTheme.colorScheme.primaryContainer alwaysLight true)
-                    } else this
-                }
-                .run {
-                    if (onClick != null && enabled) {
-                        combinedClickable(onLongClick = onLongClick) { onClick() }
-                    } else this
-                }
-                .run {
-                    if (LocalBackgroundRoundedShape.current) {
-                        padding(horizontal = 16.dp, vertical = 12.dp)
-                    } else padding(16.dp)
-                },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (LocalUseColorfulIcon.current) {
-                Image(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .size(24.dp),
-                    painter = icon,
-                    contentDescription = null
-                )
-            } else {
-                Icon(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .size(24.dp),
-                    painter = icon,
-                    contentDescription = null,
-                )
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .run {
+                if (onClick != null && enabled) {
+                    combinedClickable(onLongClick = onLongClick) { onClick() }
+                } else this
             }
-            Column(
+            .padding(LocalVerticalPadding.current),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (LocalUseColorfulIcon.current) {
+            Image(
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 10.dp)
-            ) {
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                if (description != null) {
-                    Box(modifier = Modifier.padding(top = 5.dp)) {
-                        description.invoke()
-                    }
+                    .padding(10.dp)
+                    .size(24.dp),
+                painter = icon,
+                contentDescription = null
+            )
+        } else {
+            Icon(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(24.dp),
+                painter = icon,
+                contentDescription = null,
+            )
+        }
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 10.dp)
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+            )
+            if (description != null) {
+                Box(modifier = Modifier.padding(top = 5.dp)) {
+                    description.invoke()
                 }
             }
-            content?.let {
-                Box(modifier = Modifier.padding(end = 5.dp)) { it.invoke() }
-            }
+        }
+        content?.let {
+            Box(modifier = Modifier.padding(end = 5.dp)) { it.invoke() }
         }
     }
 }

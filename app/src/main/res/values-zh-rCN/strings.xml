@@ -44,6 +44,8 @@
     <string name="setting_screen_appearance_description">设置主题、深色模式、页面样式等</string>
     <string name="appearance_screen_dark_mode">深色模式</string>
     <string name="appearance_screen_dark_mode_description">设置深色模式策略</string>
+    <string name="appearance_screen_sticker_color_theme">贴纸颜色主题</string>
+    <string name="appearance_screen_sticker_color_theme_description">当切换首页表情包时，更新应用的主题色为表情包的主色调</string>
     <string name="dark_mode_dark">深色</string>
     <string name="dark_mode_light">亮色</string>
     <string name="dark_mode_follow_system">跟随系统</string>

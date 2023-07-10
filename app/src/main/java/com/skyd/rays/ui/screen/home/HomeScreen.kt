@@ -34,6 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -76,11 +77,17 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val primaryColor = MaterialTheme.colorScheme.primary
 
     refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
         value ?: return@apply
         viewModel.sendUiIntent(HomeIntent.GetStickerWithTagsList(query))
-        viewModel.sendUiIntent(HomeIntent.GetStickerDetails(currentStickerUuid))
+        viewModel.sendUiIntent(
+            HomeIntent.GetStickerDetails(
+                stickerUuid = currentStickerUuid,
+                primaryColor = primaryColor.toArgb(),
+            )
+        )
     }
 
     LaunchedEffect(query) {
@@ -121,7 +128,10 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                         )
                         if (stickerDetailUiState.stickerUuid.isNotBlank()) {
                             viewModel.sendUiIntent(
-                                HomeIntent.GetStickerDetails(stickerDetailUiState.stickerUuid)
+                                HomeIntent.GetStickerDetails(
+                                    stickerUuid = stickerDetailUiState.stickerUuid,
+                                    primaryColor = primaryColor.toArgb(),
+                                )
                             )
                         }
                     }

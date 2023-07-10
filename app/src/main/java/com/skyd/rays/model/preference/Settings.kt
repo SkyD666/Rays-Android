@@ -19,6 +19,7 @@ import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
+import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
 import com.skyd.rays.ui.local.LocalApiGrant
 import com.skyd.rays.ui.local.LocalAutoShareIgnoreStrategy
@@ -34,6 +35,7 @@ import com.skyd.rays.ui.local.LocalQuery
 import com.skyd.rays.ui.local.LocalSearchResultReverse
 import com.skyd.rays.ui.local.LocalSearchResultSort
 import com.skyd.rays.ui.local.LocalStickerClassificationModel
+import com.skyd.rays.ui.local.LocalStickerColorTheme
 import com.skyd.rays.ui.local.LocalStickerExtName
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalTextRecognizeThreshold
@@ -49,6 +51,7 @@ data class Settings(
     val themeName: String = ThemeNamePreference.default,
     val customPrimaryColor: String = CustomPrimaryColorPreference.default,
     val darkMode: Int = DarkModePreference.default,
+    val stickerColorTheme: Boolean = StickerColorThemePreference.default,
     // Update
     val ignoreUpdateVersion: Long = IgnoreUpdateVersionPreference.default,
     // Sticker
@@ -92,6 +95,7 @@ fun SettingsProvider(
         LocalThemeName provides settings.themeName,
         LocalCustomPrimaryColor provides settings.customPrimaryColor,
         LocalDarkMode provides settings.darkMode,
+        LocalStickerColorTheme provides settings.stickerColorTheme,
         // Update
         LocalIgnoreUpdateVersion provides settings.ignoreUpdateVersion,
         // Sticker

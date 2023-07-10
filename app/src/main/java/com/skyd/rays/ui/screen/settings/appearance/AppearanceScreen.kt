@@ -31,6 +31,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -67,6 +68,7 @@ import com.skyd.rays.ext.onDark
 import com.skyd.rays.ext.toColorOrNull
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
+import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.BlockRadioButton
@@ -74,10 +76,12 @@ import com.skyd.rays.ui.component.BlockRadioGroupButtonItem
 import com.skyd.rays.ui.component.CategorySettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
+import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalDarkMode
 import com.skyd.rays.ui.local.LocalNavController
+import com.skyd.rays.ui.local.LocalStickerColorTheme
 import com.skyd.rays.ui.local.LocalThemeName
 import com.skyd.rays.ui.screen.settings.appearance.style.HOME_STYLE_SCREEN_ROUTE
 import com.skyd.rays.ui.theme.extractTonalPalettes
@@ -89,6 +93,8 @@ const val APPEARANCE_SCREEN_ROUTE = "appearanceScreen"
 fun AppearanceScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val navController = LocalNavController.current
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val themeName = LocalThemeName.current
 
     val tonalPalettes = extractTonalPalettes()
@@ -141,6 +147,21 @@ fun AppearanceScreen() {
                     text = stringResource(id = R.string.appearance_screen_dark_mode),
                     descriptionText = stringResource(id = R.string.appearance_screen_dark_mode_description),
                     onClick = { openDarkBottomSheet = true }
+                )
+            }
+            item {
+                SwitchSettingsItem(
+                    icon = Icons.Default.Palette,
+                    text = stringResource(R.string.appearance_screen_sticker_color_theme),
+                    description = stringResource(R.string.appearance_screen_sticker_color_theme_description),
+                    checked = LocalStickerColorTheme.current,
+                    onCheckedChange = {
+                        StickerColorThemePreference.put(
+                            context = context,
+                            scope = scope,
+                            value = it,
+                        )
+                    },
                 )
             }
             item {

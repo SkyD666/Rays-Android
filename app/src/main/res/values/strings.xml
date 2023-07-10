@@ -44,6 +44,8 @@
     <string name="setting_screen_appearance_description">Theme, dark mode, style</string>
     <string name="appearance_screen_dark_mode">Dark mode</string>
     <string name="appearance_screen_dark_mode_description">Set dark mode strategy</string>
+    <string name="appearance_screen_sticker_color_theme">Sticker color theme</string>
+    <string name="appearance_screen_sticker_color_theme_description">When changing the homepage sticker, update the theme color to the main color of the sticker</string>
     <string name="dark_mode_dark">Dark mode</string>
     <string name="dark_mode_light">Light mode</string>
     <string name="dark_mode_follow_system">Follow the system</string>

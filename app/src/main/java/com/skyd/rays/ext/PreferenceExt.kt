@@ -22,6 +22,7 @@ import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
+import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
 
 fun Preferences.toSettings(): Settings {
@@ -30,6 +31,7 @@ fun Preferences.toSettings(): Settings {
         themeName = ThemeNamePreference.fromPreferences(this),
         customPrimaryColor = CustomPrimaryColorPreference.fromPreferences(this),
         darkMode = DarkModePreference.fromPreferences(this),
+        stickerColorTheme = StickerColorThemePreference.fromPreferences(this),
 
         // Theme
         ignoreUpdateVersion = IgnoreUpdateVersionPreference.fromPreferences(this),

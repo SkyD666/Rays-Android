@@ -23,6 +23,7 @@ import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
+import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
 
 val LocalNavController = compositionLocalOf<NavHostController> {
@@ -37,6 +38,7 @@ val LocalWindowSizeClass = compositionLocalOf<WindowSizeClass> {
 val LocalDarkMode = compositionLocalOf { DarkModePreference.default }
 val LocalThemeName = compositionLocalOf { ThemeNamePreference.default }
 val LocalCustomPrimaryColor = compositionLocalOf { CustomPrimaryColorPreference.default }
+val LocalStickerColorTheme = compositionLocalOf { StickerColorThemePreference.default }
 
 // Update
 val LocalIgnoreUpdateVersion = compositionLocalOf { IgnoreUpdateVersionPreference.default }
