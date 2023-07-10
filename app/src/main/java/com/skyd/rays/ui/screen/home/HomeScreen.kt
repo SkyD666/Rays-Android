@@ -77,17 +77,11 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
-    val primaryColor = MaterialTheme.colorScheme.primary
 
     refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
         value ?: return@apply
         viewModel.sendUiIntent(HomeIntent.GetStickerWithTagsList(query))
-        viewModel.sendUiIntent(
-            HomeIntent.GetStickerDetails(
-                stickerUuid = currentStickerUuid,
-                primaryColor = primaryColor.toArgb(),
-            )
-        )
+        viewModel.sendUiIntent(HomeIntent.GetStickerDetails(currentStickerUuid))
     }
 
     LaunchedEffect(query) {
@@ -128,10 +122,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                         )
                         if (stickerDetailUiState.stickerUuid.isNotBlank()) {
                             viewModel.sendUiIntent(
-                                HomeIntent.GetStickerDetails(
-                                    stickerUuid = stickerDetailUiState.stickerUuid,
-                                    primaryColor = primaryColor.toArgb(),
-                                )
+                                HomeIntent.GetStickerDetails(stickerDetailUiState.stickerUuid)
                             )
                         }
                     }
@@ -184,14 +175,24 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 }
 
 @Composable
-private fun MainCard(stickerWithTags: StickerWithTags) {
+private fun MainCard(stickerWithTags: StickerWithTags, viewModel: HomeViewModel = hiltViewModel()) {
     val navController = LocalNavController.current
-    val currentStickerUuid = LocalCurrentStickerUuid.current
+    val stickerUuid = stickerWithTags.sticker.uuid
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
+    val primaryColor = MaterialTheme.colorScheme.primary
 
     val stickerBean = stickerWithTags.sticker
     val tags = stickerWithTags.tags
+
+    LaunchedEffect(stickerUuid) {
+        viewModel.sendUiIntent(
+            HomeIntent.UpdateThemeColor(
+                stickerUuid = stickerUuid,
+                primaryColor = primaryColor.toArgb(),
+            )
+        )
+    }
 
     Card(
         modifier = Modifier
@@ -210,7 +211,7 @@ private fun MainCard(stickerWithTags: StickerWithTags) {
                         )
                     },
                     onDoubleClick = {
-                        navController.navigate("$ADD_SCREEN_ROUTE?stickerUuid=${currentStickerUuid}")
+                        navController.navigate("$ADD_SCREEN_ROUTE?stickerUuid=${stickerUuid}")
                     },
                     onClick = {}
                 )

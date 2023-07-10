@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -73,6 +74,16 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
         state = ReqState.Success
         data = Unit
     })
+
+    /**
+     * 不需要访问 repository 的简单的 Flow
+     */
+    protected fun <T> simpleFlow(action: () -> T): Flow<BaseData<T>> = flow {
+        emit(BaseData<T>().apply {
+            state = ReqState.Success
+            data = action()
+        })
+    }
 
     /**
      * 若 T 是给定的类型则执行...

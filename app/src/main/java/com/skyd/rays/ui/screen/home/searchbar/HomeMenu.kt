@@ -12,11 +12,9 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,7 +79,6 @@ internal fun HomeMenu(
 ) {
     val navController = LocalNavController.current
     val currentStickerUuid = LocalCurrentStickerUuid.current
-    val primaryColor = MaterialTheme.colorScheme.primary
 
     DropdownMenu(
         expanded = expanded,
@@ -92,10 +89,7 @@ internal fun HomeMenu(
             text = { Text(stringResource(R.string.home_screen_clear_current_sicker)) },
             onClick = {
                 viewModel.sendUiIntent(
-                    HomeIntent.GetStickerDetails(
-                        stickerUuid = CurrentStickerUuidPreference.default,
-                        primaryColor = primaryColor.toArgb(),
-                    )
+                    HomeIntent.GetStickerDetails(CurrentStickerUuidPreference.default)
                 )
                 onDismissRequest()
             },

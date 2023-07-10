@@ -27,7 +27,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
@@ -71,21 +70,10 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
                         scope = viewModelScope,
                         value = CurrentStickerUuidPreference.default,
                     )
-                    setPrimaryColor(
-                        uuid = CurrentStickerUuidPreference.default,
-                        primaryColor = intent.primaryColor
-                    )
                     emit(uiStateFlow.value.copy(stickerDetailUiState = StickerDetailUiState.Init()))
                 }.defaultFinally()
             } else {
                 homeRepo.requestStickerWithTagsDetail(intent.stickerUuid)
-                    .map {
-                        setPrimaryColor(
-                            uuid = intent.stickerUuid,
-                            primaryColor = intent.primaryColor
-                        )
-                        it
-                    }
                     .mapToUIChange { data ->
                         CurrentStickerUuidPreference.put(
                             context = appContext,
@@ -145,7 +133,6 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
         doIsInstance<HomeIntent.AddClickCountAndGetStickerDetails> { intent ->
             homeRepo.requestAddClickCount(stickerUuid = intent.stickerUuid, count = intent.count)
                 .flatMapConcat {
-                    setPrimaryColor(uuid = intent.stickerUuid, primaryColor = intent.primaryColor)
                     homeRepo.requestStickerWithTagsDetail(stickerUuid = intent.stickerUuid)
                 }
                 .mapToUIChange { data ->
@@ -163,6 +150,20 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
             homeRepo.requestExportStickers(intent.stickerUuids)
                 .mapToUIChange { data ->
                     HomeEvent(homeResultUiEvent = HomeResultUiEvent.Success(data))
+                }
+                .defaultFinally()
+        },
+
+        doIsInstance<HomeIntent.UpdateThemeColor> { intent ->
+            simpleFlow { appContext.dataStore.get(StickerColorThemePreference.key) }
+                .mapToUIChange {
+                    if (it == true) {
+                        setPrimaryColor(
+                            uuid = intent.stickerUuid,
+                            primaryColor = intent.primaryColor
+                        )
+                    }
+                    this
                 }
                 .defaultFinally()
         },
@@ -233,7 +234,6 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
     }
 
     private fun setPrimaryColor(uuid: String, primaryColor: Int? = null) {
-        if (appContext.dataStore.get(StickerColorThemePreference.key) != true) return
         fun setCustomPrimaryColorPreference(value: Int) {
             CustomPrimaryColorPreference.put(
                 context = appContext,
