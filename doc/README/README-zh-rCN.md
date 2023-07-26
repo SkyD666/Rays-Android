@@ -16,6 +16,9 @@
         <a href="https://github.com/SkyD666/Rays-Android/blob/master/LICENSE" style="text-decoration:none" >
             <img src="https://img.shields.io/github/license/SkyD666/Rays-Android?style=for-the-badge" alt="GitHub license"/>
         </a>
+        <a href="https://t.me/SkyD666Chat" style="text-decoration:none" >
+            <img src="https://img.shields.io/badge/Telegram-2CA5E0?logo=telegram&logoColor=white&style=for-the-badge" alt="Telegram"/>
+        </a>
         <a href="https://discord.gg/pEWEjeJTa3" style="text-decoration:none" >
             <img src="https://img.shields.io/discord/982522006819991622?color=5865F2&label=Discord&logo=discord&logoColor=white&style=for-the-badge" alt="Discord"/>
         </a>
@@ -34,6 +37,7 @@
         <b><a href="https://github.com/SkyD666/Rays-Android/issues/4">帮助我们翻译</a></b>
     </p>
 </div>
+
 
 
 
