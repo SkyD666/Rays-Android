@@ -3,24 +3,22 @@ package com.skyd.rays.ui.screen.home.searchbar
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -158,77 +156,79 @@ fun SearchResultConfigBar(
     val scope = rememberCoroutineScope()
     var expandMenu by rememberSaveable { mutableStateOf(false) }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .horizontalScroll(rememberScrollState()),
-        verticalAlignment = Alignment.CenterVertically
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Badge(
-            modifier = Modifier.padding(vertical = 10.dp),
-        ) {
-            AnimatedContent(targetState = size) { targetCount ->
-                Text(text = targetCount.toString())
+        item {
+            Badge {
+                AnimatedContent(targetState = size) { targetCount ->
+                    Text(text = targetCount.toString())
+                }
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        item {
+            Box {
+                FilterChip(
+                    selected = false,
+                    onClick = { expandMenu = !expandMenu },
+                    label = { Text(text = stringResource(R.string.search_result_sort)) },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = if (expandMenu) Icons.Default.ArrowDropUp
+                            else Icons.Default.ArrowDropDown,
+                            contentDescription = null,
+                            modifier = Modifier.size(AssistChipDefaults.IconSize),
+                        )
+                    }
+                )
+                SearchResultSortMenu(
+                    expanded = expandMenu,
+                    onDismissRequest = { expandMenu = false })
+            }
+        }
 
-        Box(modifier = Modifier.padding(horizontal = 3.dp)) {
+        item {
             FilterChip(
-                selected = false,
-                onClick = { expandMenu = !expandMenu },
-                label = { Text(text = stringResource(R.string.search_result_sort)) },
-                trailingIcon = {
-                    Icon(
-                        imageVector = if (expandMenu) Icons.Default.ArrowDropUp
-                        else Icons.Default.ArrowDropDown,
-                        contentDescription = null,
-                        modifier = Modifier.size(AssistChipDefaults.IconSize),
+                selected = searchResultReverse,
+                onClick = {
+                    SearchResultReversePreference.put(
+                        context = context,
+                        scope = scope,
+                        value = !searchResultReverse
                     )
+                },
+                label = { Text(text = stringResource(R.string.search_result_reverse)) },
+                leadingIcon = {
+                    if (searchResultReverse) {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = null,
+                            modifier = Modifier.size(FilterChipDefaults.IconSize),
+                        )
+                    }
                 }
             )
-            SearchResultSortMenu(expanded = expandMenu, onDismissRequest = { expandMenu = false })
         }
 
-        FilterChip(
-            modifier = Modifier.padding(horizontal = 3.dp),
-            selected = searchResultReverse,
-            onClick = {
-                SearchResultReversePreference.put(
-                    context = context,
-                    scope = scope,
-                    value = !searchResultReverse
-                )
-            },
-            label = { Text(text = stringResource(R.string.search_result_reverse)) },
-            leadingIcon = {
-                if (searchResultReverse) {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = null,
-                        modifier = Modifier.size(FilterChipDefaults.IconSize),
-                    )
+        item {
+            FilterChip(
+                selected = multiSelect,
+                onClick = { onMultiSelectChanged(!multiSelect) },
+                label = { Text(text = stringResource(R.string.search_result_multi_select)) },
+                leadingIcon = {
+                    if (multiSelect) {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = null,
+                            modifier = Modifier.size(FilterChipDefaults.IconSize),
+                        )
+                    }
                 }
-            }
-        )
-
-        FilterChip(
-            modifier = Modifier.padding(start = 3.dp),
-            selected = multiSelect,
-            onClick = { onMultiSelectChanged(!multiSelect) },
-            label = { Text(text = stringResource(R.string.search_result_multi_select)) },
-            leadingIcon = {
-                if (multiSelect) {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = null,
-                        modifier = Modifier.size(FilterChipDefaults.IconSize),
-                    )
-                }
-            }
-        )
+            )
+        }
     }
 }
 

@@ -9,10 +9,14 @@ import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -20,7 +24,10 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Divider
+import androidx.compose.material3.RichTooltipBox
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -59,6 +66,7 @@ import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.home.HomeIntent
 import com.skyd.rays.ui.screen.home.HomeState
 import com.skyd.rays.ui.screen.home.HomeViewModel
+import com.skyd.rays.ui.screen.home.PopularTagsUiState
 import com.skyd.rays.ui.screen.home.SearchResultUiState
 import com.skyd.rays.ui.screen.home.StickerDetailUiState
 
@@ -83,6 +91,8 @@ fun RaysSearchBar(
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
     val searchResultListState = rememberLazyStaggeredGridState()
+    val popularTags =
+        (uiState.popularTagsUiState as? PopularTagsUiState.Success)?.popularTags.orEmpty()
     var openDeleteWarningDialog by rememberSaveable { mutableStateOf(false) }
     var openExportPathDialog by rememberSaveable { mutableStateOf(false) }
     var openStickerInfoDialog by rememberSaveable { mutableStateOf(false) }
@@ -106,13 +116,15 @@ fun RaysSearchBar(
                 query = query,
                 onSearch = { keyword ->
                     keyboardController?.hide()
-                    QueryPreference.put(context, scope, keyword)
+                    onQueryChange(keyword)
                     viewModel.sendUiIntent(HomeIntent.GetStickerWithTagsList(keyword))
                 },
                 active = active,
                 onActiveChange = {
-                    if (!it) {
-                        QueryPreference.put(context, scope, query)
+                    if (it) {
+                        viewModel.sendUiIntent(HomeIntent.GetPopularTagsList)
+                    } else {
+                        onQueryChange(query)
                     }
                     active = it
                 },
@@ -148,6 +160,19 @@ fun RaysSearchBar(
                     }
                 },
             ) {
+                AnimatedVisibility(visible = popularTags.isNotEmpty()) {
+                    Box {
+                        PopularTagsBar(
+                            onTagClicked = { onQueryChange(query + it) },
+                            tags = popularTags,
+                        )
+                        Divider(
+                            Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(horizontal = 16.dp)
+                        )
+                    }
+                }
                 val searchResultUiState = uiState.searchResultUiState
                 if (searchResultUiState is SearchResultUiState.Success) {
                     val searchResultList = @Composable {
@@ -343,5 +368,36 @@ fun TrailingIcon(
             contentDescription = stringResource(R.string.home_screen_clear_search_text),
             onClick = { onClick?.invoke() }
         )
+    }
+}
+
+@Composable
+fun PopularTagsBar(
+    onTagClicked: (String) -> Unit,
+    tags: List<Pair<String, Long>>,
+) {
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        itemsIndexed(tags) { _, item ->
+            RichTooltipBox(
+                title = { Text(item.first) },
+                text = {
+                    Text(
+                        text = stringResource(
+                            R.string.home_screen_popular_tags_total_share_count, item.second
+                        )
+                    )
+                },
+            ) {
+                SuggestionChip(
+                    modifier = Modifier.tooltipAnchor(),
+                    onClick = { onTagClicked(item.first) },
+                    label = { Text(text = item.first) }
+                )
+            }
+        }
     }
 }

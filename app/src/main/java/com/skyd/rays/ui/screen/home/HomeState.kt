@@ -7,6 +7,7 @@ import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 data class HomeState(
     val stickerDetailUiState: StickerDetailUiState,
     val searchResultUiState: SearchResultUiState,
+    val popularTagsUiState: PopularTagsUiState
 ) : IUiState
 
 sealed class StickerDetailUiState {
@@ -19,4 +20,9 @@ sealed class StickerDetailUiState {
 sealed class SearchResultUiState {
     object Init : SearchResultUiState()
     data class Success(val stickerWithTagsList: List<StickerWithTags>) : SearchResultUiState()
+}
+
+sealed class PopularTagsUiState {
+    object Init : PopularTagsUiState()
+    data class Success(val popularTags: List<Pair<String, Long>>) : PopularTagsUiState()
 }

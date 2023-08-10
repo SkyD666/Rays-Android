@@ -65,6 +65,22 @@ class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : B
         }
     }
 
+    suspend fun requestPopularTags(count: Int): Flow<BaseData<List<Pair<String, Long>>>> {
+        return flow {
+            val popularStickersList = stickerDao.getPopularStickersList(count = count)
+            val tagsMap: MutableMap<String, Long> = mutableMapOf()
+            popularStickersList.forEach {
+                it.tags.forEach { tag ->
+                    tagsMap[tag.tag] = tagsMap.getOrDefault(tag.tag, 0) + it.sticker.shareCount
+                }
+            }
+            emitBaseData(BaseData<List<Pair<String, Long>>>().apply {
+                code = 0
+                data = tagsMap.toList().sortedByDescending { (_, value) -> value }
+            })
+        }
+    }
+
     suspend fun requestExportStickers(stickerUuids: List<String>): Flow<BaseData<Int>> {
         return flow {
             val exportStickerDir = appContext.dataStore.get(ExportStickerDirPreference.key)

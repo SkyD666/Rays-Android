@@ -16,4 +16,5 @@ sealed class HomeIntent : IUiIntent {
         HomeIntent()
 
     data class ExportStickers(val stickerUuids: List<String>) : HomeIntent()
+    object GetPopularTagsList : HomeIntent()
 }

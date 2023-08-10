@@ -44,6 +44,7 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
                     .get(CurrentStickerUuidPreference.key) ?: CurrentStickerUuidPreference.default
             ),
             SearchResultUiState.Init,
+            PopularTagsUiState.Init,
         )
     }
 
@@ -164,6 +165,14 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
                         )
                     }
                     this
+                }
+                .defaultFinally()
+        },
+
+        doIsInstance<HomeIntent.GetPopularTagsList> { intent ->
+            homeRepo.requestPopularTags(count = 15)
+                .mapToUIChange { data ->
+                    copy(popularTagsUiState = PopularTagsUiState.Success(data))
                 }
                 .defaultFinally()
         },

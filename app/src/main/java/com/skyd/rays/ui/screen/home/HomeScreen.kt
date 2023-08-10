@@ -51,6 +51,7 @@ import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.screenIsLand
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.StickerScalePreference
+import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysIconButtonStyle
@@ -110,7 +111,10 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             uiState.apply {
                 RaysSearchBar(
                     query = query,
-                    onQueryChange = { query = it },
+                    onQueryChange = {
+                        query = it
+                        QueryPreference.put(context, scope, it)
+                    },
                     stickerWithTags = (stickerDetailUiState as? StickerDetailUiState.Success)?.stickerWithTags,
                     uiState = uiState,
                 )

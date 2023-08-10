@@ -72,6 +72,10 @@ interface StickerDao {
     fun addShareCount(uuids: List<String>, count: Int = 1): Int
 
     @Transaction
+    @Query("SELECT * FROM $STICKER_TABLE_NAME ORDER BY $SHARE_COUNT_COLUMN DESC LIMIT :count")
+    fun getPopularStickersList(count: Int = 15): List<StickerWithTags>
+
+    @Transaction
     fun addStickerWithTags(
         stickerWithTags: StickerWithTags,
         updateModifyTime: Boolean = true
