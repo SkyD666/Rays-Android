@@ -17,6 +17,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Help
+import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.material.icons.filled.PictureInPicture
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -47,13 +48,16 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
 import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
+import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.CategorySettingsItem
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
+import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
+import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.util.CommonUtil.openBrowser
 
@@ -62,6 +66,8 @@ const val HOME_STYLE_SCREEN_ROUTE = "homeStyleScreen"
 @Composable
 fun HomeStyleScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val stickerScale = LocalStickerScale.current
     var openStickerScaleSheet by rememberSaveable { mutableStateOf(false) }
 
@@ -74,6 +80,7 @@ fun HomeStyleScreen() {
             )
         }
     ) { paddingValues ->
+        val showPopularTags = LocalShowPopularTags.current
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -111,6 +118,24 @@ fun HomeStyleScreen() {
             }
             item {
                 HomeShareButtonAlignmentSettingItem()
+            }
+            item {
+                CategorySettingsItem(text = stringResource(R.string.home_style_screen_search_bar))
+            }
+            item {
+                SwitchSettingsItem(
+                    icon = Icons.Default.LocalOffer,
+                    checked = showPopularTags,
+                    text = stringResource(R.string.home_style_screen_show_popular_tags),
+                    description = stringResource(R.string.home_style_screen_show_popular_tags_description),
+                    onCheckedChange = {
+                        ShowPopularTagsPreference.put(
+                            context = context,
+                            scope = scope,
+                            value = it,
+                        )
+                    },
+                )
             }
         }
         if (openStickerScaleSheet) {

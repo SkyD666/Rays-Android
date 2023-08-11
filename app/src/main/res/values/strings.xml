@@ -132,8 +132,11 @@
     <string name="home_screen_clear_current_sicker">Clear screen</string>
     <string name="appearance_screen_style_category">Style</string>
     <string name="home_style_screen_name">Home screen style</string>
+    <string name="home_style_screen_search_bar">Search bar</string>
     <string name="home_style_screen_sticker_card">Sticker card</string>
     <string name="home_style_screen_sticker_scale">Sticker scale</string>
+    <string name="home_style_screen_show_popular_tags">Show popular tags</string>
+    <string name="home_style_screen_show_popular_tags_description">Show the tags corresponding to the most shared stickers below the search bar</string>
     <string name="sticker_scale_default">" (Default)"</string>
     <string name="update_check">Check updates</string>
     <string name="update_no_update">This is the latest version!</string>

@@ -132,8 +132,11 @@
     <string name="home_screen_clear_current_sicker">清空主屏幕</string>
     <string name="appearance_screen_style_category">样式</string>
     <string name="home_style_screen_name">首页样式</string>
+    <string name="home_style_screen_search_bar">搜索栏</string>
     <string name="home_style_screen_sticker_card">表情包卡片</string>
     <string name="home_style_screen_sticker_scale">表情包显示比例</string>
+    <string name="home_style_screen_show_popular_tags">显示常用标签</string>
+    <string name="home_style_screen_show_popular_tags_description">在搜索栏下方显示分享次数最多的表情包对应的标签</string>
     <string name="sticker_scale_default">（默认）</string>
     <string name="update_check">检查更新</string>
     <string name="update_no_update">当前已是最新版！</string>

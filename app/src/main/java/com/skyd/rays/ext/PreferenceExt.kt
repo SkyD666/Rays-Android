@@ -8,6 +8,7 @@ import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
 import com.skyd.rays.model.preference.Settings
+import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
@@ -46,6 +47,7 @@ fun Preferences.toSettings(): Settings {
         intersectSearchBySpace = IntersectSearchBySpacePreference.fromPreferences(this),
         searchResultSort = SearchResultSortPreference.fromPreferences(this),
         searchResultReverse = SearchResultReversePreference.fromPreferences(this),
+        showPopularTags = ShowPopularTagsPreference.fromPreferences(this),
 
         // WebDav
         webDavServer = WebDavServerPreference.fromPreferences(this),

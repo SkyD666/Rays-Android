@@ -34,6 +34,7 @@ import com.skyd.rays.ui.local.LocalIntersectSearchBySpace
 import com.skyd.rays.ui.local.LocalQuery
 import com.skyd.rays.ui.local.LocalSearchResultReverse
 import com.skyd.rays.ui.local.LocalSearchResultSort
+import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalStickerClassificationModel
 import com.skyd.rays.ui.local.LocalStickerColorTheme
 import com.skyd.rays.ui.local.LocalStickerExtName
@@ -63,6 +64,7 @@ data class Settings(
     val intersectSearchBySpace: Boolean = IntersectSearchBySpacePreference.default,
     val searchResultSort: String = SearchResultSortPreference.default,
     val searchResultReverse: Boolean = SearchResultReversePreference.default,
+    val showPopularTags: Boolean = ShowPopularTagsPreference.default,
     // WebDav
     val webDavServer: String = WebDavServerPreference.default,
     // ML
@@ -107,6 +109,7 @@ fun SettingsProvider(
         LocalIntersectSearchBySpace provides settings.intersectSearchBySpace,
         LocalSearchResultSort provides settings.searchResultSort,
         LocalSearchResultReverse provides settings.searchResultReverse,
+        LocalShowPopularTags provides settings.showPopularTags,
         // WebDav
         LocalWebDavServer provides settings.webDavServer,
         // ML

@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -61,6 +62,7 @@ import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalExportStickerDir
 import com.skyd.rays.ui.local.LocalNavController
+import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.home.HomeIntent
@@ -91,6 +93,7 @@ fun RaysSearchBar(
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
     val searchResultListState = rememberLazyStaggeredGridState()
+    val showPopularTags = LocalShowPopularTags.current
     val popularTags =
         (uiState.popularTagsUiState as? PopularTagsUiState.Success)?.popularTags.orEmpty()
     var openDeleteWarningDialog by rememberSaveable { mutableStateOf(false) }
@@ -98,6 +101,12 @@ fun RaysSearchBar(
     var openStickerInfoDialog by rememberSaveable { mutableStateOf(false) }
     var openDeleteMultiStickersDialog by rememberSaveable {
         mutableStateOf<Set<StickerWithTags>?>(null)
+    }
+
+    LaunchedEffect(showPopularTags) {
+        if (showPopularTags && active) {
+            viewModel.sendUiIntent(HomeIntent.GetPopularTagsList)
+        }
     }
 
     Box(
@@ -122,7 +131,9 @@ fun RaysSearchBar(
                 active = active,
                 onActiveChange = {
                     if (it) {
-                        viewModel.sendUiIntent(HomeIntent.GetPopularTagsList)
+                        if (showPopularTags) {
+                            viewModel.sendUiIntent(HomeIntent.GetPopularTagsList)
+                        }
                     } else {
                         onQueryChange(query)
                     }
@@ -160,18 +171,11 @@ fun RaysSearchBar(
                     }
                 },
             ) {
-                AnimatedVisibility(visible = popularTags.isNotEmpty()) {
-                    Box {
-                        PopularTagsBar(
-                            onTagClicked = { onQueryChange(query + it) },
-                            tags = popularTags,
-                        )
-                        Divider(
-                            Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(horizontal = 16.dp)
-                        )
-                    }
+                AnimatedVisibility(visible = LocalShowPopularTags.current && popularTags.isNotEmpty()) {
+                    PopularTagsBar(
+                        onTagClicked = { onQueryChange(query + it) },
+                        tags = popularTags,
+                    )
                 }
                 val searchResultUiState = uiState.searchResultUiState
                 if (searchResultUiState is SearchResultUiState.Success) {
@@ -376,28 +380,36 @@ fun PopularTagsBar(
     onTagClicked: (String) -> Unit,
     tags: List<Pair<String, Long>>,
 ) {
-    LazyRow(
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        itemsIndexed(tags) { _, item ->
-            RichTooltipBox(
-                title = { Text(item.first) },
-                text = {
-                    Text(
-                        text = stringResource(
-                            R.string.home_screen_popular_tags_total_share_count, item.second
+    Box {
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            itemsIndexed(tags) { _, item ->
+                RichTooltipBox(
+                    title = { Text(item.first) },
+                    text = {
+                        Text(
+                            text = stringResource(
+                                R.string.home_screen_popular_tags_total_share_count, item.second
+                            )
                         )
+                    },
+                ) {
+                    SuggestionChip(
+                        modifier = Modifier.tooltipAnchor(),
+                        onClick = { onTagClicked(item.first) },
+                        label = { Text(text = item.first) }
                     )
-                },
-            ) {
-                SuggestionChip(
-                    modifier = Modifier.tooltipAnchor(),
-                    onClick = { onTagClicked(item.first) },
-                    label = { Text(text = item.first) }
-                )
+                }
             }
         }
+
+        Divider(
+            Modifier
+                .align(Alignment.BottomStart)
+                .padding(horizontal = 16.dp)
+        )
     }
 }

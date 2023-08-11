@@ -9,6 +9,7 @@ import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
+import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
@@ -53,6 +54,7 @@ val LocalUseRegexSearch = compositionLocalOf { UseRegexSearchPreference.default 
 val LocalIntersectSearchBySpace = compositionLocalOf { IntersectSearchBySpacePreference.default }
 val LocalSearchResultSort = compositionLocalOf { SearchResultSortPreference.default }
 val LocalSearchResultReverse = compositionLocalOf { SearchResultReversePreference.default }
+val LocalShowPopularTags = compositionLocalOf { ShowPopularTagsPreference.default }
 
 // WebDav
 val LocalWebDavServer = compositionLocalOf { WebDavServerPreference.default }

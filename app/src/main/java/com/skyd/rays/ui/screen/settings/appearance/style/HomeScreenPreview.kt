@@ -62,7 +62,9 @@ import com.skyd.rays.ui.component.RaysIconButtonStyle
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
+import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalStickerScale
+import com.skyd.rays.ui.screen.home.searchbar.PopularTagsBar
 import com.skyd.rays.ui.screen.home.searchbar.SearchResultList
 import com.skyd.rays.ui.screen.home.searchbar.TrailingIcon
 
@@ -150,6 +152,12 @@ private fun RaysSearchBarPreview() {
                     }
                 },
             ) {
+                AnimatedVisibility(visible = LocalShowPopularTags.current) {
+                    PopularTagsBar(
+                        onTagClicked = {},
+                        tags = listOf("Tag" to 100, "LOL" to 90),
+                    )
+                }
                 SearchResultList(
                     state = searchResultListState,
                     dataList = if (currentStickerUuid.isBlank()) {

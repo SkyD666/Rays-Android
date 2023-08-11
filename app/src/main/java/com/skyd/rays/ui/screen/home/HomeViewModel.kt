@@ -14,6 +14,7 @@ import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
+import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
@@ -169,12 +170,17 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
                 .defaultFinally()
         },
 
-        doIsInstance<HomeIntent.GetPopularTagsList> { intent ->
-            homeRepo.requestPopularTags(count = 15)
-                .mapToUIChange { data ->
-                    copy(popularTagsUiState = PopularTagsUiState.Success(data))
-                }
-                .defaultFinally()
+        doIsInstance<HomeIntent.GetPopularTagsList> {
+            if (appContext.dataStore.get(ShowPopularTagsPreference.key) == true) {
+                homeRepo.requestPopularTags(count = 15)
+                    .mapToUIChange { data ->
+                        copy(popularTagsUiState = PopularTagsUiState.Success(data))
+                    }
+            } else {
+                emptyFlow()
+                    .mapToUIChange { this }
+                    .defaultFinally()
+            }
         },
     )
 
