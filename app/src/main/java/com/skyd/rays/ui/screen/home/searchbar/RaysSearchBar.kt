@@ -52,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.skyd.rays.R
-import com.skyd.rays.ext.dateTime
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.search.QueryPreference
@@ -70,6 +69,7 @@ import com.skyd.rays.ui.screen.home.HomeState
 import com.skyd.rays.ui.screen.home.HomeViewModel
 import com.skyd.rays.ui.screen.home.PopularTagsUiState
 import com.skyd.rays.ui.screen.home.SearchResultUiState
+import com.skyd.rays.ui.screen.home.StickerDetailInfo
 import com.skyd.rays.ui.screen.home.StickerDetailUiState
 
 
@@ -77,6 +77,8 @@ import com.skyd.rays.ui.screen.home.StickerDetailUiState
 fun RaysSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
+    active: Boolean,
+    onActiveChange: (Boolean) -> Unit = {},
     stickerWithTags: StickerWithTags?,
     uiState: HomeState,
     viewModel: HomeViewModel = hiltViewModel()
@@ -89,7 +91,6 @@ fun RaysSearchBar(
     val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
     val currentStickerUuid = LocalCurrentStickerUuid.current
-    var active by rememberSaveable { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
     val searchResultListState = rememberLazyStaggeredGridState()
@@ -137,7 +138,7 @@ fun RaysSearchBar(
                     } else {
                         onQueryChange(query)
                     }
-                    active = it
+                    onActiveChange(it)
                 },
                 placeholder = { Text(text = stringResource(R.string.home_screen_search_hint)) },
                 leadingIcon = {
@@ -145,7 +146,7 @@ fun RaysSearchBar(
                         RaysIconButton(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.home_screen_close_search),
-                            onClick = { active = false }
+                            onClick = { onActiveChange(false) }
                         )
                     } else {
                         RaysIconButton(
@@ -191,7 +192,7 @@ fun RaysSearchBar(
                                         selectedStickers.remove(data)
                                     }
                                 } else {
-                                    active = false
+                                    onActiveChange(false)
                                     viewModel.sendUiIntent(
                                         HomeIntent.AddClickCountAndGetStickerDetails(
                                             stickerUuid = data.sticker.uuid,
@@ -250,19 +251,7 @@ fun RaysSearchBar(
             visible = openStickerInfoDialog && stickerWithTags != null,
             title = { Text(text = stringResource(id = R.string.home_screen_sticker_info)) },
             text = {
-                val sticker = stickerWithTags!!.sticker
-                val createTime = dateTime(sticker.createTime)
-                Text(
-                    text = stringResource(
-                        id = R.string.home_screen_sticker_info_desc,
-                        sticker.uuid,
-                        sticker.stickerMd5,
-                        sticker.clickCount,
-                        sticker.shareCount,
-                        createTime,
-                        sticker.modifyTime?.let { dateTime(it) } ?: createTime,
-                    )
-                )
+                StickerDetailInfo(stickerWithTags = stickerWithTags!!)
             },
             confirmButton = {
                 TextButton(onClick = { openStickerInfoDialog = false }) {
@@ -378,7 +367,7 @@ fun TrailingIcon(
 @Composable
 fun PopularTagsBar(
     onTagClicked: (String) -> Unit,
-    tags: List<Pair<String, Long>>,
+    tags: List<Pair<String, Float>>,
 ) {
     Box {
         LazyRow(
@@ -392,7 +381,7 @@ fun PopularTagsBar(
                     text = {
                         Text(
                             text = stringResource(
-                                R.string.home_screen_popular_tags_total_share_count, item.second
+                                R.string.home_screen_popular_tags_popular_value, item.second
                             )
                         )
                     },

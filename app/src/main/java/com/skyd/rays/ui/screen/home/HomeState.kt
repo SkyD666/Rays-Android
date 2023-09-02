@@ -24,5 +24,5 @@ sealed class SearchResultUiState {
 
 sealed class PopularTagsUiState {
     object Init : PopularTagsUiState()
-    data class Success(val popularTags: List<Pair<String, Long>>) : PopularTagsUiState()
+    data class Success(val popularTags: List<Pair<String, Float>>) : PopularTagsUiState()
 }

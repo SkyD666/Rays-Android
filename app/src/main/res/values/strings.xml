@@ -164,10 +164,15 @@
     <string name="webdav_screen_progress_refresh_backup_info">Update backup information</string>
     <string name="webdav_screen_warning">Please do not force kill the app or disconnect the network when pushing and pulling, as this may corrupt the data!</string>
     <string name="home_screen_sticker_info">Sticker info</string>
-    <string name="home_screen_sticker_info_desc">UUID: %s\n\nSticker MD5: \n%s\n\nClick count: %s\n\nShare count: %s\n\nCreate time: \n%s\n\nLast modified time: \n%s</string>
+    <string name="home_screen_sticker_info_uuid">UUID</string>
+    <string name="home_screen_sticker_info_md5">Sticker MD5</string>
+    <string name="home_screen_sticker_info_click_count">Click count</string>
+    <string name="home_screen_sticker_info_share_count">Share count</string>
+    <string name="home_screen_sticker_info_create_time">Create time</string>
+    <string name="home_screen_sticker_info_last_modified_time">Last modified time</string>
     <string name="home_screen_select_export_folder">Select export folder</string>
     <string name="home_screen_select_export_folder_tip">Please select an export folder</string>
-    <string name="home_screen_popular_tags_total_share_count">Total share count: %d</string>
+    <string name="home_screen_popular_tags_popular_value">Popular value: %.2f</string>
     <string name="db_sticker_table">Sticker table</string>
     <string name="db_sticker_table_uuid">UUID</string>
     <string name="db_sticker_table_title">Title</string>

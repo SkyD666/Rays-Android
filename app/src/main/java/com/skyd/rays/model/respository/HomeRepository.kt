@@ -65,18 +65,29 @@ class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : B
         }
     }
 
-    suspend fun requestPopularTags(count: Int): Flow<BaseData<List<Pair<String, Long>>>> {
+    suspend fun requestPopularTags(count: Int): Flow<BaseData<List<Pair<String, Float>>>> {
         return flow {
             val popularStickersList = stickerDao.getPopularStickersList(count = count)
             val tagsMap: MutableMap<String, Long> = mutableMapOf()
+            val tagsCountMap: MutableMap<String, Long> = mutableMapOf()
             popularStickersList.forEach {
                 it.tags.forEach { tag ->
-                    tagsMap[tag.tag] = tagsMap.getOrDefault(tag.tag, 0) + it.sticker.shareCount
+                    val tagString = tag.tag
+                    if (tagString.length < 6) {
+                        tagsCountMap[tagString] = tagsCountMap.getOrDefault(tagString, 0) + 1
+                        tagsMap[tagString] =
+                            tagsMap.getOrDefault(tagString, 0) + it.sticker.shareCount
+                    }
                 }
             }
-            emitBaseData(BaseData<List<Pair<String, Long>>>().apply {
+            tagsCountMap.forEach { (t, u) ->
+                tagsMap[t] = tagsMap.getOrDefault(t, 0) * u
+            }
+            val result = tagsMap.toList().sortedByDescending { (_, value) -> value }
+            val maxPopularValue = result.getOrNull(0)?.second ?: 1
+            emitBaseData(BaseData<List<Pair<String, Float>>>().apply {
                 code = 0
-                data = tagsMap.toList().sortedByDescending { (_, value) -> value }
+                data = result.map { it.first to it.second.toFloat() / maxPopularValue }
             })
         }
     }

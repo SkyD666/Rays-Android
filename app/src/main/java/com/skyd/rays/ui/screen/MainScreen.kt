@@ -36,7 +36,7 @@ const val MAIN_SCREEN_ROUTE = "mainScreen"
 fun MainScreen() {
     val windowSizeClass = LocalWindowSizeClass.current
     val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState { 2 }
     val navigationBarOrRail = @Composable {
         NavigationBarOrRail(
             currentPage = pagerState.currentPage,
@@ -116,7 +116,6 @@ private fun ContentPager(pagerState: PagerState) {
     HorizontalPager(
         state = pagerState,
         modifier = Modifier.fillMaxSize(),
-        pageCount = 2,
         userScrollEnabled = false
     ) { page ->
         when (page) {

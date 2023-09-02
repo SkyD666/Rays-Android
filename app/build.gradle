@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -13,15 +15,15 @@ apply from: secret
 
 android {
     namespace 'com.skyd.rays'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.skyd.rays"
         minSdk 24
-        targetSdk 33
-        versionCode 25
+        targetSdk 34
+        versionCode 26
         versionName "1.5-beta01"
-        flavorDimensions "versionName"
+        flavorDimensions = ["versionName"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -45,8 +47,8 @@ android {
         GitHub
     }
 
-    applicationVariants.all { variant ->
-        variant.outputs.all {
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach {
             outputFileName = "app_release_${variant.productFlavors[0].name.toLowerCase()}_${variant.versionName}.apk"
         }
     }
@@ -54,7 +56,6 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            zipAlignEnabled false
             shrinkResources false           // 使用keep.xml，keep住某些资源文件
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             applicationIdSuffix '.debug'    // 一台手机debug release共存
@@ -65,7 +66,6 @@ android {
         release {
             signingConfig signingConfigs.release    //签名
             minifyEnabled true
-            zipAlignEnabled true
             shrinkResources true       // 使用keep.xml，keep住某些资源文件
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             ndk {
@@ -102,7 +102,7 @@ android {
     }
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
         freeCompilerArgs += "-opt-in=androidx.compose.animation.ExperimentalAnimationApi"
@@ -127,17 +127,17 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material3:material3:$md3_version"
     implementation "androidx.compose.material3:material3-window-size-class:$md3_version"
-    implementation "androidx.compose.material:material-icons-extended:1.4.3"
+    implementation "androidx.compose.material:material-icons-extended:1.5.0"
     implementation "androidx.compose.ui:ui-tooling-preview:$md3_version"
     implementation "com.google.android.material:material:1.9.0"
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
     implementation "androidx.activity:activity-compose:1.7.2"
     implementation "androidx.palette:palette-ktx:1.0.0"
-    implementation "com.google.dagger:hilt-android:2.47"
-    kapt "com.google.dagger:hilt-android-compiler:2.47"
+    implementation "com.google.dagger:hilt-android:2.48"
+    kapt "com.google.dagger:hilt-android-compiler:2.48"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
-    implementation "androidx.navigation:navigation-compose:2.6.0"
+    implementation "androidx.navigation:navigation-compose:2.7.1"
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
     implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
     implementation "com.google.accompanist:accompanist-drawablepainter:$accompanist_version"
@@ -149,7 +149,7 @@ dependencies {
     implementation "androidx.room:room-ktx:2.5.2"
     ksp "androidx.room:room-compiler:2.5.2"
     implementation "com.github.thegrizzlylabs:sardine-android:0.8"
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0"
     implementation "com.github.Kyant0:Monet:0.1.0-alpha03"
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     implementation "com.airbnb.android:lottie-compose:6.1.0"

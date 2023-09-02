@@ -25,10 +25,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.model.preference.SettingsProvider
 import com.skyd.rays.ui.local.LocalDarkMode
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            navController = rememberAnimatedNavController()
+            navController = rememberNavController()
             SettingsProvider {
                 CompositionLocalProvider(
                     LocalNavController provides navController,
@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         var openUpdateDialog by rememberSaveable { mutableStateOf(true) }
 
         RaysTheme(darkTheme = LocalDarkMode.current) {
-            AnimatedNavHost(
+            NavHost(
                 modifier = Modifier.background(MaterialTheme.colorScheme.background),
                 navController = navController,
                 startDestination = MAIN_SCREEN_ROUTE,

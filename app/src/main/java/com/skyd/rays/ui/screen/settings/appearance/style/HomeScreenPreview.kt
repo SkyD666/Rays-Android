@@ -118,7 +118,7 @@ private fun RaysSearchBarPreview() {
             SearchBar(
                 windowInsets = WindowInsets(0.dp),
                 onQueryChange = {},
-                query = "轻音少女",
+                query = "LOL",
                 onSearch = { },
                 active = active,
                 onActiveChange = {
@@ -155,7 +155,7 @@ private fun RaysSearchBarPreview() {
                 AnimatedVisibility(visible = LocalShowPopularTags.current) {
                     PopularTagsBar(
                         onTagClicked = {},
-                        tags = listOf("Tag" to 100, "LOL" to 90),
+                        tags = listOf("Tag" to 1f, "LOL" to 0.9f),
                     )
                 }
                 SearchResultList(
@@ -248,7 +248,7 @@ private fun HomeMenuPreview(expanded: Boolean, onDismissRequest: () -> Unit) {
 fun MainCardPreview() {
     val stickerWithTags = StickerWithTags(
         sticker = StickerBean(title = "").apply { uuid = LocalCurrentStickerUuid.current },
-        tags = listOf(TagBean(tag = "轻音少女"), TagBean(tag = "揍你"))
+        tags = listOf(TagBean(tag = "Tag"), TagBean(tag = "LOL"))
     )
     val stickerBean = stickerWithTags.sticker
     val tags = stickerWithTags.tags
