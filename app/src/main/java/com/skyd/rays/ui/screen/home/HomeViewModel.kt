@@ -157,9 +157,12 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
         },
 
         doIsInstance<HomeIntent.UpdateThemeColor> { intent ->
-            simpleFlow { appContext.dataStore.get(StickerColorThemePreference.key) }
+            simpleFlow {
+                appContext.dataStore.get(StickerColorThemePreference.key)
+                    ?: StickerColorThemePreference.default
+            }
                 .mapToUIChange {
-                    if (it == true) {
+                    if (it) {
                         setPrimaryColor(
                             uuid = intent.stickerUuid,
                             primaryColor = intent.primaryColor

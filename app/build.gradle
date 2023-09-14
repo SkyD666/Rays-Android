@@ -21,8 +21,8 @@ android {
         applicationId "com.skyd.rays"
         minSdk 24
         targetSdk 34
-        versionCode 26
-        versionName "1.5-beta01"
+        versionCode 27
+        versionName "1.5-beta02"
         flavorDimensions = ["versionName"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -127,11 +127,11 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material3:material3:$md3_version"
     implementation "androidx.compose.material3:material3-window-size-class:$md3_version"
-    implementation "androidx.compose.material:material-icons-extended:1.5.0"
+    implementation "androidx.compose.material:material-icons-extended:1.5.1"
     implementation "androidx.compose.ui:ui-tooling-preview:$md3_version"
     implementation "com.google.android.material:material:1.9.0"
-    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
     implementation "androidx.activity:activity-compose:1.7.2"
     implementation "androidx.palette:palette-ktx:1.0.0"
     implementation "com.google.dagger:hilt-android:2.48"
@@ -139,7 +139,6 @@ dependencies {
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
     implementation "androidx.navigation:navigation-compose:2.7.1"
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
-    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
     implementation "com.google.accompanist:accompanist-drawablepainter:$accompanist_version"
     implementation "io.coil-kt:coil-compose:2.4.0"
     implementation "io.coil-kt:coil-gif:2.4.0"
@@ -167,6 +166,10 @@ dependencies {
     // TF Lite
     implementation 'org.tensorflow:tensorflow-lite:2.13.0'
     implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
+    // Import the Task Vision Library dependency (NNAPI is included)
+    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.4'
+    // Import the GPU delegate plugin Library for GPU inference
+    implementation 'org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.4'
 
     debugImplementation "androidx.compose.ui:ui-tooling:$md3_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$md3_version"
