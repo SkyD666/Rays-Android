@@ -46,6 +46,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -100,7 +101,7 @@ fun AppearanceScreen() {
     val tonalPalettes = extractTonalPalettes()
     val tonalPalettesFromWallpaper = extractTonalPalettesFromWallpaper()
     var wallpaperOrBasicThemeSelected by rememberSaveable {
-        mutableStateOf(if (tonalPalettesFromWallpaper.containsKey(themeName)) 0 else 1)
+        mutableIntStateOf(if (tonalPalettesFromWallpaper.containsKey(themeName)) 0 else 1)
     }
     var openDarkBottomSheet by rememberSaveable { mutableStateOf(false) }
 

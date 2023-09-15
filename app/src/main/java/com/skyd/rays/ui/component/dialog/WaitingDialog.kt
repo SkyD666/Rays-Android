@@ -35,7 +35,8 @@ fun WaitingDialog(
     } else {
         val animatedProgress by animateFloatAsState(
             targetValue = currentValue.toFloat() / totalValue,
-            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+            label = "waitingDialogAnimatedProgress"
         )
         WaitingDialog(visible = visible, title = title) {
             Column(

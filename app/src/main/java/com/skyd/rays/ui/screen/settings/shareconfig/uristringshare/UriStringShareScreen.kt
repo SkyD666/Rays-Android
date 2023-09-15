@@ -39,7 +39,6 @@ import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.local.LocalUriStringShare
-import kotlinx.coroutines.launch
 
 
 const val URI_STRING_SHARE_SCREEN_ROUTE = "uriStringShareScreen"
@@ -63,7 +62,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
     uiEvent?.apply {
         when (addPackageNameUiEvent) {
             is AddPackageNameUiEvent.Failed -> {
-                scope.launch {
+                LaunchedEffect(snackbarHostState) {
                     snackbarHostState.showSnackbar(
                         message = context.getString(
                             R.string.uri_string_share_screen_failed, addPackageNameUiEvent.msg

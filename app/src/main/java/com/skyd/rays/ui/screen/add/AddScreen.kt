@@ -49,6 +49,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -89,7 +90,6 @@ import com.skyd.rays.ui.component.TopBarIcon
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.util.stickerUuidToUri
-import kotlinx.coroutines.launch
 
 const val ADD_SCREEN_ROUTE = "addScreen"
 
@@ -106,7 +106,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
     var titleText by rememberSaveable { mutableStateOf("") }
     var currentTagText by rememberSaveable { mutableStateOf("") }
     var stickerUri by remember { mutableStateOf<Uri?>(null) }
-    var stickerCreateTime by remember { mutableStateOf(System.currentTimeMillis()) }
+    var stickerCreateTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
     val tags = remember { mutableStateListOf<TagBean>() }
     var stickerUuid by remember { mutableStateOf(initStickerUuid) }
     val suggestedTags = remember { mutableStateListOf<String>() }
@@ -326,7 +326,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
 
         when (addStickersResultUiEvent) {
             AddStickersResultUiEvent.Duplicate -> {
-                scope.launch {
+                LaunchedEffect(snackbarHostState) {
                     snackbarHostState.showSnackbar(
                         context.getString(R.string.add_screen_sticker_duplicate),
                         withDismissAction = true
@@ -357,7 +357,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
     loadUiIntent?.also {
         when (it) {
             is LoadUiIntent.Error -> {
-                scope.launch {
+                LaunchedEffect(snackbarHostState) {
                     snackbarHostState.showSnackbar(
                         context.getString(R.string.add_screen_error, it.msg),
                         withDismissAction = true

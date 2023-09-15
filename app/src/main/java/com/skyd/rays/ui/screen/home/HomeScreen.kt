@@ -83,7 +83,6 @@ import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.home.searchbar.RaysSearchBar
 import com.skyd.rays.util.sendStickerByUuid
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -194,16 +193,14 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
         uiEvent?.apply {
             when (homeResultUiEvent) {
                 is HomeResultUiEvent.Success -> {
-                    LaunchedEffect(this) {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = context.getString(
-                                    R.string.home_screen_export_result,
-                                    homeResultUiEvent.successCount
-                                ),
-                                withDismissAction = true
-                            )
-                        }
+                    LaunchedEffect(snackbarHostState) {
+                        snackbarHostState.showSnackbar(
+                            message = context.getString(
+                                R.string.home_screen_export_result,
+                                homeResultUiEvent.successCount
+                            ),
+                            withDismissAction = true
+                        )
                     }
                 }
 
@@ -214,7 +211,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
         loadUiIntent?.also { loadUiIntent ->
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
-                    scope.launch {
+                    LaunchedEffect(snackbarHostState) {
                         snackbarHostState.showSnackbar(
                             message = context.getString(
                                 R.string.home_screen_failed, loadUiIntent.msg

@@ -31,6 +31,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -153,10 +154,10 @@ private fun HomeShareButtonAlignmentSettingItem() {
 
     val homeShareButtonAlignment = LocalHomeShareButtonAlignment.current
     var horizontalSliderPosition by remember {
-        mutableStateOf(homeShareButtonAlignment.horizontalBias)
+        mutableFloatStateOf(homeShareButtonAlignment.horizontalBias)
     }
     var verticalSliderPosition by remember {
-        mutableStateOf(homeShareButtonAlignment.verticalBias)
+        mutableFloatStateOf(homeShareButtonAlignment.verticalBias)
     }
 
     BaseSettingsItem(

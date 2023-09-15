@@ -46,7 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.isContainer
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -100,13 +100,16 @@ fun HomeScreenPreview() {
 private fun RaysSearchBarPreview() {
     var menuExpanded by rememberSaveable { mutableStateOf(false) }
     var active by rememberSaveable { mutableStateOf(false) }
-    val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
+    val searchBarHorizontalPadding: Dp by animateDpAsState(
+        if (active) 0.dp else 16.dp,
+        label = "searchBarHorizontalPadding"
+    )
     val currentStickerUuid = LocalCurrentStickerUuid.current
     val searchResultListState = rememberLazyStaggeredGridState()
 
     Box(
         Modifier
-            .semantics { isContainer = true }
+            .semantics { isTraversalGroup = true }
             .zIndex(1f)
             .fillMaxWidth()
     ) {

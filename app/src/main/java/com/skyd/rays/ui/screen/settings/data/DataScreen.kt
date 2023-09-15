@@ -11,10 +11,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -33,7 +33,6 @@ import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
-import kotlinx.coroutines.launch
 
 const val DATA_SCREEN_ROUTE = "dataScreen"
 
@@ -41,7 +40,6 @@ const val DATA_SCREEN_ROUTE = "dataScreen"
 fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val navController = LocalNavController.current
-    val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var openDeleteWarningDialog by rememberSaveable { mutableStateOf(false) }
     var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
@@ -83,7 +81,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
         loadUiIntent?.also { loadUiIntent ->
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
-                    scope.launch {
+                    LaunchedEffect(snackbarHostState) {
                         snackbarHostState.showSnackbar(
                             message = appContext.getString(
                                 R.string.data_screen_failed, loadUiIntent.msg
@@ -101,7 +99,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
         uiEvent?.apply {
             when (deleteAllResultUiEvent) {
                 is DeleteAllResultUiEvent.Success -> {
-                    scope.launch {
+                    LaunchedEffect(snackbarHostState) {
                         snackbarHostState.showSnackbar(
                             message = appContext.getString(
                                 R.string.data_screen_delete_all_success,

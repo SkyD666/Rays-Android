@@ -22,7 +22,8 @@ fun Modifier.simpleVerticalScrollbar(
 
     val alpha by animateFloatAsState(
         targetValue = targetAlpha,
-        animationSpec = tween(durationMillis = duration)
+        animationSpec = tween(durationMillis = duration),
+        label = "simpleVerticalScrollbarAlpha"
     )
 
     drawWithContent {

@@ -45,13 +45,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.isContainer
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
+import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.search.QueryPreference
@@ -92,7 +94,10 @@ fun RaysSearchBar(
     val scope = rememberCoroutineScope()
     val currentStickerUuid = LocalCurrentStickerUuid.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    val searchBarHorizontalPadding: Dp by animateDpAsState(if (active) 0.dp else 16.dp)
+    val searchBarHorizontalPadding: Dp by animateDpAsState(
+        targetValue = if (active) 0.dp else 16.dp,
+        label = "searchBarHorizontalPadding"
+    )
     val searchResultListState = rememberLazyStaggeredGridState()
     val showPopularTags = LocalShowPopularTags.current
     val popularTags =
@@ -104,6 +109,13 @@ fun RaysSearchBar(
         mutableStateOf<Set<StickerWithTags>?>(null)
     }
 
+    refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
+        value ?: return@apply
+        if (showPopularTags && active) {
+            viewModel.sendUiIntent(HomeIntent.GetPopularTagsList)
+        }
+    }
+
     LaunchedEffect(showPopularTags) {
         if (showPopularTags && active) {
             viewModel.sendUiIntent(HomeIntent.GetPopularTagsList)
@@ -112,7 +124,7 @@ fun RaysSearchBar(
 
     Box(
         Modifier
-            .semantics { isContainer = true }
+            .semantics { isTraversalGroup = true }
             .zIndex(1f)
             .fillMaxWidth()
     ) {

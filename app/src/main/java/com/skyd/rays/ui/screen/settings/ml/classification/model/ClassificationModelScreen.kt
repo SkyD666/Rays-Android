@@ -42,7 +42,6 @@ import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalStickerClassificationModel
-import kotlinx.coroutines.launch
 
 
 const val CLASSIFICATION_MODEL_SCREEN_ROUTE = "classificationModelScreen"
@@ -51,7 +50,6 @@ const val CLASSIFICATION_MODEL_SCREEN_ROUTE = "classificationModelScreen"
 fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var openWaitingDialog by remember { mutableStateOf(false) }
     var openDeleteWarningDialog by remember { mutableStateOf<ModelBean?>(null) }
@@ -104,7 +102,7 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
         loadUiIntent?.also {
             when (it) {
                 is LoadUiIntent.Error -> {
-                    scope.launch {
+                    LaunchedEffect(snackbarHostState) {
                         snackbarHostState.showSnackbar(
                             message = context.getString(
                                 R.string.classification_model_screen_failed,

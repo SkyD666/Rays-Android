@@ -258,7 +258,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
         loadUiIntent?.also { loadUiIntent ->
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
-                    scope.launch {
+                    LaunchedEffect(snackbarHostState) {
                         snackbarHostState.showSnackbar(
                             message = appContext.getString(
                                 R.string.webdav_screen_failed,
@@ -357,7 +357,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             is UploadResultUiEvent.Success -> {
                 when (val result = uploadResultUiEvent.result) {
                     is WebDavResultInfo -> {
-                        scope.launch {
+                        LaunchedEffect(snackbarHostState) {
                             snackbarHostState.showSnackbar(
                                 message = appContext.getString(
                                     R.string.webdav_screen_upload_success,
@@ -380,7 +380,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             is DownloadResultUiEvent.Success -> {
                 when (val result = downloadResultUiEvent.result) {
                     is WebDavResultInfo -> {
-                        scope.launch {
+                        LaunchedEffect(snackbarHostState) {
                             snackbarHostState.showSnackbar(
                                 message = appContext.getString(
                                     R.string.webdav_screen_download_success,

@@ -63,7 +63,7 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
     uiEvent?.apply {
         when (addPackageNameUiEvent) {
             is AddPackageNameUiEvent.Failed -> {
-                scope.launch {
+                LaunchedEffect(snackbarHostState) {
                     snackbarHostState.showSnackbar(
                         message = context.getString(
                             R.string.uri_string_share_screen_failed, addPackageNameUiEvent.msg

@@ -163,7 +163,7 @@ fun SearchResultConfigBar(
     ) {
         item {
             Badge {
-                AnimatedContent(targetState = size) { targetCount ->
+                AnimatedContent(targetState = size, label = "badgeAnimatedContent") { targetCount ->
                     Text(text = targetCount.toString())
                 }
             }

@@ -174,7 +174,9 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
         },
 
         doIsInstance<HomeIntent.GetPopularTagsList> {
-            if (appContext.dataStore.get(ShowPopularTagsPreference.key) == true) {
+            if (appContext.dataStore.get(ShowPopularTagsPreference.key)
+                    ?: ShowPopularTagsPreference.default
+            ) {
                 homeRepo.requestPopularTags(count = 15)
                     .mapToUIChange { data ->
                         copy(popularTagsUiState = PopularTagsUiState.Success(data))
