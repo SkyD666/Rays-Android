@@ -65,8 +65,12 @@
     <string name="webdav_screen_upload_description">将本地数据推送到远端，冲突时会覆盖远端内容。若某表情包本地没有，而远端有，则该表情包会被移动到远端回收站</string>
     <string name="webdav_screen_download">从远端拉取</string>
     <string name="webdav_screen_download_description">从远端拉取数据，冲突时会覆盖本地内容。若某表情包既在本地，也在远端回收站内，则本地的该表情包会被删除。若某表情包本地有，而远端没有，则该表情包不会被修改</string>
-    <string name="webdav_screen_download_success">拉取成功，耗时 %.2f 秒，更新 %d 条</string>
-    <string name="webdav_screen_upload_success">推送成功，耗时 %.2f 秒，更新 %d 条</string>
+    <plurals name="webdav_screen_download_success">
+        <item quantity="other">拉取成功，耗时 %.2f 秒，更新 %d 条</item>
+    </plurals>
+    <plurals name="webdav_screen_upload_success">
+        <item quantity="other">推送成功，耗时 %.2f 秒，更新 %d 条</item>
+    </plurals>
     <string name="webdav_screen_failed">操作失败：%s</string>
     <string name="webdav_screen_waiting">请稍后…</string>
     <string name="webdav_screen_input_server">服务器网址</string>
@@ -99,7 +103,9 @@
     <string name="search_config_screen_intersect_search_by_space">交集搜索</string>
     <string name="search_config_screen_intersect_search_by_space_description">使用空格分割多个搜索关键字以实现“并且”条件，即对这些关键字的结果进行交集操作</string>
     <string name="home_screen_failed">操作失败：%s</string>
-    <string name="home_screen_export_result">导出了 %d 个表情包</string>
+    <plurals name="home_screen_export_result">
+        <item quantity="other">导出了 %d 个表情包</item>
+    </plurals>
     <string name="webdav_screen_restore">还原</string>
     <string name="home_screen_empty_tip">新建表情包或从搜索结果中选择一个表情包吧~</string>
     <string name="home_screen_no_search_result_tip">空空如也呢~</string>

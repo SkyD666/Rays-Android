@@ -68,7 +68,6 @@ object CommonUtil {
                     .of(PackageManager.MATCH_UNINSTALLED_PACKAGES.toLong())
             )
         } else {
-            @Suppress("DEPRECATION")
             pm.getPackageInfo(packageName, PackageManager.MATCH_UNINSTALLED_PACKAGES)
         }
     }

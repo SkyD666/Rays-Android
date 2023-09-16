@@ -28,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.skyd.rays.R
+import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ApiGrantPackageBean
 import com.skyd.rays.model.preference.ApiGrantPreference
 import com.skyd.rays.ui.component.BannerItem
@@ -39,7 +40,6 @@ import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.local.LocalApiGrant
-import kotlinx.coroutines.launch
 
 
 const val API_GRANT_SCREEN_ROUTE = "apiGrantScreen"
@@ -63,14 +63,12 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
     uiEvent?.apply {
         when (addPackageNameUiEvent) {
             is AddPackageNameUiEvent.Failed -> {
-                LaunchedEffect(snackbarHostState) {
-                    snackbarHostState.showSnackbar(
-                        message = context.getString(
-                            R.string.uri_string_share_screen_failed, addPackageNameUiEvent.msg
-                        ),
-                        withDismissAction = true
-                    )
-                }
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    message = context.getString(
+                        R.string.uri_string_share_screen_failed, addPackageNameUiEvent.msg
+                    ),
+                    withDismissAction = true
+                )
             }
 
             AddPackageNameUiEvent.Success,

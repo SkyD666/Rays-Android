@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
+import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ModelBean
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.ui.component.BaseSettingsItem
@@ -102,15 +103,13 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
         loadUiIntent?.also {
             when (it) {
                 is LoadUiIntent.Error -> {
-                    LaunchedEffect(snackbarHostState) {
-                        snackbarHostState.showSnackbar(
-                            message = context.getString(
-                                R.string.classification_model_screen_failed,
-                                it.msg
-                            ),
-                            withDismissAction = true
-                        )
-                    }
+                    snackbarHostState.showSnackbarWithLaunchedEffect(
+                        message = context.getString(
+                            R.string.classification_model_screen_failed,
+                            it.msg
+                        ),
+                        withDismissAction = true
+                    )
                 }
 
                 is LoadUiIntent.Loading -> {

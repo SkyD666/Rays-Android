@@ -21,8 +21,8 @@ android {
         applicationId "com.skyd.rays"
         minSdk 24
         targetSdk 34
-        versionCode 28
-        versionName "1.5-beta03"
+        versionCode 29
+        versionName "1.5-beta04"
         flavorDimensions = ["versionName"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -103,6 +103,7 @@ android {
 }
 
 tasks.withType(KotlinCompile).configureEach {
+    //noinspection GrDeprecatedAPIUsage
     kotlinOptions {
         freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
         freeCompilerArgs += "-opt-in=androidx.compose.animation.ExperimentalAnimationApi"

@@ -186,9 +186,10 @@ fun externalShareStickerUuidToFile(uuid: String): File {
  */
 fun stickerUuidToFile(uuid: String): File = File(STICKER_DIR, uuid)
 
-fun externalShareStickerUuidToUri(uuid: String) = Uri.fromFile(externalShareStickerUuidToFile(uuid))
+fun externalShareStickerUuidToUri(uuid: String): Uri =
+    Uri.fromFile(externalShareStickerUuidToFile(uuid))
 
-fun stickerUuidToUri(uuid: String) = Uri.fromFile(stickerUuidToFile(uuid))
+fun stickerUuidToUri(uuid: String): Uri = Uri.fromFile(stickerUuidToFile(uuid))
 
 fun exportSticker(uuid: String, outputDir: Uri) {
     val originFile = stickerUuidToFile(uuid)

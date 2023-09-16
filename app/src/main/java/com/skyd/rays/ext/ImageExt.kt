@@ -2,11 +2,7 @@ package com.skyd.rays.ext
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ColorSpace
-import android.graphics.ImageDecoder
-import android.graphics.ImageDecoder.OnHeaderDecodedListener
 import android.net.Uri
-import android.os.Build
 import androidx.compose.ui.layout.ContentScale
 import com.skyd.rays.R
 import com.skyd.rays.appContext

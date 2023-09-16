@@ -5,7 +5,6 @@ import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.tensorflow.lite.task.processor.NearestNeighbor
 import javax.inject.Inject
 
 class StickerSimilarityRepository @Inject constructor() : BaseRepository() {

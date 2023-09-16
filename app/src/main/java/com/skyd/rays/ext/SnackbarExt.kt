@@ -2,6 +2,8 @@ package com.skyd.rays.ext
 
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -20,4 +22,22 @@ fun SnackbarHostState.showSnackbar(
             duration = duration,
         )
     }
+}
+
+@Composable
+fun SnackbarHostState.showSnackbarWithLaunchedEffect(
+    message: String,
+    actionLabel: String? = null,
+    withDismissAction: Boolean = true,
+    duration: SnackbarDuration = if (actionLabel == null) SnackbarDuration.Short else SnackbarDuration.Indefinite
+): SnackbarHostState {
+    LaunchedEffect(this) {
+        showSnackbar(
+            message = message,
+            actionLabel = actionLabel,
+            withDismissAction = withDismissAction,
+            duration = duration,
+        )
+    }
+    return this
 }

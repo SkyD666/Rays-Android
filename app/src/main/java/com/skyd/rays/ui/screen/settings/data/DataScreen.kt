@@ -11,7 +11,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.base.LoadUiIntent
+import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
@@ -81,14 +81,12 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
         loadUiIntent?.also { loadUiIntent ->
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
-                    LaunchedEffect(snackbarHostState) {
-                        snackbarHostState.showSnackbar(
-                            message = appContext.getString(
-                                R.string.data_screen_failed, loadUiIntent.msg
-                            ),
-                            withDismissAction = true
-                        )
-                    }
+                    snackbarHostState.showSnackbarWithLaunchedEffect(
+                        message = appContext.getString(
+                            R.string.data_screen_failed, loadUiIntent.msg
+                        ),
+                        withDismissAction = true
+                    )
                 }
 
                 is LoadUiIntent.Loading -> {
@@ -99,15 +97,13 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
         uiEvent?.apply {
             when (deleteAllResultUiEvent) {
                 is DeleteAllResultUiEvent.Success -> {
-                    LaunchedEffect(snackbarHostState) {
-                        snackbarHostState.showSnackbar(
-                            message = appContext.getString(
-                                R.string.data_screen_delete_all_success,
-                                deleteAllResultUiEvent.time / 1000.0f
-                            ),
-                            withDismissAction = true
-                        )
-                    }
+                    snackbarHostState.showSnackbarWithLaunchedEffect(
+                        message = appContext.getString(
+                            R.string.data_screen_delete_all_success,
+                            deleteAllResultUiEvent.time / 1000.0f
+                        ),
+                        withDismissAction = true
+                    )
                 }
 
                 null -> Unit

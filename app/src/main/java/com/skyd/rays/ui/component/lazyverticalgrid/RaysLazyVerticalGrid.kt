@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import com.skyd.rays.ext.simpleVerticalScrollbar
-import com.skyd.rays.ui.component.lazyverticalgrid.adapter.AnimeItemSpace.animeItemSpace
+import com.skyd.rays.ui.component.lazyverticalgrid.adapter.RaysItemSpace.raysItemSpace
 import com.skyd.rays.ui.component.lazyverticalgrid.adapter.LazyGridAdapter
 import com.skyd.rays.ui.component.lazyverticalgrid.adapter.MAX_SPAN_SIZE
 import com.skyd.rays.ui.component.lazyverticalgrid.adapter.animeShowSpan
@@ -47,7 +47,7 @@ fun RaysLazyVerticalGrid(
             }
         ) { index, item ->
             adapter.Draw(
-                modifier = Modifier.animeItemSpace(
+                modifier = Modifier.raysItemSpace(
                     item = item,
                     spanSize = animeShowSpan(data = item, configuration = configuration),
                     spanIndex = spanIndexArray[index]

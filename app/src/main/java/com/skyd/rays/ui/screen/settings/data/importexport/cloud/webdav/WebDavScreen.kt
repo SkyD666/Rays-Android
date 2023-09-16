@@ -53,6 +53,7 @@ import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.ext.dateTime
 import com.skyd.rays.ext.editor
 import com.skyd.rays.ext.secretSharedPreferences
+import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.BackupInfo
 import com.skyd.rays.model.bean.WebDavResultInfo
 import com.skyd.rays.model.bean.WebDavWaitingInfo
@@ -258,15 +259,13 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
         loadUiIntent?.also { loadUiIntent ->
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
-                    LaunchedEffect(snackbarHostState) {
-                        snackbarHostState.showSnackbar(
-                            message = appContext.getString(
-                                R.string.webdav_screen_failed,
-                                loadUiIntent.msg
-                            ),
-                            withDismissAction = true
-                        )
-                    }
+                    snackbarHostState.showSnackbarWithLaunchedEffect(
+                        message = appContext.getString(
+                            R.string.webdav_screen_failed,
+                            loadUiIntent.msg
+                        ),
+                        withDismissAction = true
+                    )
                     openWaitingDialog = false
                     waitingDialogData = null
                 }
@@ -357,15 +356,14 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             is UploadResultUiEvent.Success -> {
                 when (val result = uploadResultUiEvent.result) {
                     is WebDavResultInfo -> {
-                        LaunchedEffect(snackbarHostState) {
-                            snackbarHostState.showSnackbar(
-                                message = appContext.getString(
-                                    R.string.webdav_screen_upload_success,
-                                    result.time / 1000.0f, result.count
-                                ),
-                                withDismissAction = true
-                            )
-                        }
+                        snackbarHostState.showSnackbarWithLaunchedEffect(
+                            message = appContext.resources.getQuantityString(
+                                R.plurals.webdav_screen_upload_success,
+                                result.count,
+                                result.time / 1000.0f, result.count
+                            ),
+                            withDismissAction = true
+                        )
                     }
 
                     is WebDavWaitingInfo -> {
@@ -380,15 +378,14 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             is DownloadResultUiEvent.Success -> {
                 when (val result = downloadResultUiEvent.result) {
                     is WebDavResultInfo -> {
-                        LaunchedEffect(snackbarHostState) {
-                            snackbarHostState.showSnackbar(
-                                message = appContext.getString(
-                                    R.string.webdav_screen_download_success,
-                                    result.time / 1000.0f, result.count
-                                ),
-                                withDismissAction = true
-                            )
-                        }
+                        snackbarHostState.showSnackbarWithLaunchedEffect(
+                            message = appContext.resources.getQuantityString(
+                                R.plurals.webdav_screen_download_success,
+                                result.count,
+                                result.time / 1000.0f, result.count
+                            ),
+                            withDismissAction = true
+                        )
                     }
 
                     is WebDavWaitingInfo -> {

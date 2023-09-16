@@ -4,7 +4,6 @@ import com.skyd.rays.base.BaseViewModel
 import com.skyd.rays.base.IUIChange
 import com.skyd.rays.base.IUiEvent
 import com.skyd.rays.config.GITHUB_REPO
-import com.skyd.rays.ext.readable
 import com.skyd.rays.model.respository.UpdateRepository
 import com.skyd.rays.util.CommonUtil.getAppVersionCode
 import com.skyd.rays.util.CommonUtil.openBrowser

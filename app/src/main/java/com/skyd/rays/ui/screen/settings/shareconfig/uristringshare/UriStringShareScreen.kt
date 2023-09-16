@@ -28,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.skyd.rays.R
+import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.UriStringSharePackageBean
 import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.ui.component.BannerItem
@@ -62,14 +63,12 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
     uiEvent?.apply {
         when (addPackageNameUiEvent) {
             is AddPackageNameUiEvent.Failed -> {
-                LaunchedEffect(snackbarHostState) {
-                    snackbarHostState.showSnackbar(
-                        message = context.getString(
-                            R.string.uri_string_share_screen_failed, addPackageNameUiEvent.msg
-                        ),
-                        withDismissAction = true
-                    )
-                }
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    message = context.getString(
+                        R.string.uri_string_share_screen_failed, addPackageNameUiEvent.msg
+                    ),
+                    withDismissAction = true
+                )
             }
 
             AddPackageNameUiEvent.Success,

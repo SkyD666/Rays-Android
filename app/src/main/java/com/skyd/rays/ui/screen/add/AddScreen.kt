@@ -79,6 +79,7 @@ import com.skyd.rays.ext.addIfAny
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
+import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
@@ -326,12 +327,10 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
 
         when (addStickersResultUiEvent) {
             AddStickersResultUiEvent.Duplicate -> {
-                LaunchedEffect(snackbarHostState) {
-                    snackbarHostState.showSnackbar(
-                        context.getString(R.string.add_screen_sticker_duplicate),
-                        withDismissAction = true
-                    )
-                }
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    context.getString(R.string.add_screen_sticker_duplicate),
+                    withDismissAction = true
+                )
             }
 
             is AddStickersResultUiEvent.Success -> {
@@ -357,12 +356,10 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
     loadUiIntent?.also {
         when (it) {
             is LoadUiIntent.Error -> {
-                LaunchedEffect(snackbarHostState) {
-                    snackbarHostState.showSnackbar(
-                        context.getString(R.string.add_screen_error, it.msg),
-                        withDismissAction = true
-                    )
-                }
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    context.getString(R.string.add_screen_error, it.msg),
+                    withDismissAction = true
+                )
             }
 
             is LoadUiIntent.Loading -> Unit

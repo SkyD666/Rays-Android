@@ -5,14 +5,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-object AnimeItemSpace {
-    val ITEM_SPACING = 12.dp
-    val HORIZONTAL_PADDING = 16.dp
+object RaysItemSpace {
+    private val ITEM_SPACING = 12.dp
+    private val HORIZONTAL_PADDING = 16.dp
 
-    fun Modifier.animeItemSpace(item: Any, spanSize: Int, spanIndex: Int) =
+    fun Modifier.raysItemSpace(item: Any, spanSize: Int, spanIndex: Int) =
         this.padding(getItemSpace(item, spanSize, spanIndex))
 
-    fun getItemSpace(item: Any, spanSize: Int, spanIndex: Int): PaddingValues {
+    private fun getItemSpace(item: Any, spanSize: Int, spanIndex: Int): PaddingValues {
         var top = 0.dp
         var bottom = 0.dp
         var start = 0.dp
@@ -137,7 +137,7 @@ object AnimeItemSpace {
     private val noHorizontalMarginType: Set<Class<*>> = setOf(
     )
 
-    fun noHorizontalMargin(clz: Class<*>?): Boolean {
+    private fun noHorizontalMargin(clz: Class<*>?): Boolean {
         clz ?: return true
         if (clz in noHorizontalMarginType) return true
         return false
@@ -146,7 +146,7 @@ object AnimeItemSpace {
     private val needVerticalMarginType: Set<Class<*>> = setOf(
     )
 
-    fun needVerticalMargin(clz: Class<*>?): Boolean {
+    private fun needVerticalMargin(clz: Class<*>?): Boolean {
         clz ?: return false
         if (clz in needVerticalMarginType) return true
         return false

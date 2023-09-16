@@ -65,8 +65,14 @@
     <string name="webdav_screen_upload_description">Push the local data to remote, overwrite the remote content in case of conflict. If a sticker is not available locally but is available at the remote, the sticker will be moved to the remote recycle bin</string>
     <string name="webdav_screen_download">Pull</string>
     <string name="webdav_screen_download_description">Pull data from remote, overwrite local content in case of conflict. If a sticker is both local and in the remote recycle bin, the local sticker will be deleted. If a sticker is local but not in the remote, the sticker will not be modified</string>
-    <string name="webdav_screen_download_success">Pull successful, spent %.2fs, update %d sticker(s)</string>
-    <string name="webdav_screen_upload_success">Push succeeded, spent %.2fs, update %d sticker(s)</string>
+    <plurals name="webdav_screen_download_success">
+        <item quantity="one">Pull successful, spent %.2fs, update %d sticker</item>
+        <item quantity="other">Pull successful, spent %.2fs, update %d stickers</item>
+    </plurals>
+    <plurals name="webdav_screen_upload_success">
+        <item quantity="one">Push succeeded, spent %.2fs, update %d sticker</item>
+        <item quantity="other">Push succeeded, spent %.2fs, update %d stickers</item>
+    </plurals>
     <string name="webdav_screen_failed">Operation failed: %s</string>
     <string name="webdav_screen_waiting">Please wait…</string>
     <string name="webdav_screen_input_server">Server URL</string>
@@ -99,7 +105,10 @@
     <string name="search_config_screen_intersect_search_by_space">Intersection search</string>
     <string name="search_config_screen_intersect_search_by_space_description">Use spaces to split multiple keywords to achieve the \"and\" condition</string>
     <string name="home_screen_failed">Operation failed: %s</string>
-    <string name="home_screen_export_result">Export %d stickers</string>
+    <plurals name="home_screen_export_result">
+        <item quantity="one">Export %d sticker</item>
+        <item quantity="other">Export %d stickers</item>
+    </plurals>
     <string name="webdav_screen_restore">Restore</string>
     <string name="home_screen_empty_tip">Create a new sticker or select a sticker from the search results~</string>
     <string name="home_screen_no_search_result_tip">It\'s empty~</string>

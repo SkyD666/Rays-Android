@@ -67,6 +67,7 @@ import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.dateTime
 import com.skyd.rays.ext.screenIsLand
+import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.search.QueryPreference
@@ -193,15 +194,14 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
         uiEvent?.apply {
             when (homeResultUiEvent) {
                 is HomeResultUiEvent.Success -> {
-                    LaunchedEffect(snackbarHostState) {
-                        snackbarHostState.showSnackbar(
-                            message = context.getString(
-                                R.string.home_screen_export_result,
-                                homeResultUiEvent.successCount
-                            ),
-                            withDismissAction = true
-                        )
-                    }
+                    snackbarHostState.showSnackbarWithLaunchedEffect(
+                        message = context.resources.getQuantityString(
+                            R.plurals.home_screen_export_result,
+                            homeResultUiEvent.successCount,
+                            homeResultUiEvent.successCount
+                        ),
+                        withDismissAction = true
+                    )
                 }
 
                 null -> Unit
@@ -211,14 +211,12 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
         loadUiIntent?.also { loadUiIntent ->
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
-                    LaunchedEffect(snackbarHostState) {
-                        snackbarHostState.showSnackbar(
-                            message = context.getString(
-                                R.string.home_screen_failed, loadUiIntent.msg
-                            ),
-                            withDismissAction = true
-                        )
-                    }
+                    snackbarHostState.showSnackbarWithLaunchedEffect(
+                        message = context.getString(
+                            R.string.home_screen_failed, loadUiIntent.msg
+                        ),
+                        withDismissAction = true
+                    )
                 }
 
                 is LoadUiIntent.Loading -> Unit

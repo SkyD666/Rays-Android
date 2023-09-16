@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class StyleTransferViewModel @Inject constructor(private var StyleTransferRepo: StyleTransferRepository) :
+class StyleTransferViewModel @Inject constructor(private var styleTransferRepo: StyleTransferRepository) :
     BaseViewModel<StyleTransferState, IUiEvent, StyleTransferIntent>() {
     override fun initUiState(): StyleTransferState {
         return StyleTransferState(styleTransferResultUiState = StyleTransferResultUiState.Init)
@@ -22,7 +22,7 @@ class StyleTransferViewModel @Inject constructor(private var StyleTransferRepo: 
 
     override fun Flow<StyleTransferIntent>.handleIntent(): Flow<IUIChange> = merge(
         doIsInstance<StyleTransferIntent.Transfer> { intent ->
-            StyleTransferRepo.requestTransferredImage(
+            styleTransferRepo.requestTransferredImage(
                 style = intent.style.toBitmap(),
                 content = intent.content.toBitmap(),
             )
