@@ -24,6 +24,7 @@
     <string name="home_screen_export">Export</string>
     <string name="dialog_tip">Info</string>
     <string name="dialog_ok">OK</string>
+    <string name="dialog_close">Close</string>
     <string name="add_screen_success">Operation successful</string>
     <string name="add_screen_waiting_uris">Waiting list (Click to remove)</string>
     <string name="dialog_cancel">Cancel</string>
@@ -227,6 +228,9 @@
     <string name="auto_share_screen_accessibility_not_granted">No accessibility permission granted now</string>
     <string name="auto_share_screen_supported_app">Auto share allows you to share a sticker directly to the application corresponding to the previous page.\n\nThis feature requires accessibility permission. After killing the Rays process, upgrading or reinstalling Rays, Auto share may be disabled and needs to be enabled by manually granting accessibility permission. \n\nIt is recommended that Rays should be allowed to launch on startup, launch by other apps and keep running in background.\n\nSupported apps:\nTelegram\nDiscord\nWeChat\nInstagram\nQQ\nWhatsApp\nWeibo</string>
     <string name="sponsor">Sponsor</string>
+    <string name="sponsor_description">If you like the app, you can buy me a cup of coffee, thanks!</string>
+    <string name="sponsor_afadian">Afadian</string>
+    <string name="sponsor_buy_me_a_coffee">Buy me a coffee</string>
     <string name="classification_screen_threshold">Classification threshold</string>
     <string name="classification_screen_threshold_description">Only tags with confidence higher than this threshold will be recommended, suggested to be set around 0.5.</string>
     <string name="text_recognize_screen_name">Text recognize</string>

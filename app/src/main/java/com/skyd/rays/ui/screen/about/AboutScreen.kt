@@ -18,19 +18,25 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Balance
 import androidx.compose.material.icons.filled.Coffee
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -58,6 +64,7 @@ import com.skyd.rays.model.bean.OtherWorksBean
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
+import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.about.license.LICENSE_SCREEN_ROUTE
@@ -71,6 +78,7 @@ const val ABOUT_SCREEN_ROUTE = "aboutScreen"
 fun AboutScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     var openUpdateDialog by rememberSaveable { mutableStateOf(false) }
+    var openSponsorDialog by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -106,7 +114,10 @@ fun AboutScreen() {
                     TextArea()
                 }
                 item {
-                    SponsorArea()
+                    SponsorArea(
+                        openSponsorDialog = openSponsorDialog,
+                        onSponsorDialogVisibleChange = { openSponsorDialog = it }
+                    )
                     ButtonArea()
                 }
             } else {
@@ -117,7 +128,10 @@ fun AboutScreen() {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             IconArea()
-                            SponsorArea()
+                            SponsorArea(
+                                openSponsorDialog = openSponsorDialog,
+                                onSponsorDialogVisibleChange = { openSponsorDialog = it }
+                            )
                             ButtonArea()
                         }
                         TextArea(modifier = Modifier.weight(1f))
@@ -216,13 +230,60 @@ private fun TextArea(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SponsorArea() {
+private fun SponsorArea(
+    openSponsorDialog: Boolean,
+    onSponsorDialogVisibleChange: (Boolean) -> Unit
+) {
     Spacer(modifier = Modifier.height(16.dp))
-    Button(onClick = { openBrowser("https://afdian.net/a/SkyD666") }) {
+    Button(onClick = { onSponsorDialogVisibleChange(true) }) {
         Icon(imageVector = Icons.Default.Coffee, contentDescription = null)
         Spacer(modifier = Modifier.width(10.dp))
         Text(text = stringResource(id = R.string.sponsor))
     }
+    SponsorDialog(visible = openSponsorDialog, onClose = { onSponsorDialogVisibleChange(false) })
+}
+
+@Composable
+private fun SponsorDialog(visible: Boolean, onClose: () -> Unit) {
+    RaysDialog(
+        visible = visible,
+        onDismissRequest = onClose,
+        icon = { Icon(imageVector = Icons.Default.Coffee, contentDescription = null) },
+        title = { Text(text = stringResource(id = R.string.sponsor)) },
+        selectable = false,
+        text = {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                Text(text = stringResource(id = R.string.sponsor_description))
+                Spacer(modifier = Modifier.height(6.dp))
+                ListItem(
+                    modifier = Modifier.clickable {
+                        openBrowser("https://afdian.net/a/SkyD666")
+                        onClose()
+                    },
+                    headlineContent = { Text(text = stringResource(R.string.sponsor_afadian)) },
+                    leadingContent = {
+                        Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null)
+                    }
+                )
+                Divider()
+                ListItem(
+                    modifier = Modifier.clickable {
+                        openBrowser("https://www.buymeacoffee.com/SkyD666")
+                        onClose()
+                    },
+                    headlineContent = { Text(text = stringResource(R.string.sponsor_buy_me_a_coffee)) },
+                    leadingContent = {
+                        Icon(imageVector = Icons.Default.Coffee, contentDescription = null)
+                    }
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onClose) {
+                Text(text = stringResource(R.string.dialog_close))
+            }
+        },
+    )
 }
 
 @Composable
