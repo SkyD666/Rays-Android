@@ -291,10 +291,10 @@ private fun ButtonArea() {
     val navController = LocalNavController.current
 
     Row(
-        modifier = Modifier.fillMaxWidth(0.8f),
+        modifier = Modifier.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        val boxModifier = Modifier.padding(vertical = 16.dp, horizontal = 10.dp)
+        val boxModifier = Modifier.padding(vertical = 16.dp, horizontal = 6.dp)
         Box(
             modifier = boxModifier.background(
                 color = MaterialTheme.colorScheme.primaryContainer,
@@ -324,6 +324,19 @@ private fun ButtonArea() {
         Box(
             modifier = boxModifier.background(
                 color = MaterialTheme.colorScheme.tertiaryContainer,
+                shape = RoundedCornerShape(30)
+            ),
+            contentAlignment = Alignment.Center
+        ) {
+            RaysIconButton(
+                painter = painterResource(id = R.drawable.ic_telegram_24),
+                contentDescription = stringResource(id = R.string.about_screen_join_telegram),
+                onClick = { openBrowser("https://t.me/SkyD666Chat") }
+            )
+        }
+        Box(
+            modifier = boxModifier.background(
+                color = MaterialTheme.colorScheme.primaryContainer,
                 shape = RoundedCornerShape(30)
             ),
             contentAlignment = Alignment.Center
