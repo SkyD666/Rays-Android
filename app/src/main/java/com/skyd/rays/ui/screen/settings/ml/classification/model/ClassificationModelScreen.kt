@@ -108,7 +108,7 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
                             R.string.classification_model_screen_failed,
                             it.msg
                         ),
-                        withDismissAction = true
+                        key2 = it,
                     )
                 }
 

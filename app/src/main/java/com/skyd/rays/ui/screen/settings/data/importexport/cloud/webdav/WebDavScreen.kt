@@ -264,7 +264,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                             R.string.webdav_screen_failed,
                             loadUiIntent.msg
                         ),
-                        withDismissAction = true
+                        key2 = loadUiIntent,
                     )
                     openWaitingDialog = false
                     waitingDialogData = null
@@ -362,7 +362,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                                 result.count,
                                 result.time / 1000.0f, result.count
                             ),
-                            withDismissAction = true
+                            key2 = result,
                         )
                     }
 
@@ -384,7 +384,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                                 result.count,
                                 result.time / 1000.0f, result.count
                             ),
-                            withDismissAction = true
+                            key2 = result,
                         )
                     }
 

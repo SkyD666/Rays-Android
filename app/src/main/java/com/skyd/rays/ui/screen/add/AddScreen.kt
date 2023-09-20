@@ -329,7 +329,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
             AddStickersResultUiEvent.Duplicate -> {
                 snackbarHostState.showSnackbarWithLaunchedEffect(
                     context.getString(R.string.add_screen_sticker_duplicate),
-                    withDismissAction = true
+                    key2 = addStickersResultUiEvent,
                 )
             }
 
@@ -358,7 +358,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
             is LoadUiIntent.Error -> {
                 snackbarHostState.showSnackbarWithLaunchedEffect(
                     context.getString(R.string.add_screen_error, it.msg),
-                    withDismissAction = true
+                    key2 = it,
                 )
             }
 

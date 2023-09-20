@@ -77,6 +77,7 @@ const val ABOUT_SCREEN_ROUTE = "aboutScreen"
 @Composable
 fun AboutScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val navController = LocalNavController.current
     var openUpdateDialog by rememberSaveable { mutableStateOf(false) }
     var openSponsorDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -87,6 +88,11 @@ fun AboutScreen() {
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.about)) },
                 actions = {
+                    RaysIconButton(
+                        imageVector = Icons.Default.Balance,
+                        contentDescription = stringResource(id = R.string.license_screen_name),
+                        onClick = { navController.navigate(LICENSE_SCREEN_ROUTE) }
+                    )
                     RaysIconButton(
                         onClick = { openUpdateDialog = true },
                         imageVector = Icons.Default.Update,
@@ -288,8 +294,6 @@ private fun SponsorDialog(visible: Boolean, onClose: () -> Unit) {
 
 @Composable
 private fun ButtonArea() {
-    val navController = LocalNavController.current
-
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.Center
@@ -303,19 +307,6 @@ private fun ButtonArea() {
             contentAlignment = Alignment.Center
         ) {
             RaysIconButton(
-                imageVector = Icons.Default.Balance,
-                contentDescription = stringResource(id = R.string.license_screen_name),
-                onClick = { navController.navigate(LICENSE_SCREEN_ROUTE) }
-            )
-        }
-        Box(
-            modifier = boxModifier.background(
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = RoundedCornerShape(30)
-            ),
-            contentAlignment = Alignment.Center
-        ) {
-            RaysIconButton(
                 painter = painterResource(id = R.drawable.ic_github_24),
                 contentDescription = stringResource(id = R.string.about_screen_goto_github_repo),
                 onClick = { openBrowser(GITHUB_REPO) }
@@ -323,7 +314,7 @@ private fun ButtonArea() {
         }
         Box(
             modifier = boxModifier.background(
-                color = MaterialTheme.colorScheme.tertiaryContainer,
+                color = MaterialTheme.colorScheme.secondaryContainer,
                 shape = RoundedCornerShape(30)
             ),
             contentAlignment = Alignment.Center
@@ -336,7 +327,7 @@ private fun ButtonArea() {
         }
         Box(
             modifier = boxModifier.background(
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = MaterialTheme.colorScheme.tertiaryContainer,
                 shape = RoundedCornerShape(30)
             ),
             contentAlignment = Alignment.Center

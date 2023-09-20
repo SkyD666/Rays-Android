@@ -21,8 +21,8 @@ android {
         applicationId "com.skyd.rays"
         minSdk 24
         targetSdk 34
-        versionCode 29
-        versionName "1.5-beta04"
+        versionCode 30
+        versionName "1.5-beta05"
         flavorDimensions = ["versionName"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -167,10 +167,6 @@ dependencies {
     // TF Lite
     implementation 'org.tensorflow:tensorflow-lite:2.13.0'
     implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
-    // Import the Task Vision Library dependency (NNAPI is included)
-    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.4'
-    // Import the GPU delegate plugin Library for GPU inference
-    implementation 'org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.4'
 
     debugImplementation "androidx.compose.ui:ui-tooling:$md3_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$md3_version"

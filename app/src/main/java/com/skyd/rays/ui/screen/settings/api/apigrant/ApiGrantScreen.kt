@@ -67,7 +67,7 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
                     message = context.getString(
                         R.string.uri_string_share_screen_failed, addPackageNameUiEvent.msg
                     ),
-                    withDismissAction = true
+                    key2 = addPackageNameUiEvent,
                 )
             }
 

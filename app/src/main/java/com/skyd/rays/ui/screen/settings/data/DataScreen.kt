@@ -85,7 +85,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                         message = appContext.getString(
                             R.string.data_screen_failed, loadUiIntent.msg
                         ),
-                        withDismissAction = true
+                        key2 = loadUiIntent,
                     )
                 }
 
@@ -102,7 +102,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                             R.string.data_screen_delete_all_success,
                             deleteAllResultUiEvent.time / 1000.0f
                         ),
-                        withDismissAction = true
+                        key2 = deleteAllResultUiEvent,
                     )
                 }
 

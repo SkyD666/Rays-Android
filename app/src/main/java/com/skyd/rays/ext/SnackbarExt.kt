@@ -27,11 +27,14 @@ fun SnackbarHostState.showSnackbar(
 @Composable
 fun SnackbarHostState.showSnackbarWithLaunchedEffect(
     message: String,
+    key1: Any? = this,
+    key2: Any? = null,
+    key3: Any? = null,
     actionLabel: String? = null,
     withDismissAction: Boolean = true,
     duration: SnackbarDuration = if (actionLabel == null) SnackbarDuration.Short else SnackbarDuration.Indefinite
 ): SnackbarHostState {
-    LaunchedEffect(this) {
+    LaunchedEffect(key1, key2, key3) {
         showSnackbar(
             message = message,
             actionLabel = actionLabel,

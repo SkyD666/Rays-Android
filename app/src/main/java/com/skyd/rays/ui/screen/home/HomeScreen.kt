@@ -200,7 +200,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                             homeResultUiEvent.successCount,
                             homeResultUiEvent.successCount
                         ),
-                        withDismissAction = true
+                        key2 = homeResultUiEvent
                     )
                 }
 
@@ -215,7 +215,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                         message = context.getString(
                             R.string.home_screen_failed, loadUiIntent.msg
                         ),
-                        withDismissAction = true
+                        key2 = loadUiIntent,
                     )
                 }
 
