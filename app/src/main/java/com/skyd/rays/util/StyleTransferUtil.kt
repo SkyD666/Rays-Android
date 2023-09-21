@@ -14,9 +14,7 @@ import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
-import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
-import java.lang.Integer.min
 
 class StyleTransferUtil(
     private var numThreads: Int = 2,
@@ -118,7 +116,11 @@ class StyleTransferUtil(
         interpreterTransform?.runForMultipleInputsOutputs(
             transformInput, mapOf(Pair(0, outputImage.buffer))
         )
-        val outputBitmap = getOutputImage(outputImage)
+        val outputBitmap = getOutputImage(
+            output = outputImage,
+            outputHeight = image.height,
+            outputWidth = image.width
+        )
         return outputBitmap to SystemClock.uptimeMillis() - inferenceTime
     }
 
@@ -138,11 +140,7 @@ class StyleTransferUtil(
         targetWidth: Int,
         targetHeight: Int
     ): TensorImage {
-        val height = image.height
-        val width = image.width
-        val cropSize = min(height, width)
         val imageProcessor = ImageProcessor.Builder()
-            .add(ResizeWithCropOrPadOp(cropSize, cropSize))
             .add(
                 ResizeOp(
                     targetHeight,
@@ -158,9 +156,21 @@ class StyleTransferUtil(
     }
 
     // Convert output bytebuffer to bitmap image.
-    private fun getOutputImage(output: TensorBuffer): Bitmap {
+    private fun getOutputImage(
+        output: TensorBuffer,
+        outputHeight: Int,
+        outputWidth: Int,
+    ): Bitmap {
         val imagePostProcessor = ImageProcessor.Builder()
-            .add(DequantizeOp(0f, 255f)).build()
+            .add(DequantizeOp(0f, 255f))
+            .add(
+                ResizeOp(
+                    outputHeight,
+                    outputWidth,
+                    ResizeOp.ResizeMethod.BILINEAR
+                )
+            )
+            .build()
         val tensorImage = TensorImage(DataType.FLOAT32)
         tensorImage.load(output)
         return imagePostProcessor.process(tensorImage).bitmap
