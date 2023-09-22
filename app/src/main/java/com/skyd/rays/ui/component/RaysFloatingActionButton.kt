@@ -8,9 +8,12 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.FloatingActionButtonElevation
 import androidx.compose.material3.LargeFloatingActionButton
-import androidx.compose.material3.PlainTooltipBox
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -68,11 +71,58 @@ fun RaysFloatingActionButton(
     if (contentDescription.isNullOrEmpty()) {
         floatingActionButton(modifier = modifier)
     } else {
-        PlainTooltipBox(
+        TooltipBox(
             modifier = modifier,
-            tooltip = { Text(contentDescription) }
+            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+            tooltip = {
+                PlainTooltip {
+                    Text(contentDescription)
+                }
+            },
+            state = rememberTooltipState()
         ) {
-            floatingActionButton(modifier = Modifier.tooltipAnchor())
+            floatingActionButton(modifier = Modifier)
+        }
+    }
+}
+
+@Composable
+fun RaysExtendedFloatingActionButton(
+    modifier: Modifier = Modifier,
+    text: @Composable () -> Unit,
+    icon: @Composable () -> Unit,
+    onClick: () -> Unit,
+    expanded: Boolean = true,
+    elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
+    contentDescription: String? = null,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+) {
+    val floatingActionButton: @Composable (modifier: Modifier) -> Unit = {
+        ExtendedFloatingActionButton(
+            text = text,
+            icon = icon,
+            modifier = it,
+            onClick = onClick,
+            expanded = expanded,
+            elevation = elevation,
+            interactionSource = interactionSource,
+        )
+    }
+
+    if (contentDescription.isNullOrEmpty()) {
+        floatingActionButton(modifier = modifier)
+    } else {
+        TooltipBox(
+            modifier = modifier,
+            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+            tooltip = {
+                PlainTooltip {
+                    Text(contentDescription)
+                }
+            },
+            state = rememberTooltipState()
+        ) {
+            floatingActionButton(modifier = Modifier)
         }
     }
 }

@@ -30,7 +30,7 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -65,6 +65,9 @@ import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.dialog.RaysDialog
+import com.skyd.rays.ui.component.shape.CloverShape
+import com.skyd.rays.ui.component.shape.CurlyCornerShape
+import com.skyd.rays.ui.component.shape.SquircleShape
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.about.license.LICENSE_SCREEN_ROUTE
@@ -271,7 +274,7 @@ private fun SponsorDialog(visible: Boolean, onClose: () -> Unit) {
                         Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null)
                     }
                 )
-                Divider()
+                HorizontalDivider()
                 ListItem(
                     modifier = Modifier.clickable {
                         openBrowser("https://www.buymeacoffee.com/SkyD666")
@@ -302,7 +305,7 @@ private fun ButtonArea() {
         Box(
             modifier = boxModifier.background(
                 color = MaterialTheme.colorScheme.primaryContainer,
-                shape = RoundedCornerShape(30)
+                shape = CurlyCornerShape(amp = 3f, count = 10),
             ),
             contentAlignment = Alignment.Center
         ) {
@@ -315,7 +318,7 @@ private fun ButtonArea() {
         Box(
             modifier = boxModifier.background(
                 color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = RoundedCornerShape(30)
+                shape = SquircleShape,
             ),
             contentAlignment = Alignment.Center
         ) {
@@ -328,7 +331,7 @@ private fun ButtonArea() {
         Box(
             modifier = boxModifier.background(
                 color = MaterialTheme.colorScheme.tertiaryContainer,
-                shape = RoundedCornerShape(30)
+                shape = CloverShape,
             ),
             contentAlignment = Alignment.Center
         ) {

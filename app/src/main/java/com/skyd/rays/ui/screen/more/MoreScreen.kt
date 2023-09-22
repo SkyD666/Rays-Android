@@ -2,10 +2,11 @@ package com.skyd.rays.ui.screen.more
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Egg
+import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
@@ -26,11 +27,12 @@ import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.lazyverticalgrid.RaysLazyVerticalGrid
 import com.skyd.rays.ui.component.lazyverticalgrid.adapter.LazyGridAdapter
 import com.skyd.rays.ui.component.lazyverticalgrid.adapter.proxy.More1Proxy
+import com.skyd.rays.ui.component.shape.CloverShape
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
-import com.skyd.rays.ui.component.shape.PolygonShape
+import com.skyd.rays.ui.component.shape.SquircleShape
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.about.ABOUT_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.minitool.MINI_TOOL_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.getMainScreenTopBarWindowInsets
 import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
 
@@ -43,9 +45,8 @@ fun MoreScreen() {
         topBar = {
             RaysTopBar(
                 title = { Text(text = stringResource(id = R.string.more_screen_name)) },
-                navigationIcon = {
-                    RaysIconButton(imageVector = Icons.Default.Egg, onClick = { })
-                }
+                navigationIcon = { RaysIconButton(imageVector = Icons.Default.Egg, onClick = { }) },
+                windowInsets = getMainScreenTopBarWindowInsets(),
             )
         },
         contentWindowInsets = if (context.screenIsLand) {
@@ -65,23 +66,15 @@ fun MoreScreen() {
                 title = stringResource(R.string.import_export_screen_name),
                 icon = Icons.Default.ImportExport,
                 iconTint = MaterialTheme.colorScheme.onPrimary,
-                shape = RoundedCornerShape(30),
+                shape = SquircleShape,
                 shapeColor = MaterialTheme.colorScheme.primary,
                 action = { navController.navigate(IMPORT_EXPORT_SCREEN_ROUTE) }
-            ),
-            More1Bean(
-                title = stringResource(R.string.mini_tool_screen_name),
-                icon = Icons.Default.Extension,
-                iconTint = MaterialTheme.colorScheme.onSecondary,
-                shape = PolygonShape(10),
-                shapeColor = MaterialTheme.colorScheme.secondary,
-                action = { navController.navigate(MINI_TOOL_SCREEN_ROUTE) }
             ),
             More1Bean(
                 title = stringResource(R.string.settings),
                 icon = Icons.Default.Settings,
                 iconTint = MaterialTheme.colorScheme.onSecondary,
-                shape = CircleShape,
+                shape = CloverShape,
                 shapeColor = MaterialTheme.colorScheme.secondary,
                 action = { navController.navigate(SETTINGS_SCREEN_ROUTE) }
             ),

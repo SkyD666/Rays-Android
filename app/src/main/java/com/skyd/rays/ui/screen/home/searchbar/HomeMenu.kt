@@ -1,16 +1,16 @@
 package com.skyd.rays.ui.screen.home.searchbar
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ManageSearch
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.ManageSearch
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -156,7 +156,7 @@ internal fun HomeMenu(
                 )
             }
         )
-        Divider()
+        HorizontalDivider()
         DropdownMenuItem(
             text = { Text(stringResource(R.string.search_config_screen_name)) },
             onClick = {
@@ -165,7 +165,7 @@ internal fun HomeMenu(
             },
             leadingIcon = {
                 Icon(
-                    Icons.Default.ManageSearch,
+                    Icons.AutoMirrored.Default.ManageSearch,
                     contentDescription = null
                 )
             }

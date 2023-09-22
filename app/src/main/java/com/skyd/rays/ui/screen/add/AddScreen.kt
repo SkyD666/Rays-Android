@@ -31,7 +31,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.AssistChipDefaults
@@ -144,7 +144,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                         imageVector = if (uriWaitingList.isEmpty()) {
                             Icons.Default.Done
                         } else {
-                            Icons.Default.ArrowForwardIos
+                            Icons.AutoMirrored.Default.ArrowForwardIos
                         },
                         contentDescription = stringResource(R.string.add_screen_add),
                         onClick = {

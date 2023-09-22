@@ -4,6 +4,11 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +29,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,7 +49,7 @@ import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ui.component.RaysCard
-import com.skyd.rays.ui.component.RaysFloatingActionButton
+import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.WaitingDialog
@@ -67,31 +74,32 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
     val pickContentLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { if (it != null) contentUri = it }
+    val columnScrollState = rememberScrollState()
+    val fabVisibility by remember {
+        derivedStateOf {
+            columnScrollState.value < columnScrollState.maxValue || columnScrollState.maxValue == 0
+        }
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
-            RaysFloatingActionButton(
-                onClick = {
-                    val style = styleUri
-                    val content = contentUri
-                    if (style == null || content == null) {
-                        snackbarHostState.showSnackbar(
-                            scope = scope,
-                            message = context.getString(R.string.style_transfer_screen_image_not_selected)
-                        )
-                        return@RaysFloatingActionButton
-                    }
-                    viewModel.sendUiIntent(
-                        StyleTransferIntent.Transfer(
-                            style = style,
-                            content = content,
-                        )
+            TransferExtendedFloatingActionButton(visible = fabVisibility) {
+                val style = styleUri
+                val content = contentUri
+                if (style == null || content == null) {
+                    snackbarHostState.showSnackbar(
+                        scope = scope,
+                        message = context.getString(R.string.style_transfer_screen_image_not_selected)
                     )
-                },
-                contentDescription = stringResource(R.string.style_transfer_screen_transfer),
-            ) {
-                Icon(imageVector = Icons.Default.Transform, contentDescription = null)
+                    return@TransferExtendedFloatingActionButton
+                }
+                viewModel.sendUiIntent(
+                    StyleTransferIntent.Transfer(
+                        style = style,
+                        content = content,
+                    )
+                )
             }
         },
         topBar = {
@@ -105,7 +113,7 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
             Column(
                 modifier = Modifier
                     .padding(paddingValues)
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(columnScrollState)
             ) {
                 InputArea(
                     styleUri = styleUri,
@@ -122,7 +130,7 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
             Row(
                 modifier = Modifier
                     .padding(paddingValues)
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(columnScrollState)
             ) {
                 InputArea(
                     styleUri = styleUri,
@@ -220,5 +228,27 @@ private fun InputArea(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun TransferExtendedFloatingActionButton(visible: Boolean, onClick: () -> Unit) {
+    val density = LocalDensity.current
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInVertically { with(density) { 40.dp.roundToPx() } } + fadeIn(),
+        exit = slideOutVertically { with(density) { 40.dp.roundToPx() } } + fadeOut(),
+    ) {
+        RaysExtendedFloatingActionButton(
+            text = { Text(text = stringResource(R.string.style_transfer_screen_transfer)) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Transform,
+                    contentDescription = null
+                )
+            },
+            onClick = onClick,
+            contentDescription = stringResource(R.string.style_transfer_screen_transfer),
+        )
     }
 }

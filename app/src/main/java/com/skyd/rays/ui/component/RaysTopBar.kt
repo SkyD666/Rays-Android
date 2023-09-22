@@ -2,10 +2,16 @@ package com.skyd.rays.ui.component
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +32,7 @@ fun RaysTopBar(
     title: @Composable () -> Unit,
     contentPadding: @Composable () -> PaddingValues = { PaddingValues() },
     navigationIcon: @Composable () -> Unit = { BackIcon() },
+    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     actions: @Composable RowScope.() -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
@@ -42,26 +49,31 @@ fun RaysTopBar(
                 modifier = topBarModifier,
                 navigationIcon = navigationIcon,
                 actions = actions,
+                windowInsets = windowInsets,
                 colors = colors,
                 scrollBehavior = scrollBehavior
             )
         }
+
         RaysTopBarStyle.Large -> {
             LargeTopAppBar(
                 modifier = topBarModifier,
                 title = title,
                 navigationIcon = navigationIcon,
                 actions = actions,
+                windowInsets = windowInsets,
                 colors = colors,
                 scrollBehavior = scrollBehavior
             )
         }
+
         RaysTopBarStyle.CenterAligned -> {
             CenterAlignedTopAppBar(
                 modifier = topBarModifier,
                 title = title,
                 navigationIcon = navigationIcon,
                 actions = actions,
+                windowInsets = windowInsets,
                 colors = colors,
                 scrollBehavior = scrollBehavior
             )
@@ -114,7 +126,7 @@ fun BackIcon() {
 @Composable
 fun BackIcon(onClick: () -> Unit = {}) {
     TopBarIcon(
-        imageVector = Icons.Rounded.ArrowBack,
+        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
         contentDescription = stringResource(id = R.string.back),
         onClick = onClick
     )

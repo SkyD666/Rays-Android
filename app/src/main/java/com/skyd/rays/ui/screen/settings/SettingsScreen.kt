@@ -3,9 +3,9 @@ package com.skyd.rays.ui.screen.settings
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ManageSearch
 import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.Dataset
-import androidx.compose.material.icons.filled.ManageSearch
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SmartToy
@@ -52,7 +52,7 @@ fun SettingsScreen() {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.ManageSearch),
+                    icon = rememberVectorPainter(Icons.AutoMirrored.Default.ManageSearch),
                     text = stringResource(id = R.string.search_config_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_search_description),
                     onClick = { navController.navigate(SEARCH_CONFIG_SCREEN_ROUTE) }

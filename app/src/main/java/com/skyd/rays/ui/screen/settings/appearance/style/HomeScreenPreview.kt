@@ -20,20 +20,20 @@ import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridS
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ManageSearch
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.ManageSearch
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
@@ -131,7 +131,7 @@ private fun RaysSearchBarPreview() {
                 leadingIcon = {
                     if (active) {
                         RaysIconButton(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.home_screen_close_search),
                             onClick = { active = false }
                         )
@@ -232,13 +232,13 @@ private fun HomeMenuPreview(expanded: Boolean, onDismissRequest: () -> Unit) {
                 )
             }
         )
-        Divider()
+        HorizontalDivider()
         DropdownMenuItem(
             text = { Text(stringResource(R.string.search_config_screen_name)) },
             onClick = onDismissRequest,
             leadingIcon = {
                 Icon(
-                    Icons.Default.ManageSearch,
+                    Icons.AutoMirrored.Default.ManageSearch,
                     contentDescription = null
                 )
             }

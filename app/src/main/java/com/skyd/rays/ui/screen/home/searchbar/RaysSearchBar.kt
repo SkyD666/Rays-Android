@@ -19,17 +19,20 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Divider
-import androidx.compose.material3.RichTooltipBox
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -66,6 +69,7 @@ import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.getMainScreenSearchBarWindowInsets
 import com.skyd.rays.ui.screen.home.HomeIntent
 import com.skyd.rays.ui.screen.home.HomeState
 import com.skyd.rays.ui.screen.home.HomeViewModel
@@ -134,6 +138,7 @@ fun RaysSearchBar(
                 .padding(horizontal = searchBarHorizontalPadding)
         ) {
             SearchBar(
+                windowInsets = getMainScreenSearchBarWindowInsets(),
                 onQueryChange = onQueryChange,
                 query = query,
                 onSearch = { keyword ->
@@ -156,7 +161,7 @@ fun RaysSearchBar(
                 leadingIcon = {
                     if (active) {
                         RaysIconButton(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.home_screen_close_search),
                             onClick = { onActiveChange(false) }
                         )
@@ -388,18 +393,23 @@ fun PopularTagsBar(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             itemsIndexed(tags) { _, item ->
-                RichTooltipBox(
-                    title = { Text(item.first) },
-                    text = {
-                        Text(
-                            text = stringResource(
-                                R.string.home_screen_popular_tags_popular_value, item.second
-                            )
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+                    tooltip = {
+                        RichTooltip(
+                            title = { Text(item.first) },
+                            text = {
+                                Text(
+                                    text = stringResource(
+                                        R.string.home_screen_popular_tags_popular_value, item.second
+                                    )
+                                )
+                            }
                         )
                     },
+                    state = rememberTooltipState(),
                 ) {
                     SuggestionChip(
-                        modifier = Modifier.tooltipAnchor(),
                         onClick = { onTagClicked(item.first) },
                         label = { Text(text = item.first) }
                     )
@@ -407,7 +417,7 @@ fun PopularTagsBar(
             }
         }
 
-        Divider(
+        HorizontalDivider(
             Modifier
                 .align(Alignment.BottomStart)
                 .padding(horizontal = 16.dp)

@@ -19,7 +19,7 @@ import androidx.compose.material.icons.filled.Recycling
 import androidx.compose.material.icons.filled.RestoreFromTrash
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -459,7 +459,7 @@ private fun RecycleBinBottomSheet(
                             }
                         }
                     )
-                    Divider(modifier = Modifier.padding(horizontal = 16.dp))
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 }
             } else {
                 item {
