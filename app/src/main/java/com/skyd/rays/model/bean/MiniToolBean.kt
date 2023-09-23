@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 data class MiniToolBean(
     val title: String,
     val icon: ImageVector,
+    val experimental: Boolean = false,
     val action: () -> Unit
 ) : BaseBean
 

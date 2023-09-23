@@ -200,7 +200,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                             homeResultUiEvent.successCount,
                             homeResultUiEvent.successCount
                         ),
-                        key2 = homeResultUiEvent
+                        key2 = homeResultUiEvent,
                     )
                 }
 

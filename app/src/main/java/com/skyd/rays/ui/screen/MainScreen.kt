@@ -1,12 +1,10 @@
 package com.skyd.rays.ui.screen
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -22,8 +20,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -44,13 +40,8 @@ const val MAIN_SCREEN_ROUTE = "mainScreen"
 
 @Composable
 fun getMainScreenTopBarWindowInsets(): WindowInsets =
-    if (LocalWindowSizeClass.current.isCompact) WindowInsets(0)
+    if (LocalWindowSizeClass.current.isCompact) TopAppBarDefaults.windowInsets
     else TopAppBarDefaults.windowInsets.only(WindowInsetsSides.End + WindowInsetsSides.Top)
-
-@Composable
-fun getMainScreenSearchBarWindowInsets(): WindowInsets =
-    if (LocalWindowSizeClass.current.isCompact) WindowInsets(0)
-    else SearchBarDefaults.windowInsets
 
 @Composable
 fun MainScreen() {
@@ -67,28 +58,19 @@ fun MainScreen() {
             }
         )
     }
-    val contentPager = @Composable {
-        ContentPager(pagerState = pagerState)
+    val contentPager: @Composable (modifier: Modifier) -> Unit = @Composable { modifier ->
+        ContentPager(modifier = modifier, pagerState = pagerState)
     }
 
-    Scaffold(
-        bottomBar = if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
-            navigationBarOrRail
-        } else {
-            {}
+    if (windowSizeClass.isCompact) {
+        Column {
+            contentPager(modifier = Modifier.weight(1f))
+            navigationBarOrRail()
         }
-    ) { innerPadding ->
-        if (windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                navigationBarOrRail()
-                Box(modifier = Modifier.weight(1f)) {
-                    contentPager()
-                }
-            }
-        } else {
-            Box(modifier = Modifier.padding(innerPadding)) {
-                contentPager()
-            }
+    } else {
+        Row {
+            navigationBarOrRail()
+            contentPager(modifier = Modifier.weight(1f))
         }
     }
 }
@@ -139,10 +121,10 @@ private fun NavigationBarOrRail(
 }
 
 @Composable
-private fun ContentPager(pagerState: PagerState) {
+private fun ContentPager(modifier: Modifier, pagerState: PagerState) {
     HorizontalPager(
         state = pagerState,
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         userScrollEnabled = false
     ) { page ->
         when (page) {

@@ -22,7 +22,7 @@ android {
         minSdk 24
         targetSdk 34
         versionCode 31
-        versionName "1.5-beta06"
+        versionName "1.5-beta07"
         flavorDimensions = ["versionName"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

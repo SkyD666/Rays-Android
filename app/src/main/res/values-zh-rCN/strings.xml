@@ -206,7 +206,8 @@
     <string name="share_config_screen_file_extension">文件扩展名</string>
     <string name="share_config_screen_file_extension_description">分享表情包时为文件添加扩展名</string>
     <string name="mini_tool_screen_name">小工具</string>
-    <string name="style_transfer_screen_name">风格转移（实验性）</string>
+    <string name="mini_tool_experimental">实验性</string>
+    <string name="style_transfer_screen_name">风格转移</string>
     <string name="style_transfer_screen_transfer">转移</string>
     <string name="style_transfer_screen_image_not_selected">请选择目标风格图片和内容图片后再进行转换</string>
     <string name="style_transfer_screen_style">风格</string>

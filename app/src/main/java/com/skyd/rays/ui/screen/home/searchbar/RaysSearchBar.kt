@@ -69,7 +69,6 @@ import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.getMainScreenSearchBarWindowInsets
 import com.skyd.rays.ui.screen.home.HomeIntent
 import com.skyd.rays.ui.screen.home.HomeState
 import com.skyd.rays.ui.screen.home.HomeViewModel
@@ -138,7 +137,6 @@ fun RaysSearchBar(
                 .padding(horizontal = searchBarHorizontalPadding)
         ) {
             SearchBar(
-                windowInsets = getMainScreenSearchBarWindowInsets(),
                 onQueryChange = onQueryChange,
                 query = query,
                 onSearch = { keyword ->

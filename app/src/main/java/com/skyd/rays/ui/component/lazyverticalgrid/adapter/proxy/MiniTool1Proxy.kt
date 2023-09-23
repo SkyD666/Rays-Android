@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Science
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -14,8 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.skyd.rays.R
 import com.skyd.rays.model.bean.MiniTool1Bean
 import com.skyd.rays.ui.component.lazyverticalgrid.adapter.LazyGridAdapter
 
@@ -63,6 +67,12 @@ fun MiniTool1Item(
                 maxLines = 1,
                 textAlign = TextAlign.Center
             )
+            if (data.experimental) {
+                Icon(
+                    imageVector = Icons.Default.Science,
+                    contentDescription = stringResource(R.string.mini_tool_experimental),
+                )
+            }
         }
     }
 }
