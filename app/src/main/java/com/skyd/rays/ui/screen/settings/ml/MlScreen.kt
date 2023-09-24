@@ -3,7 +3,7 @@ package com.skyd.rays.ui.screen.settings.ml
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.HotelClass
+import androidx.compose.material.icons.filled.Sell
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -46,7 +46,7 @@ fun MlScreen() {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.HotelClass),
+                    icon = rememberVectorPainter(image = Icons.Default.Sell),
                     text = stringResource(id = R.string.classification_screen_name),
                     descriptionText = stringResource(R.string.classification_screen_description),
                     onClick = { navController.navigate(CLASSIFICATION_SCREEN_ROUTE) }

@@ -12,7 +12,11 @@ import androidx.compose.material.icons.filled.Science
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,10 +72,16 @@ fun MiniTool1Item(
                 textAlign = TextAlign.Center
             )
             if (data.experimental) {
-                Icon(
-                    imageVector = Icons.Default.Science,
-                    contentDescription = stringResource(R.string.mini_tool_experimental),
-                )
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                    tooltip = { PlainTooltip { Text(stringResource(R.string.mini_tool_experimental)) } },
+                    state = rememberTooltipState()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Science,
+                        contentDescription = stringResource(R.string.mini_tool_experimental),
+                    )
+                }
             }
         }
     }

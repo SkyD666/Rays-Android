@@ -1,6 +1,9 @@
 package com.skyd.rays.ui.screen.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.basicMarquee
@@ -66,7 +69,6 @@ import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.dateTime
-import com.skyd.rays.ext.screenIsLand
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.StickerScalePreference
@@ -112,17 +114,14 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        contentWindowInsets = if (context.screenIsLand) {
-            WindowInsets(
-                left = 0,
-                top = 0,
-                right = ScaffoldDefaults.contentWindowInsets
-                    .getRight(LocalDensity.current, LocalLayoutDirection.current),
-                bottom = 0
-            )
-        } else {
-            WindowInsets(0.dp)
-        }
+        contentWindowInsets = WindowInsets(
+            left = ScaffoldDefaults.contentWindowInsets
+                .getLeft(LocalDensity.current, LocalLayoutDirection.current),
+            top = 0,
+            right = ScaffoldDefaults.contentWindowInsets
+                .getRight(LocalDensity.current, LocalLayoutDirection.current),
+            bottom = ScaffoldDefaults.contentWindowInsets.getBottom(LocalDensity.current),
+        )
     ) { innerPaddings ->
         Row(
             modifier = Modifier
@@ -269,7 +268,14 @@ private fun MainCard(stickerWithTags: StickerWithTags, viewModel: HomeViewModel 
         ) {
             Box {
                 RaysImage(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .animateContentSize(
+                            animationSpec = spring(
+                                dampingRatio = 1.3f,
+                                stiffness = Spring.StiffnessHigh,
+                            )
+                        )
+                        .fillMaxWidth(),
                     uuid = stickerBean.uuid,
                     contentScale = StickerScalePreference.toContentScale(LocalStickerScale.current),
                 )

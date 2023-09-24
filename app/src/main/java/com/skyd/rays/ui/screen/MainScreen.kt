@@ -1,10 +1,14 @@
 package com.skyd.rays.ui.screen
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -20,8 +24,8 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -37,11 +41,6 @@ import com.skyd.rays.ui.screen.more.MoreScreen
 import kotlinx.coroutines.launch
 
 const val MAIN_SCREEN_ROUTE = "mainScreen"
-
-@Composable
-fun getMainScreenTopBarWindowInsets(): WindowInsets =
-    if (LocalWindowSizeClass.current.isCompact) TopAppBarDefaults.windowInsets
-    else TopAppBarDefaults.windowInsets.only(WindowInsetsSides.End + WindowInsetsSides.Top)
 
 @Composable
 fun MainScreen() {
@@ -62,14 +61,28 @@ fun MainScreen() {
         ContentPager(modifier = modifier, pagerState = pagerState)
     }
 
-    if (windowSizeClass.isCompact) {
-        Column {
-            contentPager(modifier = Modifier.weight(1f))
-            navigationBarOrRail()
-        }
-    } else {
-        Row {
-            navigationBarOrRail()
+    Scaffold(
+        bottomBar = {
+            if (windowSizeClass.isCompact) {
+                navigationBarOrRail()
+            }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+    ) { padding ->
+        Row(
+            Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .consumeWindowInsets(padding)
+                .run {
+                    if (!windowSizeClass.isCompact) {
+                        windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+                    } else this
+                },
+        ) {
+            if (!windowSizeClass.isCompact) {
+                navigationBarOrRail()
+            }
             contentPager(modifier = Modifier.weight(1f))
         }
     }

@@ -50,9 +50,9 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
@@ -128,7 +128,6 @@ fun RaysSearchBar(
     Box(
         Modifier
             .semantics { isTraversalGroup = true }
-            .zIndex(1f)
             .fillMaxWidth()
     ) {
         Box(
@@ -137,6 +136,9 @@ fun RaysSearchBar(
                 .padding(horizontal = searchBarHorizontalPadding)
         ) {
             SearchBar(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .semantics { traversalIndex = -1f },
                 onQueryChange = onQueryChange,
                 query = query,
                 onSearch = { keyword ->

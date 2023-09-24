@@ -215,6 +215,8 @@
     <string name="style_transfer_screen_image_not_selected">Please select the target style image and content image before transferring</string>
     <string name="style_transfer_screen_style">Style</string>
     <string name="style_transfer_screen_content">Content</string>
+    <string name="style_transfer_screen_select_style_image">Select a style image</string>
+    <string name="style_transfer_screen_select_content_image">Select a content image</string>
     <string name="api_screen_name">API (Experimental)</string>
     <string name="api_grant_screen_name">API Grant</string>
     <string name="setting_screen_api_description">Application Programming Interface</string>
