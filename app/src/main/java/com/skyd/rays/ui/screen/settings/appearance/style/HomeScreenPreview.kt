@@ -1,7 +1,10 @@
 package com.skyd.rays.ui.screen.settings.appearance.style
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.basicMarquee
@@ -28,6 +31,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Replay
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
@@ -223,6 +227,16 @@ private fun HomeMenuPreview(expanded: Boolean, onDismissRequest: () -> Unit) {
             }
         )
         DropdownMenuItem(
+            text = { Text(stringResource(R.string.home_screen_export)) },
+            onClick = onDismissRequest,
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Save,
+                    contentDescription = null
+                )
+            }
+        )
+        DropdownMenuItem(
             text = { Text(stringResource(R.string.home_screen_sticker_info)) },
             onClick = onDismissRequest,
             leadingIcon = {
@@ -264,12 +278,18 @@ fun MainCardPreview() {
             .fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier
-                .clickable { }
+            modifier = Modifier.clickable { }
         ) {
             Box {
                 RaysImage(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .animateContentSize(
+                            animationSpec = spring(
+                                dampingRatio = 1.3f,
+                                stiffness = Spring.StiffnessHigh,
+                            )
+                        )
+                        .fillMaxWidth(),
                     uuid = stickerWithTags.sticker.uuid,
                     contentScale = StickerScalePreference.toContentScale(LocalStickerScale.current),
                 )

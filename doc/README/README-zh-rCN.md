@@ -39,8 +39,6 @@
 </div>
 
 
-
-
 ## 💡主要功能
 
 1. 支持为表情包打**标签**
@@ -49,16 +47,18 @@
 4. 支持**识别**表情包中的**文本**
 5. 支持 **Ai 推荐表情包标签**（支持更换模型）
 6. 支持**使用 WebDAV 同步**数据
-7. 支持通过**系统“分享”页面导入**表情包
-8. 支持**更换和自定义主题色**，支持主题色**跟随表情包主色调**变化
-9. 支持**深色模式**
-10. ......
+7. 支持 **Ai 转移**图片的**风格**
+8. 支持通过**系统“分享”页面导入**表情包
+9. 支持**莫奈取色和自定义主题色**，支持主题色**跟随表情包主色调**变化
+10. 支持**深色模式**
+11. ......
 
 ## 🤩应用截图
 
 ![ic_home_screen](../../image/zh-rCN/ic_home_screen.jpg) ![ic_home_screen_search](../../image/zh-rCN/ic_home_screen_search.jpg)
 ![ic_add_screen_edit](../../image/zh-rCN/ic_add_screen_edit.jpg) ![ic_home_screen_share](../../image/zh-rCN/ic_home_screen_share.jpg)
 ![ic_appearance_screen](../../image/zh-rCN/ic_appearance_screen.jpg) ![ic_webdav_screen](../../image/zh-rCN/ic_webdav_screen.jpg)
+![ic_mini_tool_screen](../../image/zh-rCN/ic_mini_tool_screen.jpg) ![ic_style_transfer_screen](../../image/zh-rCN/ic_style_transfer_screen.jpg)
 ![ic_search_config_screen](../../image/zh-rCN/ic_search_config_screen.jpg) ![ic_more_screen](../../image/zh-rCN/ic_more_screen.jpg)
 ![ic_settings_screen](../../image/zh-rCN/ic_settings_screen.jpg) ![ic_classification_screen](../../image/zh-rCN/ic_classification_screen.jpg)
 ![ic_auto_share_screen](../../image/zh-rCN/ic_auto_share_screen.jpg) ![ic_about_screen](../../image/zh-rCN/ic_about_screen.jpg)

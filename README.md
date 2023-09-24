@@ -51,16 +51,19 @@
 4. Support **recognizing text** in stickers
 5. Support **recommending sticker tags** using **Ai** (support change models)
 6. Support **syncing data using WebDAV**
-7. Support importing a sticker through the **system "Share" page**
-8. Support **changing and customizing theme colors**, support **theme color following the sticker's main color**
-9. Support **dark color mode**
-10. ......
+7. Support **AI image style transfer**
+8. Support importing a sticker through the **system "Share" page**
+9. Support **Monet theming and customizing theme colors**, support **theme color following the sticker's main color**
+10. Support **dark color mode**
+11. ......
 
 ## 🤩 Screenshots
 
 ![ic_home_screen](image/en/ic_home_screen.jpg) ![ic_home_screen_search](image/en/ic_home_screen_search.jpg)
 ![ic_add_screen_edit](image/en/ic_add_screen_edit.jpg) ![ic_home_screen_share](image/en/ic_home_screen_share.jpg)
 ![ic_appearance_screen](image/en/ic_appearance_screen.jpg) ![ic_webdav_screen](image/en/ic_webdav_screen.jpg)
+![ic_mini_tool_screen](image/en/ic_mini_tool_screen.jpg) ![ic_style_transfer_screen](image/en/ic_style_transfer_screen.jpg)
+![ic_search_config_screen](image/en/ic_search_config_screen.jpg) ![ic_more_screen](image/en/ic_more_screen.jpg)
 ![ic_settings_screen](image/en/ic_settings_screen.jpg) ![ic_classification_screen](image/en/ic_classification_screen.jpg)
 ![ic_auto_share_screen](image/en/ic_auto_share_screen.jpg) ![ic_about_screen](image/en/ic_about_screen.jpg)
 
