@@ -12,7 +12,11 @@ interface IUiState : IUIChange
 interface IUiEvent : IUIChange
 
 @Keep
-interface IUiIntent
+interface IUiIntent {
+    // 是否触发 sendLoadUiIntent(LoadUiIntent.Loading(true))
+    val showLoading: Boolean
+        get() = true
+}
 
 sealed class LoadUiIntent {
     data class Loading(var isShow: Boolean) : LoadUiIntent()

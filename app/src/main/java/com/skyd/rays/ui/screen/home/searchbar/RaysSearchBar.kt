@@ -1,5 +1,6 @@
 package com.skyd.rays.ui.screen.home.searchbar
 
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,7 +34,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,6 +57,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.config.refreshStickerData
+import com.skyd.rays.ext.isCompact
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.search.QueryPreference
@@ -91,10 +92,8 @@ fun RaysSearchBar(
     var menuExpanded by rememberSaveable { mutableStateOf(false) }
     var multiSelect by rememberSaveable { mutableStateOf(false) }
     val selectedStickers = remember { mutableStateListOf<StickerWithTags>() }
-    val context = LocalContext.current
     val windowSizeClass = LocalWindowSizeClass.current
     val navController = LocalNavController.current
-    val scope = rememberCoroutineScope()
     val currentStickerUuid = LocalCurrentStickerUuid.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(
@@ -234,16 +233,30 @@ fun RaysSearchBar(
                                 enter = if (compact) expandVertically() else expandHorizontally(),
                                 exit = if (compact) shrinkVertically() else shrinkHorizontally(),
                             ) {
-                                MultiSelectBar(
+                                var openMultiStickersExportPathDialog by rememberSaveable {
+                                    mutableStateOf(false)
+                                }
+                                MultiSelectActionBar(
                                     selectedStickers = selectedStickers,
                                     onDeleteClick = {
                                         openDeleteMultiStickersDialog =
                                             searchResultUiState.stickerWithTagsList.toSet()
-                                    }
+                                    },
+                                    onExportClick = { openMultiStickersExportPathDialog = true },
+                                )
+                                ExportDialog(
+                                    visible = openMultiStickersExportPathDialog,
+                                    onDismissRequest = {
+                                        openMultiStickersExportPathDialog = false
+                                    },
+                                    onExport = {
+                                        val uuidList = selectedStickers.map { it.sticker.uuid }
+                                        viewModel.sendUiIntent(HomeIntent.ExportStickers(uuidList))
+                                    },
                                 )
                             }
                         }
-                    if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
+                    if (windowSizeClass.isCompact) {
                         Box(modifier = Modifier.weight(1f)) { searchResultList() }
                         multiSelectBar(compact = true)
                     } else {
@@ -311,61 +324,77 @@ fun RaysSearchBar(
             }
         )
 
-        val exportStickerDir = LocalExportStickerDir.current
-        val pickExportDirLauncher = rememberLauncherForActivityResult(
-            ActivityResultContracts.OpenDocumentTree()
-        ) { uri ->
-            if (uri != null) {
-                ExportStickerDirPreference.put(
-                    context = context,
-                    scope = scope,
-                    value = uri.toString()
-                )
-            }
-        }
-        RaysDialog(
+        ExportDialog(
             visible = openExportPathDialog,
-            title = { Text(text = stringResource(R.string.home_screen_export)) },
-            text = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        modifier = Modifier.weight(1f),
-                        text = exportStickerDir.ifBlank {
-                            stringResource(id = R.string.home_screen_select_export_folder_tip)
-                        }
-                    )
-                    RaysIconButton(
-                        onClick = {
-                            pickExportDirLauncher.launch(Uri.parse(exportStickerDir))
-                        },
-                        imageVector = Icons.Default.Folder,
-                        contentDescription = stringResource(R.string.home_screen_select_export_folder)
-                    )
-                }
-            },
-            onDismissRequest = {
-                openExportPathDialog = false
-            },
-            dismissButton = {
-                TextButton(onClick = { openExportPathDialog = false }) {
-                    Text(text = stringResource(id = R.string.dialog_cancel))
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    enabled = exportStickerDir.isNotBlank(),
-                    onClick = {
-                        openExportPathDialog = false
-                        viewModel.sendUiIntent(HomeIntent.ExportStickers(listOf(currentStickerUuid)))
-                    }
-                ) {
-                    Text(text = stringResource(id = R.string.dialog_ok))
-                }
-            }
+            onDismissRequest = { openExportPathDialog = false },
+            onExport = { viewModel.sendUiIntent(HomeIntent.ExportStickers(listOf(currentStickerUuid))) },
         )
     }
 }
 
+@Composable
+internal fun ExportDialog(
+    visible: Boolean,
+    onDismissRequest: () -> Unit = {},
+    onExport: () -> Unit,
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val exportStickerDir = LocalExportStickerDir.current
+    val pickExportDirLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocumentTree()
+    ) { uri ->
+        if (uri != null) {
+            context.contentResolver.takePersistableUriPermission(
+                uri, Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
+            ExportStickerDirPreference.put(
+                context = context,
+                scope = scope,
+                value = uri.toString()
+            )
+        }
+    }
+    RaysDialog(
+        visible = visible,
+        title = { Text(text = stringResource(R.string.home_screen_export)) },
+        text = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = exportStickerDir.ifBlank {
+                        stringResource(id = R.string.home_screen_select_export_folder_tip)
+                    }
+                )
+                RaysIconButton(
+                    onClick = {
+                        pickExportDirLauncher.launch(Uri.parse(exportStickerDir))
+                    },
+                    imageVector = Icons.Default.Folder,
+                    contentDescription = stringResource(R.string.home_screen_select_export_folder)
+                )
+            }
+        },
+        onDismissRequest = onDismissRequest,
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(text = stringResource(id = R.string.dialog_cancel))
+            }
+        },
+        confirmButton = {
+            TextButton(
+                enabled = exportStickerDir.isNotBlank(),
+                onClick = {
+                    onDismissRequest()
+                    onExport()
+                }
+            ) {
+                Text(text = stringResource(id = R.string.dialog_ok))
+            }
+        }
+    )
+}
 
 @Composable
 fun TrailingIcon(

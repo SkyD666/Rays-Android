@@ -68,26 +68,44 @@ class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : B
     suspend fun requestPopularTags(count: Int): Flow<BaseData<List<Pair<String, Float>>>> {
         return flow {
             val popularStickersList = stickerDao.getPopularStickersList(count = count)
-            val tagsMap: MutableMap<String, Long> = mutableMapOf()
-            val tagsCountMap: MutableMap<String, Long> = mutableMapOf()
+            val tagsMap: MutableMap<Pair<String, String>, Long> = mutableMapOf()
+            val tagsCountMap: MutableMap<Pair<String, String>, Long> = mutableMapOf()
+            val stickerUuidCountMap: MutableMap<String, Long> = mutableMapOf()
             popularStickersList.forEach {
                 it.tags.forEach { tag ->
                     val tagString = tag.tag
                     if (tagString.length < 6) {
-                        tagsCountMap[tagString] = tagsCountMap.getOrDefault(tagString, 0) + 1
-                        tagsMap[tagString] =
-                            tagsMap.getOrDefault(tagString, 0) + it.sticker.shareCount
+                        tagsCountMap[tagString to it.sticker.uuid] = tagsCountMap
+                            .getOrDefault(tagString to it.sticker.uuid, 0) + 1
+                        tagsMap[tagString to it.sticker.uuid] = tagsMap
+                            .getOrDefault(tagString to it.sticker.uuid, 0) + it.sticker.shareCount
                     }
                 }
+                stickerUuidCountMap[it.sticker.uuid] = 0
             }
             tagsCountMap.forEach { (t, u) ->
                 tagsMap[t] = tagsMap.getOrDefault(t, 0) * u
             }
-            val result = tagsMap.toList().sortedByDescending { (_, value) -> value }
+            var result = tagsMap.toList().sortedByDescending { (_, value) -> value }
+            result = result.filter {
+                val stickUuid = it.first.second
+                val cnt = stickerUuidCountMap[stickUuid]
+                if (cnt != null) {
+                    // 限制每个表情包只能推荐两个标签
+                    if (cnt >= 2) {
+                        false
+                    } else {
+                        stickerUuidCountMap[stickUuid] = cnt + 1
+                        true
+                    }
+                } else {
+                    false
+                }
+            }.distinctBy { it.first.first }
             val maxPopularValue = result.getOrNull(0)?.second ?: 1
             emitBaseData(BaseData<List<Pair<String, Float>>>().apply {
                 code = 0
-                data = result.map { it.first to it.second.toFloat() / maxPopularValue }
+                data = result.map { it.first.first to it.second.toFloat() / maxPopularValue }
             })
         }
     }

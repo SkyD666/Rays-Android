@@ -1,6 +1,12 @@
 package com.skyd.rays.ui.screen.home.searchbar
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +32,7 @@ import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.AssistChipDefaults
@@ -54,6 +61,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.skyd.rays.R
+import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
@@ -94,7 +102,7 @@ fun SearchResultList(
 
     Column {
         SearchResultConfigBar(
-            size = dataList.size,
+            stickersCount = dataList.size,
             multiSelect = multiSelect,
             onMultiSelectChanged = onMultiSelectChanged,
         )
@@ -147,7 +155,7 @@ fun SearchResultList(
 
 @Composable
 fun SearchResultConfigBar(
-    size: Int,
+    stickersCount: Int,
     multiSelect: Boolean,
     onMultiSelectChanged: (Boolean) -> Unit
 ) {
@@ -163,7 +171,17 @@ fun SearchResultConfigBar(
     ) {
         item {
             Badge {
-                AnimatedContent(targetState = size, label = "badgeAnimatedContent") { targetCount ->
+                AnimatedContent(
+                    targetState = stickersCount,
+                    label = "badgeAnimatedContent",
+                    transitionSpec = {
+                        (fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+                                slideInVertically(initialOffsetY = { it }))
+                            .togetherWith(fadeOut(animationSpec = tween(90)) +
+                                    slideOutVertically(targetOffsetY = { -it })
+                            )
+                    }
+                ) { targetCount ->
                     Text(text = targetCount.toString())
                 }
             }
@@ -233,7 +251,11 @@ fun SearchResultConfigBar(
 }
 
 @Composable
-internal fun MultiSelectBar(selectedStickers: List<StickerWithTags>, onDeleteClick: () -> Unit) {
+internal fun MultiSelectActionBar(
+    selectedStickers: List<StickerWithTags>,
+    onDeleteClick: () -> Unit,
+    onExportClick: () -> Unit,
+) {
     val context = LocalContext.current
     val windowSizeClass = LocalWindowSizeClass.current
     val items = remember {
@@ -253,6 +275,14 @@ internal fun MultiSelectBar(selectedStickers: List<StickerWithTags>, onDeleteCli
             },
             @Composable {
                 RaysIconButton(
+                    onClick = onExportClick,
+                    enabled = selectedStickers.isNotEmpty(),
+                    imageVector = Icons.Default.Save,
+                    contentDescription = stringResource(id = R.string.home_screen_export)
+                )
+            },
+            @Composable {
+                RaysIconButton(
                     onClick = onDeleteClick,
                     enabled = selectedStickers.isNotEmpty(),
                     imageVector = Icons.Default.Delete,
@@ -261,7 +291,7 @@ internal fun MultiSelectBar(selectedStickers: List<StickerWithTags>, onDeleteCli
             }
         )
     }
-    if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
+    if (windowSizeClass.isCompact) {
         Row {
             items.forEachIndexed { _, function -> function() }
         }

@@ -77,6 +77,7 @@ import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysIconButtonStyle
 import com.skyd.rays.ui.component.RaysImage
+import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
 import com.skyd.rays.ui.local.LocalNavController
@@ -98,6 +99,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val initQuery = LocalQuery.current
     var active by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable(initQuery) { mutableStateOf(initQuery) }
+    var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
@@ -218,9 +220,11 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     )
                 }
 
-                is LoadUiIntent.Loading -> Unit
+                is LoadUiIntent.Loading -> openWaitingDialog = loadUiIntent.isShow
             }
         }
+
+        WaitingDialog(visible = openWaitingDialog)
     }
 }
 

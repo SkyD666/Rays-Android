@@ -51,7 +51,9 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
 
     fun sendUiIntent(uiIntent: UiIntent) {
         viewModelScope.launch {
-            sendLoadUiIntent(LoadUiIntent.Loading(true))
+            if (uiIntent.showLoading) {
+                sendLoadUiIntent(LoadUiIntent.Loading(true))
+            }
             _uiIntentFlow.emit(uiIntent)
         }
     }
