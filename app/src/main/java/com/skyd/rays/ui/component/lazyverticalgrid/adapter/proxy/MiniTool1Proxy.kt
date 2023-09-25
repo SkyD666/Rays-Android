@@ -1,6 +1,5 @@
 package com.skyd.rays.ui.component.lazyverticalgrid.adapter.proxy
 
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.PlainTooltip
@@ -63,12 +63,10 @@ fun MiniTool1Item(
                 contentDescription = null,
             )
             Text(
-                modifier = Modifier
-                    .padding(horizontal = 10.dp)
-                    .basicMarquee(iterations = Int.MAX_VALUE),
+                modifier = Modifier.padding(horizontal = 10.dp),
                 text = data.title,
                 style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
+                maxLines = 2,
                 textAlign = TextAlign.Center
             )
             if (data.experimental) {
@@ -80,6 +78,7 @@ fun MiniTool1Item(
                     Icon(
                         imageVector = Icons.Default.Science,
                         contentDescription = stringResource(R.string.mini_tool_experimental),
+                        tint = LocalContentColor.current.copy(alpha = 0.5f),
                     )
                 }
             }

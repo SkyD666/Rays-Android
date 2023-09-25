@@ -1,5 +1,10 @@
 package com.skyd.rays.ui.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -17,6 +22,8 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 
 enum class RaysFloatingActionButtonStyle {
     Normal, Extended, Large, Small
@@ -124,5 +131,36 @@ fun RaysExtendedFloatingActionButton(
         ) {
             floatingActionButton(modifier = Modifier)
         }
+    }
+}
+
+@Composable
+fun BottomHideExtendedFloatingActionButton(
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+    text: @Composable () -> Unit,
+    icon: @Composable () -> Unit,
+    onClick: () -> Unit,
+    expanded: Boolean = true,
+    elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
+    contentDescription: String? = null,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+) {
+    val density = LocalDensity.current
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInVertically { with(density) { 40.dp.roundToPx() } } + fadeIn(),
+        exit = slideOutVertically { with(density) { 40.dp.roundToPx() } } + fadeOut(),
+    ) {
+        RaysExtendedFloatingActionButton(
+            modifier = modifier,
+            text = text,
+            icon = icon,
+            onClick = onClick,
+            expanded = expanded,
+            elevation = elevation,
+            contentDescription = contentDescription,
+            interactionSource = interactionSource,
+        )
     }
 }

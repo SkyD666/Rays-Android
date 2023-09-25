@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Menu
@@ -66,10 +65,8 @@ import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalExportStickerDir
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.home.HomeIntent
 import com.skyd.rays.ui.screen.home.HomeState
 import com.skyd.rays.ui.screen.home.HomeViewModel
@@ -93,7 +90,6 @@ fun RaysSearchBar(
     var multiSelect by rememberSaveable { mutableStateOf(false) }
     val selectedStickers = remember { mutableStateListOf<StickerWithTags>() }
     val windowSizeClass = LocalWindowSizeClass.current
-    val navController = LocalNavController.current
     val currentStickerUuid = LocalCurrentStickerUuid.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(
@@ -179,12 +175,6 @@ fun RaysSearchBar(
                                 onQueryChange(QueryPreference.default)
                             }
                         }
-                    } else {
-                        RaysIconButton(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(R.string.home_screen_add),
-                            onClick = { navController.navigate(ADD_SCREEN_ROUTE) }
-                        )
                     }
                 },
             ) {

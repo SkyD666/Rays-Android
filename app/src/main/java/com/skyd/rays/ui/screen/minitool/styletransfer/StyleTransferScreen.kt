@@ -5,10 +5,6 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -20,8 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Image
@@ -33,7 +30,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -47,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -55,8 +50,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
+import com.skyd.rays.ext.inBottomOrNotLarge
+import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.showSnackbar
-import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
+import com.skyd.rays.ui.component.BottomHideExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysOutlinedCard
 import com.skyd.rays.ui.component.RaysTopBar
@@ -84,48 +81,47 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
     val pickContentLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { if (it != null) contentUri = it }
-    val columnScrollState = rememberScrollState()
+    val lazyListState = rememberLazyListState()
     val fabVisibility by remember {
-        derivedStateOf {
-            columnScrollState.value < columnScrollState.maxValue || columnScrollState.maxValue == 0
-        }
+        derivedStateOf { lazyListState.inBottomOrNotLarge }
     }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
-            TransferExtendedFloatingActionButton(visible = fabVisibility) {
-                val style = styleUri
-                val content = contentUri
-                if (style == null || content == null) {
-                    snackbarHostState.showSnackbar(
-                        scope = scope,
-                        message = context.getString(R.string.style_transfer_screen_image_not_selected)
+            BottomHideExtendedFloatingActionButton(
+                visible = fabVisibility,
+                text = { Text(text = stringResource(R.string.style_transfer_screen_transfer)) },
+                icon = { Icon(imageVector = Icons.Default.Transform, contentDescription = null) },
+                onClick = {
+                    val style = styleUri
+                    val content = contentUri
+                    if (style == null || content == null) {
+                        snackbarHostState.showSnackbar(
+                            scope = scope,
+                            message = context.getString(R.string.style_transfer_screen_image_not_selected)
+                        )
+                        return@BottomHideExtendedFloatingActionButton
+                    }
+                    viewModel.sendUiIntent(
+                        StyleTransferIntent.Transfer(
+                            style = style,
+                            content = content,
+                        )
                     )
-                    return@TransferExtendedFloatingActionButton
-                }
-                viewModel.sendUiIntent(
-                    StyleTransferIntent.Transfer(
-                        style = style,
-                        content = content,
-                    )
-                )
-            }
+                },
+                contentDescription = stringResource(R.string.style_transfer_screen_transfer)
+            )
         },
         topBar = {
-            RaysTopBar(
-                title = { Text(text = stringResource(id = R.string.style_transfer_screen_name)) },
-            )
+            RaysTopBar(title = { Text(text = stringResource(id = R.string.style_transfer_screen_name)) })
         }
     ) { paddingValues ->
-        val windowSizeClass = LocalWindowSizeClass.current
-        if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .verticalScroll(columnScrollState)
-            ) {
+        val isCompact = LocalWindowSizeClass.current.isCompact
+        val content: @Composable LazyItemScope.() -> Unit = remember {
+            {
                 InputArea(
+                    modifier = Modifier.fillMaxWidth(if (isCompact) 1f else 0.5f),
                     styleUri = styleUri,
                     contentUri = contentUri,
                     onSelectStyleImage = { pickStyleLauncher.launch("image/*") },
@@ -136,21 +132,16 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
                     ResultArea(bitmap = styleTransferResultUiState.image)
                 }
             }
-        } else {
-            Row(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .verticalScroll(columnScrollState)
-            ) {
-                InputArea(
-                    styleUri = styleUri,
-                    contentUri = contentUri,
-                    onSelectStyleImage = { pickStyleLauncher.launch("image/*") },
-                    onSelectContentImage = { pickContentLauncher.launch("image/*") },
-                )
-                val styleTransferResultUiState = uiState.styleTransferResultUiState
-                if (styleTransferResultUiState is StyleTransferResultUiState.Success) {
-                    ResultArea(bitmap = styleTransferResultUiState.image)
+        }
+        LazyColumn(
+            state = lazyListState,
+            contentPadding = paddingValues,
+        ) {
+            item {
+                if (isCompact) {
+                    content()
+                } else {
+                    Row { content() }
                 }
             }
         }
@@ -187,18 +178,14 @@ private fun ResultArea(bitmap: Bitmap) {
 
 @Composable
 private fun InputArea(
+    modifier: Modifier = Modifier,
     styleUri: Uri?,
     contentUri: Uri?,
     onSelectStyleImage: () -> Unit,
     onSelectContentImage: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(
-                if (LocalWindowSizeClass.current.widthSizeClass == WindowWidthSizeClass.Compact) 1f
-                else 0.5f
-            ),
+        modifier = modifier.padding(16.dp),
         horizontalAlignment = Alignment.End,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -293,27 +280,5 @@ private fun InputItem(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun TransferExtendedFloatingActionButton(visible: Boolean, onClick: () -> Unit) {
-    val density = LocalDensity.current
-    AnimatedVisibility(
-        visible = visible,
-        enter = slideInVertically { with(density) { 40.dp.roundToPx() } } + fadeIn(),
-        exit = slideOutVertically { with(density) { 40.dp.roundToPx() } } + fadeOut(),
-    ) {
-        RaysExtendedFloatingActionButton(
-            text = { Text(text = stringResource(R.string.style_transfer_screen_transfer)) },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Transform,
-                    contentDescription = null
-                )
-            },
-            onClick = onClick,
-            contentDescription = stringResource(R.string.style_transfer_screen_transfer),
-        )
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.AdsClick
 import androidx.compose.material.icons.filled.Badge
@@ -45,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,11 +72,14 @@ import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.dateTime
+import com.skyd.rays.ext.inBottomOrNotLarge
+import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.ui.component.AnimatedPlaceholder
+import com.skyd.rays.ui.component.BottomHideExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysIconButtonStyle
 import com.skyd.rays.ui.component.RaysImage
@@ -91,6 +97,7 @@ import com.skyd.rays.util.sendStickerByUuid
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
+    val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -103,6 +110,17 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val mainCardScrollState = rememberScrollState()
+    val stickerDetailInfoScrollState = rememberScrollState()
+    val fabVisibility by remember {
+        derivedStateOf {
+            if (windowSizeClass.isCompact) {
+                mainCardScrollState.inBottomOrNotLarge
+            } else {
+                stickerDetailInfoScrollState.inBottomOrNotLarge
+            }
+        }
+    }
 
     refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
         value ?: return@apply
@@ -116,6 +134,15 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        floatingActionButton = {
+            BottomHideExtendedFloatingActionButton(
+                visible = fabVisibility,
+                text = { Text(text = stringResource(R.string.home_screen_add)) },
+                icon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
+                onClick = { navController.navigate(ADD_SCREEN_ROUTE) },
+                contentDescription = stringResource(R.string.home_screen_add),
+            )
+        },
         contentWindowInsets = WindowInsets(
             left = ScaffoldDefaults.contentWindowInsets
                 .getLeft(LocalDensity.current, LocalLayoutDirection.current),
@@ -165,7 +192,10 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 
                     is StickerDetailUiState.Success -> {
                         Spacer(modifier = Modifier.height(16.dp))
-                        MainCard(stickerWithTags = stickerDetailUiState.stickerWithTags)
+                        MainCard(
+                            stickerWithTags = stickerDetailUiState.stickerWithTags,
+                            scrollState = mainCardScrollState,
+                        )
                     }
                 }
             }
@@ -173,7 +203,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 visible = showStickerDetailInfo,
                 modifier = Modifier
                     .fillMaxHeight()
-                    .verticalScroll(state = rememberScrollState()),
+                    .verticalScroll(stickerDetailInfoScrollState),
                 enter = expandHorizontally(expandFrom = Alignment.Start),
                 exit = shrinkHorizontally(shrinkTowards = Alignment.End),
             ) {
@@ -229,7 +259,11 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 }
 
 @Composable
-private fun MainCard(stickerWithTags: StickerWithTags, viewModel: HomeViewModel = hiltViewModel()) {
+private fun MainCard(
+    stickerWithTags: StickerWithTags,
+    scrollState: ScrollState = rememberScrollState(),
+    viewModel: HomeViewModel = hiltViewModel()
+) {
     val navController = LocalNavController.current
     val stickerUuid = stickerWithTags.sticker.uuid
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
@@ -250,7 +284,7 @@ private fun MainCard(stickerWithTags: StickerWithTags, viewModel: HomeViewModel 
 
     Card(
         modifier = Modifier
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
             .fillMaxWidth()
