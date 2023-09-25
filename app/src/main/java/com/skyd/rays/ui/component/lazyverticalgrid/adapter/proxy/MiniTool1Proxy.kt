@@ -6,21 +6,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Science
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
@@ -42,6 +39,7 @@ fun MiniTool1Item(
     data: MiniTool1Bean,
     onClickListener: ((data: MiniTool1Bean) -> Unit)? = null
 ) {
+    val context = LocalContext.current
     OutlinedCard(
         modifier = modifier.padding(vertical = 6.dp),
         shape = RoundedCornerShape(16)
@@ -62,25 +60,28 @@ fun MiniTool1Item(
                 imageVector = data.icon,
                 contentDescription = null,
             )
-            Text(
-                modifier = Modifier.padding(horizontal = 10.dp),
-                text = data.title,
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 2,
-                textAlign = TextAlign.Center
-            )
-            if (data.experimental) {
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                    tooltip = { PlainTooltip { Text(stringResource(R.string.mini_tool_experimental)) } },
-                    state = rememberTooltipState()
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Science,
-                        contentDescription = stringResource(R.string.mini_tool_experimental),
-                        tint = LocalContentColor.current.copy(alpha = 0.5f),
-                    )
+            BadgedBox(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                badge = {
+                    if (data.experimental) {
+                        Text(
+                            text = stringResource(R.string.mini_tool_experimental),
+                            modifier = Modifier.semantics {
+                                contentDescription =
+                                    context.getString(R.string.mini_tool_experimental)
+                            },
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
                 }
+            ) {
+                Text(
+                    text = data.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }

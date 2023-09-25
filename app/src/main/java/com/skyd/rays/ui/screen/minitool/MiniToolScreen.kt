@@ -49,7 +49,7 @@ fun MiniToolScreen() {
             MiniTool1Bean(
                 title = stringResource(R.string.style_transfer_screen_name),
                 icon = Icons.Default.Style,
-                experimental = true,
+                experimental = false,
                 action = { navController.navigate(STYLE_TRANSFER_SCREEN_ROUTE) }
             ),
         )

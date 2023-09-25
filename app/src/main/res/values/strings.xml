@@ -209,7 +209,7 @@
     <string name="share_config_screen_file_extension">File extension</string>
     <string name="share_config_screen_file_extension_description">Add the file extension name when sharing a sticker</string>
     <string name="mini_tool_screen_name">Mini Tool</string>
-    <string name="mini_tool_experimental">Experimental</string>
+    <string name="mini_tool_experimental">Beta</string>
     <string name="style_transfer_screen_name">Style Transfer</string>
     <string name="style_transfer_screen_transfer">Transfer</string>
     <string name="style_transfer_screen_image_not_selected">Please select the target style image and content image before transferring</string>
