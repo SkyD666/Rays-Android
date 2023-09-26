@@ -114,7 +114,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val stickerDetailInfoScrollState = rememberScrollState()
     val fabVisibility by remember {
         derivedStateOf {
-            if (windowSizeClass.isCompact) {
+            !active && if (windowSizeClass.isCompact) {
                 mainCardScrollState.inBottomOrNotLarge
             } else {
                 stickerDetailInfoScrollState.inBottomOrNotLarge
