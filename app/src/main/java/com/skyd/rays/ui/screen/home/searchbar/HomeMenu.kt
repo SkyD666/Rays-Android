@@ -19,15 +19,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.skyd.rays.R
+import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalSearchResultSort
-import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.home.HomeIntent
 import com.skyd.rays.ui.screen.home.HomeViewModel
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
+import com.skyd.rays.util.stickerUuidToUri
 
 
 @Composable
@@ -104,7 +106,16 @@ internal fun HomeMenu(
             enabled = stickerMenuItemEnabled,
             text = { Text(stringResource(R.string.home_screen_edit)) },
             onClick = {
-                navController.navigate("$ADD_SCREEN_ROUTE?stickerUuid=${currentStickerUuid}")
+                openAddScreen(
+                    navController = navController,
+                    stickers = mutableListOf(
+                        UriWithStickerUuidBean(
+                            uri = stickerUuidToUri(currentStickerUuid),
+                            stickerUuid = currentStickerUuid,
+                        )
+                    ),
+                    isEdit = true
+                )
                 onDismissRequest()
             },
             leadingIcon = {

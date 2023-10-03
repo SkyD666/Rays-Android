@@ -1,6 +1,7 @@
 package com.skyd.rays.ui.screen.add
 
 import android.net.Uri
+import android.os.Bundle
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -70,19 +71,23 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.addAllDistinctly
 import com.skyd.rays.ext.addIfAny
+import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
+import com.skyd.rays.model.bean.EmptyUriWithStickerUuidBean
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
+import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysCard
 import com.skyd.rays.ui.component.RaysImage
@@ -94,9 +99,28 @@ import com.skyd.rays.util.stickerUuidToUri
 
 const val ADD_SCREEN_ROUTE = "addScreen"
 
+fun openAddScreen(
+    navController: NavHostController,
+    stickers: MutableList<UriWithStickerUuidBean>,
+    isEdit: Boolean
+) {
+    navController.navigate(
+        ADD_SCREEN_ROUTE,
+        Bundle().apply {
+            putBoolean("isEdit", isEdit)
+            putParcelableArrayList("stickers", ArrayList(stickers))
+        }
+    )
+}
+
 @Composable
-fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = hiltViewModel()) {
+fun AddScreen(
+    initStickers: MutableList<UriWithStickerUuidBean>,
+    isEdit: Boolean,
+    viewModel: AddViewModel = hiltViewModel()
+) {
     var openDialog by remember { mutableStateOf(false) }
+    var openDuplicateDialog by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -106,20 +130,21 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
     val navController = LocalNavController.current
     var titleText by rememberSaveable { mutableStateOf("") }
     var currentTagText by rememberSaveable { mutableStateOf("") }
-    var stickerUri by remember { mutableStateOf<Uri?>(null) }
     var stickerCreateTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
     val tags = remember { mutableStateListOf<TagBean>() }
-    var stickerUuid by remember { mutableStateOf(initStickerUuid) }
+    var currentSticker by remember { mutableStateOf(EmptyUriWithStickerUuidBean) }
+    val stickersWaitingList = remember { mutableStateListOf<UriWithStickerUuidBean>() }
     val suggestedTags = remember { mutableStateListOf<String>() }
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
     val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
-    val uriWaitingList = remember { mutableStateListOf<Uri>() }
 
     LaunchedEffect(Unit) {
-        if (initStickerUuid.isNotBlank()) {
-            viewModel.sendUiIntent(AddIntent.GetStickerWithTags(initStickerUuid))
-        } else if (sticker != null) {
-            stickerUri = sticker
+        initStickers.firstOrNull()?.let { firstSticker ->
+            currentSticker = firstSticker
+            stickersWaitingList.addAll(initStickers.subList(1, initStickers.size))
+            if (firstSticker.stickerUuid.isNotBlank()) {
+                viewModel.sendUiIntent(AddIntent.GetStickerWithTags(firstSticker.stickerUuid))
+            }
         }
     }
 
@@ -134,21 +159,20 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                 title = {
                     Text(
                         text = stringResource(
-                            if (stickerUuid.isBlank()) R.string.add_screen_name
-                            else R.string.add_screen_name_edit
+                            if (isEdit) R.string.add_screen_name_edit else R.string.add_screen_name
                         )
                     )
                 },
                 actions = {
                     TopBarIcon(
-                        imageVector = if (uriWaitingList.isEmpty()) {
+                        imageVector = if (stickersWaitingList.isEmpty()) {
                             Icons.Default.Done
                         } else {
                             Icons.AutoMirrored.Default.ArrowForwardIos
                         },
                         contentDescription = stringResource(R.string.add_screen_add),
                         onClick = {
-                            if (stickerUri == null) {
+                            if (currentSticker.isEmpty()) {
                                 snackbarHostState.showSnackbar(
                                     scope = scope,
                                     message = appContext.getString(R.string.add_screen_sticker_is_not_set),
@@ -160,11 +184,14 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
                                     sticker = StickerBean(
                                         title = titleText,
                                         createTime = stickerCreateTime
-                                    ).apply { uuid = stickerUuid },
+                                    ).apply { uuid = currentSticker.stickerUuid },
                                     tags = tags.distinct()
                                 )
                                 viewModel.sendUiIntent(
-                                    AddIntent.AddNewStickerWithTags(stickerWithTags, stickerUri!!)
+                                    AddIntent.AddNewStickerWithTags(
+                                        stickerWithTags,
+                                        currentSticker.uri!!
+                                    )
                                 )
                             }
                         }
@@ -176,30 +203,31 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
         val pickStickerLauncher = rememberLauncherForActivityResult(
             ActivityResultContracts.GetContent()
         ) { result ->
-            if (result != null) stickerUri = result
+            if (result != null) currentSticker = UriWithStickerUuidBean(uri = result)
         }
         val pickStickersLauncher = rememberLauncherForActivityResult(
             ActivityResultContracts.GetMultipleContents()
         ) { result ->
             if (result.isEmpty()) return@rememberLauncherForActivityResult
-            if (stickerUri == null) {
-                stickerUri = result.first()
-                uriWaitingList.addAllDistinctly(result.subList(1, result.size))
+            if (currentSticker.isEmpty()) {
+                currentSticker = UriWithStickerUuidBean(uri = result.first())
+                stickersWaitingList.addAllDistinctly(result.subList(1, result.size)
+                    .map { UriWithStickerUuidBean(uri = it) })
             } else {
-                uriWaitingList.addAllDistinctly(result)
-                uriWaitingList.removeIf { it == stickerUri }
+                stickersWaitingList.addAllDistinctly(result.map { UriWithStickerUuidBean(uri = it) })
+                stickersWaitingList.removeIf { it.uri == currentSticker.uri }
             }
         }
         LazyColumn(contentPadding = paddingValues + PaddingValues(horizontal = 16.dp)) {
             item {
                 AnimatedVisibility(
-                    visible = uriWaitingList.isNotEmpty(),
+                    visible = stickersWaitingList.isNotEmpty(),
                     enter = expandVertically(),
                     exit = shrinkVertically(),
                 ) {
                     WaitingRow(
-                        uris = uriWaitingList,
-                        onStickerDeleted = { uriWaitingList.remove(it) },
+                        uris = stickersWaitingList,
+                        onStickerDeleted = { stickersWaitingList.remove(it) },
                     )
                 }
             }
@@ -259,12 +287,8 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
             }
             item {
                 StickerCard(
-                    stickerUri = stickerUri,
-                    pickLauncher = if (initStickerUuid.isBlank()) {
-                        pickStickersLauncher
-                    } else {
-                        pickStickerLauncher
-                    }
+                    stickerUri = currentSticker.uri,
+                    pickLauncher = if (isEdit) pickStickerLauncher else pickStickersLauncher
                 )
             }
         }
@@ -275,17 +299,29 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
             text = { Text(text = stringResource(R.string.add_screen_success)) },
             onDismissRequest = {
                 openDialog = false
-                if (uriWaitingList.isEmpty() && stickerUri == null) {
+                if (stickersWaitingList.isEmpty() && currentSticker.isEmpty()) {
                     navController.popBackStackWithLifecycle()
                 }
             },
             confirmButton = {
                 TextButton(onClick = {
                     openDialog = false
-                    if (uriWaitingList.isEmpty() && stickerUri == null) {
+                    if (stickersWaitingList.isEmpty() && currentSticker.isEmpty()) {
                         navController.popBackStackWithLifecycle()
                     }
                 }) {
+                    Text(text = stringResource(id = R.string.dialog_ok))
+                }
+            }
+        )
+
+        RaysDialog(
+            visible = openDuplicateDialog,
+            title = { Text(text = stringResource(R.string.dialog_tip)) },
+            text = { Text(text = stringResource(R.string.add_screen_sticker_duplicate)) },
+            onDismissRequest = { openDuplicateDialog = false },
+            confirmButton = {
+                TextButton(onClick = { openDuplicateDialog = false }) {
                     Text(text = stringResource(id = R.string.dialog_ok))
                 }
             }
@@ -294,17 +330,16 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
 
     // 添加/修改完成后重设页面数据
     fun resetStickerData() {
-        stickerUuid = initStickerUuid
         titleText = ""
         currentTagText = ""
         stickerCreateTime = System.currentTimeMillis()
         suggestedTags.clear()
         tags.clear()
-        if (uriWaitingList.isEmpty()) {
-            stickerUri = null
+        if (stickersWaitingList.isEmpty()) {
+            currentSticker = EmptyUriWithStickerUuidBean
         } else {
-            stickerUri = uriWaitingList.first()
-            uriWaitingList.removeAt(0)
+            currentSticker = stickersWaitingList.first()
+            stickersWaitingList.removeAt(0)
         }
     }
 
@@ -312,9 +347,11 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
         when (getStickersWithTagsUiEvent) {
             is GetStickersWithTagsUiEvent.Success -> {
                 val stickerBean = getStickersWithTagsUiEvent.stickerWithTags.sticker
-                stickerUuid = stickerBean.uuid
+                currentSticker = currentSticker.copy(
+                    uri = stickerUuidToUri(stickerBean.uuid),
+                    stickerUuid = stickerBean.uuid
+                )
                 titleText = stickerBean.title
-                stickerUri = stickerUuidToUri(stickerBean.uuid)
                 stickerCreateTime = stickerBean.createTime
                 tags.clear()
                 tags.addAll(getStickersWithTagsUiEvent.stickerWithTags.tags.distinct())
@@ -326,12 +363,7 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
         }
 
         when (addStickersResultUiEvent) {
-            AddStickersResultUiEvent.Duplicate -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    context.getString(R.string.add_screen_sticker_duplicate),
-                    key2 = addStickersResultUiEvent,
-                )
-            }
+            AddStickersResultUiEvent.Duplicate -> openDuplicateDialog = true
 
             is AddStickersResultUiEvent.Success -> {
                 refreshStickerData.tryEmit(Unit)
@@ -368,7 +400,10 @@ fun AddScreen(initStickerUuid: String, sticker: Uri?, viewModel: AddViewModel = 
 }
 
 @Composable
-private fun WaitingRow(uris: List<Uri>, onStickerDeleted: (Uri) -> Unit) {
+private fun WaitingRow(
+    uris: List<UriWithStickerUuidBean>,
+    onStickerDeleted: (UriWithStickerUuidBean) -> Unit
+) {
     Column {
         Spacer(modifier = Modifier.height(10.dp))
         Text(
@@ -383,7 +418,7 @@ private fun WaitingRow(uris: List<Uri>, onStickerDeleted: (Uri) -> Unit) {
             items(uris) { uri ->
                 RaysCard(onClick = { onStickerDeleted(uri) }) {
                     RaysImage(
-                        model = uri,
+                        model = uri.uri,
                         modifier = Modifier
                             .fillMaxHeight()
                             .aspectRatio(1f),

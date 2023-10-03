@@ -76,6 +76,7 @@ import com.skyd.rays.ext.inBottomOrNotLarge
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerWithTags
+import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.ui.component.AnimatedPlaceholder
@@ -90,9 +91,10 @@ import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalQuery
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.home.searchbar.RaysSearchBar
 import com.skyd.rays.util.sendStickerByUuid
+import com.skyd.rays.util.stickerUuidToUri
 
 
 @Composable
@@ -139,7 +141,13 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 visible = fabVisibility,
                 text = { Text(text = stringResource(R.string.home_screen_add)) },
                 icon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
-                onClick = { navController.navigate(ADD_SCREEN_ROUTE) },
+                onClick = {
+                    openAddScreen(
+                        navController = navController,
+                        stickers = mutableListOf(),
+                        isEdit = false,
+                    )
+                },
                 contentDescription = stringResource(R.string.home_screen_add),
             )
         },
@@ -299,7 +307,16 @@ private fun MainCard(
                         )
                     },
                     onDoubleClick = {
-                        navController.navigate("$ADD_SCREEN_ROUTE?stickerUuid=${stickerUuid}")
+                        openAddScreen(
+                            navController = navController,
+                            stickers = mutableListOf(
+                                UriWithStickerUuidBean(
+                                    uri = stickerUuidToUri(stickerBean.uuid),
+                                    stickerUuid = stickerBean.uuid,
+                                )
+                            ),
+                            isEdit = true,
+                        )
                     },
                     onClick = {}
                 )

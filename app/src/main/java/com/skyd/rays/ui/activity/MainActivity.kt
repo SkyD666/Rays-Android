@@ -29,7 +29,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.skyd.rays.ext.navigate
+import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.SettingsProvider
 import com.skyd.rays.ui.local.LocalDarkMode
 import com.skyd.rays.ui.local.LocalNavController
@@ -43,6 +43,7 @@ import com.skyd.rays.ui.screen.about.license.LicenseScreen
 import com.skyd.rays.ui.screen.about.update.UpdateDialog
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.add.AddScreen
+import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.minitool.MINI_TOOL_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.minitool.MiniToolScreen
 import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUTE
@@ -154,12 +155,13 @@ class MainActivity : AppCompatActivity() {
                     MainScreen()
                 }
                 composable(
-                    route = "$ADD_SCREEN_ROUTE?stickerUuid={stickerUuid}",
-                    arguments = listOf(navArgument("stickerUuid") { defaultValue = "" })
+                    route = "$ADD_SCREEN_ROUTE?isEdit={isEdit}",
+                    arguments = listOf(navArgument("isEdit") { defaultValue = false })
                 ) {
                     AddScreen(
-                        initStickerUuid = it.arguments?.getString("stickerUuid").orEmpty(),
-                        sticker = it.arguments?.getParcelable("sticker")
+                        initStickers = it.arguments?.getParcelableArrayList("stickers")
+                            ?: mutableListOf(),
+                        isEdit = it.arguments?.getBoolean("isEdit") ?: false,
                     )
                 }
                 composable(route = SETTINGS_SCREEN_ROUTE) {
@@ -231,21 +233,46 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initIntent() {
-        val sticker: Uri = if (Intent.ACTION_SEND == intent.action &&
-            intent.type.orEmpty().startsWith("image/")
-        ) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
-            } else {
-                intent.getParcelableExtra(Intent.EXTRA_STREAM)
+        val stickers: MutableList<UriWithStickerUuidBean> = when (intent?.action) {
+            Intent.ACTION_SEND -> {
+                val data = mutableListOf<UriWithStickerUuidBean>()
+                if (intent.type?.startsWith("image/") == true) {
+                    val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                    } else {
+                        intent.getParcelableExtra(Intent.EXTRA_STREAM)
+                    }
+                    if (uri != null) {
+                        data.add(UriWithStickerUuidBean(uri = uri))
+                    }
+                    data
+                } else data
             }
-        } else {
-            null
-        } ?: return
 
-        navController.navigate(
-            ADD_SCREEN_ROUTE,
-            Bundle().apply { putParcelable("sticker", sticker) }
+            Intent.ACTION_SEND_MULTIPLE -> {
+                val data = mutableListOf<UriWithStickerUuidBean>()
+                if (intent.type?.startsWith("image/") == true) {
+                    val uris = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                    } else {
+                        intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM)
+                    }?.map { UriWithStickerUuidBean(uri = it) }
+                    if (uris != null) {
+                        data.addAll(uris)
+                    }
+                    data
+                } else data
+            }
+
+            else -> mutableListOf()
+        }
+
+        if (stickers.isEmpty()) return
+
+        openAddScreen(
+            navController = navController,
+            stickers = stickers,
+            isEdit = false,
         )
     }
 }
