@@ -248,10 +248,10 @@ fun RaysSearchBar(
                         }
                     if (windowSizeClass.isCompact) {
                         Box(modifier = Modifier.weight(1f)) { searchResultList() }
-                        multiSelectBar(compact = true)
+                        multiSelectBar(true)
                     } else {
                         Row {
-                            multiSelectBar(compact = false)
+                            multiSelectBar(false)
                             searchResultList()
                         }
                     }

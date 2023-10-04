@@ -67,6 +67,7 @@
     </plurals>
     <string name="import_files_screen_failed">Operation failed: %s</string>
     <string name="import_files_screen_on_conflict">On conflict</string>
+    <string name="import_files_screen_on_conflict_desc">"Conflict" refers to the situation where the UUID of the sticker you are currently importing is the same as the UUID of an existing sticker, regardless of whether the content of these two stickers is the same.</string>
     <string name="export_files_screen_name">Export to files</string>
     <string name="export_files_screen_description">Export stickers, tags, and other information to the local files</string>
     <string name="export_files_screen_select_dir">Select export directory</string>

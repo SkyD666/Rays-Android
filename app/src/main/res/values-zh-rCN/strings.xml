@@ -66,6 +66,7 @@
     </plurals>
     <string name="import_files_screen_failed">操作失败：%s</string>
     <string name="import_files_screen_on_conflict">冲突时策略</string>
+    <string name="import_files_screen_on_conflict_desc">“冲突”指的是当前要导入贴纸的 UUID 与已有贴纸的 UUID 相同，与这两个贴纸的内容是否相同无关。</string>
     <string name="export_files_screen_name">导出为文件</string>
     <string name="export_files_screen_description">将表情包、标签等信息导出为文件</string>
     <string name="export_files_screen_select_dir">选择导出文件夹</string>

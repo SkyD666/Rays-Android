@@ -8,6 +8,7 @@ import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.EXPORT_FILES_DIR
 import com.skyd.rays.config.IMPORT_FILES_DIR
+import com.skyd.rays.ext.dateTime
 import com.skyd.rays.model.bean.ImportExportInfo
 import com.skyd.rays.model.bean.ImportExportResultInfo
 import com.skyd.rays.model.bean.ImportExportWaitingInfo
@@ -111,9 +112,11 @@ class ImportExportFilesRepository @Inject constructor(
                 )
             }
             val documentFile = DocumentFile.fromTreeUri(appContext, dirUri)!!
+            val currentDate =
+                dateTime(timestamp = System.currentTimeMillis(), pattern = "yyyyMMdd-HHmmss")
             val zipFileUri: Uri = documentFile.createFile(
                 "application/zip",
-                "Rays_Backup_${Random.nextInt(0, Int.MAX_VALUE)}"
+                "Rays_Backup_${currentDate}_${Random.nextInt(0, Int.MAX_VALUE)}"
             )?.uri!!
             zip(
                 context = appContext,

@@ -83,7 +83,7 @@ fun MainScreen() {
             if (!windowSizeClass.isCompact) {
                 navigationBarOrRail()
             }
-            contentPager(modifier = Modifier.weight(1f))
+            contentPager(Modifier.weight(1f))
         }
     }
 }

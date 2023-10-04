@@ -71,7 +71,7 @@ fun RaysIconButton(
     }
 
     if (contentDescription.isNullOrEmpty()) {
-        iconButton(modifier = modifier)
+        iconButton(modifier)
     } else {
         TooltipBox(
             modifier = modifier,
@@ -83,7 +83,7 @@ fun RaysIconButton(
             },
             state = rememberTooltipState()
         ) {
-            iconButton(modifier = Modifier)
+            iconButton(Modifier)
         }
     }
 }

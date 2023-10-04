@@ -1,11 +1,12 @@
 package com.skyd.rays.ext
 
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
-fun dateTime(timestamp: Long): String {
+fun dateTime(timestamp: Long, pattern: String = "yyyy/MM/dd HH:mm:ss"): String {
     return try {
-        SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault())
+        SimpleDateFormat(pattern, Locale.getDefault())
             .format(Date(timestamp))
     } catch (e: Exception) {
         ""

@@ -76,7 +76,7 @@ fun RaysFloatingActionButton(
     }
 
     if (contentDescription.isNullOrEmpty()) {
-        floatingActionButton(modifier = modifier)
+        floatingActionButton(modifier)
     } else {
         TooltipBox(
             modifier = modifier,
@@ -88,7 +88,7 @@ fun RaysFloatingActionButton(
             },
             state = rememberTooltipState()
         ) {
-            floatingActionButton(modifier = Modifier)
+            floatingActionButton(Modifier)
         }
     }
 }
@@ -117,7 +117,7 @@ fun RaysExtendedFloatingActionButton(
     }
 
     if (contentDescription.isNullOrEmpty()) {
-        floatingActionButton(modifier = modifier)
+        floatingActionButton(modifier)
     } else {
         TooltipBox(
             modifier = modifier,
@@ -129,7 +129,7 @@ fun RaysExtendedFloatingActionButton(
             },
             state = rememberTooltipState()
         ) {
-            floatingActionButton(modifier = Modifier)
+            floatingActionButton(Modifier)
         }
     }
 }

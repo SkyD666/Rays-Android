@@ -51,6 +51,7 @@ import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.BottomHideExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
+import com.skyd.rays.ui.component.TipSettingsItem
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 
@@ -151,6 +152,11 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
                             }
                         }
                     }
+                )
+            }
+            item {
+                TipSettingsItem(
+                    text = stringResource(id = R.string.import_files_screen_on_conflict_desc)
                 )
             }
         }
