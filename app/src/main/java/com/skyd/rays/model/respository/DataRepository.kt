@@ -2,7 +2,7 @@ package com.skyd.rays.model.respository
 
 import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
-import com.skyd.rays.model.db.dao.StickerDao
+import com.skyd.rays.model.db.dao.sticker.StickerDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

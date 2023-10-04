@@ -52,6 +52,35 @@
     <string name="dark_mode_light">亮色</string>
     <string name="dark_mode_follow_system">跟随系统</string>
     <string name="import_export_screen_using_cloud_category">通过云</string>
+    <string name="import_export_screen_using_file_category">通过文件（Beta）</string>
+    <string name="import_files_screen_name">从文件导入</string>
+    <string name="import_files_screen_description">从本地文件导入表情包、标签等信息</string>
+    <string name="import_files_screen_select_file">选择备份文件</string>
+    <string name="import_files_screen_import">导入</string>
+    <string name="import_files_screen_progress_unzipping">解压中：%s</string>
+    <string name="import_files_screen_progress_checking_backup_format">检查备份文件格式中…</string>
+    <string name="import_files_screen_progress_saving_data">保存数据中…</string>
+    <string name="import_files_screen_successful">导入成功</string>
+    <plurals name="import_files_screen_successful_desc">
+        <item quantity="other">共更新 %d 个表情包，耗时 %.2f 秒</item>
+    </plurals>
+    <string name="import_files_screen_failed">操作失败：%s</string>
+    <string name="import_files_screen_on_conflict">冲突时策略</string>
+    <string name="export_files_screen_name">导出为文件</string>
+    <string name="export_files_screen_description">将表情包、标签等信息导出为文件</string>
+    <string name="export_files_screen_select_dir">选择导出文件夹</string>
+    <string name="export_files_screen_export">导出</string>
+    <string name="export_files_screen_progress_exporting">导出中…</string>
+    <string name="export_files_screen_progress_zipping">压缩中：%s</string>
+    <string name="export_files_screen_progress_open_backup_file">打开</string>
+    <string name="export_files_screen_successful">导出成功</string>
+    <plurals name="export_files_screen_successful_desc">
+        <item quantity="other">共导出 %d 个表情包，耗时 %.2f 秒</item>
+    </plurals>
+    <string name="export_files_screen_failed">操作失败：%s</string>
+    <string name="export_files_screen_open_backup_file">打开备份文件</string>
+    <string name="handle_imported_sticker_proxy_skip">跳过</string>
+    <string name="handle_imported_sticker_proxy_replace">替换原有</string>
     <string name="webdav_screen_name">WebDAV</string>
     <string name="import_export_screen_webdav_description">通过 WebDAV 在云端同步数据</string>
     <string name="webdav_screen_service_category">WebDAV 服务</string>
@@ -156,7 +185,7 @@
     <string name="search_result_sort_modify_time">修改时间</string>
     <string name="search_result_sort_tag_count">标签数量</string>
     <string name="search_result_sort_title">标题</string>
-    <string name="search_result_sort">排序方式</string>
+    <string name="search_result_sort">排序</string>
     <string name="search_result_reverse">逆序</string>
     <string name="search_result_multi_select">多选</string>
     <string name="home_screen_search_result_list_to_top">到顶部</string>
@@ -170,7 +199,7 @@
     <string name="webdav_screen_progress_download_data">更新本地数据</string>
     <string name="webdav_screen_progress_delete">删除本地数据 + 表情包</string>
     <string name="webdav_screen_progress_refresh_backup_info">更新备份信息</string>
-    <string name="webdav_screen_warning">请勿在推送和拉取时强制杀死应用或断开网络，否则可能会损坏数据！</string>
+    <string name="data_sync_warning">请勿在推送和拉取时强制杀死应用或断开网络，否则可能会损坏数据！</string>
     <string name="home_screen_sticker_info">表情包信息</string>
     <string name="home_screen_sticker_info_uuid">UUID</string>
     <string name="home_screen_sticker_info_md5">表情包 MD5</string>

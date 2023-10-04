@@ -14,7 +14,7 @@ import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.db.dao.SearchDomainDao
-import com.skyd.rays.model.db.dao.StickerDao
+import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference

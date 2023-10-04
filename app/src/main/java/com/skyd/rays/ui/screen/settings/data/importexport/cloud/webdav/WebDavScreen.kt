@@ -283,7 +283,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             visible = openWaitingDialog,
             currentValue = waitingDialogData?.current,
             totalValue = waitingDialogData?.total,
-            msg = waitingDialogData?.msg + "\n\n" + stringResource(id = R.string.webdav_screen_warning),
+            msg = waitingDialogData?.msg + "\n\n" + stringResource(id = R.string.data_sync_warning),
         )
         DeleteWarningDialog(
             visible = openDeleteWarningDialog != null,
@@ -316,7 +316,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 Text(text = stringResource(id = R.string.dialog_warning))
             },
             text = {
-                Text(text = stringResource(id = R.string.webdav_screen_warning))
+                Text(text = stringResource(id = R.string.data_sync_warning))
             },
             confirmButton = {
                 TextButton(onClick = { openWarningDialog = false }) {

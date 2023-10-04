@@ -148,10 +148,6 @@ fun AddScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
@@ -326,6 +322,10 @@ fun AddScreen(
                 }
             }
         )
+    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 
     // 添加/修改完成后重设页面数据

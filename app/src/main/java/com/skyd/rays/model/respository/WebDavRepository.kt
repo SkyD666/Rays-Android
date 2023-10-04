@@ -10,7 +10,7 @@ import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.WebDavInfo
 import com.skyd.rays.model.bean.WebDavResultInfo
 import com.skyd.rays.model.bean.WebDavWaitingInfo
-import com.skyd.rays.model.db.dao.StickerDao
+import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.util.md5
 import com.skyd.rays.util.stickerUuidToFile
 import com.thegrizzlylabs.sardineandroid.Sardine
@@ -146,7 +146,7 @@ class WebDavRepository @Inject constructor(
                         waitToAddList += json.decodeFromStream<StickerWithTags>(inputStream)
                     }
                 if (waitToAddList.size > 10) {
-                    stickerDao.webDavImportData(waitToAddList)
+                    stickerDao.importDataFromExternal(waitToAddList)
                     waitToAddList.clear()
                 }
                 emitProgressData(
@@ -165,7 +165,7 @@ class WebDavRepository @Inject constructor(
                         inputStream.saveTo(stickerUuidToFile(entry.value.uuid))
                     }
                 if (waitToAddList.size > 10) {
-                    stickerDao.webDavImportData(waitToAddList)
+                    stickerDao.importDataFromExternal(waitToAddList)
                     waitToAddList.clear()
                 }
                 emitProgressData(
@@ -174,7 +174,7 @@ class WebDavRepository @Inject constructor(
                     msg = appContext.getString(R.string.webdav_screen_progress_download_data_sticker),
                 )
             }
-            stickerDao.webDavImportData(waitToAddList)
+            stickerDao.importDataFromExternal(waitToAddList)
             emitBaseData(BaseData<WebDavInfo>().apply {
                 code = 0
                 data = WebDavResultInfo(

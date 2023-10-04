@@ -1,4 +1,4 @@
-package com.skyd.rays.model.db.dao
+package com.skyd.rays.model.db.dao.sticker
 
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
@@ -13,6 +13,8 @@ import com.skyd.rays.model.bean.StickerBean.Companion.SHARE_COUNT_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.STICKER_MD5_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.UUID_COLUMN
 import com.skyd.rays.model.bean.StickerWithTags
+import com.skyd.rays.model.bean.StickerWithTagsAndFile
+import com.skyd.rays.model.db.dao.TagDao
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -142,10 +144,31 @@ interface StickerDao {
     fun innerDeleteSticker(stickerUuid: String): Int
 
     @Transaction
-    fun webDavImportData(stickerWithTagsList: List<StickerWithTags>) {
+    fun importDataFromExternal(stickerWithTagsList: List<StickerWithTags>) {
+        // 原始方案就是覆盖
         stickerWithTagsList.forEach {
             addStickerWithTags(stickerWithTags = it, updateModifyTime = false)
         }
+    }
+
+    @Transaction
+    fun importDataFromExternal(
+        stickerWithTagsList: List<StickerWithTagsAndFile>,
+        proxy: HandleImportedStickerProxy,
+    ): Int {
+        val hiltEntryPoint = EntryPointAccessors
+            .fromApplication(appContext, StickerDaoEntryPoint::class.java)
+        var updatedCount = 0
+        stickerWithTagsList.forEach {
+            val updated = proxy.handle(
+                stickerDao = this,
+                tagDao = hiltEntryPoint.tagDao,
+                importedStickerWithTags = it.stickerWithTags,
+                stickerFile = it.stickerFile,
+            )
+            if (updated) updatedCount++
+        }
+        return updatedCount
     }
 
     @Transaction

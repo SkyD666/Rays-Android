@@ -64,6 +64,10 @@ import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_R
 import com.skyd.rays.ui.screen.settings.data.importexport.ImportExportScreen
 import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WEBDAV_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WebDavScreen
+import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.EXPORT_FILES_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.ExportFilesScreen
+import com.skyd.rays.ui.screen.settings.data.importexport.file.importfiles.IMPORT_FILES_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.data.importexport.file.importfiles.ImportFilesScreen
 import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.ml.MlScreen
 import com.skyd.rays.ui.screen.settings.ml.classification.CLASSIFICATION_SCREEN_ROUTE
@@ -199,6 +203,12 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = WEBDAV_SCREEN_ROUTE) {
                     WebDavScreen()
+                }
+                composable(route = EXPORT_FILES_SCREEN_ROUTE) {
+                    ExportFilesScreen()
+                }
+                composable(route = IMPORT_FILES_SCREEN_ROUTE) {
+                    ImportFilesScreen()
                 }
                 composable(route = DATA_SCREEN_ROUTE) {
                     DataScreen()

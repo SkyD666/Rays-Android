@@ -21,7 +21,7 @@ import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get
 import com.skyd.rays.ext.md5
 import com.skyd.rays.model.bean.StickerWithTags
-import com.skyd.rays.model.db.dao.StickerDao
+import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference

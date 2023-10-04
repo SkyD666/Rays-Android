@@ -5,6 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import java.io.File
 
 @Parcelize
 @Serializable
@@ -15,4 +16,10 @@ data class StickerWithTags(
         entityColumn = TagBean.STICKER_UUID_COLUMN
     )
     val tags: List<TagBean>
+) : Parcelable
+
+@Parcelize
+data class StickerWithTagsAndFile(
+    val stickerWithTags: StickerWithTags,
+    val stickerFile: File
 ) : Parcelable

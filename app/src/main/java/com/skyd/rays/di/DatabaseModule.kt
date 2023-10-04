@@ -4,7 +4,7 @@ import android.content.Context
 import com.skyd.rays.model.db.AppDatabase
 import com.skyd.rays.model.db.dao.ApiGrantPackageDao
 import com.skyd.rays.model.db.dao.SearchDomainDao
-import com.skyd.rays.model.db.dao.StickerDao
+import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.model.db.dao.TagDao
 import com.skyd.rays.model.db.dao.UriStringSharePackageDao
 import dagger.Module
