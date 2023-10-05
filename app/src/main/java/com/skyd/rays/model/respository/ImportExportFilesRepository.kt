@@ -164,8 +164,8 @@ class ImportExportFilesRepository @Inject constructor(
         check(dataDir.exists()) { "BackupData directory not exists!" }
         check(stickerDir.exists()) { "BackupSticker directory not exists!" }
 
-        val dataList = dataDir.list().orEmpty()
-        val stickersList = stickerDir.list().orEmpty()
+        val dataList = dataDir.list().orEmpty().apply { sort() }
+        val stickersList = stickerDir.list().orEmpty().apply { sort() }
         check(dataList.contentEquals(stickersList)) {
             "The contents of the BackupData directory do not match the contents of the BackupSticker directory!"
         }

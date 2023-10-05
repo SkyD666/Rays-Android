@@ -26,8 +26,9 @@ sealed interface HandleImportedStickerProxy : Parcelable {
     }
 
     fun moveFile(stickerFile: File) {
-        val destStickerFile = File(File(STICKER_DIR), stickerFile.name)
-        stickerFile.renameTo(destStickerFile)
+        val destStickerFile = File(STICKER_DIR, stickerFile.name)
+        stickerFile.copyTo(target = destStickerFile, overwrite = true)
+        stickerFile.deleteRecursively()
     }
 
     val displayName: String

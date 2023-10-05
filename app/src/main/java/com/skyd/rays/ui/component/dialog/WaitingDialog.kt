@@ -31,7 +31,13 @@ fun WaitingDialog(
     title: String = stringResource(R.string.webdav_screen_waiting)
 ) {
     if (currentValue == null || totalValue == null) {
-        WaitingDialog(visible = visible, title = title)
+        WaitingDialog(
+            visible = visible,
+            title = title,
+            text = if (msg == null) null else {
+                { Text(text = msg) }
+            }
+        )
     } else {
         val animatedProgress by animateFloatAsState(
             targetValue = currentValue.toFloat() / totalValue,
