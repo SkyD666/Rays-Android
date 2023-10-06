@@ -29,6 +29,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import okio.use
 import java.io.File
+import java.io.FileInputStream
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -51,6 +52,21 @@ class ImportExportFilesRepository @Inject constructor(
 
             // 清空导入所需的临时目录
             IMPORT_FILES_DIR.deleteRecursively()
+
+            // 检查文件最后两个字节是不是 0x0D000721
+            appContext.contentResolver.openFileDescriptor(backupFileUri, "r").use { descriptor ->
+                val fileDescriptor = descriptor?.fileDescriptor ?: return@use
+                FileInputStream(fileDescriptor).use { fis ->
+                    val lastTwoByte = ByteArray(4)
+                    fis.channel.use { channel ->
+                        channel.position(channel.size() - 4)
+                        fis.read(lastTwoByte)
+                        check(lastTwoByte.contentEquals(byteArrayOf(0x0D, 0x00, 0x07, 0x21))) {
+                            "Magic number not equals to 0x0D000721"
+                        }
+                    }
+                }
+            }
 
             // 解压文件
             unzip(
