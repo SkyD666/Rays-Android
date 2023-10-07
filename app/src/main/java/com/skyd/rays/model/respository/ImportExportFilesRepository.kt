@@ -53,7 +53,7 @@ class ImportExportFilesRepository @Inject constructor(
             // 清空导入所需的临时目录
             IMPORT_FILES_DIR.deleteRecursively()
 
-            // 检查文件最后两个字节是不是 0x0D000721
+            // 检查文件最后四个字节是不是 0x0D000721
             appContext.contentResolver.openFileDescriptor(backupFileUri, "r").use { descriptor ->
                 val fileDescriptor = descriptor?.fileDescriptor ?: return@use
                 FileInputStream(fileDescriptor).use { fis ->
@@ -62,7 +62,7 @@ class ImportExportFilesRepository @Inject constructor(
                         channel.position(channel.size() - 4)
                         fis.read(lastTwoByte)
                         check(lastTwoByte.contentEquals(byteArrayOf(0x0D, 0x00, 0x07, 0x21))) {
-                            "Magic number not equals to 0x0D000721"
+                            appContext.getString(R.string.import_export_files_repo_invalid_magic_number)
                         }
                     }
                 }
@@ -148,6 +148,18 @@ class ImportExportFilesRepository @Inject constructor(
                     )
                 },
             )
+
+            // 添加最后四个字节 0x0D000721
+            appContext.contentResolver.openOutputStream(zipFileUri, "wa").use { fos ->
+                check(fos != null) {
+                    appContext.getString(
+                        R.string.import_export_files_repo_error,
+                        "Zip file OutputStream is null!"
+                    )
+                }
+                fos.write(byteArrayOf(0x0D, 0x00, 0x07, 0x21))
+            }
+
             emitBaseData(BaseData<ImportExportInfo>().apply {
                 code = 0
                 data = ImportExportResultInfo(
@@ -177,13 +189,26 @@ class ImportExportFilesRepository @Inject constructor(
     private fun checkBackupUnzipFiles(destDir: File): List<StickerWithTagsAndFile> {
         val dataDir = File(destDir, BACKUP_DATA_DIR)
         val stickerDir = File(destDir, BACKUP_STICKER_DIR)
-        check(dataDir.exists()) { "BackupData directory not exists!" }
-        check(stickerDir.exists()) { "BackupSticker directory not exists!" }
+        check(dataDir.exists()) {
+            appContext.getString(
+                R.string.import_export_files_repo_invalid_format,
+                "BackupData directory not exists!"
+            )
+        }
+        check(stickerDir.exists()) {
+            appContext.getString(
+                R.string.import_export_files_repo_invalid_format,
+                "BackupSticker directory not exists!"
+            )
+        }
 
         val dataList = dataDir.list().orEmpty().apply { sort() }
         val stickersList = stickerDir.list().orEmpty().apply { sort() }
         check(dataList.contentEquals(stickersList)) {
-            "The contents of the BackupData directory do not match the contents of the BackupSticker directory!"
+            appContext.getString(
+                R.string.import_export_files_repo_invalid_format,
+                "The contents of the BackupData directory do not match the contents of the BackupSticker directory!"
+            )
         }
 
         val dataListFiles = dataDir.listFiles().orEmpty()
@@ -203,18 +228,27 @@ class ImportExportFilesRepository @Inject constructor(
             // 检查 Json 里面存的表情包的 UUID 与文件名是否相同
             val stickerUuid = stickerWithTags!!.sticker.uuid
             check(file.name == stickerUuid) {
-                "BackupData json file name: '${file.name}' do not match sticker's uuid: '$stickerUuid'"
+                appContext.getString(
+                    R.string.import_export_files_repo_invalid_format,
+                    "BackupData json file name: '${file.name}' do not match sticker's uuid: '$stickerUuid'"
+                )
             }
 
             // 检查两者的文件名是否相同
             check(stickersListFiles[index].name == file.name) {
-                "The name of BackupData json file: '${file.name}' do not match the name of the BackupSticker file: '${stickersListFiles[index].name}'"
+                appContext.getString(
+                    R.string.import_export_files_repo_invalid_format,
+                    "The name of BackupData json file: '${file.name}' do not match the name of the BackupSticker file: '${stickersListFiles[index].name}'"
+                )
             }
 
             // 检查表情包的图片格式
             stickersListFiles[index].inputStream().use { inputStream ->
                 check(ImageFormatChecker.check(inputStream) != ImageFormat.UNDEFINED) {
-                    "Unsupported sticker format, sticker file name: '${stickersListFiles[index].name}'"
+                    appContext.getString(
+                        R.string.import_export_files_repo_invalid_format,
+                        "Unsupported sticker format, sticker file name: '${stickersListFiles[index].name}'"
+                    )
                 }
                 stickerWithTagsAndFileList += StickerWithTagsAndFile(
                     stickerWithTags = stickerWithTags!!,

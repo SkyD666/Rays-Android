@@ -84,6 +84,9 @@
     <string name="export_files_screen_open_backup_file">Open backup file</string>
     <string name="handle_imported_sticker_proxy_skip">Skip</string>
     <string name="handle_imported_sticker_proxy_replace">Replace</string>
+    <string name="import_export_files_repo_invalid_magic_number">Invalid format, Magic number not equals to 0x0D000721</string>
+    <string name="import_export_files_repo_invalid_format">Invalid format: %s</string>
+    <string name="import_export_files_repo_error">Error: %s</string>
     <string name="webdav_screen_name">WebDAV</string>
     <string name="import_export_screen_webdav_description">Synchronize data via WebDAV</string>
     <string name="webdav_screen_service_category">Service</string>

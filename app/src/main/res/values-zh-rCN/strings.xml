@@ -82,6 +82,9 @@
     <string name="export_files_screen_open_backup_file">打开备份文件</string>
     <string name="handle_imported_sticker_proxy_skip">跳过</string>
     <string name="handle_imported_sticker_proxy_replace">替换原有</string>
+    <string name="import_export_files_repo_invalid_magic_number">格式非法，备份文件的魔数不等于 0x0D000721</string>
+    <string name="import_export_files_repo_invalid_format">备份文件格式非法：%s</string>
+    <string name="import_export_files_repo_error">错误：%s</string>
     <string name="webdav_screen_name">WebDAV</string>
     <string name="import_export_screen_webdav_description">通过 WebDAV 在云端同步数据</string>
     <string name="webdav_screen_service_category">WebDAV 服务</string>
