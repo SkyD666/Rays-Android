@@ -21,8 +21,8 @@ android {
         applicationId "com.skyd.rays"
         minSdk 24
         targetSdk 34
-        versionCode 36
-        versionName "1.6-beta07"
+        versionCode 37
+        versionName "1.6-beta08"
         flavorDimensions = ["versionName"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -163,6 +163,7 @@ dependencies {
     implementation "com.google.mlkit:text-recognition-japanese:$mlkit_recognition_version"
     implementation "com.google.mlkit:text-recognition-korean:$mlkit_recognition_version"
     implementation 'com.google.mlkit:image-labeling-custom:17.0.1'
+    implementation 'com.google.mlkit:segmentation-selfie:16.0.0-beta4'
 
     // TF Lite
     implementation 'org.tensorflow:tensorflow-lite:2.13.0'

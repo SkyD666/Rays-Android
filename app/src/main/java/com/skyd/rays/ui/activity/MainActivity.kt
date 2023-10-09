@@ -46,6 +46,8 @@ import com.skyd.rays.ui.screen.add.AddScreen
 import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.minitool.MINI_TOOL_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.minitool.MiniToolScreen
+import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SELFIE_SEGMENTATION_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SelfieSegmentationScreen
 import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.minitool.styletransfer.StyleTransferScreen
 import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
@@ -224,6 +226,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = STYLE_TRANSFER_SCREEN_ROUTE) {
                     StyleTransferScreen()
+                }
+                composable(route = SELFIE_SEGMENTATION_SCREEN_ROUTE) {
+                    SelfieSegmentationScreen()
                 }
                 composable(route = API_SCREEN_ROUTE) {
                     ApiScreen()

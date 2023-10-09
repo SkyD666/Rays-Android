@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Extension
+import androidx.compose.material.icons.filled.PeopleAlt
 import androidx.compose.material.icons.filled.Style
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,6 +25,7 @@ import com.skyd.rays.ui.component.lazyverticalgrid.RaysLazyVerticalGrid
 import com.skyd.rays.ui.component.lazyverticalgrid.adapter.LazyGridAdapter
 import com.skyd.rays.ui.component.lazyverticalgrid.adapter.proxy.MiniTool1Proxy
 import com.skyd.rays.ui.local.LocalNavController
+import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SELFIE_SEGMENTATION_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUTE
 
 const val MINI_TOOL_SCREEN_ROUTE = "miniToolScreen"
@@ -51,6 +53,12 @@ fun MiniToolScreen() {
                 icon = Icons.Default.Style,
                 experimental = false,
                 action = { navController.navigate(STYLE_TRANSFER_SCREEN_ROUTE) }
+            ),
+            MiniTool1Bean(
+                title = stringResource(R.string.selfie_segmentation_screen_name),
+                icon = Icons.Default.PeopleAlt,
+                experimental = true,
+                action = { navController.navigate(SELFIE_SEGMENTATION_SCREEN_ROUTE) }
             ),
         )
 

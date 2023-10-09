@@ -25,3 +25,29 @@ fun Uri.toBitmap(): Bitmap {
         BitmapFactory.decodeStream(it, null, op)!!
     }
 }
+
+fun Bitmap.cropTransparency(): Bitmap? {
+    var minX = width
+    var minY = height
+    var maxX = -1
+    var maxY = -1
+    for (y in 0 until height) {
+        for (x in 0 until width) {
+            val alpha = getPixel(x, y) shr 24 and 255
+            // pixel is not 100% transparent
+            if (alpha > 0) {
+                if (x < minX) minX = x
+                if (x > maxX) maxX = x
+                if (y < minY) minY = y
+                if (y > maxY) maxY = y
+            }
+        }
+    }
+    return if (maxX < minX || maxY < minY) null else Bitmap.createBitmap(
+        this,
+        minX,
+        minY,
+        maxX - minX + 1,
+        maxY - minY + 1
+    )
+}

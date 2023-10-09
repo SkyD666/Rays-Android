@@ -252,6 +252,13 @@
     <string name="style_transfer_screen_content">Content</string>
     <string name="style_transfer_screen_select_style_image">Select a style image</string>
     <string name="style_transfer_screen_select_content_image">Select a content image</string>
+    <string name="selfie_segmentation_screen_name">Selfie segmentation</string>
+    <string name="selfie_segmentation_screen_segment">Segment</string>
+    <string name="selfie_segmentation_screen_image_not_selected">Please select a selfie image before segmenting</string>
+    <string name="selfie_segmentation_screen_selfie">Selfie</string>
+    <string name="selfie_segmentation_screen_background">Background</string>
+    <string name="selfie_segmentation_screen_select_selfie_image">Select a selfie image</string>
+    <string name="selfie_segmentation_screen_select_background_image">Select a background image</string>
     <string name="api_screen_name">API (Experimental)</string>
     <string name="api_grant_screen_name">API Grant</string>
     <string name="setting_screen_api_description">Application Programming Interface</string>

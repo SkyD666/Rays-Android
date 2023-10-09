@@ -247,6 +247,13 @@
     <string name="style_transfer_screen_content">内容</string>
     <string name="style_transfer_screen_select_style_image">选择风格图片</string>
     <string name="style_transfer_screen_select_content_image">选择内容图片</string>
+    <string name="selfie_segmentation_screen_name">自拍照分割</string>
+    <string name="selfie_segmentation_screen_segment">分割</string>
+    <string name="selfie_segmentation_screen_image_not_selected">请选择自拍照图片后再进行分割</string>
+    <string name="selfie_segmentation_screen_selfie">自拍照</string>
+    <string name="selfie_segmentation_screen_background">背景</string>
+    <string name="selfie_segmentation_screen_select_selfie_image">选择自拍照</string>
+    <string name="selfie_segmentation_screen_select_background_image">选择背景</string>
     <string name="api_screen_name">API（实验性）</string>
     <string name="api_grant_screen_name">API 授权</string>
     <string name="setting_screen_api_description">对外开放接口</string>
