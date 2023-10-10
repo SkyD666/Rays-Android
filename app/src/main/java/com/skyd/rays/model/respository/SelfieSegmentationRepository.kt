@@ -2,6 +2,9 @@ package com.skyd.rays.model.respository
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.RectF
 import android.net.Uri
 import androidx.core.graphics.get
 import androidx.core.graphics.set
@@ -19,7 +22,44 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resumeWithException
 
+
 class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
+
+    suspend fun requestExport(
+        foregroundBitmap: Bitmap,
+        backgroundUri: Uri?,
+        foregroundRect: RectF,
+    ): Flow<BaseData<Bitmap>> {
+        return flow {
+            val resultBitmap: Bitmap = if (backgroundUri != null) {
+                val underlayBitmap =
+                    appContext.contentResolver.openInputStream(backgroundUri)!!.use {
+                        val origin = BitmapFactory.decodeStream(it)
+                        origin.copy(origin.config, true).apply {
+                            setHasAlpha(true)
+                            origin.recycle()
+                        }
+                    }
+
+                val paint = Paint(Paint.FILTER_BITMAP_FLAG)
+                val result = Canvas(underlayBitmap)
+                foregroundRect.set(
+                    foregroundRect.left * underlayBitmap.width,
+                    foregroundRect.top * underlayBitmap.height,
+                    foregroundRect.right * underlayBitmap.width,
+                    foregroundRect.bottom * underlayBitmap.height,
+                )
+                result.drawBitmap(foregroundBitmap, null, foregroundRect, paint)
+                underlayBitmap
+            } else {
+                foregroundBitmap
+            }
+            emitBaseData(BaseData<Bitmap>().apply {
+                code = 0
+                data = resultBitmap
+            })
+        }
+    }
 
     suspend fun requestSelfieSegment(foregroundUri: Uri): Flow<BaseData<Pair<Bitmap, Long>>> {
         return flow {

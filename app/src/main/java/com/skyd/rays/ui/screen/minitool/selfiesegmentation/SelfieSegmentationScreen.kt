@@ -1,21 +1,23 @@
 package com.skyd.rays.ui.screen.minitool.selfiesegmentation
 
 import android.graphics.Bitmap
+import android.graphics.RectF
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,8 +36,10 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,10 +48,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.boundsInParent
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -65,6 +75,7 @@ import com.skyd.rays.ui.component.shape.CloverShape
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.sendSticker
+import kotlin.math.roundToInt
 
 const val SELFIE_SEGMENTATION_SCREEN_ROUTE = "selfieSegmentationScreen"
 
@@ -75,6 +86,7 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
     val context = LocalContext.current
     var openWaitingDialog by remember { mutableStateOf(false) }
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
     val loadUiIntentFlow by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
     var selfieUri by rememberSaveable { mutableStateOf<Uri?>(null) }
     val pickSelfieLauncher = rememberLauncherForActivityResult(
@@ -131,6 +143,15 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
                     ResultArea(
                         bitmap = selfieSegmentationResultUiState.image,
                         backgroundUri = backgroundUri,
+                        onExport = {
+                            viewModel.sendUiIntent(
+                                SelfieSegmentationIntent.Export(
+                                    foregroundBitmap = selfieSegmentationResultUiState.image,
+                                    backgroundUri = backgroundUri,
+                                    foregroundRect = it,
+                                )
+                            )
+                        },
                     )
                 }
             }
@@ -148,6 +169,17 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
             }
         }
 
+        when (val exportUiEvent = uiEvent?.exportUiEvent) {
+            is ExportUiEvent.Success -> {
+                LaunchedEffect(uiEvent) {
+                    context.sendSticker(bitmap = exportUiEvent.bitmap)
+                }
+            }
+
+            ExportUiEvent.Init,
+            null -> Unit
+        }
+
         loadUiIntentFlow?.also { loadUiIntent ->
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {}
@@ -161,26 +193,60 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
 }
 
 @Composable
-private fun ResultArea(bitmap: Bitmap, backgroundUri: Uri?) {
-    val context = LocalContext.current
+private fun ResultArea(bitmap: Bitmap, backgroundUri: Uri?, onExport: (RectF) -> Unit) {
+    var componentRect by remember { mutableStateOf(RectF()) }
+    var parentSize by remember { mutableStateOf(IntSize.Zero) }
+
+    // drag Selfie的位置
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
     Card(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
 //            .height(IntrinsicSize.Min)
             .width(IntrinsicSize.Min),
-        onClick = { context.sendSticker(bitmap = bitmap) }
+        onClick = {
+            componentRect.set(
+                (componentRect.left / parentSize.width),
+                (componentRect.top / parentSize.height),
+                (componentRect.right / parentSize.width),
+                (componentRect.bottom / parentSize.height)
+            )
+            onExport(componentRect)
+        },
     ) {
         Box {
             RaysImage(
                 model = backgroundUri,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .onSizeChanged { parentSize = it }
+                    .fillMaxWidth(),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
             )
             RaysImage(
                 model = bitmap,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+                    .pointerInput(Unit) {
+                        detectDragGestures { change, dragAmount ->
+                            change.consume()
+                            offsetX += dragAmount.x
+                            offsetY += dragAmount.y
+                        }
+                    }
+                    .onGloballyPositioned {
+                        componentRect = run {
+                            val boundsInParent = it.boundsInParent()
+                            RectF(
+                                boundsInParent.left,
+                                boundsInParent.top,
+                                boundsInParent.right,
+                                boundsInParent.bottom,
+                            )
+                        }
+                    },
                 contentDescription = null,
                 contentScale = ContentScale.Inside,
             )

@@ -138,13 +138,14 @@ fun Bitmap.shareToFile(outputDir: File = File(appContext.cacheDir, "TempSticker"
     val tempFile = File(outputDir, resultFileName)
 
     FileOutputStream(tempFile).use {
-        compress(Bitmap.CompressFormat.JPEG, 100, it)
+        compress(Bitmap.CompressFormat.PNG, 100, it)
     }
     scope.launch {
         // > 5MB
         if (outputDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum() > 5_242_880) {
             outputDir.walkBottomUp().fold(true) { res, it ->
-                (it.name == resultFileName || it.delete() || !it.exists()) && res
+                // it == tempFile || it == outputDir 可以排除当前文件和TempSticker文件夹
+                (it == tempFile || it == outputDir || it.delete() || !it.exists()) && res
             }
         }
     }
