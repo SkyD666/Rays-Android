@@ -38,87 +38,55 @@ class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
         borderSize: IntSize,
     ): Flow<BaseData<Bitmap>> {
         return flow {
-            val resultBitmap: Bitmap = if (backgroundUri != null) {
-                val underlayBitmap =
-                    appContext.contentResolver.openInputStream(backgroundUri)!!.use {
-                        val origin = BitmapFactory.decodeStream(it)
-                        origin.copy(origin.config, true).apply {
-                            setHasAlpha(true)
-                            origin.recycle()
-                        }
+            // 在Compose里显示的大小和真实Bitmap大小的比率
+            val foregroundRatio = foregroundSize.width.toFloat() / foregroundBitmap.width
+            val backgroundRatio: Float
+
+            val underlayBitmap = if (backgroundUri != null) {
+                appContext.contentResolver.openInputStream(backgroundUri)!!.use {
+                    val origin = BitmapFactory.decodeStream(it)
+                    origin.copy(origin.config, true).apply {
+                        setHasAlpha(true)
+                        origin.recycle()
                     }
-
-                val matrix = Matrix()
-                with(matrix) {
-                    // 在Compose里显示的大小和真实Bitmap大小的比率
-                    val backgroundRatio = backgroundSize.width.toFloat() / underlayBitmap.width
-                    val foregroundRatio = foregroundSize.width.toFloat() / foregroundBitmap.width
-
-                    // 计算上述两个比率的差异
-                    val scale1 = foregroundRatio / backgroundRatio
-                    // 水平竖直移动
-                    val dx = foregroundOffset.x / scale1 / backgroundRatio
-                    val dy = foregroundOffset.y / scale1 / backgroundRatio
-                    setTranslate(dx, dy)
-
-                    // 是调整编辑页面和实际位图的大小差异用的
-                    postScale(scale1, scale1)
-
-                    // 计算“调整编辑页面和实际位图的大小差异”后的中心点
-                    val centerX = ((foregroundBitmap.width + 2 * dx) / 2f) * scale1
-                    val centerY = ((foregroundBitmap.height + 2 * dy) / 2f) * scale1
-                    // 是用户主动缩放的大小
-                    postScale(foregroundScale, foregroundScale, centerX, centerY)
-
-                    // 由于上一行就是在中心点进行缩放的，因此缩放后，图像的中心点没变，下面旋转继续用这个中心点
-                    postRotate(foregroundRotation, centerX, centerY)
-                }
-                Canvas(underlayBitmap).drawBitmap(
-                    foregroundBitmap,
-                    matrix,
-                    Paint(Paint.FILTER_BITMAP_FLAG).apply { isAntiAlias = true }
-                )
-                underlayBitmap
+                }.also { backgroundRatio = backgroundSize.width.toFloat() / it.width }
             } else {
-                val matrix = Matrix()
-                with(matrix) {
-                    // 在Compose里显示的大小和真实Bitmap大小的比率
-                    val foregroundRatio = foregroundSize.width.toFloat() / foregroundBitmap.width
-
-                    // 计算上述两个比率的差异
-                    val scale1 = foregroundRatio
-                    // 水平竖直移动
-                    val dx = foregroundOffset.x / scale1
-                    val dy = foregroundOffset.y / scale1
-                    setTranslate(dx, dy)
-
-                    // 是调整编辑页面和实际位图的大小差异用的
-                    postScale(scale1, scale1)
-
-                    // 计算“调整编辑页面和实际位图的大小差异”后的中心点
-                    val centerX = ((foregroundBitmap.width + 2 * dx) / 2f) * scale1
-                    val centerY = ((foregroundBitmap.height + 2 * dy) / 2f) * scale1
-                    // 是用户主动缩放的大小
-                    postScale(foregroundScale, foregroundScale, centerX, centerY)
-
-                    // 由于上一行就是在中心点进行缩放的，因此缩放后，图像的中心点没变，下面旋转继续用这个中心点
-                    postRotate(foregroundRotation, centerX, centerY)
-                }
-                val underlayBitmap = Bitmap.createBitmap(
+                Bitmap.createBitmap(
                     borderSize.width,
                     borderSize.height,
                     Bitmap.Config.ARGB_8888,
-                )
-                Canvas(underlayBitmap).drawBitmap(
-                    foregroundBitmap,
-                    matrix,
-                    Paint(Paint.FILTER_BITMAP_FLAG).apply { isAntiAlias = true }
-                )
-                underlayBitmap
+                ).also {/* 没有背景时用透明图像，比率是1 */ backgroundRatio = 1f }
             }
+
+            val matrix = Matrix()
+            with(matrix) {
+                // 计算上述两个比率的差异
+                val scale1 = foregroundRatio / backgroundRatio
+                // 水平竖直移动
+                val dx = foregroundOffset.x / scale1 / backgroundRatio
+                val dy = foregroundOffset.y / scale1 / backgroundRatio
+                setTranslate(dx, dy)
+
+                // 是调整编辑页面和实际位图的大小差异用的
+                postScale(scale1, scale1)
+
+                // 计算“调整编辑页面和实际位图的大小差异”后的中心点
+                val centerX = ((foregroundBitmap.width + 2 * dx) / 2f) * scale1
+                val centerY = ((foregroundBitmap.height + 2 * dy) / 2f) * scale1
+                // 是用户主动缩放的大小
+                postScale(foregroundScale, foregroundScale, centerX, centerY)
+
+                // 由于上一行就是在中心点进行缩放的，因此缩放后，图像的中心点没变，下面旋转继续用这个中心点
+                postRotate(foregroundRotation, centerX, centerY)
+            }
+            Canvas(underlayBitmap).drawBitmap(
+                foregroundBitmap,
+                matrix,
+                Paint(Paint.FILTER_BITMAP_FLAG).apply { isAntiAlias = true }
+            )
             emitBaseData(BaseData<Bitmap>().apply {
                 code = 0
-                data = resultBitmap
+                data = underlayBitmap
             })
         }
     }
@@ -136,13 +104,14 @@ class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
                     }.addOnFailureListener { e -> cont.resumeWithException(e) }
             })
         }.map { segmentationMask ->
-            val foregroundBitmap = appContext.contentResolver.openInputStream(foregroundUri)!!.use {
-                val origin = BitmapFactory.decodeStream(it)
-                origin.copy(origin.config, true).apply {
-                    setHasAlpha(true)
-                    origin.recycle()
+            val foregroundBitmap =
+                appContext.contentResolver.openInputStream(foregroundUri)!!.use {
+                    val origin = BitmapFactory.decodeStream(it)
+                    origin.copy(origin.config, true).apply {
+                        setHasAlpha(true)
+                        origin.recycle()
+                    }
                 }
-            }
 
             val mask = segmentationMask.buffer
             val maskWidth = segmentationMask.width

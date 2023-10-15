@@ -39,7 +39,7 @@ fun RaysDialog(
         }
         RaysLottieAnimation(
             modifier = Modifier.size(48.dp),
-            resId = res.random()
+            resId = remember { res.random() }
         )
     },
     title: @Composable (() -> Unit)? = null,

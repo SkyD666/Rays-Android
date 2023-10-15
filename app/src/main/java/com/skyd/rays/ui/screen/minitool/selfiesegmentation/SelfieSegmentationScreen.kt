@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCut
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.Card
@@ -65,6 +66,8 @@ import com.skyd.rays.ext.inBottomOrNotLarge
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ui.component.BottomHideExtendedFloatingActionButton
+import com.skyd.rays.ui.component.RaysIconButton
+import com.skyd.rays.ui.component.RaysIconButtonStyle
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysOutlinedCard
 import com.skyd.rays.ui.component.RaysTopBar
@@ -132,8 +135,9 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
                     modifier = Modifier.fillMaxWidth(if (isCompact) 1f else 0.5f),
                     selfieUri = selfieUri,
                     backgroundUri = backgroundUri,
-                    onSelectStyleImage = { pickSelfieLauncher.launch("image/*") },
-                    onSelectContentImage = { pickBackgroundLauncher.launch("image/*") },
+                    onSelectSelfieImage = { pickSelfieLauncher.launch("image/*") },
+                    onSelectBackgroundImage = { pickBackgroundLauncher.launch("image/*") },
+                    onRemoveBackgroundImage = { backgroundUri = null }
                 )
                 val selfieSegmentationResultUiState = uiState.selfieSegmentationResultUiState
                 if (selfieSegmentationResultUiState is SelfieSegmentationResultUiState.Success) {
@@ -220,7 +224,6 @@ private fun ResultArea(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
-//            .height(IntrinsicSize.Min)
             .width(IntrinsicSize.Min),
         onClick = {
             onExport(
@@ -253,7 +256,7 @@ private fun ResultArea(
                         rotationZ = rotation,
                     )
                     .pointerInput(Unit) {
-                        detectTransformGestures { centroid, pan, zoom, r ->
+                        detectTransformGestures { _, pan, zoom, r ->
                             rotation += r
                             scale *= zoom
 
@@ -288,8 +291,9 @@ private fun InputArea(
     modifier: Modifier = Modifier,
     selfieUri: Uri?,
     backgroundUri: Uri?,
-    onSelectStyleImage: () -> Unit,
-    onSelectContentImage: () -> Unit,
+    onSelectSelfieImage: () -> Unit,
+    onSelectBackgroundImage: () -> Unit,
+    onRemoveBackgroundImage: () -> Unit,
 ) {
     Column(
         modifier = modifier.padding(16.dp),
@@ -302,7 +306,7 @@ private fun InputArea(
                 hintText = stringResource(R.string.selfie_segmentation_screen_select_selfie_image),
                 shape = CurlyCornerShape(amp = 5f, count = 12),
                 imageUri = selfieUri,
-                onSelectImage = onSelectStyleImage,
+                onSelectImage = onSelectSelfieImage,
             )
             Icon(
                 modifier = Modifier.padding(10.dp),
@@ -315,7 +319,8 @@ private fun InputArea(
                 hintText = stringResource(R.string.selfie_segmentation_screen_select_background_image),
                 shape = CloverShape,
                 imageUri = backgroundUri,
-                onSelectImage = onSelectContentImage,
+                onRemoveClick = onRemoveBackgroundImage,
+                onSelectImage = onSelectBackgroundImage,
             )
         }
     }
@@ -328,6 +333,7 @@ private fun InputItem(
     hintText: String,
     shape: Shape,
     imageUri: Uri?,
+    onRemoveClick: (() -> Unit)? = null,
     onSelectImage: () -> Unit
 ) {
     RaysOutlinedCard(modifier = modifier, onClick = onSelectImage) {
@@ -370,21 +376,31 @@ private fun InputItem(
             visible = imageUri != null,
             modifier = Modifier.clickable(onClick = onSelectImage)
         ) {
-            Column {
-                RaysImage(
-                    model = imageUri,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 120.dp),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.CenterHorizontally),
-                    text = title,
-                )
+            Box {
+                Column {
+                    RaysImage(
+                        model = imageUri,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 120.dp),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .align(Alignment.CenterHorizontally),
+                        text = title,
+                    )
+                }
+                if (onRemoveClick != null) {
+                    RaysIconButton(
+                        modifier = Modifier.align(Alignment.TopEnd),
+                        onClick = onRemoveClick,
+                        imageVector = Icons.Default.Close,
+                        style = RaysIconButtonStyle.Filled,
+                    )
+                }
             }
         }
     }
