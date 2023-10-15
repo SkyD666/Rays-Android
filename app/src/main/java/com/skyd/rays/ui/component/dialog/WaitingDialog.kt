@@ -35,7 +35,13 @@ fun WaitingDialog(
             visible = visible,
             title = title,
             text = if (msg == null) null else {
-                { Text(text = msg) }
+                {
+                    Text(
+                        text = msg,
+                        style = MaterialTheme.typography.labelLarge,
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
         )
     } else {

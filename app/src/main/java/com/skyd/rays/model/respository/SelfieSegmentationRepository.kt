@@ -3,9 +3,11 @@ package com.skyd.rays.model.respository
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.graphics.Paint
-import android.graphics.RectF
 import android.net.Uri
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.IntSize
 import androidx.core.graphics.get
 import androidx.core.graphics.set
 import com.google.mlkit.vision.common.InputImage
@@ -28,7 +30,12 @@ class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
     suspend fun requestExport(
         foregroundBitmap: Bitmap,
         backgroundUri: Uri?,
-        foregroundRect: RectF,
+        backgroundSize: IntSize,
+        foregroundScale: Float,
+        foregroundOffset: Offset,
+        foregroundRotation: Float,
+        foregroundSize: IntSize,
+        borderSize: IntSize,
     ): Flow<BaseData<Bitmap>> {
         return flow {
             val resultBitmap: Bitmap = if (backgroundUri != null) {
@@ -41,18 +48,73 @@ class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
                         }
                     }
 
-                val paint = Paint(Paint.FILTER_BITMAP_FLAG)
-                val result = Canvas(underlayBitmap)
-                foregroundRect.set(
-                    foregroundRect.left * underlayBitmap.width,
-                    foregroundRect.top * underlayBitmap.height,
-                    foregroundRect.right * underlayBitmap.width,
-                    foregroundRect.bottom * underlayBitmap.height,
+                val matrix = Matrix()
+                with(matrix) {
+                    // 在Compose里显示的大小和真实Bitmap大小的比率
+                    val backgroundRatio = backgroundSize.width.toFloat() / underlayBitmap.width
+                    val foregroundRatio = foregroundSize.width.toFloat() / foregroundBitmap.width
+
+                    // 计算上述两个比率的差异
+                    val scale1 = foregroundRatio / backgroundRatio
+                    // 水平竖直移动
+                    val dx = foregroundOffset.x / scale1 / backgroundRatio
+                    val dy = foregroundOffset.y / scale1 / backgroundRatio
+                    setTranslate(dx, dy)
+
+                    // 是调整编辑页面和实际位图的大小差异用的
+                    postScale(scale1, scale1)
+
+                    // 计算“调整编辑页面和实际位图的大小差异”后的中心点
+                    val centerX = ((foregroundBitmap.width + 2 * dx) / 2f) * scale1
+                    val centerY = ((foregroundBitmap.height + 2 * dy) / 2f) * scale1
+                    // 是用户主动缩放的大小
+                    postScale(foregroundScale, foregroundScale, centerX, centerY)
+
+                    // 由于上一行就是在中心点进行缩放的，因此缩放后，图像的中心点没变，下面旋转继续用这个中心点
+                    postRotate(foregroundRotation, centerX, centerY)
+                }
+                Canvas(underlayBitmap).drawBitmap(
+                    foregroundBitmap,
+                    matrix,
+                    Paint(Paint.FILTER_BITMAP_FLAG).apply { isAntiAlias = true }
                 )
-                result.drawBitmap(foregroundBitmap, null, foregroundRect, paint)
                 underlayBitmap
             } else {
-                foregroundBitmap
+                val matrix = Matrix()
+                with(matrix) {
+                    // 在Compose里显示的大小和真实Bitmap大小的比率
+                    val foregroundRatio = foregroundSize.width.toFloat() / foregroundBitmap.width
+
+                    // 计算上述两个比率的差异
+                    val scale1 = foregroundRatio
+                    // 水平竖直移动
+                    val dx = foregroundOffset.x / scale1
+                    val dy = foregroundOffset.y / scale1
+                    setTranslate(dx, dy)
+
+                    // 是调整编辑页面和实际位图的大小差异用的
+                    postScale(scale1, scale1)
+
+                    // 计算“调整编辑页面和实际位图的大小差异”后的中心点
+                    val centerX = ((foregroundBitmap.width + 2 * dx) / 2f) * scale1
+                    val centerY = ((foregroundBitmap.height + 2 * dy) / 2f) * scale1
+                    // 是用户主动缩放的大小
+                    postScale(foregroundScale, foregroundScale, centerX, centerY)
+
+                    // 由于上一行就是在中心点进行缩放的，因此缩放后，图像的中心点没变，下面旋转继续用这个中心点
+                    postRotate(foregroundRotation, centerX, centerY)
+                }
+                val underlayBitmap = Bitmap.createBitmap(
+                    borderSize.width,
+                    borderSize.height,
+                    Bitmap.Config.ARGB_8888,
+                )
+                Canvas(underlayBitmap).drawBitmap(
+                    foregroundBitmap,
+                    matrix,
+                    Paint(Paint.FILTER_BITMAP_FLAG).apply { isAntiAlias = true }
+                )
+                underlayBitmap
             }
             emitBaseData(BaseData<Bitmap>().apply {
                 code = 0

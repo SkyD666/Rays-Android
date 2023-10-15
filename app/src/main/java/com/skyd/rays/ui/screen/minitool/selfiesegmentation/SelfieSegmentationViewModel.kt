@@ -34,7 +34,12 @@ class SelfieSegmentationViewModel @Inject constructor(private var selfieSegmenta
             selfieSegmentationRepo.requestExport(
                 foregroundBitmap = intent.foregroundBitmap,
                 backgroundUri = intent.backgroundUri,
-                foregroundRect = intent.foregroundRect
+                backgroundSize = intent.backgroundSize,
+                foregroundScale = intent.foregroundScale,
+                foregroundOffset = intent.foregroundOffset,
+                foregroundRotation = intent.foregroundRotation,
+                foregroundSize = intent.foregroundSize,
+                borderSize = intent.borderSize,
             ).mapToUIChange { data ->
                 SelfieSegmentationEvent(exportUiEvent = ExportUiEvent.Success(data))
             }.defaultFinally()

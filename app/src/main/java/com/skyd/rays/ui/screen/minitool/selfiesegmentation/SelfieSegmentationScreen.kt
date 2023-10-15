@@ -1,14 +1,13 @@
 package com.skyd.rays.ui.screen.minitool.selfiesegmentation
 
 import android.graphics.Bitmap
-import android.graphics.RectF
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -47,16 +45,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.boundsInParent
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -75,7 +73,6 @@ import com.skyd.rays.ui.component.shape.CloverShape
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.sendSticker
-import kotlin.math.roundToInt
 
 const val SELFIE_SEGMENTATION_SCREEN_ROUTE = "selfieSegmentationScreen"
 
@@ -143,12 +140,17 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
                     ResultArea(
                         bitmap = selfieSegmentationResultUiState.image,
                         backgroundUri = backgroundUri,
-                        onExport = {
+                        onExport = { scale, offset, rotation, foregroundSize, backgroundSize, borderSize ->
                             viewModel.sendUiIntent(
                                 SelfieSegmentationIntent.Export(
                                     foregroundBitmap = selfieSegmentationResultUiState.image,
                                     backgroundUri = backgroundUri,
-                                    foregroundRect = it,
+                                    backgroundSize = backgroundSize,
+                                    foregroundScale = scale,
+                                    foregroundOffset = offset,
+                                    foregroundRotation = rotation,
+                                    foregroundSize = foregroundSize,
+                                    borderSize = borderSize,
                                 )
                             )
                         },
@@ -193,13 +195,27 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
 }
 
 @Composable
-private fun ResultArea(bitmap: Bitmap, backgroundUri: Uri?, onExport: (RectF) -> Unit) {
-    var componentRect by remember { mutableStateOf(RectF()) }
-    var parentSize by remember { mutableStateOf(IntSize.Zero) }
+private fun ResultArea(
+    bitmap: Bitmap,
+    backgroundUri: Uri?,
+    onExport: (
+        scale: Float,
+        offset: Offset,
+        rotation: Float,
+        foregroundSize: IntSize,
+        backgroundSize: IntSize,
+        borderSize: IntSize,
+    ) -> Unit
+) {
+    var borderSize by remember { mutableStateOf(IntSize.Zero) }
+    var backgroundSize by remember { mutableStateOf(IntSize.Zero) }
 
     // drag Selfie的位置
-    var offsetX by remember { mutableFloatStateOf(0f) }
-    var offsetY by remember { mutableFloatStateOf(0f) }
+    var foregroundSize by remember { mutableStateOf(IntSize.Zero) }
+    var scale by remember { mutableFloatStateOf(1f) }
+    var rotation by remember { mutableFloatStateOf(0f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+    var matrix by remember { mutableStateOf(Matrix()) }
     Card(
         modifier = Modifier
             .padding(16.dp)
@@ -207,20 +223,21 @@ private fun ResultArea(bitmap: Bitmap, backgroundUri: Uri?, onExport: (RectF) ->
 //            .height(IntrinsicSize.Min)
             .width(IntrinsicSize.Min),
         onClick = {
-            componentRect.set(
-                (componentRect.left / parentSize.width),
-                (componentRect.top / parentSize.height),
-                (componentRect.right / parentSize.width),
-                (componentRect.bottom / parentSize.height)
+            onExport(
+                scale,
+                offset,
+                rotation,
+                foregroundSize,
+                backgroundSize,
+                borderSize,
             )
-            onExport(componentRect)
         },
     ) {
-        Box {
+        Box(modifier = Modifier.onSizeChanged { borderSize = it }) {
             RaysImage(
                 model = backgroundUri,
                 modifier = Modifier
-                    .onSizeChanged { parentSize = it }
+                    .onSizeChanged { backgroundSize = it }
                     .fillMaxWidth(),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
@@ -228,25 +245,37 @@ private fun ResultArea(bitmap: Bitmap, backgroundUri: Uri?, onExport: (RectF) ->
             RaysImage(
                 model = bitmap,
                 modifier = Modifier
-                    .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+                    .graphicsLayer(
+                        translationX = offset.x,
+                        translationY = offset.y,
+                        scaleX = scale,
+                        scaleY = scale,
+                        rotationZ = rotation,
+                    )
                     .pointerInput(Unit) {
-                        detectDragGestures { change, dragAmount ->
-                            change.consume()
-                            offsetX += dragAmount.x
-                            offsetY += dragAmount.y
-                        }
-                    }
-                    .onGloballyPositioned {
-                        componentRect = run {
-                            val boundsInParent = it.boundsInParent()
-                            RectF(
-                                boundsInParent.left,
-                                boundsInParent.top,
-                                boundsInParent.right,
-                                boundsInParent.bottom,
+                        detectTransformGestures { centroid, pan, zoom, r ->
+                            rotation += r
+                            scale *= zoom
+
+                            // ------------- 下面是矫正正确的偏移Offset
+                            // 对矩阵先这样，再那样那样，现在不用担心顺序了，矩阵的rotateZ()是原地打转的
+                            // 想让它围着某点打转可以用 rotationMatrix(degrees , px , py)创建一个这样的矩阵
+                            // 这三者必须都用上，最终才能得到贴合手指移动的正确结果
+                            matrix.translate(pan.x, pan.y)
+                            matrix.rotateZ(r)
+                            matrix.scale(zoom, zoom)
+
+                            // 把修改后的matrix保存起来以继承状态啊
+                            matrix = Matrix(matrix.values)
+
+                            // 新的offset就可以通过矩阵计算得到正确的值了
+                            offset = Offset(
+                                matrix.values[Matrix.TranslateX],
+                                matrix.values[Matrix.TranslateY]
                             )
                         }
-                    },
+                    }
+                    .onSizeChanged { foregroundSize = it },
                 contentDescription = null,
                 contentScale = ContentScale.Inside,
             )
