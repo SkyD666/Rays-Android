@@ -259,6 +259,7 @@
     <string name="selfie_segmentation_screen_background">Background</string>
     <string name="selfie_segmentation_screen_select_selfie_image">Select a selfie image</string>
     <string name="selfie_segmentation_screen_select_background_image">Select a background image</string>
+    <string name="selfie_segmentation_screen_reset_selfie_transformations">Reset selfie</string>
     <string name="api_screen_name">API (Experimental)</string>
     <string name="api_grant_screen_name">API Grant</string>
     <string name="setting_screen_api_description">Application Programming Interface</string>

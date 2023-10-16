@@ -254,6 +254,7 @@
     <string name="selfie_segmentation_screen_background">背景</string>
     <string name="selfie_segmentation_screen_select_selfie_image">选择自拍照</string>
     <string name="selfie_segmentation_screen_select_background_image">选择背景</string>
+    <string name="selfie_segmentation_screen_reset_selfie_transformations">重置自拍照</string>
     <string name="api_screen_name">API（实验性）</string>
     <string name="api_grant_screen_name">API 授权</string>
     <string name="setting_screen_api_description">对外开放接口</string>

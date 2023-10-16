@@ -5,6 +5,8 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -27,6 +29,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCut
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -199,6 +202,15 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
 }
 
 @Composable
+private fun ResetArea(onResetSelfie: () -> Unit) {
+    Row(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Button(modifier = Modifier.weight(1f), onClick = onResetSelfie) {
+            Text(text = stringResource(R.string.selfie_segmentation_screen_reset_selfie_transformations))
+        }
+    }
+}
+
+@Composable
 private fun ResultArea(
     bitmap: Bitmap,
     backgroundUri: Uri?,
@@ -220,6 +232,33 @@ private fun ResultArea(
     var rotation by remember { mutableFloatStateOf(0f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
     var matrix by remember { mutableStateOf(Matrix()) }
+
+    var useAnimate by remember { mutableStateOf(false) }
+    val animateFinishedListener: (Any) -> Unit = { useAnimate = false }
+    val scaleAnimate: Float by animateFloatAsState(
+        targetValue = scale,
+        label = "scaleAnimate",
+        finishedListener = animateFinishedListener
+    )
+    val rotationAnimate: Float by animateFloatAsState(
+        targetValue = rotation,
+        label = "rotationAnimate",
+        finishedListener = animateFinishedListener
+    )
+    val offsetAnimate: Offset by animateOffsetAsState(
+        targetValue = offset,
+        label = "offsetAnimate",
+        finishedListener = animateFinishedListener
+    )
+
+    ResetArea(onResetSelfie = {
+        useAnimate = true
+        scale = 1f
+        rotation = 0f
+        offset = Offset.Zero
+        matrix.reset()
+    })
+
     Card(
         modifier = Modifier
             .padding(16.dp)
@@ -248,13 +287,21 @@ private fun ResultArea(
             RaysImage(
                 model = bitmap,
                 modifier = Modifier
-                    .graphicsLayer(
-                        translationX = offset.x,
-                        translationY = offset.y,
-                        scaleX = scale,
-                        scaleY = scale,
-                        rotationZ = rotation,
-                    )
+                    .graphicsLayer {
+                        if (useAnimate) {
+                            translationX = offsetAnimate.x
+                            translationY = offsetAnimate.y
+                            scaleX = scaleAnimate
+                            scaleY = scaleAnimate
+                            rotationZ = rotationAnimate
+                        } else {
+                            translationX = offset.x
+                            translationY = offset.y
+                            scaleX = scale
+                            scaleY = scale
+                            rotationZ = rotation
+                        }
+                    }
                     .pointerInput(Unit) {
                         detectTransformGestures { _, pan, zoom, r ->
                             rotation += r
