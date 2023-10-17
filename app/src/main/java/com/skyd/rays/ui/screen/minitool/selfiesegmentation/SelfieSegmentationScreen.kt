@@ -251,84 +251,86 @@ private fun ResultArea(
         finishedListener = animateFinishedListener
     )
 
-    ResetArea(onResetSelfie = {
-        useAnimate = true
-        scale = 1f
-        rotation = 0f
-        offset = Offset.Zero
-        matrix.reset()
-    })
+    Column {
+        ResetArea(onResetSelfie = {
+            useAnimate = true
+            scale = 1f
+            rotation = 0f
+            offset = Offset.Zero
+            matrix.reset()
+        })
 
-    Card(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .width(IntrinsicSize.Min),
-        onClick = {
-            onExport(
-                scale,
-                offset,
-                rotation,
-                foregroundSize,
-                backgroundSize,
-                borderSize,
-            )
-        },
-    ) {
-        Box(modifier = Modifier.onSizeChanged { borderSize = it }) {
-            RaysImage(
-                model = backgroundUri,
-                modifier = Modifier
-                    .onSizeChanged { backgroundSize = it }
-                    .fillMaxWidth(),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
-            )
-            RaysImage(
-                model = bitmap,
-                modifier = Modifier
-                    .graphicsLayer {
-                        if (useAnimate) {
-                            translationX = offsetAnimate.x
-                            translationY = offsetAnimate.y
-                            scaleX = scaleAnimate
-                            scaleY = scaleAnimate
-                            rotationZ = rotationAnimate
-                        } else {
-                            translationX = offset.x
-                            translationY = offset.y
-                            scaleX = scale
-                            scaleY = scale
-                            rotationZ = rotation
+        Card(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .width(IntrinsicSize.Min),
+            onClick = {
+                onExport(
+                    scale,
+                    offset,
+                    rotation,
+                    foregroundSize,
+                    backgroundSize,
+                    borderSize,
+                )
+            },
+        ) {
+            Box(modifier = Modifier.onSizeChanged { borderSize = it }) {
+                RaysImage(
+                    model = backgroundUri,
+                    modifier = Modifier
+                        .onSizeChanged { backgroundSize = it }
+                        .fillMaxWidth(),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
+                )
+                RaysImage(
+                    model = bitmap,
+                    modifier = Modifier
+                        .graphicsLayer {
+                            if (useAnimate) {
+                                translationX = offsetAnimate.x
+                                translationY = offsetAnimate.y
+                                scaleX = scaleAnimate
+                                scaleY = scaleAnimate
+                                rotationZ = rotationAnimate
+                            } else {
+                                translationX = offset.x
+                                translationY = offset.y
+                                scaleX = scale
+                                scaleY = scale
+                                rotationZ = rotation
+                            }
                         }
-                    }
-                    .pointerInput(Unit) {
-                        detectTransformGestures { _, pan, zoom, r ->
-                            rotation += r
-                            scale *= zoom
+                        .pointerInput(Unit) {
+                            detectTransformGestures { _, pan, zoom, r ->
+                                rotation += r
+                                scale *= zoom
 
-                            // ------------- 下面是矫正正确的偏移Offset
-                            // 对矩阵先这样，再那样那样，现在不用担心顺序了，矩阵的rotateZ()是原地打转的
-                            // 想让它围着某点打转可以用 rotationMatrix(degrees , px , py)创建一个这样的矩阵
-                            // 这三者必须都用上，最终才能得到贴合手指移动的正确结果
-                            matrix.translate(pan.x, pan.y)
-                            matrix.rotateZ(r)
-                            matrix.scale(zoom, zoom)
+                                // ------------- 下面是矫正正确的偏移Offset
+                                // 对矩阵先这样，再那样那样，现在不用担心顺序了，矩阵的rotateZ()是原地打转的
+                                // 想让它围着某点打转可以用 rotationMatrix(degrees , px , py)创建一个这样的矩阵
+                                // 这三者必须都用上，最终才能得到贴合手指移动的正确结果
+                                matrix.translate(pan.x, pan.y)
+                                matrix.rotateZ(r)
+                                matrix.scale(zoom, zoom)
 
-                            // 把修改后的matrix保存起来以继承状态啊
-                            matrix = Matrix(matrix.values)
+                                // 把修改后的matrix保存起来以继承状态啊
+                                matrix = Matrix(matrix.values)
 
-                            // 新的offset就可以通过矩阵计算得到正确的值了
-                            offset = Offset(
-                                matrix.values[Matrix.TranslateX],
-                                matrix.values[Matrix.TranslateY]
-                            )
+                                // 新的offset就可以通过矩阵计算得到正确的值了
+                                offset = Offset(
+                                    matrix.values[Matrix.TranslateX],
+                                    matrix.values[Matrix.TranslateY]
+                                )
+                            }
                         }
-                    }
-                    .onSizeChanged { foregroundSize = it },
-                contentDescription = null,
-                contentScale = ContentScale.Inside,
-            )
+                        .onSizeChanged { foregroundSize = it },
+                    contentDescription = null,
+                    contentScale = ContentScale.Inside,
+                )
+            }
         }
     }
 }
