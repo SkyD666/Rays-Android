@@ -18,11 +18,11 @@ sealed class StickerDetailUiState {
 }
 
 sealed class SearchResultUiState {
-    object Init : SearchResultUiState()
+    data object Init : SearchResultUiState()
     data class Success(val stickerWithTagsList: List<StickerWithTags>) : SearchResultUiState()
 }
 
 sealed class PopularTagsUiState {
-    object Init : PopularTagsUiState()
+    data object Init : PopularTagsUiState()
     data class Success(val popularTags: List<Pair<String, Float>>) : PopularTagsUiState()
 }

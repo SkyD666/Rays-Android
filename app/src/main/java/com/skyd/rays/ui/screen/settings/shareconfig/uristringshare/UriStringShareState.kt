@@ -8,6 +8,6 @@ data class UriStringShareState(
 ) : IUiState
 
 sealed class UriStringShareResultUiState {
-    object Init : UriStringShareResultUiState()
+    data object Init : UriStringShareResultUiState()
     data class Success(val data: List<UriStringShareDataBean>) : UriStringShareResultUiState()
 }

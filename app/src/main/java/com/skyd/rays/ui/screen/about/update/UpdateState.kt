@@ -9,6 +9,6 @@ data class UpdateState(
 
 sealed class UpdateUiState {
     data class OpenNewerDialog(val data: UpdateBean) : UpdateUiState()
-    object OpenNoUpdateDialog : UpdateUiState()
-    object Init : UpdateUiState()
+    data object OpenNoUpdateDialog : UpdateUiState()
+    data object Init : UpdateUiState()
 }

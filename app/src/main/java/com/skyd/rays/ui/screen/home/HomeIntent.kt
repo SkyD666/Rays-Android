@@ -23,5 +23,5 @@ sealed class HomeIntent : IUiIntent {
         override val showLoading: Boolean = true
     }
 
-    object GetPopularTagsList : HomeIntent()
+    data object GetPopularTagsList : HomeIntent()
 }

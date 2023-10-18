@@ -8,6 +8,6 @@ data class StyleTransferState(
 ) : IUiState
 
 sealed class StyleTransferResultUiState {
-    object Init : StyleTransferResultUiState()
+    data object Init : StyleTransferResultUiState()
     data class Success(val image: Bitmap) : StyleTransferResultUiState()
 }

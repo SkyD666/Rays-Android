@@ -7,6 +7,6 @@ data class SearchConfigState(
 ) : IUiState
 
 sealed class SearchDomainResultUiState {
-    object Init : SearchDomainResultUiState()
+    data object Init : SearchDomainResultUiState()
     data class Success(val searchDomainMap: Map<String, Boolean>) : SearchDomainResultUiState()
 }

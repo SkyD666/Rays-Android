@@ -8,6 +8,6 @@ data class ClassificationModelState(
 ) : IUiState
 
 sealed class GetModelsUiState {
-    object Init : GetModelsUiState()
+    data object Init : GetModelsUiState()
     data class Success(val models: List<ModelBean>) : GetModelsUiState()
 }

@@ -35,7 +35,7 @@ sealed interface HandleImportedStickerProxy : Parcelable {
 
     // 冲突则跳过
     @Parcelize
-    object SkipProxy : HandleImportedStickerProxy {
+    data object SkipProxy : HandleImportedStickerProxy {
         override fun handle(
             stickerDao: StickerDao,
             tagDao: TagDao,
@@ -64,7 +64,7 @@ sealed interface HandleImportedStickerProxy : Parcelable {
 
     // 冲突则覆盖
     @Parcelize
-    object ReplaceProxy : HandleImportedStickerProxy {
+    data object ReplaceProxy : HandleImportedStickerProxy {
         override fun handle(
             stickerDao: StickerDao,
             tagDao: TagDao,

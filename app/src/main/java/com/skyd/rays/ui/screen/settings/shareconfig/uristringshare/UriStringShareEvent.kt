@@ -7,6 +7,6 @@ class UriStringShareEvent(
 ) : IUiEvent
 
 sealed class AddPackageNameUiEvent {
-    object Success : AddPackageNameUiEvent()
+    data object Success : AddPackageNameUiEvent()
     class Failed(val msg: String) : AddPackageNameUiEvent()
 }

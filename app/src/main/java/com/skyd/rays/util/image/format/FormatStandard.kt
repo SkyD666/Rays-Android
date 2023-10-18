@@ -34,7 +34,7 @@ sealed class FormatStandard(
         return check(buffer) to buffer
     }
 
-    object PngFormat : FormatStandard(
+    data object PngFormat : FormatStandard(
         format = ImageFormat.PNG,
         requiredByteArraySize = 8,
     ) {
@@ -53,7 +53,7 @@ sealed class FormatStandard(
         )
     }
 
-    object JpgFormat : FormatStandard(
+    data object JpgFormat : FormatStandard(
         format = ImageFormat.JPG,
         requiredByteArraySize = 3,
     ) {
@@ -68,7 +68,7 @@ sealed class FormatStandard(
     }
 
 
-    object GifFormat : FormatStandard(
+    data object GifFormat : FormatStandard(
         format = ImageFormat.GIF,
         requiredByteArraySize = 6,
     ) {
@@ -97,7 +97,7 @@ sealed class FormatStandard(
         )
     }
 
-    object BmpFormat : FormatStandard(
+    data object BmpFormat : FormatStandard(
         format = ImageFormat.BMP,
         requiredByteArraySize = 28,
     ) {
@@ -144,7 +144,7 @@ sealed class FormatStandard(
         }
     }
 
-    object WebpFormat : FormatStandard(
+    data object WebpFormat : FormatStandard(
         format = ImageFormat.WEBP,
         requiredByteArraySize = 12,
     ) {

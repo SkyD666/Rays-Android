@@ -11,5 +11,5 @@ sealed class ClassificationModelIntent : IUiIntent {
 
     data class ImportModel(val uri: Uri) : ClassificationModelIntent()
 
-    object GetModels : ClassificationModelIntent()
+    data object GetModels : ClassificationModelIntent()
 }

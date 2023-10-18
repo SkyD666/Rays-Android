@@ -8,6 +8,6 @@ data class ApiGrantState(
 ) : IUiState
 
 sealed class ApiGrantResultUiState {
-    object Init : ApiGrantResultUiState()
+    data object Init : ApiGrantResultUiState()
     data class Success(val data: List<ApiGrantDataBean>) : ApiGrantResultUiState()
 }

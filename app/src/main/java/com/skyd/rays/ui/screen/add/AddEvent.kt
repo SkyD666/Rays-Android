@@ -11,12 +11,12 @@ class AddEvent(
 
 sealed class GetStickersWithTagsUiEvent {
     class Success(val stickerWithTags: StickerWithTags) : GetStickersWithTagsUiEvent()
-    object Init : GetStickersWithTagsUiEvent()
-    object Failed : GetStickersWithTagsUiEvent()
+    data object Init : GetStickersWithTagsUiEvent()
+    data object Failed : GetStickersWithTagsUiEvent()
 }
 
 sealed class AddStickersResultUiEvent {
-    object Duplicate : AddStickersResultUiEvent()
+    data object Duplicate : AddStickersResultUiEvent()
     class Success(val stickerUuid: String) : AddStickersResultUiEvent()
 }
 
