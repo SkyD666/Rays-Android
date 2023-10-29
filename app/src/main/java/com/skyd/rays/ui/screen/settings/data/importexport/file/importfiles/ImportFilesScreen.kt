@@ -3,6 +3,7 @@ package com.skyd.rays.ui.screen.settings.data.importexport.file.importfiles
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,7 +25,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,13 +42,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.base.LoadUiIntent
-import com.skyd.rays.ext.inBottomOrNotLarge
+import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ImportExportResultInfo
 import com.skyd.rays.model.bean.ImportExportWaitingInfo
 import com.skyd.rays.model.db.dao.sticker.HandleImportedStickerProxy
 import com.skyd.rays.ui.component.BaseSettingsItem
-import com.skyd.rays.ui.component.BottomHideExtendedFloatingActionButton
+import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.TipSettingsItem
@@ -81,11 +81,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
         }
     }
     val lazyListState = rememberLazyListState()
-    val fabVisibility by remember {
-        derivedStateOf {
-            lazyListState.inBottomOrNotLarge && fileUri.toString().isNotBlank()
-        }
-    }
+    var fabHeight by remember { mutableStateOf(0.dp) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -97,8 +93,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
             )
         },
         floatingActionButton = {
-            BottomHideExtendedFloatingActionButton(
-                visible = fabVisibility,
+            RaysExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.import_files_screen_import)) },
                 icon = { Icon(imageVector = Icons.Default.Done, contentDescription = null) },
                 onClick = {
@@ -109,6 +104,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
                         )
                     )
                 },
+                onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
                 contentDescription = stringResource(R.string.import_files_screen_import)
             )
         },
@@ -117,7 +113,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentPadding = paddingValues,
+            contentPadding = paddingValues + PaddingValues(bottom = fabHeight),
             state = lazyListState,
         ) {
             item {

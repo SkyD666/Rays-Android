@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -30,17 +31,20 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.ext.inBottomOrNotLarge
+import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ImportExportResultInfo
 import com.skyd.rays.model.bean.ImportExportWaitingInfo
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.BottomHideExtendedFloatingActionButton
+import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.dialog.RaysDialog
@@ -73,11 +77,7 @@ fun ExportFilesScreen(viewModel: ExportFilesViewModel = hiltViewModel()) {
         }
     }
     val lazyListState = rememberLazyListState()
-    val fabVisibility by remember {
-        derivedStateOf {
-            lazyListState.inBottomOrNotLarge && exportDir.toString().isNotBlank()
-        }
-    }
+    var fabHeight by remember { mutableStateOf(0.dp) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -89,11 +89,11 @@ fun ExportFilesScreen(viewModel: ExportFilesViewModel = hiltViewModel()) {
             )
         },
         floatingActionButton = {
-            BottomHideExtendedFloatingActionButton(
-                visible = fabVisibility,
+            RaysExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.export_files_screen_export)) },
                 icon = { Icon(imageVector = Icons.Default.Done, contentDescription = null) },
                 onClick = { viewModel.sendUiIntent(ExportFilesIntent.Export(exportDir)) },
+                onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
                 contentDescription = stringResource(R.string.export_files_screen_export)
             )
         },
@@ -102,7 +102,7 @@ fun ExportFilesScreen(viewModel: ExportFilesViewModel = hiltViewModel()) {
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentPadding = paddingValues,
+            contentPadding = paddingValues + PaddingValues(bottom = fabHeight),
             state = lazyListState,
         ) {
             item {

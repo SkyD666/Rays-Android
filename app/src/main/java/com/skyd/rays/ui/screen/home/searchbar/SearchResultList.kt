@@ -92,6 +92,7 @@ fun SearchResultList(
     val searchResultSort = LocalSearchResultSort.current
     val searchResultReverse = LocalSearchResultReverse.current
     val scope = rememberCoroutineScope()
+    var fabHeight by remember { mutableStateOf(0.dp) }
 
     LaunchedEffect(searchResultSort) {
         viewModel.sendUiIntent(HomeIntent.SortStickerWithTagsList(dataList))
@@ -116,6 +117,7 @@ fun SearchResultList(
                 floatingActionButton = {
                     RaysFloatingActionButton(
                         onClick = { scope.launch { state.animateScrollToItem(0) } },
+                        onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
                         contentDescription = stringResource(R.string.home_screen_search_result_list_to_top),
                     ) {
                         Icon(
@@ -130,7 +132,7 @@ fun SearchResultList(
                 LazyVerticalStaggeredGrid(
                     modifier = Modifier.fillMaxSize(),
                     state = state,
-                    contentPadding = paddingValues +
+                    contentPadding = paddingValues + PaddingValues(bottom = fabHeight) +
                             PaddingValues(horizontal = 16.dp) +
                             PaddingValues(bottom = 16.dp),
                     columns = StaggeredGridCells.Fixed(
@@ -177,8 +179,9 @@ fun SearchResultConfigBar(
                     transitionSpec = {
                         (fadeIn(animationSpec = tween(220, delayMillis = 90)) +
                                 slideInVertically(initialOffsetY = { it }))
-                            .togetherWith(fadeOut(animationSpec = tween(90)) +
-                                    slideOutVertically(targetOffsetY = { -it })
+                            .togetherWith(
+                                fadeOut(animationSpec = tween(90)) +
+                                        slideOutVertically(targetOffsetY = { -it })
                             )
                     }
                 ) { targetCount ->

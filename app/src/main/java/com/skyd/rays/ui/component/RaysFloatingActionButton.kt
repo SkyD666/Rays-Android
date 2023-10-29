@@ -22,7 +22,9 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 enum class RaysFloatingActionButtonStyle {
@@ -33,16 +35,27 @@ enum class RaysFloatingActionButtonStyle {
 fun RaysFloatingActionButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    onSizeWithSinglePaddingChanged: ((width: Dp, height: Dp) -> Unit)? = null,
     elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
     style: RaysFloatingActionButtonStyle = RaysFloatingActionButtonStyle.Normal,
     contentDescription: String? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: @Composable RowScope.() -> Unit
 ) {
+    val density = LocalDensity.current
     val floatingActionButton: @Composable (modifier: Modifier) -> Unit = {
+        val newModifier = it.onSizeChanged {
+            with(density) {
+                onSizeWithSinglePaddingChanged?.invoke(
+                    it.width.toDp() + 16.dp,
+                    it.height.toDp() + 16.dp,
+                )
+            }
+        }
+
         when (style) {
             RaysFloatingActionButtonStyle.Normal -> FloatingActionButton(
-                modifier = it,
+                modifier = newModifier,
                 onClick = onClick,
                 elevation = elevation,
                 interactionSource = interactionSource,
@@ -50,7 +63,7 @@ fun RaysFloatingActionButton(
             )
 
             RaysFloatingActionButtonStyle.Extended -> ExtendedFloatingActionButton(
-                modifier = it,
+                modifier = newModifier,
                 onClick = onClick,
                 elevation = elevation,
                 interactionSource = interactionSource,
@@ -58,7 +71,7 @@ fun RaysFloatingActionButton(
             )
 
             RaysFloatingActionButtonStyle.Large -> LargeFloatingActionButton(
-                modifier = it,
+                modifier = newModifier,
                 onClick = onClick,
                 elevation = elevation,
                 interactionSource = interactionSource,
@@ -66,7 +79,7 @@ fun RaysFloatingActionButton(
             )
 
             RaysFloatingActionButtonStyle.Small -> SmallFloatingActionButton(
-                modifier = it,
+                modifier = newModifier,
                 onClick = onClick,
                 elevation = elevation,
                 interactionSource = interactionSource,
@@ -100,15 +113,24 @@ fun RaysExtendedFloatingActionButton(
     icon: @Composable () -> Unit,
     onClick: () -> Unit,
     expanded: Boolean = true,
+    onSizeWithSinglePaddingChanged: ((width: Dp, height: Dp) -> Unit)? = null,
     elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
     contentDescription: String? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
+    val density = LocalDensity.current
     val floatingActionButton: @Composable (modifier: Modifier) -> Unit = {
         ExtendedFloatingActionButton(
             text = text,
             icon = icon,
-            modifier = it,
+            modifier = it.onSizeChanged {
+                with(density) {
+                    onSizeWithSinglePaddingChanged?.invoke(
+                        it.width.toDp() + 16.dp,
+                        it.height.toDp() + 16.dp,
+                    )
+                }
+            },
             onClick = onClick,
             expanded = expanded,
             elevation = elevation,

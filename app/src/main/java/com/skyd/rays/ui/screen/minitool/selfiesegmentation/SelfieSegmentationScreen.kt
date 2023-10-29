@@ -13,6 +13,7 @@ import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +40,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -65,10 +65,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
-import com.skyd.rays.ext.inBottomOrNotLarge
 import com.skyd.rays.ext.isCompact
+import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbar
-import com.skyd.rays.ui.component.BottomHideExtendedFloatingActionButton
+import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysIconButtonStyle
 import com.skyd.rays.ui.component.RaysImage
@@ -100,15 +100,12 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
         ActivityResultContracts.GetContent()
     ) { if (it != null) backgroundUri = it }
     val lazyListState = rememberLazyListState()
-    val fabVisibility by remember {
-        derivedStateOf { lazyListState.inBottomOrNotLarge }
-    }
+    var fabHeight by remember { mutableStateOf(0.dp) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
-            BottomHideExtendedFloatingActionButton(
-                visible = fabVisibility,
+            RaysExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.selfie_segmentation_screen_segment)) },
                 icon = { Icon(imageVector = Icons.Default.ContentCut, contentDescription = null) },
                 onClick = {
@@ -118,12 +115,13 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
                             scope = scope,
                             message = context.getString(R.string.selfie_segmentation_screen_image_not_selected)
                         )
-                        return@BottomHideExtendedFloatingActionButton
+                        return@RaysExtendedFloatingActionButton
                     }
                     viewModel.sendUiIntent(
                         SelfieSegmentationIntent.Segment(foregroundUri = foreground)
                     )
                 },
+                onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
                 contentDescription = stringResource(R.string.selfie_segmentation_screen_segment)
             )
         },
@@ -167,7 +165,7 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
         }
         LazyColumn(
             state = lazyListState,
-            contentPadding = paddingValues,
+            contentPadding = paddingValues + PaddingValues(bottom = fabHeight),
         ) {
             item {
                 if (isCompact) {

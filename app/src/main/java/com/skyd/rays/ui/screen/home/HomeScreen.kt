@@ -47,7 +47,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,6 +64,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -72,15 +72,13 @@ import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.dateTime
-import com.skyd.rays.ext.inBottomOrNotLarge
-import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.ui.component.AnimatedPlaceholder
-import com.skyd.rays.ui.component.BottomHideExtendedFloatingActionButton
+import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysIconButtonStyle
 import com.skyd.rays.ui.component.RaysImage
@@ -114,15 +112,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
     val mainCardScrollState = rememberScrollState()
     val stickerDetailInfoScrollState = rememberScrollState()
-    val fabVisibility by remember {
-        derivedStateOf {
-            !active && if (windowSizeClass.isCompact) {
-                mainCardScrollState.inBottomOrNotLarge
-            } else {
-                stickerDetailInfoScrollState.inBottomOrNotLarge
-            }
-        }
-    }
+    var fabHeight by remember { mutableStateOf(0.dp) }
 
     refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
         value ?: return@apply
@@ -137,8 +127,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
-            BottomHideExtendedFloatingActionButton(
-                visible = fabVisibility,
+            RaysExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.home_screen_add)) },
                 icon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
                 onClick = {
@@ -148,6 +137,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                         isEdit = false,
                     )
                 },
+                onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
                 contentDescription = stringResource(R.string.home_screen_add),
             )
         },
@@ -203,6 +193,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                         MainCard(
                             stickerWithTags = stickerDetailUiState.stickerWithTags,
                             scrollState = mainCardScrollState,
+                            bottomPadding = fabHeight,
                         )
                     }
                 }
@@ -270,6 +261,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 private fun MainCard(
     stickerWithTags: StickerWithTags,
     scrollState: ScrollState = rememberScrollState(),
+    bottomPadding: Dp = 0.dp,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
@@ -294,7 +286,7 @@ private fun MainCard(
         modifier = Modifier
             .verticalScroll(scrollState)
             .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
+            .padding(bottom = bottomPadding + 16.dp)
             .fillMaxWidth()
     ) {
         Column(
