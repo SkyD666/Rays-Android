@@ -5,7 +5,11 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
@@ -98,6 +102,7 @@ import com.skyd.rays.util.stickerUuidToUri
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val navController = LocalNavController.current
+    val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -127,19 +132,25 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
-            RaysExtendedFloatingActionButton(
-                text = { Text(text = stringResource(R.string.home_screen_add)) },
-                icon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
-                onClick = {
-                    openAddScreen(
-                        navController = navController,
-                        stickers = mutableListOf(),
-                        isEdit = false,
-                    )
-                },
-                onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
-                contentDescription = stringResource(R.string.home_screen_add),
-            )
+            AnimatedVisibility(
+                visible = !active,
+                enter = slideInVertically { with(density) { 40.dp.roundToPx() } } + fadeIn(),
+                exit = slideOutVertically { with(density) { 40.dp.roundToPx() } } + fadeOut(),
+            ) {
+                RaysExtendedFloatingActionButton(
+                    text = { Text(text = stringResource(R.string.home_screen_add)) },
+                    icon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
+                    onClick = {
+                        openAddScreen(
+                            navController = navController,
+                            stickers = mutableListOf(),
+                            isEdit = false,
+                        )
+                    },
+                    onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
+                    contentDescription = stringResource(R.string.home_screen_add),
+                )
+            }
         },
         contentWindowInsets = WindowInsets(
             left = ScaffoldDefaults.contentWindowInsets
