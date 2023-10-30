@@ -106,7 +106,7 @@ private fun NavigationBarOrRail(
     }
     val windowSizeClass = LocalWindowSizeClass.current
 
-    if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
+    if (windowSizeClass.isCompact) {
         NavigationBar {
             items.forEachIndexed { index, item ->
                 val selected = currentPage == index

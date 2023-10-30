@@ -43,7 +43,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -136,7 +135,7 @@ fun SearchResultList(
                             PaddingValues(horizontal = 16.dp) +
                             PaddingValues(bottom = 16.dp),
                     columns = StaggeredGridCells.Fixed(
-                        if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) 2 else 4
+                        if (windowSizeClass.isCompact) 2 else 4
                     ),
                     verticalItemSpacing = 12.dp,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)

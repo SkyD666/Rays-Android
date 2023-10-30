@@ -23,8 +23,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SuggestionChip
@@ -161,11 +163,7 @@ fun RaysSearchBar(
                             onClick = { onActiveChange(false) }
                         )
                     } else {
-                        RaysIconButton(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = stringResource(id = R.string.home_screen_open_menu),
-                            onClick = { menuExpanded = true }
-                        )
+                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
                     }
                 },
                 trailingIcon = {
@@ -175,6 +173,20 @@ fun RaysSearchBar(
                                 onQueryChange(QueryPreference.default)
                             }
                         }
+                    } else {
+                        RaysIconButton(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = stringResource(id = R.string.home_screen_open_menu),
+                            onClick = { menuExpanded = true }
+                        )
+                        HomeMenu(
+                            expanded = menuExpanded,
+                            stickerMenuItemEnabled = uiState.stickerDetailUiState is StickerDetailUiState.Success,
+                            onDismissRequest = { menuExpanded = false },
+                            onDeleteClick = { openDeleteWarningDialog = true },
+                            onExportClick = { openExportPathDialog = true },
+                            onStickerInfoClick = { openStickerInfoDialog = true },
+                        )
                     }
                 },
             ) {
@@ -257,14 +269,6 @@ fun RaysSearchBar(
                     }
                 }
             }
-            HomeMenu(
-                expanded = menuExpanded,
-                stickerMenuItemEnabled = uiState.stickerDetailUiState is StickerDetailUiState.Success,
-                onDismissRequest = { menuExpanded = false },
-                onDeleteClick = { openDeleteWarningDialog = true },
-                onExportClick = { openExportPathDialog = true },
-                onStickerInfoClick = { openStickerInfoDialog = true },
-            )
         }
 
         RaysDialog(

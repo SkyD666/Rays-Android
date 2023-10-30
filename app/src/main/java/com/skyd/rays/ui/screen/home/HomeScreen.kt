@@ -48,7 +48,6 @@ import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -76,6 +75,7 @@ import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.dateTime
+import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
@@ -167,8 +167,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 .fillMaxSize()
         ) {
             val stickerDetailUiState = uiState.stickerDetailUiState
-            val showStickerDetailInfo = !active &&
-                    windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact &&
+            val showStickerDetailInfo = !active && !windowSizeClass.isCompact &&
                     stickerDetailUiState is StickerDetailUiState.Success
 
             Column(modifier = Modifier.weight(1f)) {
@@ -204,7 +203,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                         MainCard(
                             stickerWithTags = stickerDetailUiState.stickerWithTags,
                             scrollState = mainCardScrollState,
-                            bottomPadding = fabHeight,
+                            bottomPadding = if (windowSizeClass.isCompact) fabHeight else 0.dp,
                         )
                     }
                 }
@@ -220,7 +219,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth(0.4f)
-                        .padding(end = 16.dp, top = 8.dp, bottom = 16.dp)
+                        .padding(end = 16.dp, top = 8.dp, bottom = 16.dp + fabHeight)
                         .statusBarsPadding()
                 ) {
                     StickerDetailInfo(

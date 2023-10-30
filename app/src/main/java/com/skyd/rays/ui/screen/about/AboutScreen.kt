@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.skyd.rays.R
 import com.skyd.rays.config.GITHUB_REPO
+import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.model.bean.OtherWorksBean
 import com.skyd.rays.ui.component.RaysIconButton
@@ -115,7 +116,7 @@ fun AboutScreen() {
             contentPadding = paddingValues + PaddingValues(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
+            if (windowSizeClass.isCompact) {
                 item {
                     IconArea()
                 }
