@@ -22,7 +22,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    # 设置JDK为17
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 17
@@ -36,32 +35,34 @@ jobs:
         repository: ${{ secrets.SECRET_REPO }}
         token: ${{ secrets.TOKEN }}                     # 连接仓库的Token
         path: secret
-    # 准备secret文件
+    # 准备 secret 文件
     - name: Copy Secret Files
       run: |
         cd secret/Rays-Android
         cp key.jks ../..
         cp secret.gradle ../..
         cp -r assets ../../app/src/main/assets
-    # 清理secret文件
+    # 清理 secret 文件
     - name: Clean Temp Secret Files
       run: |
         rm -rf ./secret
-    # 打包
+    # 构建
     - name: Build with Gradle
-      run: |
-        bash ./gradlew assembleGitHub
-    # 存档打包的文件
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: assembleGitHubRelease
+        gradle-home-cache-cleanup: true
+    # 上传 apk
     - name: Upload Pre-Release Apk
       uses: actions/upload-artifact@v3
       with:
         name: Pre-Release Apk
         path: app/build/outputs/apk/GitHub/release/*.apk
-    # 获取apk文件路径
+    # 获取 apk 路径
     - name: Get Pre-Release Apk File Path
       run: |
         echo "PRE_RELEASE_APK=$(find app/build/outputs/apk/GitHub/release -name '*.apk' -type f | head -1)" >> $GITHUB_ENV
-    # 发送至TG频道
+    # 发送至 Telegram 频道
     - name: Post to Telegram Channel
       if: github.ref == 'refs/heads/master' && contains(github.event.head_commit.message, '[skip_post]') == false
       env:
