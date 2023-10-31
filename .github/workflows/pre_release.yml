@@ -48,10 +48,8 @@ jobs:
         rm -rf ./secret
     # 构建
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: assembleGitHubRelease
-        gradle-home-cache-cleanup: true
+      run: |
+        bash ./gradlew assembleGitHubRelease
     # 上传 apk
     - name: Upload Pre-Release Apk
       uses: actions/upload-artifact@v3
