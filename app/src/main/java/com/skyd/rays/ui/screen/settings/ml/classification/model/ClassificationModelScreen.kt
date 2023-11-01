@@ -1,5 +1,6 @@
 package com.skyd.rays.ui.screen.settings.ml.classification.model
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
@@ -97,7 +98,13 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = paddingValues,
             classificationModelState = uiState,
-            onDelete = { openDeleteWarningDialog = it }
+            onDelete = { openDeleteWarningDialog = it },
+            onImportModel = { uri ->
+                viewModel.sendUiIntent(ClassificationModelIntent.ImportModel(uri))
+            },
+            onSetModel = { model ->
+                viewModel.sendUiIntent(ClassificationModelIntent.SetModel(model))
+            }
         )
 
         loadUiIntent?.also {
@@ -138,7 +145,8 @@ private fun ModelList(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     classificationModelState: ClassificationModelState,
     onDelete: (ModelBean) -> Unit,
-    viewModel: ClassificationModelViewModel = hiltViewModel()
+    onImportModel: (Uri) -> Unit,
+    onSetModel: (ModelBean) -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -150,7 +158,7 @@ private fun ModelList(
         ActivityResultContracts.GetContent()
     ) { uri ->
         if (uri != null) {
-            viewModel.sendUiIntent(ClassificationModelIntent.ImportModel(uri))
+            onImportModel(uri)
         }
     }
     val getModelsUiState = classificationModelState.getModelsUiState
@@ -199,7 +207,7 @@ private fun ModelList(
                 onLongClick = { onDelete(item) },
                 onClick = {
                     if (item.name != classificationModelName) {
-                        viewModel.sendUiIntent(ClassificationModelIntent.SetModel(item))
+                        onSetModel(item)
                     }
                 }
             )

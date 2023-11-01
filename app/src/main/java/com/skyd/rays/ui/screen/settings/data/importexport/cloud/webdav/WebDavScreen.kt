@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CloudDownload
@@ -91,6 +92,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
     var openRecycleBinBottomSheet by rememberSaveable { mutableStateOf(false) }
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
     val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -117,143 +119,100 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             password = secretSharedPreferences().getString("webDavPassword", null).orEmpty()
         }
 
+        val webDavIncompleteInfo = remember {
+            {
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = appContext.getString(R.string.webdav_screen_info_incomplete),
+                        withDismissAction = true
+                    )
+                }
+            }
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentPadding = paddingValues
+            contentPadding = paddingValues,
         ) {
-            item {
-                CategorySettingsItem(
-                    text = stringResource(id = R.string.webdav_screen_service_category)
-                )
-            }
-            item {
-                BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Dns),
-                    text = stringResource(id = R.string.webdav_screen_server),
-                    descriptionText = server.ifBlank {
-                        stringResource(id = R.string.webdav_screen_server_description)
-                    },
-                    onClick = {
-                        inputDialogInfo = Triple(
-                            appContext.getString(R.string.webdav_screen_input_server), server
-                        ) {
-                            openInputDialog = false
-                            WebDavServerPreference.put(
-                                context = context,
-                                scope = scope,
-                                value = if (!it.endsWith("/")) "$it/" else it
+            webDavItem(
+                server = server,
+                account = account,
+                password = password,
+                onServerItemClick = {
+                    inputDialogInfo = Triple(
+                        appContext.getString(R.string.webdav_screen_input_server), server
+                    ) {
+                        openInputDialog = false
+                        WebDavServerPreference.put(
+                            context = context,
+                            scope = scope,
+                            value = if (!it.endsWith("/")) "$it/" else it
+                        )
+                    }
+                    inputDialogIsPassword = false
+                    openInputDialog = true
+                },
+                onAccountItemClick = {
+                    inputDialogInfo = Triple(
+                        appContext.getString(R.string.webdav_screen_input_account), account
+                    ) {
+                        account = it
+                        openInputDialog = false
+                        secretSharedPreferences().editor { putString("webDavAccount", it) }
+                    }
+                    inputDialogIsPassword = false
+                    openInputDialog = true
+                },
+                onPasswordItemClick = {
+                    inputDialogInfo = Triple(
+                        appContext.getString(R.string.webdav_screen_input_password), password
+                    ) {
+                        password = it
+                        openInputDialog = false
+                        secretSharedPreferences().editor { putString("webDavPassword", it) }
+                    }
+                    inputDialogIsPassword = true
+                    openInputDialog = true
+                }
+            )
+            syncItem(
+                onPullItemClick = {
+                    if (checkWebDavInfo(server = server, account = account, password = password)) {
+                        viewModel.sendUiIntent(
+                            WebDavIntent.StartDownload(
+                                website = server, username = account, password = password
                             )
-                        }
-                        inputDialogIsPassword = false
-                        openInputDialog = true
+                        )
+                    } else {
+                        webDavIncompleteInfo()
                     }
-                )
-                BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.AccountCircle),
-                    text = stringResource(id = R.string.webdav_screen_account),
-                    descriptionText = account.ifBlank {
-                        stringResource(id = R.string.webdav_screen_account_description)
-                    },
-                    onClick = {
-                        inputDialogInfo = Triple(
-                            appContext.getString(R.string.webdav_screen_input_account), account
-                        ) {
-                            account = it
-                            openInputDialog = false
-                            secretSharedPreferences().editor { putString("webDavAccount", it) }
-                        }
-                        inputDialogIsPassword = false
-                        openInputDialog = true
-                    }
-                )
-                BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Key),
-                    text = stringResource(id = R.string.webdav_screen_password),
-                    descriptionText = stringResource(
-                        id = if (password.isBlank()) R.string.webdav_screen_password_description
-                        else R.string.webdav_screen_password_entered
-                    ),
-                    onClick = {
-                        inputDialogInfo = Triple(
-                            appContext.getString(R.string.webdav_screen_input_password), password
-                        ) {
-                            password = it
-                            openInputDialog = false
-                            secretSharedPreferences().editor { putString("webDavPassword", it) }
-                        }
-                        inputDialogIsPassword = true
-                        openInputDialog = true
-                    }
-                )
-            }
-            item {
-                CategorySettingsItem(
-                    text = stringResource(id = R.string.webdav_screen_sync_category)
-                )
-            }
-            item {
-                val webDavIncompleteInfo = remember {
-                    {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = appContext.getString(R.string.webdav_screen_info_incomplete),
-                                withDismissAction = true
+                },
+                onPushItemClick = {
+                    if (checkWebDavInfo(server = server, account = account, password = password)) {
+                        viewModel.sendUiIntent(
+                            WebDavIntent.StartUpload(
+                                website = server, username = account, password = password
                             )
-                        }
+                        )
+                    } else {
+                        webDavIncompleteInfo()
+                    }
+                },
+                onRemoteRecycleBinItemClick = {
+                    if (checkWebDavInfo(server = server, account = account, password = password)) {
+                        viewModel.sendUiIntent(
+                            WebDavIntent.GetRemoteRecycleBin(
+                                website = server, username = account, password = password
+                            )
+                        )
+                        openRecycleBinBottomSheet = true
+                    } else {
+                        webDavIncompleteInfo()
                     }
                 }
-                BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.CloudDownload),
-                    text = stringResource(id = R.string.webdav_screen_download),
-                    descriptionText = stringResource(id = R.string.webdav_screen_download_description),
-                    onClick = {
-                        if (server.isNotBlank() && account.isNotBlank() && password.isNotBlank()) {
-                            viewModel.sendUiIntent(
-                                WebDavIntent.StartDownload(
-                                    website = server, username = account, password = password
-                                )
-                            )
-                        } else {
-                            webDavIncompleteInfo()
-                        }
-                    }
-                )
-                BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.CloudUpload),
-                    text = stringResource(id = R.string.webdav_screen_upload),
-                    descriptionText = stringResource(id = R.string.webdav_screen_upload_description),
-                    onClick = {
-                        if (server.isNotBlank() && account.isNotBlank() && password.isNotBlank()) {
-                            viewModel.sendUiIntent(
-                                WebDavIntent.StartUpload(
-                                    website = server, username = account, password = password
-                                )
-                            )
-                        } else {
-                            webDavIncompleteInfo()
-                        }
-                    }
-                )
-                BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Recycling),
-                    text = stringResource(id = R.string.webdav_screen_remote_recycle_bin),
-                    descriptionText = stringResource(id = R.string.webdav_screen_remote_recycle_bin_description),
-                    onClick = {
-                        if (server.isNotBlank() && account.isNotBlank() && password.isNotBlank()) {
-                            viewModel.sendUiIntent(
-                                WebDavIntent.GetRemoteRecycleBin(
-                                    website = server, username = account, password = password
-                                )
-                            )
-                            openRecycleBinBottomSheet = true
-                        } else {
-                            webDavIncompleteInfo()
-                        }
-                    }
-                )
-            }
+            )
         }
 
         loadUiIntent?.also { loadUiIntent ->
@@ -338,6 +297,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
         )
         if (openRecycleBinBottomSheet) {
             RecycleBinBottomSheet(
+                uiState = uiState,
                 onDismissRequest = { openRecycleBinBottomSheet = false },
                 onRestore = {
                     viewModel.sendUiIntent(
@@ -401,14 +361,12 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
 
 @Composable
 private fun RecycleBinBottomSheet(
+    uiState: WebDavState,
     onDismissRequest: () -> Unit,
     onRestore: (String) -> Unit,
     onDelete: (String) -> Unit,
     onClear: () -> Unit,
-    viewModel: WebDavViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-
     ModalBottomSheet(onDismissRequest = onDismissRequest) {
         Row(
             Modifier
@@ -485,3 +443,79 @@ private fun RecycleBinBottomSheet(
         }
     }
 }
+
+private fun LazyListScope.webDavItem(
+    server: String,
+    account: String,
+    password: String,
+    onServerItemClick: () -> Unit,
+    onAccountItemClick: () -> Unit,
+    onPasswordItemClick: () -> Unit,
+) {
+    item {
+        CategorySettingsItem(text = stringResource(id = R.string.webdav_screen_service_category))
+    }
+    item {
+        BaseSettingsItem(
+            icon = rememberVectorPainter(image = Icons.Default.Dns),
+            text = stringResource(id = R.string.webdav_screen_server),
+            descriptionText = server.ifBlank {
+                stringResource(id = R.string.webdav_screen_server_description)
+            },
+            onClick = onServerItemClick
+        )
+        BaseSettingsItem(
+            icon = rememberVectorPainter(image = Icons.Default.AccountCircle),
+            text = stringResource(id = R.string.webdav_screen_account),
+            descriptionText = account.ifBlank {
+                stringResource(id = R.string.webdav_screen_account_description)
+            },
+            onClick = onAccountItemClick
+        )
+        BaseSettingsItem(
+            icon = rememberVectorPainter(image = Icons.Default.Key),
+            text = stringResource(id = R.string.webdav_screen_password),
+            descriptionText = stringResource(
+                id = if (password.isBlank()) R.string.webdav_screen_password_description
+                else R.string.webdav_screen_password_entered
+            ),
+            onClick = onPasswordItemClick
+        )
+    }
+}
+
+private fun LazyListScope.syncItem(
+    onPullItemClick: () -> Unit,
+    onPushItemClick: () -> Unit,
+    onRemoteRecycleBinItemClick: () -> Unit,
+) {
+    item {
+        CategorySettingsItem(text = stringResource(id = R.string.webdav_screen_sync_category))
+    }
+    item {
+        BaseSettingsItem(
+            icon = rememberVectorPainter(image = Icons.Default.CloudDownload),
+            text = stringResource(id = R.string.webdav_screen_download),
+            descriptionText = stringResource(id = R.string.webdav_screen_download_description),
+            onClick = onPullItemClick
+        )
+        BaseSettingsItem(
+            icon = rememberVectorPainter(image = Icons.Default.CloudUpload),
+            text = stringResource(id = R.string.webdav_screen_upload),
+            descriptionText = stringResource(id = R.string.webdav_screen_upload_description),
+            onClick = onPushItemClick
+        )
+        BaseSettingsItem(
+            icon = rememberVectorPainter(image = Icons.Default.Recycling),
+            text = stringResource(id = R.string.webdav_screen_remote_recycle_bin),
+            descriptionText = stringResource(id = R.string.webdav_screen_remote_recycle_bin_description),
+            onClick = onRemoteRecycleBinItemClick
+        )
+    }
+}
+
+private fun checkWebDavInfo(
+    server: String,
+    account: String,
+    password: String,
+) = server.isNotBlank() && account.isNotBlank() && password.isNotBlank()

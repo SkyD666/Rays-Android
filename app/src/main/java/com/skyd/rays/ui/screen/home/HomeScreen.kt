@@ -116,7 +116,6 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
     val mainCardScrollState = rememberScrollState()
-    val stickerDetailInfoScrollState = rememberScrollState()
     var fabHeight by remember { mutableStateOf(0.dp) }
 
     refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
@@ -199,36 +198,36 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     }
 
                     is StickerDetailUiState.Success -> {
+                        val primaryColor = MaterialTheme.colorScheme.primary
+
                         Spacer(modifier = Modifier.height(16.dp))
                         MainCard(
                             stickerWithTags = stickerDetailUiState.stickerWithTags,
                             scrollState = mainCardScrollState,
                             bottomPadding = if (windowSizeClass.isCompact) fabHeight else 0.dp,
+                            onUpdateThemeColor = { stickerUuid ->
+                                viewModel.sendUiIntent(
+                                    HomeIntent.UpdateThemeColor(
+                                        stickerUuid = stickerUuid,
+                                        primaryColor = primaryColor.toArgb(),
+                                    )
+                                )
+                            }
                         )
                     }
                 }
             }
-            AnimatedVisibility(
+            StickerDetailInfoCard(
                 visible = showStickerDetailInfo,
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .verticalScroll(stickerDetailInfoScrollState),
-                enter = expandHorizontally(expandFrom = Alignment.Start),
-                exit = shrinkHorizontally(shrinkTowards = Alignment.End),
-            ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth(0.4f)
-                        .padding(end = 16.dp, top = 8.dp, bottom = 16.dp + fabHeight)
-                        .statusBarsPadding()
-                ) {
-                    StickerDetailInfo(
-                        modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
-                        stickerWithTags = (stickerDetailUiState as StickerDetailUiState.Success)
-                            .stickerWithTags
-                    )
+                    .fillMaxWidth(0.4f)
+                    .padding(end = 16.dp, top = 8.dp, bottom = 16.dp + fabHeight)
+                    .statusBarsPadding(),
+                stickerWithTags = {
+                    (stickerDetailUiState as StickerDetailUiState.Success).stickerWithTags
                 }
-            }
+            )
+
         }
 
         uiEvent?.apply {
@@ -272,24 +271,18 @@ private fun MainCard(
     stickerWithTags: StickerWithTags,
     scrollState: ScrollState = rememberScrollState(),
     bottomPadding: Dp = 0.dp,
-    viewModel: HomeViewModel = hiltViewModel()
+    onUpdateThemeColor: (stickerUuid: String) -> Unit,
 ) {
     val navController = LocalNavController.current
     val stickerUuid = stickerWithTags.sticker.uuid
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
-    val primaryColor = MaterialTheme.colorScheme.primary
 
     val stickerBean = stickerWithTags.sticker
     val tags = stickerWithTags.tags
 
     LaunchedEffect(stickerUuid) {
-        viewModel.sendUiIntent(
-            HomeIntent.UpdateThemeColor(
-                stickerUuid = stickerUuid,
-                primaryColor = primaryColor.toArgb(),
-            )
-        )
+        onUpdateThemeColor(stickerUuid)
     }
 
     Card(
@@ -435,5 +428,28 @@ fun StickerDetailInfo(modifier: Modifier = Modifier, stickerWithTags: StickerWit
             title = stringResource(id = R.string.home_screen_sticker_info_last_modified_time),
             text = sticker.modifyTime?.let { dateTime(it) } ?: dateTime(sticker.createTime)
         )
+    }
+}
+
+@Composable
+fun StickerDetailInfoCard(
+    visible: Boolean,
+    modifier: Modifier,
+    stickerWithTags: () -> StickerWithTags
+) {
+    AnimatedVisibility(
+        visible = visible,
+        modifier = Modifier
+            .fillMaxHeight()
+            .verticalScroll(rememberScrollState()),
+        enter = expandHorizontally(expandFrom = Alignment.Start),
+        exit = shrinkHorizontally(shrinkTowards = Alignment.End),
+    ) {
+        Card(modifier = modifier) {
+            StickerDetailInfo(
+                modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
+                stickerWithTags = stickerWithTags()
+            )
+        }
     }
 }

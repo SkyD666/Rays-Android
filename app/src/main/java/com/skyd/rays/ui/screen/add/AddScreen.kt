@@ -284,7 +284,10 @@ fun AddScreen(
             item {
                 StickerCard(
                     stickerUri = currentSticker.uri,
-                    pickLauncher = if (isEdit) pickStickerLauncher else pickStickersLauncher
+                    pickLauncher = if (isEdit) pickStickerLauncher else pickStickersLauncher,
+                    onGetSuggestTags = { stickerUri ->
+                        viewModel.sendUiIntent(AddIntent.GetSuggestTags(stickerUri))
+                    }
                 )
             }
         }
@@ -434,7 +437,7 @@ private fun WaitingRow(
 private fun StickerCard(
     stickerUri: Uri?,
     pickLauncher: ManagedActivityResultLauncher<String, *>,
-    viewModel: AddViewModel = hiltViewModel(),
+    onGetSuggestTags: (Uri) -> Unit,
 ) {
     RaysCard(
         modifier = Modifier.padding(vertical = 20.dp),
@@ -451,7 +454,7 @@ private fun StickerCard(
             }
         } else {
             LaunchedEffect(stickerUri) {
-                viewModel.sendUiIntent(AddIntent.GetSuggestTags(stickerUri))
+                onGetSuggestTags(stickerUri)
             }
             RaysImage(
                 model = stickerUri,

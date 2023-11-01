@@ -77,7 +77,7 @@ internal fun HomeMenu(
     onDeleteClick: () -> Unit,
     onExportClick: () -> Unit,
     onStickerInfoClick: () -> Unit,
-    viewModel: HomeViewModel = hiltViewModel()
+    onClearScreen: () -> Unit,
 ) {
     val navController = LocalNavController.current
     val currentStickerUuid = LocalCurrentStickerUuid.current
@@ -90,9 +90,7 @@ internal fun HomeMenu(
             enabled = stickerMenuItemEnabled,
             text = { Text(stringResource(R.string.home_screen_clear_current_sicker)) },
             onClick = {
-                viewModel.sendUiIntent(
-                    HomeIntent.GetStickerDetails(CurrentStickerUuidPreference.default)
-                )
+                onClearScreen()
                 onDismissRequest()
             },
             leadingIcon = {

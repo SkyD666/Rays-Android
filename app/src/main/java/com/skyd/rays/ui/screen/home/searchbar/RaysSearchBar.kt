@@ -60,6 +60,7 @@ import com.skyd.rays.R
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.model.bean.StickerWithTags
+import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.ui.component.RaysIconButton
@@ -186,6 +187,11 @@ fun RaysSearchBar(
                             onDeleteClick = { openDeleteWarningDialog = true },
                             onExportClick = { openExportPathDialog = true },
                             onStickerInfoClick = { openStickerInfoDialog = true },
+                            onClearScreen = {
+                                viewModel.sendUiIntent(
+                                    HomeIntent.GetStickerDetails(CurrentStickerUuidPreference.default)
+                                )
+                            }
                         )
                     }
                 },

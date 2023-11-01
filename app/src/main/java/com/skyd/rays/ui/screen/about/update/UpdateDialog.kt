@@ -82,6 +82,11 @@ fun UpdateDialog(
                 onDismissRequest = {
                     onClosed()
                     viewModel.sendUiIntent(UpdateIntent.CloseDialog)
+                },
+                onDownloadClick = { updateBean ->
+                    viewModel.sendUiIntent(
+                        UpdateIntent.Update(updateBean?.assets?.firstOrNull()?.browserDownloadUrl)
+                    )
                 }
             )
         }
@@ -103,7 +108,7 @@ private fun NewerDialog(
     updateBean: UpdateBean?,
     silence: Boolean,
     onDismissRequest: () -> Unit,
-    viewModel: UpdateViewModel = hiltViewModel()
+    onDownloadClick: (UpdateBean?) -> Unit,
 ) {
     val context = LocalContext.current
     val ignoreUpdateVersion = LocalIgnoreUpdateVersion.current
@@ -193,22 +198,12 @@ private fun NewerDialog(
             }
         },
         confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.sendUiIntent(
-                        UpdateIntent.Update(
-                            updateBean?.assets?.firstOrNull()?.browserDownloadUrl
-                        )
-                    )
-                }
-            ) {
+            TextButton(onClick = { onDownloadClick(updateBean) }) {
                 Text(text = stringResource(id = R.string.download_update))
             }
         },
         dismissButton = {
-            TextButton(
-                onClick = onDismissRequest
-            ) {
+            TextButton(onClick = onDismissRequest) {
                 Text(text = stringResource(id = R.string.dialog_cancel))
             }
         }
