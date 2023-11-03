@@ -29,13 +29,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 import java.io.IOException
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.coroutines.resumeWithException
 import kotlin.random.Random
 
-class AddRepository @Inject constructor(private val stickerDao: StickerDao) : BaseRepository() {
+
+class AddRepository @Inject constructor(
+    private val stickerDao: StickerDao,
+    private val json: Json
+) : BaseRepository() {
     suspend fun requestAddStickerWithTags(
         stickerWithTags: StickerWithTags,
         uri: Uri
@@ -153,7 +160,7 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
                     val localModel = LocalModel.Builder()
                         .apply {
                             if (model.isBlank()) {
-                                setAssetFilePath("sticker_classification.tflite")
+                                setAssetFilePath("stickerclassification/sticker_classification.tflite")
                             } else {
                                 setAbsoluteFilePath(File(CLASSIFICATION_MODEL_DIR_FILE, model).path)
                             }
@@ -167,7 +174,10 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
 
                     ImageLabeling.getClient(customImageLabelerOptions).process(image)
                         .addOnSuccessListener { labels ->
-                            cont.resume(labels.map { it.text }, onCancellation = null)
+                            cont.resume(
+                                labels.map { translateClassification(it.text) },
+                                onCancellation = null,
+                            )
                         }
                         .addOnFailureListener { e ->
                             cont.resumeWithException(e)
@@ -202,5 +212,17 @@ class AddRepository @Inject constructor(private val stickerDao: StickerDao) : Ba
             }
         }
         return list
+    }
+
+    private lateinit var translateClassificationMap: MutableMap<String, String>
+    private fun translateClassification(origin: String): String {
+        val lang = Locale.getDefault().language
+        if (lang == "zh") return origin
+        if (!this::translateClassificationMap.isInitialized) {
+            translateClassificationMap = appContext.assets.open("stickerclassification/lang/$lang.txt").use {
+                json.decodeFromStream(it)
+            }
+        }
+        return translateClassificationMap.getOrDefault(origin, origin)
     }
 }
