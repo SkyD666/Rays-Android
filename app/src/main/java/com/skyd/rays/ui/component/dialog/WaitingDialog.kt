@@ -45,11 +45,6 @@ fun WaitingDialog(
             }
         )
     } else {
-        val animatedProgress by animateFloatAsState(
-            targetValue = currentValue.toFloat() / totalValue,
-            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-            label = "waitingDialogAnimatedProgress"
-        )
         WaitingDialog(visible = visible, title = title) {
             Column(
                 modifier = Modifier
@@ -57,6 +52,11 @@ fun WaitingDialog(
                     .padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                val animatedProgress by animateFloatAsState(
+                    targetValue = currentValue.toFloat() / totalValue,
+                    animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+                    label = "waitingDialogAnimatedProgress"
+                )
                 LinearProgressIndicator(
                     modifier = Modifier.semantics(mergeDescendants = true) {},
                     progress = animatedProgress,

@@ -233,21 +233,6 @@ private fun ResultArea(
 
     var useAnimate by remember { mutableStateOf(false) }
     val animateFinishedListener: (Any) -> Unit = { useAnimate = false }
-    val scaleAnimate: Float by animateFloatAsState(
-        targetValue = scale,
-        label = "scaleAnimate",
-        finishedListener = animateFinishedListener
-    )
-    val rotationAnimate: Float by animateFloatAsState(
-        targetValue = rotation,
-        label = "rotationAnimate",
-        finishedListener = animateFinishedListener
-    )
-    val offsetAnimate: Offset by animateOffsetAsState(
-        targetValue = offset,
-        label = "offsetAnimate",
-        finishedListener = animateFinishedListener
-    )
 
     Column {
         ResetArea(onResetSelfie = {
@@ -274,6 +259,22 @@ private fun ResultArea(
                 )
             },
         ) {
+            val scaleAnimate: Float by animateFloatAsState(
+                targetValue = scale,
+                label = "scaleAnimate",
+                finishedListener = animateFinishedListener
+            )
+            val rotationAnimate: Float by animateFloatAsState(
+                targetValue = rotation,
+                label = "rotationAnimate",
+                finishedListener = animateFinishedListener
+            )
+            val offsetAnimate: Offset by animateOffsetAsState(
+                targetValue = offset,
+                label = "offsetAnimate",
+                finishedListener = animateFinishedListener
+            )
+
             Box(modifier = Modifier.onSizeChanged { borderSize = it }) {
                 RaysImage(
                     model = backgroundUri,
