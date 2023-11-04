@@ -35,6 +35,7 @@ fun RaysDialog(
                 R.raw.lottie_genshin_impact_klee_3,
                 R.raw.lottie_genshin_impact_paimon_1,
                 R.raw.lottie_genshin_impact_venti_1,
+                R.raw.lottie_genshin_impact_keqing_1,
             )
         }
         RaysLottieAnimation(

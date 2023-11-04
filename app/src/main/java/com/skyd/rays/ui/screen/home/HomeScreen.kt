@@ -83,6 +83,7 @@ import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
+import com.skyd.rays.ui.component.RaysFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysIconButtonStyle
 import com.skyd.rays.ui.component.RaysImage
@@ -101,7 +102,6 @@ import com.skyd.rays.util.stickerUuidToUri
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
-    val navController = LocalNavController.current
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -136,18 +136,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 enter = slideInVertically { with(density) { 40.dp.roundToPx() } } + fadeIn(),
                 exit = slideOutVertically { with(density) { 40.dp.roundToPx() } } + fadeOut(),
             ) {
-                RaysExtendedFloatingActionButton(
-                    text = { Text(text = stringResource(R.string.home_screen_add)) },
-                    icon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
-                    onClick = {
-                        openAddScreen(
-                            navController = navController,
-                            stickers = mutableListOf(),
-                            isEdit = false,
-                        )
-                    },
-                    onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
-                    contentDescription = stringResource(R.string.home_screen_add),
+                HomeScreenFloatingActionButton(
+                    onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height }
                 )
             }
         },
@@ -187,7 +177,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 when (stickerDetailUiState) {
                     is StickerDetailUiState.Init -> {
                         AnimatedPlaceholder(
-                            resId = R.raw.lottie_genshin_impact_venti_1,
+                            resId = R.raw.lottie_genshin_impact_keqing_1,
                             tip = stringResource(id = R.string.home_screen_empty_tip)
                         )
                         if (stickerDetailUiState.stickerUuid.isNotBlank()) {
@@ -263,6 +253,46 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
         }
 
         WaitingDialog(visible = openWaitingDialog)
+    }
+}
+
+@Composable
+private fun HomeScreenFloatingActionButton(
+    onSizeWithSinglePaddingChanged: ((width: Dp, height: Dp) -> Unit)
+) {
+    val navController = LocalNavController.current
+    val windowSizeClass = LocalWindowSizeClass.current
+
+    val content: @Composable () -> Unit = remember {
+        @Composable {
+            Icon(imageVector = Icons.Default.Add, contentDescription = null)
+        }
+    }
+    val onClick = remember {
+        {
+            openAddScreen(
+                navController = navController,
+                stickers = mutableListOf(),
+                isEdit = false,
+            )
+        }
+    }
+
+    if (windowSizeClass.isCompact) {
+        RaysFloatingActionButton(
+            content = { content() },
+            onClick = onClick,
+            onSizeWithSinglePaddingChanged = onSizeWithSinglePaddingChanged,
+            contentDescription = stringResource(R.string.home_screen_add),
+        )
+    } else {
+        RaysExtendedFloatingActionButton(
+            text = { Text(text = stringResource(R.string.home_screen_add)) },
+            icon = content,
+            onClick = onClick,
+            onSizeWithSinglePaddingChanged = onSizeWithSinglePaddingChanged,
+            contentDescription = stringResource(R.string.home_screen_add),
+        )
     }
 }
 
