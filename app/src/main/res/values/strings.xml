@@ -33,7 +33,7 @@
     <string name="settings">Settings</string>
     <string name="about">About</string>
     <string name="setting_screen_search_description">Search preference, search domain</string>
-    <string name="about_screen_app_full_name">(Record All Your Stickers)</string>
+    <string name="about_screen_app_full_name" translatable="false">(Record All Your Stickers)</string>
     <string name="about_screen_description_1">A tool to record, search and manage stickers on your phone.</string>
     <string name="about_screen_description_2">Are you still struggling with too many stickers on your phone and having trouble finding the ones you want? This tool will help you manage your stickers! \uD83D\uDE0B</string>
     <string name="about_screen_description_3">Rays utilizes the MVI architecture and fully adopts the Material You design style. All pages are developed using Jetpack Compose.</string>
@@ -62,8 +62,8 @@
     <string name="import_files_screen_progress_saving_data">Saving data…</string>
     <string name="import_files_screen_successful">Import successful</string>
     <plurals name="import_files_screen_successful_desc">
-        <item quantity="one">Updated %d sticker in total, took %.2f s</item>
-        <item quantity="other">Updated %d stickers in total, took %.2f s</item>
+        <item quantity="one">Updated %1$d sticker in total, took %2$.2f s</item>
+        <item quantity="other">Updated %1$d stickers in total, took %2$.2f s</item>
     </plurals>
     <string name="import_files_screen_failed">Operation failed: %s</string>
     <string name="import_files_screen_on_conflict">On conflict</string>
@@ -77,8 +77,8 @@
     <string name="export_files_screen_progress_open_backup_file">Open</string>
     <string name="export_files_screen_successful">Export successful</string>
     <plurals name="export_files_screen_successful_desc">
-        <item quantity="one">Exported %d sticker in total, took %.2f s</item>
-        <item quantity="other">Exported %d stickers in total, took %.2f s</item>
+        <item quantity="one">Exported %1$d sticker in total, took %2$.2f s</item>
+        <item quantity="other">Exported %1$d stickers in total, took %2$.2f s</item>
     </plurals>
     <string name="export_files_screen_failed">Operation failed: %s</string>
     <string name="export_files_screen_open_backup_file">Open backup file</string>
@@ -103,12 +103,12 @@
     <string name="webdav_screen_download">Pull</string>
     <string name="webdav_screen_download_description">Pull data from remote, overwrite local content in case of conflict. If a sticker is both local and in the remote recycle bin, the local sticker will be deleted. If a sticker is local but not in the remote, the sticker will not be modified</string>
     <plurals name="webdav_screen_download_success">
-        <item quantity="one">Pull successful, spent %.2fs, update %d sticker</item>
-        <item quantity="other">Pull successful, spent %.2fs, update %d stickers</item>
+        <item quantity="one">Pull successful, spent %1$.2fs, update %2$d sticker</item>
+        <item quantity="other">Pull successful, spent %1$.2fs, update %2$d stickers</item>
     </plurals>
     <plurals name="webdav_screen_upload_success">
-        <item quantity="one">Push succeeded, spent %.2fs, update %d sticker</item>
-        <item quantity="other">Push succeeded, spent %.2fs, update %d stickers</item>
+        <item quantity="one">Push succeeded, spent %1$.2fs, update %2$d sticker</item>
+        <item quantity="other">Push succeeded, spent %1$.2fs, update %2$d stickers</item>
     </plurals>
     <string name="webdav_screen_failed">Operation failed: %s</string>
     <string name="webdav_screen_waiting">Please wait…</string>
@@ -154,10 +154,10 @@
     <string name="home_screen_send_sticker">Send</string>
     <string name="send_sticker">Send sticker</string>
     <string name="home_screen_open_menu">Show menu</string>
-    <string name="about_screen_other_works_raca_name">Raca (Record All Classic Articles)</string>
+    <string name="about_screen_other_works_raca_name" translatable="false">Raca (Record All Classic Articles)</string>
     <string name="about_screen_other_works_raca_description">A tool to record and search abstract passages and mini-essays in the comments section locally. 🤗 Are you still having trouble remembering the content of your mini-essay and facing the embarrassing situation of forgetting the front, middle and back? Using this tool will help you record the mini-essays you come across and never worry about forgetting them again! 😋</string>
     <string name="about_screen_other_works_raca_url">https://github.com/SkyD666/Raca-Android</string>
-    <string name="about_screen_other_works_night_screen_name">Night Screen</string>
+    <string name="about_screen_other_works_night_screen_name" translatable="false">Night Screen</string>
     <string name="about_screen_other_works_night_screen_description">When you use your phone at night 🌙, Night Screen can help you reduce the brightness of the screen and reduce the damage to your eyes.</string>
     <string name="about_screen_other_works_night_screen_url">https://github.com/SkyD666/NightScreen</string>
     <string name="about_screen_other_works">Other works</string>
@@ -173,7 +173,7 @@
     <string name="classification_model_screen_select">Select external model</string>
     <string name="classification_model_screen_select_description">Select an external model file (.tflite or .lite)</string>
     <string name="classification_model_screen_failed">Operation failed: %s</string>
-    <string name="classification_model_screen_default_name">EfficientNet-Lite2</string>
+    <string name="classification_model_screen_default_name" translatable="false">EfficientNet-Lite2</string>
     <string name="add_screen_error">Error: %s</string>
     <string name="home_screen_clear_current_sicker">Clear screen</string>
     <string name="appearance_screen_style_category">Style</string>
@@ -183,11 +183,11 @@
     <string name="home_style_screen_sticker_scale">Sticker scale</string>
     <string name="home_style_screen_show_popular_tags">Show popular tags</string>
     <string name="home_style_screen_show_popular_tags_description">Show the tags corresponding to the most shared stickers below the search bar</string>
-    <string name="sticker_scale_default">" (Default)"</string>
+    <string name="default_tag">%s (Default)</string>
     <string name="update_check">Check updates</string>
     <string name="update_no_update">This is the latest version!</string>
     <string name="update_newer">Found new version</string>
-    <string name="update_newer_text">New version: %s\nPublished on: %s\nDownloads: %s\n</string>
+    <string name="update_newer_text">New version: %1$s\nPublished on: %2$s\nDownloads: %3$s\n</string>
     <string name="download_update">Download</string>
     <string name="update_ignore">Ignore this update</string>
     <string name="search_result_sort_create_time">Create time</string>
@@ -280,7 +280,7 @@
     <string name="sponsor">Sponsor</string>
     <string name="sponsor_description">If you like the app, you can buy me a cup of coffee, thanks!</string>
     <string name="sponsor_afadian">Afadian</string>
-    <string name="sponsor_buy_me_a_coffee">Buy me a coffee</string>
+    <string name="sponsor_buy_me_a_coffee" translatable="false">Buy me a coffee</string>
     <string name="classification_screen_threshold">Classification threshold</string>
     <string name="classification_screen_threshold_description">Only tags with confidence higher than this threshold will be recommended, suggested to be set around 0.5.</string>
     <string name="text_recognize_screen_name">Text recognize</string>

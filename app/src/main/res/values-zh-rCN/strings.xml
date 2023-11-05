@@ -33,7 +33,6 @@
     <string name="settings">设置</string>
     <string name="about">关于</string>
     <string name="setting_screen_search_description">搜索方案、搜索域等</string>
-    <string name="about_screen_app_full_name">(Record All Your Stickers)</string>
     <string name="about_screen_description_1">一个在本地记录、查找、管理表情包的工具。</string>
     <string name="about_screen_description_2">您还在为手机中的表情包太多，找不到想要的表情包而苦恼吗？使用这款工具将帮助您管理您存储的表情包，再也不因为找不到表情包而烦恼！\uD83D\uDE0B</string>
     <string name="about_screen_description_3">Rays 使用 MVI 架构，完全采用 Material You 设计风格。所有页面均使用 Jetpack Compose 开发。</string>
@@ -62,7 +61,7 @@
     <string name="import_files_screen_progress_saving_data">保存数据中…</string>
     <string name="import_files_screen_successful">导入成功</string>
     <plurals name="import_files_screen_successful_desc">
-        <item quantity="other">共更新 %d 个表情包，耗时 %.2f 秒</item>
+        <item quantity="other">共更新 %1$d 个表情包，耗时 %2$.2f 秒</item>
     </plurals>
     <string name="import_files_screen_failed">操作失败：%s</string>
     <string name="import_files_screen_on_conflict">冲突时策略</string>
@@ -76,7 +75,7 @@
     <string name="export_files_screen_progress_open_backup_file">打开</string>
     <string name="export_files_screen_successful">导出成功</string>
     <plurals name="export_files_screen_successful_desc">
-        <item quantity="other">共导出 %d 个表情包，耗时 %.2f 秒</item>
+        <item quantity="other">共导出 %1$d 个表情包，耗时 %2$.2f 秒</item>
     </plurals>
     <string name="export_files_screen_failed">操作失败：%s</string>
     <string name="export_files_screen_open_backup_file">打开备份文件</string>
@@ -101,10 +100,10 @@
     <string name="webdav_screen_download">从远端拉取</string>
     <string name="webdav_screen_download_description">从远端拉取数据，冲突时会覆盖本地内容。若某表情包既在本地，也在远端回收站内，则本地的该表情包会被删除。若某表情包本地有，而远端没有，则该表情包不会被修改</string>
     <plurals name="webdav_screen_download_success">
-        <item quantity="other">拉取成功，耗时 %.2f 秒，更新 %d 条</item>
+        <item quantity="other">拉取成功，耗时 %1$.2f 秒，更新 %2$d 条</item>
     </plurals>
     <plurals name="webdav_screen_upload_success">
-        <item quantity="other">推送成功，耗时 %.2f 秒，更新 %d 条</item>
+        <item quantity="other">推送成功，耗时 %1$.2f 秒，更新 %2$d 条</item>
     </plurals>
     <string name="webdav_screen_failed">操作失败：%s</string>
     <string name="webdav_screen_waiting">请稍后…</string>
@@ -149,10 +148,8 @@
     <string name="home_screen_send_sticker">发送</string>
     <string name="send_sticker">发送表情包</string>
     <string name="home_screen_open_menu">显示菜单</string>
-    <string name="about_screen_other_works_raca_name">Raca (Record All Classic Articles)</string>
     <string name="about_screen_other_works_raca_description">一个在本地记录、查找抽象段落/评论区小作文的工具。🤗 您还在为记不住小作文内容，面临前面、中间、后面都忘了的尴尬处境吗？使用这款工具将帮助您记录您所遇到的小作文，再也不因为忘记而烦恼！😋</string>
     <string name="about_screen_other_works_raca_url">https://github.com/SkyD666/Raca-Android</string>
-    <string name="about_screen_other_works_night_screen_name">Night Screen</string>
     <string name="about_screen_other_works_night_screen_description">当您在夜间🌙使用手机时，Night Screen 可以帮助您减少屏幕亮度，减少对眼睛的伤害。</string>
     <string name="about_screen_other_works_night_screen_url">https://github.com/SkyD666/NightScreen</string>
     <string name="about_screen_other_works">其他作品</string>
@@ -168,7 +165,6 @@
     <string name="classification_model_screen_select">选择外部模型</string>
     <string name="classification_model_screen_select_description">选择外部模型文件 (.tflite 或 .lite)</string>
     <string name="classification_model_screen_failed">操作失败：%s</string>
-    <string name="classification_model_screen_default_name">EfficientNet-Lite2</string>
     <string name="add_screen_error">错误：%s</string>
     <string name="home_screen_clear_current_sicker">清空主屏幕</string>
     <string name="appearance_screen_style_category">样式</string>
@@ -178,11 +174,11 @@
     <string name="home_style_screen_sticker_scale">表情包显示比例</string>
     <string name="home_style_screen_show_popular_tags">显示常用标签</string>
     <string name="home_style_screen_show_popular_tags_description">在搜索栏下方显示分享次数最多的表情包对应的标签</string>
-    <string name="sticker_scale_default">（默认）</string>
+    <string name="default_tag">%s（默认）</string>
     <string name="update_check">检查更新</string>
     <string name="update_no_update">当前已是最新版！</string>
     <string name="update_newer">发现新版本</string>
-    <string name="update_newer_text">新版本：%s\n发布时间：%s\n下载数：%s\n</string>
+    <string name="update_newer_text">新版本：%1$s\n发布时间：%2$s\n下载数：%3$s\n</string>
     <string name="download_update">下载</string>
     <string name="update_ignore">忽略本次更新</string>
     <string name="search_result_sort_create_time">创建时间</string>
@@ -275,7 +271,6 @@
     <string name="sponsor">赞助作者</string>
     <string name="sponsor_description">如果您喜欢我开发的软件，您可以请我喝一杯咖啡，谢谢！</string>
     <string name="sponsor_afadian">爱发电</string>
-    <string name="sponsor_buy_me_a_coffee">Buy me a coffee</string>
     <string name="classification_screen_threshold">置信度阈值</string>
     <string name="classification_screen_threshold_description">只有置信度高于此阈值的分类标签才会被推荐，建议设置为 0.5 左右。</string>
     <string name="text_recognize_screen_name">文字识别</string>

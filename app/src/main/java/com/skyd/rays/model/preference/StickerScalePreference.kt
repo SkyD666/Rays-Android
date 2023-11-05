@@ -57,7 +57,7 @@ object StickerScalePreference {
     }
 
     fun toDisplayName(scale: String): String = toContentScale(scale).toDisplayName().let {
-        if (scale == default) it + appContext.getString(R.string.sticker_scale_default)
+        if (scale == default) appContext.getString(R.string.default_tag, it)
         else it
     }
 }
