@@ -31,7 +31,7 @@ fun TextFieldDialog(
     placeholder: String = "",
     isPassword: Boolean = false,
     errorText: String = "",
-    dismissText: String = stringResource(R.string.dialog_cancel),
+    dismissText: String = stringResource(R.string.cancel),
     confirmText: String = stringResource(R.string.dialog_ok),
     onValueChange: (String) -> Unit = {},
     onDismissRequest: () -> Unit = {},

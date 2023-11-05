@@ -42,6 +42,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -85,6 +86,7 @@ fun SearchResultList(
     onItemClickListener: ((data: StickerWithTags, selected: Boolean) -> Unit)? = null,
     multiSelect: Boolean,
     onMultiSelectChanged: (Boolean) -> Unit,
+    onSelectAllClick: () -> Unit,
     selectedStickers: List<StickerWithTags>,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -105,6 +107,7 @@ fun SearchResultList(
             stickersCount = dataList.size,
             multiSelect = multiSelect,
             onMultiSelectChanged = onMultiSelectChanged,
+            onSelectAllClick = onSelectAllClick,
         )
         if (dataList.isEmpty()) {
             AnimatedPlaceholder(
@@ -158,7 +161,8 @@ fun SearchResultList(
 fun SearchResultConfigBar(
     stickersCount: Int,
     multiSelect: Boolean,
-    onMultiSelectChanged: (Boolean) -> Unit
+    onMultiSelectChanged: (Boolean) -> Unit,
+    onSelectAllClick: () -> Unit,
 ) {
     val searchResultReverse = LocalSearchResultReverse.current
     val context = LocalContext.current
@@ -248,6 +252,15 @@ fun SearchResultConfigBar(
                     }
                 }
             )
+        }
+
+        item {
+            if (multiSelect) {
+                SuggestionChip(
+                    onClick = onSelectAllClick,
+                    label = { Text(text = stringResource(R.string.search_result_select_all)) },
+                )
+            }
         }
     }
 }

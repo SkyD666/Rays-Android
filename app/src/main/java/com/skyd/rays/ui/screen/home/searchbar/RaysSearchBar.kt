@@ -231,6 +231,10 @@ fun RaysSearchBar(
                                     selectedStickers.clear()
                                 }
                             },
+                            onSelectAllClick = {
+                                selectedStickers.clear()
+                                selectedStickers.addAll(searchResultUiState.stickerWithTagsList)
+                            },
                             selectedStickers = selectedStickers,
                         )
                     }
@@ -379,7 +383,7 @@ internal fun ExportDialog(
         onDismissRequest = onDismissRequest,
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
-                Text(text = stringResource(id = R.string.dialog_cancel))
+                Text(text = stringResource(id = R.string.cancel))
             }
         },
         confirmButton = {

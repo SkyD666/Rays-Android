@@ -20,7 +20,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,13 +36,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.base.LoadUiIntent
-import com.skyd.rays.ext.inBottomOrNotLarge
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ImportExportResultInfo
 import com.skyd.rays.model.bean.ImportExportWaitingInfo
 import com.skyd.rays.ui.component.BaseSettingsItem
-import com.skyd.rays.ui.component.BottomHideExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
@@ -155,7 +152,7 @@ fun ExportFilesScreen(viewModel: ExportFilesViewModel = hiltViewModel()) {
         },
         dismissButton = {
             TextButton(onClick = { openExportDialog = null }) {
-                Text(text = stringResource(id = R.string.dialog_cancel))
+                Text(text = stringResource(id = R.string.cancel))
             }
         }
     )

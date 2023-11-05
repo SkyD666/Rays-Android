@@ -1,9 +1,6 @@
 package com.skyd.rays.ui.screen.home
 
-import android.animation.ArgbEvaluator
-import android.animation.ValueAnimator
 import android.graphics.BitmapFactory
-import androidx.core.animation.addListener
 import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
 import com.skyd.rays.appContext
@@ -272,7 +269,6 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
         viewModelScope.launch(Dispatchers.IO) {
             val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
             val stickerFilePath = stickerUuidToFile(uuid).path
-            BitmapFactory.decodeFile(stickerFilePath, options)
             val l = max(options.outHeight, options.outWidth)
             options.apply {
                 inSampleSize = l / 20
@@ -283,20 +279,10 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
             Palette.from(bitmap).generate {
                 it ?: return@generate
                 it.dominantSwatch?.let { swatch ->
-                    if (primaryColor != null) {
-                        val colorAnimation =
-                            ValueAnimator.ofObject(ArgbEvaluator(), primaryColor, swatch.rgb)
-                        colorAnimation.duration = 500
-                        colorAnimation.addUpdateListener { rgb ->
-                            setCustomPrimaryColorPreference(rgb.animatedValue as Int)
-                        }
-                        colorAnimation.addListener(onStart = { setThemeNamePreferenceToCustom() })
-                        colorAnimation.start()
-                    } else {
-                        setCustomPrimaryColorPreference(swatch.rgb)
-                        setThemeNamePreferenceToCustom()
-                    }
+                    setCustomPrimaryColorPreference(swatch.rgb)
+                    setThemeNamePreferenceToCustom()
                 }
+                bitmap.recycle()
             }
         }
     }

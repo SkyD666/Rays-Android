@@ -39,7 +39,7 @@ fun DeleteWarningDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.dialog_cancel))
+                Text(stringResource(R.string.cancel))
             }
         }
     )

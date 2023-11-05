@@ -112,6 +112,14 @@
 </table>
 Note: **and** logic is represented by **space, tab, line break**, multiple of the above characters together are considered as one, extra spaces before and after the input box text will be ignored. The **"content "** in the form refers to the selected search domain (the results of multiple search domains are combined).
 
+## 🌏 Translation
+
+If you are interested, please help us **translate**, thank you.
+
+<a href="https://hosted.weblate.org/engage/rays/">
+<img src="https://hosted.weblate.org/widget/rays/string-xml/287x66-grey.png" alt="translate" />
+</a>
+
 ## 🛠 Primary technology stack
 
 - Jetpack **Compose**

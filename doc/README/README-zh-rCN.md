@@ -108,6 +108,14 @@
 </table>
 注：**且** 逻辑使用 **空格、制表符、换行符** 表示，多个上述字符连接在一起时视为一个，输入框文字前后多余空格将被忽略。表格中的 **“内容”** 指的是选择的搜索域（多个搜索域的结果取并集）。
 
+## 🌏翻译
+
+如果您对此项目有兴趣，请帮助我们进行**翻译工作**，谢谢。
+
+<a href="https://hosted.weblate.org/engage/rays/">
+<img src="https://hosted.weblate.org/widget/rays/string-xml/287x66-grey.png" alt="翻译状态" />
+</a>
+
 ## 🛠主要技术栈
 
 - Jetpack **Compose**

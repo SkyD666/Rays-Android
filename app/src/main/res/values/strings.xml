@@ -10,8 +10,13 @@
     <string name="add_screen_name">Add sticker</string>
     <string name="add_screen_name_edit">Edit sticker</string>
     <string name="back">Back</string>
+    <string name="add_screen_success">Operation successful</string>
+    <string name="add_screen_waiting_uris">Waiting list (Click to remove)</string>
     <string name="add_screen_sticker_is_not_set">Please select a sticker!</string>
     <string name="add_screen_tag_field_hint">Press Enter to add</string>
+    <string name="add_screen_add_tag_to_all">Add to all stickers in the waiting list</string>
+    <string name="add_screen_global_tags">Global tags</string>
+    <string name="add_screen_global_tags_tips">Global tags will be added to all stickers in the waiting list.</string>
     <string name="search_config_screen_name">Search</string>
     <string name="home_screen_close_search">Close</string>
     <string name="home_screen_clear_search_text">Clear query</string>
@@ -25,9 +30,7 @@
     <string name="dialog_tip">Info</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_close">Close</string>
-    <string name="add_screen_success">Operation successful</string>
-    <string name="add_screen_waiting_uris">Waiting list (Click to remove)</string>
-    <string name="dialog_cancel">Cancel</string>
+    <string name="cancel">Cancel</string>
     <string name="home_screen_delete_warning">Are you sure to delete? The operation is irreversible!</string>
     <string name="dialog_warning">Warning</string>
     <string name="settings">Settings</string>
@@ -149,7 +152,7 @@
     <string name="webdav_screen_restore">Restore</string>
     <string name="home_screen_empty_tip">Create a new sticker or select a sticker from the search results~</string>
     <string name="home_screen_no_search_result_tip">It\'s empty~</string>
-    <string name="add_screen_select_sticker">Click to select a sticker</string>
+    <string name="add_screen_select_sticker">Select a sticker</string>
     <string name="import_export_screen_name">Sync Data</string>
     <string name="home_screen_send_sticker">Send</string>
     <string name="send_sticker">Send sticker</string>
@@ -197,6 +200,7 @@
     <string name="search_result_sort">Sort</string>
     <string name="search_result_reverse">Reverse</string>
     <string name="search_result_multi_select">Multi-select</string>
+    <string name="search_result_select_all">All</string>
     <string name="home_screen_search_result_list_to_top">To the top</string>
     <string name="home_style_screen_share_button_alignment">Share button position</string>
     <string name="home_style_screen_share_button_alignment_horiz">Horizontal</string>

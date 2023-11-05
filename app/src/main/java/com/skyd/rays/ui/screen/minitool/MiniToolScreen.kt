@@ -2,21 +2,28 @@ package com.skyd.rays.ui.screen.minitool
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Egg
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.PeopleAlt
 import androidx.compose.material.icons.filled.Style
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
 import com.skyd.rays.ext.plus
+import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.model.bean.MiniTool1Bean
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
@@ -34,15 +41,27 @@ const val MINI_TOOL_SCREEN_ROUTE = "miniToolScreen"
 fun MiniToolScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val navController = LocalNavController.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             RaysTopBar(
                 style = RaysTopBarStyle.Large,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(id = R.string.mini_tool_screen_name)) },
                 navigationIcon = {
-                    RaysIconButton(imageVector = Icons.Default.Extension, onClick = { })
+                    RaysIconButton(
+                        imageVector = Icons.Default.Extension,
+                        onClick = {
+                            snackbarHostState.showSnackbar(
+                                message = "\uD83D\uDC31 Meow~",
+                                scope = scope,
+                                withDismissAction = true
+                            )
+                        }
+                    )
                 },
             )
         },

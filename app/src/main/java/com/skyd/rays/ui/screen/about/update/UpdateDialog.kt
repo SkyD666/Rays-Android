@@ -204,7 +204,7 @@ private fun NewerDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
-                Text(text = stringResource(id = R.string.dialog_cancel))
+                Text(text = stringResource(id = R.string.cancel))
             }
         }
     )

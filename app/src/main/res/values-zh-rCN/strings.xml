@@ -10,8 +10,13 @@
     <string name="add_screen_name">添加表情包</string>
     <string name="add_screen_name_edit">修改表情包</string>
     <string name="back">返回</string>
+    <string name="add_screen_success">操作成功</string>
+    <string name="add_screen_waiting_uris">待添加（点击可移除）</string>
     <string name="add_screen_sticker_is_not_set">表情包图片未设置！</string>
     <string name="add_screen_tag_field_hint">按下回车以添加</string>
+    <string name="add_screen_add_tag_to_all">为待添加列表中的所有表情包加入此标签</string>
+    <string name="add_screen_global_tags">全局标签</string>
+    <string name="add_screen_global_tags_tips">待添加列表中的所有表情包都会加入这些标签。</string>
     <string name="search_config_screen_name">搜索</string>
     <string name="home_screen_close_search">关闭</string>
     <string name="home_screen_clear_search_text">清除文字</string>
@@ -25,9 +30,7 @@
     <string name="dialog_tip">提示</string>
     <string name="dialog_ok">确定</string>
     <string name="dialog_close">关闭</string>
-    <string name="add_screen_success">操作成功</string>
-    <string name="add_screen_waiting_uris">待添加（点击可移除）</string>
-    <string name="dialog_cancel">取消</string>
+    <string name="cancel">取消</string>
     <string name="home_screen_delete_warning">确定要删除吗？操作不可逆！</string>
     <string name="dialog_warning">警告</string>
     <string name="settings">设置</string>
@@ -188,6 +191,7 @@
     <string name="search_result_sort">排序</string>
     <string name="search_result_reverse">逆序</string>
     <string name="search_result_multi_select">多选</string>
+    <string name="search_result_select_all">全选</string>
     <string name="home_screen_search_result_list_to_top">到顶部</string>
     <string name="home_style_screen_share_button_alignment">分享按钮位置</string>
     <string name="home_style_screen_share_button_alignment_horiz">水平</string>

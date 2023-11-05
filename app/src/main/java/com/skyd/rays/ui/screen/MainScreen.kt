@@ -26,14 +26,15 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.skyd.rays.R
 import com.skyd.rays.ext.isCompact
+import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.home.HomeScreen
 import com.skyd.rays.ui.screen.minitool.MiniToolScreen
@@ -69,6 +70,11 @@ fun MainScreen() {
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
+        // 重绘一下当前 page，以便刷新主题色
+        LaunchedEffect(LocalCustomPrimaryColor.current) {
+            pagerState.scrollToPage(pagerState.currentPage)
+        }
+
         Row(
             Modifier
                 .fillMaxSize()
