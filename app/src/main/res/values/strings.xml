@@ -31,7 +31,7 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_close">Close</string>
     <string name="cancel">Cancel</string>
-    <string name="home_screen_delete_warning">Are you sure to delete? The operation is irreversible!</string>
+    <string name="home_screen_delete_warning">Delete? The operation is irreversible!</string>
     <string name="dialog_warning">Warning</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
@@ -40,11 +40,11 @@
     <string name="about_screen_description_1">A tool to record, search and manage stickers on your phone.</string>
     <string name="about_screen_description_2">Are you still struggling with too many stickers on your phone and having trouble finding the ones you want? This tool will help you manage your stickers! \uD83D\uDE0B</string>
     <string name="about_screen_description_3">Rays utilizes the MVI architecture and fully adopts the Material You design style. All pages are developed using Jetpack Compose.</string>
-    <string name="about_screen_goto_github_repo">Visit the GitHub repository</string>
-    <string name="about_screen_join_discord">Join the Discord server</string>
-    <string name="about_screen_join_telegram">Join the Telegram group</string>
+    <string name="about_screen_goto_github_repo">GitHub repository</string>
+    <string name="about_screen_join_discord">Discord server</string>
+    <string name="about_screen_join_telegram">Telegram group</string>
     <string name="license_screen_name">Open source license</string>
-    <string name="no_browser_found">Can\'t find the browser! Website: %s</string>
+    <string name="no_browser_found">Can\'t find the browser! Link: %s</string>
     <string name="appearance_screen_name">Appearance &amp; style</string>
     <string name="setting_screen_appearance_description">Theme, dark mode, style</string>
     <string name="appearance_screen_dark_mode">Dark mode</string>
@@ -53,7 +53,7 @@
     <string name="appearance_screen_sticker_color_theme_description">When changing the homepage sticker, update the theme color to the main color of the sticker</string>
     <string name="dark_mode_dark">Dark mode</string>
     <string name="dark_mode_light">Light mode</string>
-    <string name="dark_mode_follow_system">Follow the system</string>
+    <string name="dark_mode_follow_system">System default</string>
     <string name="import_export_screen_using_cloud_category">Via cloud</string>
     <string name="import_export_screen_using_file_category">Via files (Beta)</string>
     <string name="import_files_screen_name">Import from files</string>
@@ -116,8 +116,8 @@
     <string name="webdav_screen_failed">Operation failed: %s</string>
     <string name="webdav_screen_waiting">Please wait…</string>
     <string name="webdav_screen_input_server">Server URL</string>
-    <string name="webdav_screen_input_account">WebDAV account</string>
-    <string name="webdav_screen_input_password">WebDAV password</string>
+    <string name="webdav_screen_input_account">Account</string>
+    <string name="webdav_screen_input_password">Password</string>
     <string name="webdav_screen_remote_recycle_bin">Remote recycle bin</string>
     <string name="webdav_screen_remote_recycle_bin_description">View the contents of the remote recycle bin (logically deleted). This operation will only affect the remote content and will not modify the local content</string>
     <string name="webdav_screen_clear_remote_recycle_bin">Clear</string>
@@ -130,9 +130,9 @@
     <string name="only_android_8_1_plus">8.1 +</string>
     <string name="appearance_screen_basic_colors">Basic colors</string>
     <string name="dark_mode_invalid">Invalid value</string>
-    <string name="password_visibility_off">Hide password</string>
-    <string name="password_visibility_on">Show password</string>
-    <string name="clear_input_text">Clear text</string>
+    <string name="password_visibility_off">Hide</string>
+    <string name="password_visibility_on">Show</string>
+    <string name="clear_input_text">Clear</string>
     <string name="paste">Paste</string>
     <string name="webdav_screen_info_incomplete">WebDAV information is incomplete!</string>
     <string name="data_screen_name">Data</string>
@@ -242,7 +242,7 @@
     <string name="enable">Enable</string>
     <string name="uri_string_share_screen_add_app_package">Add package</string>
     <string name="uri_string_share_screen_add_app_package_example">e.g., com.skyd.example</string>
-    <string name="uri_string_share_repo_no_package">No such package is available: %s</string>
+    <string name="uri_string_share_repo_no_package">This package is unavailable: %s</string>
     <string name="uri_string_share_screen_failed">Error: %s</string>
     <string name="setting_screen_share_config_description">Sticker file extension, URI string share</string>
     <string name="share_config_screen_file_extension">File extension</string>
