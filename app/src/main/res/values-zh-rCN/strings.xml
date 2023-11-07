@@ -281,4 +281,8 @@
     <string name="text_recognize_screen_description">识别表情包中的文字</string>
     <string name="text_recognize_screen_threshold">置信度阈值</string>
     <string name="text_recognize_screen_threshold_description">只有置信度高于此阈值的文本才会被推荐，建议设置为 0.4 左右。</string>
+    <string name="privacy_screen_name">隐私</string>
+    <string name="setting_screen_privacy_description">禁止截图等</string>
+    <string name="privacy_screen_disable_screenshot">禁止截图</string>
+    <string name="privacy_screen_disable_screenshot_description">禁止在应用内截图</string>
 </resources>

@@ -4,6 +4,7 @@ import androidx.datastore.preferences.core.Preferences
 import com.skyd.rays.model.preference.ApiGrantPreference
 import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
+import com.skyd.rays.model.preference.DisableScreenshotPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
@@ -70,5 +71,8 @@ fun Preferences.toSettings(): Settings {
         // Ai
         classificationThreshold = ClassificationThresholdPreference.fromPreferences(this),
         textRecognizeThreshold = TextRecognizeThresholdPreference.fromPreferences(this),
+
+        // Privacy
+        disableScreenshot = DisableScreenshotPreference.fromPreferences(this),
     )
 }

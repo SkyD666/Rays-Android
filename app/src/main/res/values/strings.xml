@@ -291,4 +291,8 @@
     <string name="text_recognize_screen_description">Recognize texts in a sticker</string>
     <string name="text_recognize_screen_threshold">Text recognize threshold</string>
     <string name="text_recognize_screen_threshold_description">Only texts with confidence higher than this threshold will be recommended, suggested to be set around 0.4.</string>
+    <string name="privacy_screen_name">Privacy</string>
+    <string name="setting_screen_privacy_description">Disable screenshot</string>
+    <string name="privacy_screen_disable_screenshot">Disable screenshot</string>
+    <string name="privacy_screen_disable_screenshot_description">Screenshot is prohibited in the app</string>
 </resources>

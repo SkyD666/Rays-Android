@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import com.skyd.rays.model.preference.ApiGrantPreference
 import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
+import com.skyd.rays.model.preference.DisableScreenshotPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
@@ -79,3 +80,6 @@ val LocalApiGrant = compositionLocalOf { ApiGrantPreference.default }
 // Ai
 val LocalClassificationThreshold = compositionLocalOf { ClassificationThresholdPreference.default }
 val LocalTextRecognizeThreshold = compositionLocalOf { TextRecognizeThresholdPreference.default }
+
+// Privacy
+val LocalDisableScreenshot = compositionLocalOf { DisableScreenshotPreference.default }

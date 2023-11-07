@@ -27,6 +27,7 @@ import com.skyd.rays.ui.local.LocalClassificationThreshold
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalDarkMode
+import com.skyd.rays.ui.local.LocalDisableScreenshot
 import com.skyd.rays.ui.local.LocalExportStickerDir
 import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
 import com.skyd.rays.ui.local.LocalIgnoreUpdateVersion
@@ -81,6 +82,8 @@ data class Settings(
     // Ai
     val classificationThreshold: Float = ClassificationThresholdPreference.default,
     val textRecognizeThreshold: Float = TextRecognizeThresholdPreference.default,
+    // Privacy
+    val disableScreenshot: Boolean = DisableScreenshotPreference.default,
 )
 
 @Composable
@@ -126,6 +129,8 @@ fun SettingsProvider(
         // Ai
         LocalClassificationThreshold provides settings.classificationThreshold,
         LocalTextRecognizeThreshold provides settings.textRecognizeThreshold,
+        // Privacy
+        LocalDisableScreenshot provides settings.disableScreenshot,
     ) {
         content()
     }

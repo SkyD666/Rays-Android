@@ -22,7 +22,7 @@ android {
         minSdk 24
         targetSdk 34
         versionCode 40
-        versionName "1.6-beta20"
+        versionName "1.6-beta21"
         flavorDimensions = ["versionName"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -49,7 +49,7 @@ android {
 
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach {
-            outputFileName = "Rays_Release_${variant.productFlavors[0].name.toUpperCase()}_${variant.versionName}.apk"
+            outputFileName = "Rays_${variant.versionName}_Release_${variant.productFlavors[0].name}.apk"
         }
     }
 

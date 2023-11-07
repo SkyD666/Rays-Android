@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.Spring
@@ -29,7 +30,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.skyd.rays.ext.dataStore
+import com.skyd.rays.ext.get
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
+import com.skyd.rays.model.preference.DisableScreenshotPreference
 import com.skyd.rays.model.preference.SettingsProvider
 import com.skyd.rays.ui.local.LocalDarkMode
 import com.skyd.rays.ui.local.LocalNavController
@@ -78,6 +82,8 @@ import com.skyd.rays.ui.screen.settings.ml.classification.model.CLASSIFICATION_M
 import com.skyd.rays.ui.screen.settings.ml.classification.model.ClassificationModelScreen
 import com.skyd.rays.ui.screen.settings.ml.textrecognize.TEXT_RECOGNIZE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.ml.textrecognize.TextRecognizeScreen
+import com.skyd.rays.ui.screen.settings.privacy.PRIVACY_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.privacy.PrivacyScreen
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SearchConfigScreen
 import com.skyd.rays.ui.screen.settings.shareconfig.SHARE_CONFIG_SCREEN_ROUTE
@@ -98,6 +104,13 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
+
+        // 是否禁止截图
+        if (dataStore.get(DisableScreenshotPreference.key) == true) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
 
         setContent {
             navController = rememberNavController()
@@ -238,6 +251,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = AUTO_SHARE_SCREEN_ROUTE) {
                     AutoShareScreen()
+                }
+                composable(route = PRIVACY_SCREEN_ROUTE) {
+                    PrivacyScreen()
                 }
             }
 

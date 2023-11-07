@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ManageSearch
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.Dataset
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.Scaffold
@@ -26,6 +28,7 @@ import com.skyd.rays.ui.screen.settings.api.API_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.DATA_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.privacy.PRIVACY_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.shareconfig.SHARE_CONFIG_SCREEN_ROUTE
 
@@ -88,6 +91,14 @@ fun SettingsScreen() {
                     text = stringResource(id = R.string.ml_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_ml_description),
                     onClick = { navController.navigate(ML_SCREEN_ROUTE) }
+                )
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(Icons.Default.AdminPanelSettings),
+                    text = stringResource(id = R.string.privacy_screen_name),
+                    descriptionText = stringResource(id = R.string.setting_screen_privacy_description),
+                    onClick = { navController.navigate(PRIVACY_SCREEN_ROUTE) }
                 )
             }
             item {
