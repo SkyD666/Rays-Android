@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -35,11 +36,10 @@ import com.skyd.rays.ext.get
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.DisableScreenshotPreference
 import com.skyd.rays.model.preference.SettingsProvider
+import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalDarkMode
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.MAIN_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.MainScreen
 import com.skyd.rays.ui.screen.about.ABOUT_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.about.AboutScreen
 import com.skyd.rays.ui.screen.about.license.LICENSE_SCREEN_ROUTE
@@ -48,8 +48,8 @@ import com.skyd.rays.ui.screen.about.update.UpdateDialog
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.add.AddScreen
 import com.skyd.rays.ui.screen.add.openAddScreen
-import com.skyd.rays.ui.screen.minitool.MINI_TOOL_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.minitool.MiniToolScreen
+import com.skyd.rays.ui.screen.main.MAIN_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.main.MainScreen
 import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SELFIE_SEGMENTATION_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SelfieSegmentationScreen
 import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUTE
@@ -99,6 +99,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavHostController
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -114,7 +115,14 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             navController = rememberNavController()
+
             SettingsProvider {
+                // 更新主题色
+                val stickerUuid = LocalCurrentStickerUuid.current
+                LaunchedEffect(stickerUuid) {
+                    viewModel.sendUiIntent(MainIntent.UpdateThemeColor(stickerUuid))
+                }
+
                 CompositionLocalProvider(
                     LocalNavController provides navController,
                     LocalWindowSizeClass provides calculateWindowSizeClass(this)
@@ -233,9 +241,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = URI_STRING_SHARE_SCREEN_ROUTE) {
                     UriStringShareScreen()
-                }
-                composable(route = MINI_TOOL_SCREEN_ROUTE) {
-                    MiniToolScreen()
                 }
                 composable(route = STYLE_TRANSFER_SCREEN_ROUTE) {
                     StyleTransferScreen()

@@ -1,8 +1,6 @@
 package com.skyd.rays.ui.screen.home
 
-import android.graphics.BitmapFactory
 import androidx.lifecycle.viewModelScope
-import androidx.palette.graphics.Palette
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseViewModel
 import com.skyd.rays.base.IUIChange
@@ -14,21 +12,13 @@ import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
-import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
-import com.skyd.rays.model.preference.theme.StickerColorThemePreference
-import com.skyd.rays.model.preference.theme.ThemeNamePreference
 import com.skyd.rays.model.respository.HomeRepository
-import com.skyd.rays.util.stickerUuidToFile
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.launch
-import java.lang.Integer.max
 import javax.inject.Inject
 
 
@@ -153,23 +143,6 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
                 .defaultFinally()
         },
 
-        doIsInstance<HomeIntent.UpdateThemeColor> { intent ->
-            simpleFlow {
-                appContext.dataStore.get(StickerColorThemePreference.key)
-                    ?: StickerColorThemePreference.default
-            }
-                .mapToUIChange {
-                    if (it) {
-                        setPrimaryColor(
-                            uuid = intent.stickerUuid,
-                            primaryColor = intent.primaryColor
-                        )
-                    }
-                    this
-                }
-                .defaultFinally()
-        },
-
         doIsInstance<HomeIntent.GetPopularTagsList> {
             if (appContext.dataStore.get(ShowPopularTagsPreference.key)
                     ?: ShowPopularTagsPreference.default
@@ -247,43 +220,6 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
             sortedWith(comparator).reversed()
         } else {
             sortedWith(comparator)
-        }
-    }
-
-    private fun setPrimaryColor(uuid: String, primaryColor: Int? = null) {
-        fun setCustomPrimaryColorPreference(value: Int) {
-            CustomPrimaryColorPreference.put(
-                context = appContext,
-                scope = viewModelScope,
-                value = Integer.toHexString(value),
-            )
-        }
-
-        fun setThemeNamePreferenceToCustom() {
-            ThemeNamePreference.put(
-                context = appContext,
-                scope = viewModelScope,
-                value = ThemeNamePreference.CUSTOM_THEME_NAME,
-            )
-        }
-        viewModelScope.launch(Dispatchers.IO) {
-            val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-            val stickerFilePath = stickerUuidToFile(uuid).path
-            val l = max(options.outHeight, options.outWidth)
-            options.apply {
-                inSampleSize = l / 20
-                inJustDecodeBounds = false
-            }
-            val bitmap = BitmapFactory.decodeFile(stickerFilePath, options)
-            delay(500L)
-            Palette.from(bitmap).generate {
-                it ?: return@generate
-                it.dominantSwatch?.let { swatch ->
-                    setCustomPrimaryColorPreference(swatch.rgb)
-                    setThemeNamePreferenceToCustom()
-                }
-                bitmap.recycle()
-            }
         }
     }
 }

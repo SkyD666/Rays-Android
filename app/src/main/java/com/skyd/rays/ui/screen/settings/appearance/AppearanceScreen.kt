@@ -61,10 +61,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.edit
 import com.kyant.monet.TonalPalettes
 import com.kyant.monet.TonalPalettes.Companion.toTonalPalettes
 import com.skyd.rays.R
 import com.skyd.rays.ext.checkColorHex
+import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.onDark
 import com.skyd.rays.ext.toColorOrNull
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
@@ -87,6 +89,7 @@ import com.skyd.rays.ui.local.LocalThemeName
 import com.skyd.rays.ui.screen.settings.appearance.style.HOME_STYLE_SCREEN_ROUTE
 import com.skyd.rays.ui.theme.extractTonalPalettes
 import com.skyd.rays.ui.theme.extractTonalPalettesFromWallpaper
+import kotlinx.coroutines.launch
 
 const val APPEARANCE_SCREEN_ROUTE = "appearanceScreen"
 
@@ -309,8 +312,12 @@ fun Palettes(
         },
         onConfirm = {
             it.checkColorHex()?.let { color ->
-                CustomPrimaryColorPreference.put(context, scope, color)
-                ThemeNamePreference.put(context, scope, ThemeNamePreference.CUSTOM_THEME_NAME)
+                scope.launch {
+                    context.dataStore.edit { pref ->
+                        pref[CustomPrimaryColorPreference.key] = color
+                        pref[ThemeNamePreference.key] = ThemeNamePreference.CUSTOM_THEME_NAME
+                    }
+                }
                 addDialogVisible = false
             }
         }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -80,12 +81,13 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
     /**
      * 不需要访问 repository 的简单的 Flow
      */
-    protected fun <T> simpleFlow(action: () -> T): Flow<BaseData<T>> = flow {
-        emit(BaseData<T>().apply {
-            state = ReqState.Success
-            data = action()
-        })
-    }
+    protected fun <T> simpleFlow(action: suspend FlowCollector<BaseData<T>>.() -> T): Flow<BaseData<T>> =
+        flow {
+            emit(BaseData<T>().apply {
+                state = ReqState.Success
+                data = action.invoke(this@flow)
+            })
+        }
 
     /**
      * 若 T 是给定的类型则执行...

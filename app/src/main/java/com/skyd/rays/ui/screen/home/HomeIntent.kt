@@ -6,7 +6,6 @@ import com.skyd.rays.model.bean.StickerWithTags
 sealed class HomeIntent : IUiIntent {
     override val showLoading: Boolean = false
 
-    data class UpdateThemeColor(val stickerUuid: String, val primaryColor: Int) : HomeIntent()
     data class GetStickerDetails(val stickerUuid: String) : HomeIntent()
 
     data class DeleteStickerWithTags(val stickerUuids: List<String>) : HomeIntent() {

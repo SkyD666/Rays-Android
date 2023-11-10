@@ -1,5 +1,8 @@
-package com.skyd.rays.ui.screen
+package com.skyd.rays.ui.screen.main
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -9,9 +12,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Egg
 import androidx.compose.material.icons.filled.Extension
@@ -27,54 +27,43 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.skyd.rays.R
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalWindowSizeClass
+import com.skyd.rays.ui.screen.home.HOME_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.home.HomeScreen
+import com.skyd.rays.ui.screen.minitool.MINI_TOOL_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.minitool.MiniToolScreen
+import com.skyd.rays.ui.screen.more.MORE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.more.MoreScreen
-import kotlinx.coroutines.launch
 
 const val MAIN_SCREEN_ROUTE = "mainScreen"
 
 @Composable
 fun MainScreen() {
     val windowSizeClass = LocalWindowSizeClass.current
-    val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState { 3 }
-    val navigationBarOrRail = @Composable {
-        NavigationBarOrRail(
-            currentPage = pagerState.currentPage,
-            scrollToPage = {
-                coroutineScope.launch {
-                    pagerState.scrollToPage(it)
-                }
-            }
-        )
-    }
-    val contentPager: @Composable (modifier: Modifier) -> Unit = @Composable { modifier ->
-        ContentPager(modifier = modifier, pagerState = pagerState)
-    }
+    val mainNavController = rememberNavController()
 
     Scaffold(
         bottomBar = {
             if (windowSizeClass.isCompact) {
-                navigationBarOrRail()
+                NavigationBarOrRail(navController = mainNavController)
             }
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
-        // 重绘一下当前 page，以便刷新主题色
-        LaunchedEffect(LocalCustomPrimaryColor.current) {
-            pagerState.scrollToPage(pagerState.currentPage)
-        }
-
         Row(
             Modifier
                 .fillMaxSize()
@@ -87,22 +76,32 @@ fun MainScreen() {
                 },
         ) {
             if (!windowSizeClass.isCompact) {
-                navigationBarOrRail()
+                NavigationBarOrRail(navController = mainNavController)
             }
-            contentPager(Modifier.weight(1f))
+            NavHost(
+                navController = mainNavController,
+                startDestination = HOME_SCREEN_ROUTE,
+                modifier = Modifier.weight(1f),
+                enterTransition = { fadeIn(animationSpec = tween(200)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+                popEnterTransition = { fadeIn(animationSpec = tween(200)) },
+                popExitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) {
+                composable(HOME_SCREEN_ROUTE) { HomeScreen() }
+                composable(MINI_TOOL_SCREEN_ROUTE) { MiniToolScreen() }
+                composable(MORE_SCREEN_ROUTE) { MoreScreen() }
+            }
         }
     }
 }
 
 @Composable
-private fun NavigationBarOrRail(
-    currentPage: Int,
-    scrollToPage: (Int) -> Unit
-) {
+private fun NavigationBarOrRail(navController: NavController) {
+    var currentPage by rememberSaveable { mutableIntStateOf(0) }
     val items = listOf(
-        stringResource(R.string.home_screen_name),
-        stringResource(R.string.mini_tool_screen_name),
-        stringResource(R.string.more_screen_name)
+        stringResource(R.string.home_screen_name) to HOME_SCREEN_ROUTE,
+        stringResource(R.string.mini_tool_screen_name) to MINI_TOOL_SCREEN_ROUTE,
+        stringResource(R.string.more_screen_name) to MORE_SCREEN_ROUTE
     )
     val icons = remember {
         mapOf(
@@ -112,15 +111,32 @@ private fun NavigationBarOrRail(
     }
     val windowSizeClass = LocalWindowSizeClass.current
 
+    val onClick: (Int) -> Unit = { index ->
+        navController.navigate(items[index].second) {
+            // Pop up to the start destination of the graph to
+            // avoid building up a large stack of destinations
+            // on the back stack as users select items
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            // Avoid multiple copies of the same destination when
+            // reselecting the same item
+            launchSingleTop = true
+            // Restore state when reselecting a previously selected item
+            restoreState = true
+        }
+        currentPage = index
+    }
+
     if (windowSizeClass.isCompact) {
         NavigationBar {
             items.forEachIndexed { index, item ->
                 val selected = currentPage == index
                 NavigationBarItem(
-                    icon = { Icon(icons[selected]!![index], contentDescription = item) },
-                    label = { Text(item) },
+                    icon = { Icon(icons[selected]!![index], contentDescription = item.first) },
+                    label = { Text(item.first) },
                     selected = selected,
-                    onClick = { scrollToPage(index) }
+                    onClick = { onClick(index) }
                 )
             }
         }
@@ -129,27 +145,12 @@ private fun NavigationBarOrRail(
             items.forEachIndexed { index, item ->
                 val selected = currentPage == index
                 NavigationRailItem(
-                    icon = { Icon(icons[selected]!![index], contentDescription = item) },
-                    label = { Text(item) },
+                    icon = { Icon(icons[selected]!![index], contentDescription = item.first) },
+                    label = { Text(item.first) },
                     selected = selected,
-                    onClick = { scrollToPage(index) }
+                    onClick = { onClick(index) }
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun ContentPager(modifier: Modifier, pagerState: PagerState) {
-    HorizontalPager(
-        state = pagerState,
-        modifier = modifier,
-        userScrollEnabled = false
-    ) { page ->
-        when (page) {
-            0 -> HomeScreen()
-            1 -> MiniToolScreen()
-            2 -> MoreScreen()
         }
     }
 }

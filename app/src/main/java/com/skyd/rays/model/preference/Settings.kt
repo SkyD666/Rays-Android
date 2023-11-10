@@ -3,6 +3,7 @@ package com.skyd.rays.model.preference
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.platform.LocalContext
@@ -91,9 +92,8 @@ fun SettingsProvider(
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
-    val settings = remember {
-        context.dataStore.data.map { it.toSettings() }
-    }.collectAsState(initial = Settings(), context = Dispatchers.Default).value
+    val settings by remember { context.dataStore.data.map { it.toSettings() } }
+        .collectAsState(initial = Settings(), context = Dispatchers.Default)
 
     CompositionLocalProvider(
         // Theme

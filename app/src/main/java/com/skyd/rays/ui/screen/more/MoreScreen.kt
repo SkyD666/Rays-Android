@@ -39,6 +39,8 @@ import com.skyd.rays.ui.screen.about.ABOUT_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
 
+const val MORE_SCREEN_ROUTE = "moreScreen"
+
 @Composable
 fun MoreScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()

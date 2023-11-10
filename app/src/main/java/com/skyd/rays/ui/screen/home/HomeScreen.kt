@@ -58,7 +58,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -99,6 +98,8 @@ import com.skyd.rays.ui.screen.home.searchbar.RaysSearchBar
 import com.skyd.rays.util.sendStickerByUuid
 import com.skyd.rays.util.stickerUuidToUri
 
+
+const val HOME_SCREEN_ROUTE = "homeScreen"
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
@@ -188,21 +189,11 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     }
 
                     is StickerDetailUiState.Success -> {
-                        val primaryColor = MaterialTheme.colorScheme.primary
-
                         Spacer(modifier = Modifier.height(16.dp))
                         MainCard(
                             stickerWithTags = stickerDetailUiState.stickerWithTags,
                             scrollState = mainCardScrollState,
                             bottomPadding = if (windowSizeClass.isCompact) fabHeight else 0.dp,
-                            onUpdateThemeColor = { stickerUuid ->
-                                viewModel.sendUiIntent(
-                                    HomeIntent.UpdateThemeColor(
-                                        stickerUuid = stickerUuid,
-                                        primaryColor = primaryColor.toArgb(),
-                                    )
-                                )
-                            }
                         )
                     }
                 }
@@ -301,19 +292,13 @@ private fun MainCard(
     stickerWithTags: StickerWithTags,
     scrollState: ScrollState = rememberScrollState(),
     bottomPadding: Dp = 0.dp,
-    onUpdateThemeColor: (stickerUuid: String) -> Unit,
 ) {
     val navController = LocalNavController.current
-    val stickerUuid = stickerWithTags.sticker.uuid
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
 
     val stickerBean = stickerWithTags.sticker
     val tags = stickerWithTags.tags
-
-    LaunchedEffect(stickerUuid) {
-        onUpdateThemeColor(stickerUuid)
-    }
 
     Card(
         modifier = Modifier
