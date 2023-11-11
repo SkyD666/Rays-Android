@@ -28,16 +28,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.skyd.rays.R
 import com.skyd.rays.ext.isCompact
@@ -56,10 +55,14 @@ fun MainScreen() {
     val windowSizeClass = LocalWindowSizeClass.current
     val mainNavController = rememberNavController()
 
+    val navigationBarOrRail: @Composable () -> Unit = @Composable {
+        NavigationBarOrRail(navController = mainNavController)
+    }
+
     Scaffold(
         bottomBar = {
             if (windowSizeClass.isCompact) {
-                NavigationBarOrRail(navController = mainNavController)
+                navigationBarOrRail()
             }
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -76,16 +79,16 @@ fun MainScreen() {
                 },
         ) {
             if (!windowSizeClass.isCompact) {
-                NavigationBarOrRail(navController = mainNavController)
+                navigationBarOrRail()
             }
             NavHost(
                 navController = mainNavController,
                 startDestination = HOME_SCREEN_ROUTE,
                 modifier = Modifier.weight(1f),
-                enterTransition = { fadeIn(animationSpec = tween(200)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-                popEnterTransition = { fadeIn(animationSpec = tween(200)) },
-                popExitTransition = { fadeOut(animationSpec = tween(200)) },
+                enterTransition = { fadeIn(animationSpec = tween(170)) },
+                exitTransition = { fadeOut(animationSpec = tween(170)) },
+                popEnterTransition = { fadeIn(animationSpec = tween(170)) },
+                popExitTransition = { fadeOut(animationSpec = tween(170)) },
             ) {
                 composable(HOME_SCREEN_ROUTE) { HomeScreen() }
                 composable(MINI_TOOL_SCREEN_ROUTE) { MiniToolScreen() }
@@ -96,8 +99,9 @@ fun MainScreen() {
 }
 
 @Composable
-private fun NavigationBarOrRail(navController: NavController) {
-    var currentPage by rememberSaveable { mutableIntStateOf(0) }
+private fun NavigationBarOrRail(
+    navController: NavController
+) {
     val items = listOf(
         stringResource(R.string.home_screen_name) to HOME_SCREEN_ROUTE,
         stringResource(R.string.mini_tool_screen_name) to MINI_TOOL_SCREEN_ROUTE,
@@ -109,29 +113,32 @@ private fun NavigationBarOrRail(navController: NavController) {
             false to listOf(Icons.Outlined.Home, Icons.Outlined.Extension, Icons.Outlined.Egg),
         )
     }
-    val windowSizeClass = LocalWindowSizeClass.current
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDest = navBackStackEntry?.destination
 
     val onClick: (Int) -> Unit = { index ->
         navController.navigate(items[index].second) {
-            // Pop up to the start destination of the graph to
-            // avoid building up a large stack of destinations
-            // on the back stack as users select items
-            popUpTo(navController.graph.findStartDestination().id) {
+            // Pop up to the previous (?: start) destination of the graph to
+            // avoid building up a large stack of destinations on the back stack as users select items
+            popUpTo(
+                id = navController.currentDestination?.id
+                    ?: navController.graph.findStartDestination().id
+            ) {
                 saveState = true
+                inclusive = true
             }
-            // Avoid multiple copies of the same destination when
-            // reselecting the same item
+            // Avoid multiple copies of the same destination when reselecting the same item
             launchSingleTop = true
             // Restore state when reselecting a previously selected item
             restoreState = true
         }
-        currentPage = index
     }
 
-    if (windowSizeClass.isCompact) {
+    if (LocalWindowSizeClass.current.isCompact) {
         NavigationBar {
             items.forEachIndexed { index, item ->
-                val selected = currentPage == index
+                val selected = currentDest?.hierarchy?.any { it.route == item.second } == true
                 NavigationBarItem(
                     icon = { Icon(icons[selected]!![index], contentDescription = item.first) },
                     label = { Text(item.first) },
@@ -143,7 +150,7 @@ private fun NavigationBarOrRail(navController: NavController) {
     } else {
         NavigationRail {
             items.forEachIndexed { index, item ->
-                val selected = currentPage == index
+                val selected = currentDest?.hierarchy?.any { it.route == item.second } == true
                 NavigationRailItem(
                     icon = { Icon(icons[selected]!![index], contentDescription = item.first) },
                     label = { Text(item.first) },
