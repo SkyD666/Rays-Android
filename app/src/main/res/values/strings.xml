@@ -295,4 +295,6 @@
     <string name="setting_screen_privacy_description">Disable screenshot</string>
     <string name="privacy_screen_disable_screenshot">Disable screenshot</string>
     <string name="privacy_screen_disable_screenshot_description">Screenshot is prohibited in the app</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
 </resources>

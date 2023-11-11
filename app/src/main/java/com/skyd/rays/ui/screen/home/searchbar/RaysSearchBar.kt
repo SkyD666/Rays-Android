@@ -8,20 +8,31 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
@@ -29,11 +40,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +57,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -59,6 +71,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.isCompact
+import com.skyd.rays.ext.plus
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
@@ -419,35 +432,93 @@ fun PopularTagsBar(
     onTagClicked: (String) -> Unit,
     tags: List<Pair<String, Float>>,
 ) {
-    Box {
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+    val eachTag: @Composable (Pair<String, Float>) -> Unit = { item ->
+        TooltipBox(
+            positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+            tooltip = {
+                RichTooltip(
+                    title = { Text(item.first) },
+                    text = {
+                        Text(
+                            text = stringResource(
+                                R.string.home_screen_popular_tags_popular_value, item.second
+                            )
+                        )
+                    }
+                )
+            },
+            state = rememberTooltipState(),
         ) {
-            itemsIndexed(tags) { _, item ->
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
-                    tooltip = {
-                        RichTooltip(
-                            title = { Text(item.first) },
-                            text = {
-                                Text(
-                                    text = stringResource(
-                                        R.string.home_screen_popular_tags_popular_value, item.second
-                                    )
+            Text(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .clickable { onTagClicked(item.first) }
+                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                text = item.first
+            )
+        }
+    }
+
+    Box {
+        Row {
+            var expand by rememberSaveable { mutableStateOf(false) }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.CenterVertically)
+            ) {
+                val lazyRowState = rememberLazyListState()
+                val flowRowState = rememberScrollState()
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = !expand,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                ) {
+                    LazyRow(
+                        state = lazyRowState,
+                        contentPadding = PaddingValues(start = 16.dp) + PaddingValues(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        itemsIndexed(tags) { index, item ->
+                            eachTag(item)
+                            if (index < tags.size - 1) {
+                                VerticalDivider(modifier = Modifier.height(16.dp))
+                            }
+                        }
+                    }
+                }
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = expand,
+                    enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
+                    exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
+                ) {
+                    FlowRow(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .heightIn(max = 200.dp)
+                            .verticalScroll(flowRowState)
+                            .padding(vertical = 6.dp),
+                    ) {
+                        tags.forEachIndexed { index, item ->
+                            eachTag(item)
+                            if (index < tags.size - 1) {
+                                VerticalDivider(
+                                    modifier = Modifier
+                                        .height(16.dp)
+                                        .align(Alignment.CenterVertically)
                                 )
                             }
-                        )
-                    },
-                    state = rememberTooltipState(),
-                ) {
-                    SuggestionChip(
-                        onClick = { onTagClicked(item.first) },
-                        label = { Text(text = item.first) }
-                    )
+                        }
+                    }
                 }
             }
+
+            RaysIconButton(
+                imageVector = if (expand) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                contentDescription = if (expand) stringResource(R.string.collapse)
+                else stringResource(R.string.expand),
+                onClick = { expand = !expand },
+            )
         }
 
         HorizontalDivider(

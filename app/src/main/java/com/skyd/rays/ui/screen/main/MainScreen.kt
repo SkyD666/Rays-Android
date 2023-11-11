@@ -99,9 +99,7 @@ fun MainScreen() {
 }
 
 @Composable
-private fun NavigationBarOrRail(
-    navController: NavController
-) {
+private fun NavigationBarOrRail(navController: NavController) {
     val items = listOf(
         stringResource(R.string.home_screen_name) to HOME_SCREEN_ROUTE,
         stringResource(R.string.mini_tool_screen_name) to MINI_TOOL_SCREEN_ROUTE,

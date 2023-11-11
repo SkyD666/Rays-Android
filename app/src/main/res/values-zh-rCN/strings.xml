@@ -285,4 +285,6 @@
     <string name="setting_screen_privacy_description">禁止截图等</string>
     <string name="privacy_screen_disable_screenshot">禁止截图</string>
     <string name="privacy_screen_disable_screenshot_description">禁止在应用内截图</string>
+    <string name="expand">展开</string>
+    <string name="collapse">收起</string>
 </resources>
