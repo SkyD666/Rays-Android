@@ -4,19 +4,20 @@
     <string name="home_screen_name">首页</string>
     <string name="home_screen_search_hint">输入关键词搜索</string>
     <string name="home_screen_add">添加</string>
-    <string name="add_screen_add">添加</string>
+    <string name="add_screen_save">保存</string>
     <string name="add_screen_title">标题（可选）</string>
     <string name="add_screen_add_tags">添加标签（可选）</string>
     <string name="add_screen_name">添加表情包</string>
     <string name="add_screen_name_edit">修改表情包</string>
     <string name="back">返回</string>
     <string name="add_screen_success">操作成功</string>
-    <string name="add_screen_waiting_uris">待添加（点击可移除）</string>
+    <string name="add_screen_waiting_uris">处理列表</string>
     <string name="add_screen_sticker_is_not_set">表情包图片未设置！</string>
     <string name="add_screen_tag_field_hint">按下回车以添加</string>
     <string name="add_screen_add_tag_to_all">为待添加列表中的所有表情包加入此标签</string>
     <string name="add_screen_global_tags">全局标签</string>
     <string name="add_screen_global_tags_tips">待添加列表中的所有表情包都会加入这些标签。</string>
+    <string name="add_screen_skip_current_sticker">放弃当前编辑</string>
     <string name="search_config_screen_name">搜索</string>
     <string name="home_screen_close_search">关闭</string>
     <string name="home_screen_clear_search_text">清除文字</string>
@@ -27,7 +28,7 @@
     <string name="home_screen_edit">编辑</string>
     <string name="home_screen_delete">删除</string>
     <string name="home_screen_export">导出</string>
-    <string name="dialog_tip">提示</string>
+    <string name="info">提示</string>
     <string name="dialog_ok">确定</string>
     <string name="dialog_close">关闭</string>
     <string name="cancel">取消</string>
@@ -54,7 +55,7 @@
     <string name="dark_mode_light">亮色</string>
     <string name="dark_mode_follow_system">跟随系统</string>
     <string name="import_export_screen_using_cloud_category">通过云</string>
-    <string name="import_export_screen_using_file_category">通过文件（实验性）</string>
+    <string name="import_export_screen_using_file_category">通过文件</string>
     <string name="import_files_screen_name">从文件导入</string>
     <string name="import_files_screen_description">从本地文件导入表情包、标签等信息</string>
     <string name="import_files_screen_select_file">选择备份文件</string>
@@ -98,10 +99,12 @@
     <string name="webdav_screen_server">服务器</string>
     <string name="webdav_screen_server_description">请输入 WebDAV 服务器网址</string>
     <string name="webdav_screen_sync_category">同步</string>
-    <string name="webdav_screen_upload">推送到远端</string>
-    <string name="webdav_screen_upload_description">将本地数据推送到远端，冲突时会覆盖远端内容。若某表情包本地没有，而远端有，则该表情包会被移动到远端回收站</string>
-    <string name="webdav_screen_download">从远端拉取</string>
-    <string name="webdav_screen_download_description">从远端拉取数据，冲突时会覆盖本地内容。若某表情包既在本地，也在远端回收站内，则本地的该表情包会被删除。若某表情包本地有，而远端没有，则该表情包不会被修改</string>
+    <string name="webdav_screen_upload">推送</string>
+    <string name="webdav_screen_upload_description">将本地数据推送到远端</string>
+    <string name="webdav_screen_upload_tip">将本地数据推送到远端时，若遇到冲突，则会覆盖远端内容。若某表情包本地没有，而远端有，则该表情包会被移动到远端回收站内。</string>
+    <string name="webdav_screen_download">拉取</string>
+    <string name="webdav_screen_download_description">从远端拉取数据</string>
+    <string name="webdav_screen_download_tip">从远端拉取数据时，若遇到冲突，则会覆盖本地内容。若某表情包既在本地，也在远端回收站内，则该本地的表情包会被删除。若本地有某个表情包，而远端没有，则该表情包不会被修改。</string>
     <plurals name="webdav_screen_download_success">
         <item quantity="other">拉取成功，耗时 %1$.2f 秒，更新 %2$d 条</item>
     </plurals>
@@ -114,7 +117,8 @@
     <string name="webdav_screen_input_account">账号</string>
     <string name="webdav_screen_input_password">密码</string>
     <string name="webdav_screen_remote_recycle_bin">远端回收站</string>
-    <string name="webdav_screen_remote_recycle_bin_description">查看远端回收站的内容，有哪些表情包被逻辑删除了。该项包含的操作仅会影响远端内容，不会修改本地内容</string>
+    <string name="webdav_screen_remote_recycle_bin_description">查看远端回收站的内容</string>
+    <string name="webdav_screen_remote_recycle_bin_tip">远端回收站里的内容是被逻辑删除的表情包。对远端回收站的操作仅会影响远端内容，不会修改本地内容。</string>
     <string name="webdav_screen_clear_remote_recycle_bin">清空回收站</string>
     <string name="webdav_screen_last_modified_time">上次修改时间：%s</string>
     <string name="webdav_screen_delete">删除</string>
@@ -191,7 +195,7 @@
     <string name="search_result_sort">排序</string>
     <string name="search_result_reverse">逆序</string>
     <string name="search_result_multi_select">多选</string>
-    <string name="search_result_select_all">全选</string>
+    <string name="search_result_invert_selection">反选</string>
     <string name="home_screen_search_result_list_to_top">到顶部</string>
     <string name="home_style_screen_share_button_alignment">分享按钮位置</string>
     <string name="home_style_screen_share_button_alignment_horiz">水平</string>

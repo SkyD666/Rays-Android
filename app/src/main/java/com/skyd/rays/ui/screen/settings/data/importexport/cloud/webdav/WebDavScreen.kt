@@ -15,10 +15,10 @@ import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Dns
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Recycling
 import androidx.compose.material.icons.filled.RestoreFromTrash
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
@@ -65,6 +65,7 @@ import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysLottieAnimation
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
+import com.skyd.rays.ui.component.TipSettingsItem
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.component.dialog.TextFieldDialog
@@ -104,7 +105,8 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 actions = {
                     RaysIconButton(
                         onClick = { openWarningDialog = true },
-                        imageVector = Icons.Default.Warning
+                        imageVector = Icons.Default.Info,
+                        contentDescription = stringResource(R.string.info)
                     )
                 },
             )
@@ -510,6 +512,13 @@ private fun LazyListScope.syncItem(
             text = stringResource(id = R.string.webdav_screen_remote_recycle_bin),
             descriptionText = stringResource(id = R.string.webdav_screen_remote_recycle_bin_description),
             onClick = onRemoteRecycleBinItemClick
+        )
+    }
+    item {
+        TipSettingsItem(
+            text = stringResource(R.string.webdav_screen_download_tip) + "\n\n" +
+                    stringResource(R.string.webdav_screen_upload_tip) + "\n\n" +
+                    stringResource(R.string.webdav_screen_remote_recycle_bin_tip)
         )
     }
 }

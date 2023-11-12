@@ -182,7 +182,7 @@ private fun RaysSearchBarPreview() {
                     onItemClickListener = { _, _ -> active = false },
                     multiSelect = false,
                     onMultiSelectChanged = {},
-                    onSelectAllClick = {},
+                    onInvertSelectClick = {},
                     selectedStickers = emptyList()
                 )
             }

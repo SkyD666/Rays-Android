@@ -2,13 +2,10 @@ package com.skyd.rays.ui.screen.minitool
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Egg
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.PeopleAlt
 import androidx.compose.material.icons.filled.Style
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -70,13 +67,11 @@ fun MiniToolScreen() {
             MiniTool1Bean(
                 title = stringResource(R.string.style_transfer_screen_name),
                 icon = Icons.Default.Style,
-                experimental = false,
                 action = { navController.navigate(STYLE_TRANSFER_SCREEN_ROUTE) }
             ),
             MiniTool1Bean(
                 title = stringResource(R.string.selfie_segmentation_screen_name),
                 icon = Icons.Default.PeopleAlt,
-                experimental = true,
                 action = { navController.navigate(SELFIE_SEGMENTATION_SCREEN_ROUTE) }
             ),
         )

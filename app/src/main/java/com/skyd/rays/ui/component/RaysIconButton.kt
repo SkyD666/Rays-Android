@@ -1,7 +1,21 @@
 package com.skyd.rays.ui.component
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material3.*
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.IconToggleButtonColors
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -43,6 +57,7 @@ fun RaysIconButton(
                 interactionSource = interactionSource,
                 content = icon,
             )
+
             RaysIconButtonStyle.Filled -> FilledIconButton(
                 modifier = it,
                 onClick = onClick,
@@ -51,6 +66,7 @@ fun RaysIconButton(
                 interactionSource = interactionSource,
                 content = icon,
             )
+
             RaysIconButtonStyle.FilledTonal -> FilledTonalIconButton(
                 modifier = it,
                 onClick = onClick,
@@ -59,6 +75,7 @@ fun RaysIconButton(
                 interactionSource = interactionSource,
                 content = icon,
             )
+
             RaysIconButtonStyle.Outlined -> OutlinedIconButton(
                 modifier = it,
                 onClick = onClick,
@@ -111,4 +128,44 @@ fun RaysIconButton(
         colors = colors,
         interactionSource = interactionSource,
     )
+}
+
+@Composable
+fun RaysIconToggleButton(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    colors: IconToggleButtonColors = IconButtonDefaults.iconToggleButtonColors(),
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    contentDescription: String? = null,
+    content: @Composable () -> Unit
+) {
+    val iconButton: @Composable (modifier: Modifier) -> Unit = {
+        IconToggleButton(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            modifier = it,
+            enabled = enabled,
+            colors = colors,
+            interactionSource = interactionSource,
+            content = content,
+        )
+    }
+    if (contentDescription.isNullOrEmpty()) {
+        iconButton(modifier)
+    } else {
+        TooltipBox(
+            modifier = modifier,
+            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+            tooltip = {
+                PlainTooltip {
+                    Text(contentDescription)
+                }
+            },
+            state = rememberTooltipState()
+        ) {
+            iconButton(Modifier)
+        }
+    }
 }

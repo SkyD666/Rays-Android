@@ -218,16 +218,14 @@ fun RaysSearchBar(
                 val searchResultUiState = uiState.searchResultUiState
                 if (searchResultUiState is SearchResultUiState.Success) {
                     val searchResultList = @Composable {
+                        if (!active) multiSelect = false
                         SearchResultList(
                             state = searchResultListState,
                             dataList = searchResultUiState.stickerWithTagsList,
                             onItemClickListener = { data, selected ->
                                 if (multiSelect) {
-                                    if (selected) {
-                                        selectedStickers.add(data)
-                                    } else {
-                                        selectedStickers.remove(data)
-                                    }
+                                    if (selected) selectedStickers.add(data)
+                                    else selectedStickers.remove(data)
                                 } else {
                                     onActiveChange(false)
                                     viewModel.sendUiIntent(
@@ -244,9 +242,11 @@ fun RaysSearchBar(
                                     selectedStickers.clear()
                                 }
                             },
-                            onSelectAllClick = {
+                            onInvertSelectClick = {
+                                val newSelectedStickers =
+                                    searchResultUiState.stickerWithTagsList - selectedStickers
                                 selectedStickers.clear()
-                                selectedStickers.addAll(searchResultUiState.stickerWithTagsList)
+                                selectedStickers.addAll(newSelectedStickers)
                             },
                             selectedStickers = selectedStickers,
                         )

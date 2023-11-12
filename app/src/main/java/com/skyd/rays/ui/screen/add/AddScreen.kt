@@ -36,17 +36,26 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Help
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.AddToPhotos
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.CancelScheduleSend
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.EditOff
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -77,11 +86,15 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -93,20 +106,21 @@ import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.addAllDistinctly
 import com.skyd.rays.ext.addIfAny
 import com.skyd.rays.ext.navigate
+import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
-import com.skyd.rays.model.bean.EmptyUriWithStickerUuidBean
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysCard
+import com.skyd.rays.ui.component.RaysFloatingActionButton
+import com.skyd.rays.ui.component.RaysFloatingActionButtonStyle
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.TopBarIcon
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.util.stickerUuidToUri
@@ -147,20 +161,59 @@ fun AddScreen(
     var stickerCreateTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
     val tagsToAllWaitingStickers = remember { mutableStateListOf<TagBean>() }
     val tags = remember { mutableStateListOf<TagBean>() }
-    var currentSticker by remember { mutableStateOf(EmptyUriWithStickerUuidBean) }
     val stickersWaitingList = remember { mutableStateListOf<UriWithStickerUuidBean>() }
     val suggestedTags = remember { mutableStateListOf<String>() }
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
     val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
 
+    fun currentSticker(): UriWithStickerUuidBean? = stickersWaitingList.firstOrNull()
+
+    // 添加/修改完成后重设页面数据
+    fun resetStickerData() {
+        titleText = ""
+        currentTagText = ""
+        stickerCreateTime = System.currentTimeMillis()
+        suggestedTags.clear()
+        tags.clear()
+        tags.addAll(tagsToAllWaitingStickers)
+        if (stickersWaitingList.isNotEmpty()) {
+            stickersWaitingList.removeAt(0)
+        }
+    }
+
     LaunchedEffect(Unit) {
-        initStickers.firstOrNull()?.let { firstSticker ->
-            currentSticker = firstSticker
-            stickersWaitingList.addAll(initStickers.subList(1, initStickers.size))
-            if (firstSticker.stickerUuid.isNotBlank()) {
-                viewModel.sendUiIntent(AddIntent.GetStickerWithTags(firstSticker.stickerUuid))
+        stickersWaitingList.addAll(initStickers)
+        currentSticker()?.let { currentSticker ->
+            if (currentSticker.stickerUuid.isNotBlank()) {
+                viewModel.sendUiIntent(AddIntent.GetStickerWithTags(currentSticker.stickerUuid))
             }
         }
+    }
+
+    LaunchedEffect(currentSticker()) {
+        val currentSticker = currentSticker()
+        if (currentSticker != null) {
+            currentSticker.uri?.let { uri ->
+                viewModel.sendUiIntent(AddIntent.GetSuggestTags(uri))
+            }
+        } else {
+            resetStickerData()
+            if (isEdit) {
+                navController.popBackStackWithLifecycle()
+            }
+        }
+    }
+
+    val pickStickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { result ->
+        if (result != null) stickersWaitingList[0] = UriWithStickerUuidBean(uri = result)
+    }
+    val pickStickersLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetMultipleContents()
+    ) { result ->
+        if (result.isEmpty()) return@rememberLauncherForActivityResult
+        stickersWaitingList.addAllDistinctly(result.map { UriWithStickerUuidBean(uri = it) })
     }
 
     Scaffold(
@@ -169,21 +222,29 @@ fun AddScreen(
             RaysTopBar(
                 title = {
                     Text(
-                        text = stringResource(
-                            if (isEdit) R.string.add_screen_name_edit else R.string.add_screen_name
+                        stringResource(
+                            if (isEdit) R.string.add_screen_name_edit
+                            else R.string.add_screen_name
                         )
                     )
                 },
                 actions = {
-                    TopBarIcon(
-                        imageVector = if (stickersWaitingList.isEmpty()) {
-                            Icons.Default.Done
-                        } else {
-                            Icons.AutoMirrored.Default.ArrowForwardIos
-                        },
-                        contentDescription = stringResource(R.string.add_screen_add),
+                    RaysIconButton(
                         onClick = {
-                            if (currentSticker.isEmpty()) {
+                            (if (isEdit) pickStickerLauncher else pickStickersLauncher)
+                                .launch("image/*")
+                        },
+                        contentDescription = stringResource(R.string.add_screen_select_sticker),
+                        imageVector = if (isEdit) Icons.Default.Image else Icons.Default.AddPhotoAlternate,
+                    )
+                    RaysIconButton(
+                        onClick = { resetStickerData() },
+                        contentDescription = stringResource(R.string.add_screen_skip_current_sticker),
+                        imageVector = Icons.Default.EditOff,
+                    )
+                    RaysIconButton(
+                        onClick = {
+                            if (currentSticker() == null) {
                                 snackbarHostState.showSnackbar(
                                     scope = scope,
                                     message = appContext.getString(R.string.add_screen_sticker_is_not_set),
@@ -195,40 +256,25 @@ fun AddScreen(
                                     sticker = StickerBean(
                                         title = titleText,
                                         createTime = stickerCreateTime
-                                    ).apply { uuid = currentSticker.stickerUuid },
+                                    ).apply { uuid = currentSticker()!!.stickerUuid },
                                     tags = tags.distinct()
                                 )
                                 viewModel.sendUiIntent(
                                     AddIntent.AddNewStickerWithTags(
                                         stickerWithTags,
-                                        currentSticker.uri!!
+                                        currentSticker()!!.uri!!
                                     )
                                 )
                             }
-                        }
+                        },
+                        contentDescription = stringResource(R.string.add_screen_save),
+                        imageVector = Icons.Default.Save,
                     )
                 }
             )
-        }
-    ) { paddingValues ->
-        val pickStickerLauncher = rememberLauncherForActivityResult(
-            ActivityResultContracts.GetContent()
-        ) { result ->
-            if (result != null) currentSticker = UriWithStickerUuidBean(uri = result)
-        }
-        val pickStickersLauncher = rememberLauncherForActivityResult(
-            ActivityResultContracts.GetMultipleContents()
-        ) { result ->
-            if (result.isEmpty()) return@rememberLauncherForActivityResult
-            if (currentSticker.isEmpty()) {
-                currentSticker = UriWithStickerUuidBean(uri = result.first())
-                stickersWaitingList.addAllDistinctly(result.subList(1, result.size)
-                    .map { UriWithStickerUuidBean(uri = it) })
-            } else {
-                stickersWaitingList.addAllDistinctly(result.map { UriWithStickerUuidBean(uri = it) })
-                stickersWaitingList.removeIf { it.uri == currentSticker.uri }
-            }
-        }
+        },
+
+        ) { paddingValues ->
         LazyColumn(contentPadding = paddingValues) {
             item {
                 AnimatedVisibility(
@@ -280,31 +326,22 @@ fun AddScreen(
                     tags.addIfAny(TagBean(tag = text)) { it.tag != text }
                 })
             }
-            item {
-                StickerCard(
-                    stickerUri = currentSticker.uri,
-                    pickLauncher = if (isEdit) pickStickerLauncher else pickStickersLauncher,
-                    onGetSuggestTags = { stickerUri ->
-                        viewModel.sendUiIntent(AddIntent.GetSuggestTags(stickerUri))
-                    }
-                )
-            }
         }
 
         RaysDialog(
             visible = openDialog,
-            title = { Text(text = stringResource(R.string.dialog_tip)) },
+            title = { Text(text = stringResource(R.string.info)) },
             text = { Text(text = stringResource(R.string.add_screen_success)) },
             onDismissRequest = {
                 openDialog = false
-                if (stickersWaitingList.isEmpty() && currentSticker.isEmpty()) {
+                if (stickersWaitingList.isEmpty()) {
                     navController.popBackStackWithLifecycle()
                 }
             },
             confirmButton = {
                 TextButton(onClick = {
                     openDialog = false
-                    if (stickersWaitingList.isEmpty() && currentSticker.isEmpty()) {
+                    if (stickersWaitingList.isEmpty()) {
                         navController.popBackStackWithLifecycle()
                     }
                 }) {
@@ -315,7 +352,7 @@ fun AddScreen(
 
         RaysDialog(
             visible = openDuplicateDialog,
-            title = { Text(text = stringResource(R.string.dialog_tip)) },
+            title = { Text(text = stringResource(R.string.info)) },
             text = { Text(text = stringResource(R.string.add_screen_sticker_duplicate)) },
             onDismissRequest = { openDuplicateDialog = false },
             confirmButton = {
@@ -326,30 +363,18 @@ fun AddScreen(
         )
     }
 
-    // 添加/修改完成后重设页面数据
-    fun resetStickerData() {
-        titleText = ""
-        currentTagText = ""
-        stickerCreateTime = System.currentTimeMillis()
-        suggestedTags.clear()
-        tags.clear()
-        tags.addAll(tagsToAllWaitingStickers)
-        if (stickersWaitingList.isEmpty()) {
-            currentSticker = EmptyUriWithStickerUuidBean
-        } else {
-            currentSticker = stickersWaitingList.first()
-            stickersWaitingList.removeAt(0)
-        }
-    }
-
     uiEvent?.apply {
         when (getStickersWithTagsUiEvent) {
             is GetStickersWithTagsUiEvent.Success -> {
                 val stickerBean = getStickersWithTagsUiEvent.stickerWithTags.sticker
-                currentSticker = currentSticker.copy(
-                    uri = stickerUuidToUri(stickerBean.uuid),
-                    stickerUuid = stickerBean.uuid
-                )
+                val stickerIndex = stickersWaitingList
+                    .indexOfFirst { it.stickerUuid == stickerBean.uuid }
+                if (stickerIndex > -1) {
+                    stickersWaitingList[stickerIndex] = UriWithStickerUuidBean(
+                        uri = stickerUuidToUri(stickerBean.uuid),
+                        stickerUuid = stickerBean.uuid
+                    )
+                }
                 titleText = stickerBean.title
                 stickerCreateTime = stickerBean.createTime
                 tags.clear()
@@ -424,7 +449,10 @@ private fun LazyListScope.titleInputFieldItem(
                     )
                 }
             },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Uri
+            ),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.moveFocus(FocusDirection.Next)
             })
@@ -594,37 +622,6 @@ private fun WaitingRow(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun StickerCard(
-    stickerUri: Uri?,
-    pickLauncher: ManagedActivityResultLauncher<String, *>,
-    onGetSuggestTags: (Uri) -> Unit,
-) {
-    RaysCard(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 7.dp),
-        colors = CardDefaults.cardColors(Color.Transparent),
-        onClick = { pickLauncher.launch("image/*") },
-    ) {
-        if (stickerUri == null) {
-            Box(modifier = Modifier.aspectRatio(1.6f)) {
-                AnimatedPlaceholder(
-                    resId = R.raw.lottie_genshin_impact_klee_1,
-                    sizeFraction = 0.9f,
-                    tip = stringResource(R.string.add_screen_select_sticker)
-                )
-            }
-        } else {
-            LaunchedEffect(stickerUri) {
-                onGetSuggestTags(stickerUri)
-            }
-            RaysImage(
-                model = stickerUri,
-                modifier = Modifier.fillMaxWidth()
-            )
         }
     }
 }

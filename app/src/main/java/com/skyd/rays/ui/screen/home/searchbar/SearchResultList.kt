@@ -1,5 +1,6 @@
 package com.skyd.rays.ui.screen.home.searchbar
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -31,19 +32,18 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Badge
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -86,7 +86,7 @@ fun SearchResultList(
     onItemClickListener: ((data: StickerWithTags, selected: Boolean) -> Unit)? = null,
     multiSelect: Boolean,
     onMultiSelectChanged: (Boolean) -> Unit,
-    onSelectAllClick: () -> Unit,
+    onInvertSelectClick: () -> Unit,
     selectedStickers: List<StickerWithTags>,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -107,7 +107,7 @@ fun SearchResultList(
             stickersCount = dataList.size,
             multiSelect = multiSelect,
             onMultiSelectChanged = onMultiSelectChanged,
-            onSelectAllClick = onSelectAllClick,
+            onInvertSelectClick = onInvertSelectClick,
         )
         if (dataList.isEmpty()) {
             AnimatedPlaceholder(
@@ -162,12 +162,16 @@ fun SearchResultConfigBar(
     stickersCount: Int,
     multiSelect: Boolean,
     onMultiSelectChanged: (Boolean) -> Unit,
-    onSelectAllClick: () -> Unit,
+    onInvertSelectClick: () -> Unit,
 ) {
     val searchResultReverse = LocalSearchResultReverse.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var expandMenu by rememberSaveable { mutableStateOf(false) }
+
+    BackHandler(multiSelect) {
+        onMultiSelectChanged(false)
+    }
 
     LazyRow(
         contentPadding = PaddingValues(horizontal = 16.dp),
@@ -192,6 +196,8 @@ fun SearchResultConfigBar(
                 }
             }
         }
+
+        item { VerticalDivider(modifier = Modifier.height(16.dp)) }
 
         item {
             Box {
@@ -225,40 +231,24 @@ fun SearchResultConfigBar(
                     )
                 },
                 label = { Text(text = stringResource(R.string.search_result_reverse)) },
-                leadingIcon = {
-                    if (searchResultReverse) {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = null,
-                            modifier = Modifier.size(FilterChipDefaults.IconSize),
-                        )
-                    }
-                }
             )
         }
+
+        item { VerticalDivider(modifier = Modifier.height(16.dp)) }
 
         item {
             FilterChip(
                 selected = multiSelect,
                 onClick = { onMultiSelectChanged(!multiSelect) },
                 label = { Text(text = stringResource(R.string.search_result_multi_select)) },
-                leadingIcon = {
-                    if (multiSelect) {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = null,
-                            modifier = Modifier.size(FilterChipDefaults.IconSize),
-                        )
-                    }
-                }
             )
         }
 
         item {
             if (multiSelect) {
                 SuggestionChip(
-                    onClick = onSelectAllClick,
-                    label = { Text(text = stringResource(R.string.search_result_select_all)) },
+                    onClick = onInvertSelectClick,
+                    label = { Text(text = stringResource(R.string.search_result_invert_selection)) },
                 )
             }
         }
