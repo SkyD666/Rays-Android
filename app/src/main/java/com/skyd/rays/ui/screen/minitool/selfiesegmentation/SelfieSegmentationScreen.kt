@@ -34,6 +34,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -72,7 +73,6 @@ import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysIconButtonStyle
 import com.skyd.rays.ui.component.RaysImage
-import com.skyd.rays.ui.component.RaysOutlinedCard
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.component.shape.CloverShape
@@ -384,7 +384,7 @@ private fun InputItem(
     onRemoveClick: (() -> Unit)? = null,
     onSelectImage: () -> Unit
 ) {
-    RaysOutlinedCard(modifier = modifier, onClick = onSelectImage) {
+    OutlinedCard(modifier = modifier, onClick = onSelectImage) {
         AnimatedVisibility(
             visible = imageUri == null,
             modifier = Modifier.clickable(onClick = onSelectImage)

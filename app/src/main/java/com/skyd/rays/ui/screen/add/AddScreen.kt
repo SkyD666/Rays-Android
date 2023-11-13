@@ -1,27 +1,26 @@
 package com.skyd.rays.ui.screen.add
 
-import android.net.Uri
 import android.os.Bundle
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.MutatePriority
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -30,32 +29,26 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.AddToPhotos
 import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.CancelScheduleSend
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DeleteOutline
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.EditOff
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -84,17 +77,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -106,7 +95,6 @@ import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.addAllDistinctly
 import com.skyd.rays.ext.addIfAny
 import com.skyd.rays.ext.navigate
-import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
@@ -114,10 +102,6 @@ import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
-import com.skyd.rays.ui.component.AnimatedPlaceholder
-import com.skyd.rays.ui.component.RaysCard
-import com.skyd.rays.ui.component.RaysFloatingActionButton
-import com.skyd.rays.ui.component.RaysFloatingActionButtonStyle
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysTopBar
@@ -207,7 +191,10 @@ fun AddScreen(
     val pickStickerLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { result ->
-        if (result != null) stickersWaitingList[0] = UriWithStickerUuidBean(uri = result)
+        if (result != null) {
+            stickersWaitingList[0] = stickersWaitingList
+                .getOrNull(0)?.copy(uri = result) ?: UriWithStickerUuidBean()
+        }
     }
     val pickStickersLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetMultipleContents()
@@ -277,16 +264,17 @@ fun AddScreen(
         ) { paddingValues ->
         LazyColumn(contentPadding = paddingValues) {
             item {
-                AnimatedVisibility(
-                    visible = stickersWaitingList.isNotEmpty(),
-                    enter = expandVertically(),
-                    exit = shrinkVertically(),
-                ) {
-                    Column {
-                        WaitingRow(
-                            uris = stickersWaitingList,
-                            onStickerDeleted = { stickersWaitingList.remove(it) },
-                        )
+                Column {
+                    WaitingRow(
+                        uris = stickersWaitingList,
+                        onSelectStickersClick = { pickStickersLauncher.launch("image/*") },
+                        onSelectFirstStickerClick = { pickStickerLauncher.launch("image/*") },
+                    )
+                    AnimatedVisibility(
+                        visible = stickersWaitingList.isNotEmpty(),
+                        enter = expandVertically(),
+                        exit = shrinkVertically(),
+                    ) {
                         AddToAllList(
                             list = tagsToAllWaitingStickers,
                             onDeleteTag = { tagsToAllWaitingStickers.remove(it) }
@@ -525,7 +513,7 @@ private fun AddToAllList(list: List<TagBean>, onDeleteTag: (TagBean) -> Unit) {
         var expandFlowRow by rememberSaveable { mutableStateOf(false) }
         val interactionSource = remember { MutableInteractionSource() }
 
-        RaysCard(
+        Card(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 7.dp),
             onClick = { expandFlowRow = !expandFlowRow },
             interactionSource = interactionSource
@@ -594,32 +582,49 @@ private fun AddToAllList(list: List<TagBean>, onDeleteTag: (TagBean) -> Unit) {
 @Composable
 private fun WaitingRow(
     uris: List<UriWithStickerUuidBean>,
-    onStickerDeleted: (UriWithStickerUuidBean) -> Unit
+    onSelectStickersClick: () -> Unit,
+    onSelectFirstStickerClick: () -> Unit,
 ) {
-    Column(modifier = Modifier.padding(vertical = 7.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 7.dp)
+            .fillMaxWidth()
+    ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = stringResource(R.string.add_screen_waiting_uris),
             style = MaterialTheme.typography.titleMedium,
         )
         Spacer(modifier = Modifier.height(10.dp))
-        LazyRow(
-            modifier = Modifier.height(100.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-        ) {
-            items(uris) { uri ->
-                RaysCard(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    onClick = { onStickerDeleted(uri) }
-                ) {
-                    RaysImage(
-                        model = uri.uri,
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .aspectRatio(1f),
-                        contentScale = ContentScale.Crop,
-                    )
+        if (uris.isEmpty()) {
+            TextButton(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                onClick = onSelectStickersClick,
+            ) {
+                Text(text = stringResource(R.string.add_screen_select_sticker))
+            }
+        } else {
+            LazyRow(
+                modifier = Modifier.animateContentSize(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 3.dp),
+            ) {
+                itemsIndexed(uris) { index, uri ->
+                    val content: @Composable ColumnScope.() -> Unit = {
+                        RaysImage(
+                            model = uri.uri,
+                            modifier = Modifier
+                                .height(if (index == 0) 150.dp else 100.dp)
+                                .aspectRatio(1f)
+                                .run {
+                                    if (index == 0) clickable(onClick = onSelectFirstStickerClick)
+                                    else this
+                                },
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
+                    ElevatedCard(content = content)
                 }
             }
         }
@@ -659,7 +664,7 @@ private fun SuggestedTags(suggestedTags: List<String>, onClick: (Int) -> Unit) {
         enter = expandVertically() + fadeIn(),
         exit = shrinkVertically() + fadeOut(),
     ) {
-        RaysCard(modifier = Modifier.padding(horizontal = 16.dp, vertical = 7.dp)) {
+        Card(modifier = Modifier.padding(horizontal = 16.dp, vertical = 7.dp)) {
             Text(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)

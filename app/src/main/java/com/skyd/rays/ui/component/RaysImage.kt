@@ -4,6 +4,7 @@ import android.os.Build.VERSION.SDK_INT
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
@@ -22,6 +23,7 @@ fun RaysImage(
     contentDescription: String? = null,
     imageLoader: ImageLoader = rememberRaysImageLoader(),
     contentScale: ContentScale = ContentScale.FillWidth,
+    alpha: Float = DefaultAlpha,
 ) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
@@ -32,6 +34,7 @@ fun RaysImage(
         contentDescription = contentDescription,
         contentScale = contentScale,
         imageLoader = imageLoader,
+        alpha = alpha,
     )
 }
 

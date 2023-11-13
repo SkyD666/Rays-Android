@@ -25,6 +25,8 @@ import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
+import com.skyd.rays.util.image.ImageFormatChecker
+import com.skyd.rays.util.image.format.ImageFormat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.zip
@@ -48,6 +50,12 @@ class AddRepository @Inject constructor(
         uri: Uri
     ): Flow<BaseData<String>> {
         return flow {
+            appContext.contentResolver.openInputStream(uri)?.use {
+                check(ImageFormatChecker.check(it) != ImageFormat.UNDEFINED) {
+                    "Unsupported image format"
+                }
+            }
+
             val tempFile = File(STICKER_DIR, "${Random.nextLong()}")
             uri.copyTo(tempFile)
             val stickerMd5 = tempFile.md5() ?: error("can not calc sticker's md5!")
@@ -219,9 +227,10 @@ class AddRepository @Inject constructor(
         val lang = Locale.getDefault().language
         if (lang == "zh") return origin
         if (!this::translateClassificationMap.isInitialized) {
-            translateClassificationMap = appContext.assets.open("stickerclassification/lang/$lang.txt").use {
-                json.decodeFromStream(it)
-            }
+            translateClassificationMap =
+                appContext.assets.open("stickerclassification/lang/$lang.txt").use {
+                    json.decodeFromStream(it)
+                }
         }
         return translateClassificationMap.getOrDefault(origin, origin)
     }

@@ -2,6 +2,7 @@ package com.skyd.rays.ui.screen.home.searchbar
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -10,6 +11,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,10 +42,12 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -69,7 +73,6 @@ import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
-import com.skyd.rays.ui.component.RaysOutlinedCard
 import com.skyd.rays.ui.local.LocalSearchResultReverse
 import com.skyd.rays.ui.local.LocalSearchResultSort
 import com.skyd.rays.ui.local.LocalWindowSizeClass
@@ -117,15 +120,17 @@ fun SearchResultList(
         } else {
             Scaffold(
                 floatingActionButton = {
-                    RaysFloatingActionButton(
-                        onClick = { scope.launch { state.animateScrollToItem(0) } },
-                        onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
-                        contentDescription = stringResource(R.string.home_screen_search_result_list_to_top),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowUpward,
-                            contentDescription = null
-                        )
+                    AnimatedVisibility(visible = state.firstVisibleItemIndex > 2) {
+                        RaysFloatingActionButton(
+                            onClick = { scope.launch { state.animateScrollToItem(0) } },
+                            onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
+                            contentDescription = stringResource(R.string.home_screen_search_result_list_to_top),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowUpward,
+                                contentDescription = null
+                            )
+                        }
                     }
                 },
                 contentWindowInsets = WindowInsets(0.dp),
@@ -316,17 +321,18 @@ fun SearchResultItem(
     onClickListener: ((data: StickerWithTags, selected: Boolean) -> Unit)? = null
 ) {
     val context = LocalContext.current
-    RaysOutlinedCard(
-        modifier = modifier.fillMaxWidth(),
-        onLongClick = {
-            context.sendStickerByUuid(
-                uuid = data.sticker.uuid,
-                onSuccess = { data.sticker.shareCount++ }
+    OutlinedCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onLongClick = {
+                    context.sendStickerByUuid(
+                        uuid = data.sticker.uuid,
+                        onSuccess = { data.sticker.shareCount++ }
+                    )
+                },
+                onClick = { onClickListener?.invoke(data, !selected) }
             )
-        },
-        onClick = {
-            onClickListener?.invoke(data, !selected)
-        }
     ) {
         Box {
             RaysImage(
