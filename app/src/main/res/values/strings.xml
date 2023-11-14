@@ -7,13 +7,14 @@
     <string name="add_screen_save">Save</string>
     <string name="add_screen_title">Title (Optional)</string>
     <string name="add_screen_add_tags">Add tags (Optional)</string>
-    <string name="add_screen_name">Add sticker</string>
-    <string name="add_screen_name_edit">Edit sticker</string>
+    <string name="add_screen_name">Add</string>
+    <string name="add_screen_name_edit">Edit</string>
     <string name="back">Back</string>
     <string name="add_screen_success">Operation successful</string>
     <string name="add_screen_waiting_uris">Waiting list</string>
     <string name="add_screen_sticker_is_not_set">Please select a sticker!</string>
     <string name="add_screen_tag_field_hint">Press Enter to add</string>
+    <string name="add_screen_add_tag">Add</string>
     <string name="add_screen_add_tag_to_all">Add to all stickers in the waiting list</string>
     <string name="add_screen_global_tags">Global tags</string>
     <string name="add_screen_global_tags_tips">Global tags will be added to all stickers in the waiting list.</string>

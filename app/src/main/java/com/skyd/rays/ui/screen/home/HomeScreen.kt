@@ -177,10 +177,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 )
                 when (stickerDetailUiState) {
                     is StickerDetailUiState.Init -> {
-                        AnimatedPlaceholder(
-                            resId = R.raw.lottie_genshin_impact_keqing_1,
-                            tip = stringResource(id = R.string.home_screen_empty_tip)
-                        )
+                        HomeEmptyPlaceholder()
                         if (stickerDetailUiState.stickerUuid.isNotBlank()) {
                             viewModel.sendUiIntent(
                                 HomeIntent.GetStickerDetails(stickerDetailUiState.stickerUuid)
@@ -288,7 +285,15 @@ private fun HomeScreenFloatingActionButton(
 }
 
 @Composable
-private fun MainCard(
+fun HomeEmptyPlaceholder() {
+    AnimatedPlaceholder(
+        resId = R.raw.lottie_genshin_impact_keqing_1,
+        tip = stringResource(id = R.string.home_screen_empty_tip)
+    )
+}
+
+@Composable
+fun MainCard(
     stickerWithTags: StickerWithTags,
     scrollState: ScrollState = rememberScrollState(),
     bottomPadding: Dp = 0.dp,

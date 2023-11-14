@@ -36,6 +36,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
+import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.AddToPhotos
 import androidx.compose.material.icons.filled.Cancel
@@ -132,8 +133,6 @@ fun AddScreen(
     isEdit: Boolean,
     viewModel: AddViewModel = hiltViewModel()
 ) {
-    var openDialog by remember { mutableStateOf(false) }
-    var openDuplicateDialog by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -260,8 +259,10 @@ fun AddScreen(
                 }
             )
         },
+    ) { paddingValues ->
+        var openDialog by remember { mutableStateOf(false) }
+        var openDuplicateDialog by remember { mutableStateOf(false) }
 
-        ) { paddingValues ->
         LazyColumn(contentPadding = paddingValues) {
             item {
                 Column {
@@ -316,6 +317,79 @@ fun AddScreen(
             }
         }
 
+        uiEvent?.apply {
+            when (getStickersWithTagsUiEvent) {
+                is GetStickersWithTagsUiEvent.Success -> LaunchedEffect(getStickersWithTagsUiEvent) {
+                    val stickerBean = getStickersWithTagsUiEvent.stickerWithTags.sticker
+                    // 使用获取的数据更新当前数据
+                    stickersWaitingList[0] = stickersWaitingList[0].copy(
+                        uri = stickerUuidToUri(stickerBean.uuid),
+                        stickerUuid = stickerBean.uuid
+                    )
+                    titleText = stickerBean.title
+                    stickerCreateTime = stickerBean.createTime
+                    tags.clear()
+                    tags.addAll(getStickersWithTagsUiEvent.stickerWithTags.tags.distinct())
+                }
+
+                GetStickersWithTagsUiEvent.Init,
+                GetStickersWithTagsUiEvent.Failed,
+                null -> Unit
+            }
+
+            when (addStickersResultUiEvent) {
+                is AddStickersResultUiEvent.Duplicate -> LaunchedEffect(addStickersResultUiEvent) {
+                    openDuplicateDialog = true
+                    viewModel.sendUiIntent(AddIntent.GetStickerWithTags(addStickersResultUiEvent.stickerUuid))
+                }
+
+                is AddStickersResultUiEvent.Success -> {
+                    LaunchedEffect(addStickersResultUiEvent) {
+                        refreshStickerData.tryEmit(Unit)
+                        resetStickerData()
+                        openDialog = true
+                    }
+                }
+
+                null -> Unit
+            }
+            when (recognizeTextUiEvent) {
+                is RecognizeTextUiEvent.Success -> {
+                    LaunchedEffect(recognizeTextUiEvent) {
+                        suggestedTags.clear()
+                        suggestedTags += recognizeTextUiEvent.texts
+                    }
+                }
+
+                null -> Unit
+            }
+        }
+
+        loadUiIntent?.also {
+            when (it) {
+                is LoadUiIntent.Error -> {
+                    snackbarHostState.showSnackbarWithLaunchedEffect(
+                        context.getString(R.string.add_screen_error, it.msg),
+                        key2 = it,
+                    )
+                }
+
+                is LoadUiIntent.Loading -> Unit
+            }
+        }
+
+        RaysDialog(
+            visible = openDuplicateDialog,
+            title = { Text(text = stringResource(R.string.info)) },
+            text = { Text(text = stringResource(R.string.add_screen_sticker_duplicate)) },
+            onDismissRequest = { openDuplicateDialog = false },
+            confirmButton = {
+                TextButton(onClick = { openDuplicateDialog = false }) {
+                    Text(text = stringResource(id = R.string.dialog_ok))
+                }
+            }
+        )
+
         RaysDialog(
             visible = openDialog,
             title = { Text(text = stringResource(R.string.info)) },
@@ -337,77 +411,6 @@ fun AddScreen(
                 }
             }
         )
-
-        RaysDialog(
-            visible = openDuplicateDialog,
-            title = { Text(text = stringResource(R.string.info)) },
-            text = { Text(text = stringResource(R.string.add_screen_sticker_duplicate)) },
-            onDismissRequest = { openDuplicateDialog = false },
-            confirmButton = {
-                TextButton(onClick = { openDuplicateDialog = false }) {
-                    Text(text = stringResource(id = R.string.dialog_ok))
-                }
-            }
-        )
-    }
-
-    uiEvent?.apply {
-        when (getStickersWithTagsUiEvent) {
-            is GetStickersWithTagsUiEvent.Success -> {
-                val stickerBean = getStickersWithTagsUiEvent.stickerWithTags.sticker
-                val stickerIndex = stickersWaitingList
-                    .indexOfFirst { it.stickerUuid == stickerBean.uuid }
-                if (stickerIndex > -1) {
-                    stickersWaitingList[stickerIndex] = UriWithStickerUuidBean(
-                        uri = stickerUuidToUri(stickerBean.uuid),
-                        stickerUuid = stickerBean.uuid
-                    )
-                }
-                titleText = stickerBean.title
-                stickerCreateTime = stickerBean.createTime
-                tags.clear()
-                tags.addAll(getStickersWithTagsUiEvent.stickerWithTags.tags.distinct())
-            }
-
-            GetStickersWithTagsUiEvent.Init,
-            GetStickersWithTagsUiEvent.Failed,
-            null -> Unit
-        }
-
-        when (addStickersResultUiEvent) {
-            AddStickersResultUiEvent.Duplicate -> openDuplicateDialog = true
-
-            is AddStickersResultUiEvent.Success -> {
-                refreshStickerData.tryEmit(Unit)
-                LaunchedEffect(Unit) {
-                    resetStickerData()
-                }
-                openDialog = true
-            }
-
-            null -> Unit
-        }
-        when (recognizeTextUiEvent) {
-            is RecognizeTextUiEvent.Success -> {
-                suggestedTags.clear()
-                suggestedTags += recognizeTextUiEvent.texts
-            }
-
-            null -> Unit
-        }
-    }
-
-    loadUiIntent?.also {
-        when (it) {
-            is LoadUiIntent.Error -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    context.getString(R.string.add_screen_error, it.msg),
-                    key2 = it,
-                )
-            }
-
-            is LoadUiIntent.Loading -> Unit
-        }
     }
 }
 
@@ -475,6 +478,14 @@ private fun LazyListScope.tagsInputFieldItem(
                 if (value.isNotEmpty()) {
                     Row {
                         RaysIconButton(
+                            onClick = {
+                                onAddClick()
+                                onValueChange("")
+                            },
+                            imageVector = Icons.Default.AddBox,
+                            contentDescription = stringResource(R.string.add_screen_add_tag),
+                        )
+                        RaysIconButton(
                             onClick = onAddToAllClick,
                             imageVector = Icons.Default.AddToPhotos,
                             contentDescription = stringResource(R.string.add_screen_add_tag_to_all),
@@ -482,7 +493,7 @@ private fun LazyListScope.tagsInputFieldItem(
                         RaysIconButton(
                             onClick = { onValueChange("") },
                             imageVector = Icons.Default.Cancel,
-                            contentDescription = stringResource(R.string.cancel),
+                            contentDescription = stringResource(R.string.clear_input_text),
                         )
                     }
                 }

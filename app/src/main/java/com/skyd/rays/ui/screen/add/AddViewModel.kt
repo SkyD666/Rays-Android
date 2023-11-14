@@ -34,8 +34,9 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
             addRepository.requestAddStickerWithTags(intent.stickerWithTags, intent.stickerUri)
                 .mapToUIChange(onError = { data ->
                     if (data.code == -2) {
-                        data.data?.let { sendUiIntent(AddIntent.GetStickerWithTags(it)) }
-                        AddEvent(addStickersResultUiEvent = AddStickersResultUiEvent.Duplicate)
+                        AddEvent(
+                            addStickersResultUiEvent = AddStickersResultUiEvent.Duplicate(data.data!!)
+                        )
                     } else {
                         error(data.msg.toString())
                     }

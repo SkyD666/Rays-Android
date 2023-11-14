@@ -22,7 +22,7 @@ android {
         minSdk 24
         targetSdk 34
         versionCode 43
-        versionName "1.6-beta26"
+        versionName "1.6-beta27"
         flavorDimensions = ["versionName"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -162,11 +162,11 @@ dependencies {
     implementation "com.google.mlkit:text-recognition-chinese:$mlkit_recognition_version"
     implementation "com.google.mlkit:text-recognition-japanese:$mlkit_recognition_version"
     implementation "com.google.mlkit:text-recognition-korean:$mlkit_recognition_version"
-    implementation 'com.google.mlkit:image-labeling-custom:17.0.1'
+    implementation 'com.google.mlkit:image-labeling-custom:17.0.2'
     implementation 'com.google.mlkit:segmentation-selfie:16.0.0-beta4'
 
     // TF Lite
-    implementation 'org.tensorflow:tensorflow-lite:2.13.0'
+    implementation 'org.tensorflow:tensorflow-lite:2.14.0'
     implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
 
     debugImplementation "androidx.compose.ui:ui-tooling:$md3_version"

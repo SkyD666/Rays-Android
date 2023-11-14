@@ -1,45 +1,20 @@
 package com.skyd.rays.ui.screen.settings.appearance.style
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ManageSearch
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Replay
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,15 +34,12 @@ import com.skyd.rays.R
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
-import com.skyd.rays.model.preference.StickerScalePreference
-import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysIconButton
-import com.skyd.rays.ui.component.RaysIconButtonStyle
-import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
-import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
 import com.skyd.rays.ui.local.LocalShowPopularTags
-import com.skyd.rays.ui.local.LocalStickerScale
+import com.skyd.rays.ui.screen.home.HomeEmptyPlaceholder
+import com.skyd.rays.ui.screen.home.MainCard
+import com.skyd.rays.ui.screen.home.searchbar.HomeMenu
 import com.skyd.rays.ui.screen.home.searchbar.PopularTagsBar
 import com.skyd.rays.ui.screen.home.searchbar.SearchResultList
 import com.skyd.rays.ui.screen.home.searchbar.TrailingIcon
@@ -79,23 +51,17 @@ fun HomeScreenPreview() {
         RaysSearchBarPreview()
         Spacer(modifier = Modifier.height(16.dp))
 
-        AnimatedVisibility(
-            visible = currentStickerUuid.isNotBlank(),
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            MainCardPreview()
-        }
-
-        AnimatedVisibility(
-            visible = currentStickerUuid.isBlank(),
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            AnimatedPlaceholder(
-                resId = R.raw.lottie_genshin_impact_klee_1,
-                tip = stringResource(id = R.string.home_screen_empty_tip)
+        if (currentStickerUuid.isNotBlank()) {
+            MainCard(
+                stickerWithTags = StickerWithTags(
+                    sticker = StickerBean(title = "").apply {
+                        uuid = LocalCurrentStickerUuid.current
+                    },
+                    tags = listOf(TagBean(tag = "Tag"), TagBean(tag = "LOL"))
+                )
             )
+        } else {
+            HomeEmptyPlaceholder()
         }
     }
 }
@@ -140,21 +106,26 @@ private fun RaysSearchBarPreview() {
                             onClick = { active = false }
                         )
                     } else {
-                        RaysIconButton(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = stringResource(id = R.string.home_screen_open_menu),
-                            onClick = { menuExpanded = true }
-                        )
+                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
                     }
                 },
                 trailingIcon = {
                     if (active) {
-                        TrailingIcon(showClearButton = true) { }
+                        TrailingIcon(showClearButton = true) {}
                     } else {
                         RaysIconButton(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(R.string.home_screen_add),
-                            onClick = { }
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = stringResource(id = R.string.home_screen_open_menu),
+                            onClick = { menuExpanded = true }
+                        )
+                        HomeMenu(
+                            expanded = menuExpanded,
+                            stickerMenuItemEnabled = currentStickerUuid.isNotBlank(),
+                            onDismissRequest = { menuExpanded = false },
+                            onDeleteClick = {},
+                            onExportClick = {},
+                            onStickerInfoClick = {},
+                            onClearScreen = {},
                         )
                     }
                 },
@@ -185,153 +156,6 @@ private fun RaysSearchBarPreview() {
                     onInvertSelectClick = {},
                     selectedStickers = emptyList()
                 )
-            }
-            HomeMenuPreview(expanded = menuExpanded, onDismissRequest = { menuExpanded = false })
-        }
-    }
-}
-
-@Composable
-private fun HomeMenuPreview(expanded: Boolean, onDismissRequest: () -> Unit) {
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = onDismissRequest,
-    ) {
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.home_screen_clear_current_sicker)) },
-            onClick = onDismissRequest,
-            leadingIcon = {
-                Icon(
-                    Icons.Default.Replay,
-                    contentDescription = null
-                )
-            }
-        )
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.home_screen_edit)) },
-            onClick = onDismissRequest,
-            leadingIcon = {
-                Icon(
-                    Icons.Default.Edit,
-                    contentDescription = null
-                )
-            }
-        )
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.home_screen_delete)) },
-            onClick = onDismissRequest,
-            leadingIcon = {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = null
-                )
-            }
-        )
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.home_screen_export)) },
-            onClick = onDismissRequest,
-            leadingIcon = {
-                Icon(
-                    Icons.Default.Save,
-                    contentDescription = null
-                )
-            }
-        )
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.home_screen_sticker_info)) },
-            onClick = onDismissRequest,
-            leadingIcon = {
-                Icon(
-                    Icons.Default.Info,
-                    contentDescription = null
-                )
-            }
-        )
-        HorizontalDivider()
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.search_config_screen_name)) },
-            onClick = onDismissRequest,
-            leadingIcon = {
-                Icon(
-                    Icons.AutoMirrored.Default.ManageSearch,
-                    contentDescription = null
-                )
-            }
-        )
-    }
-}
-
-
-@Composable
-fun MainCardPreview() {
-    val stickerWithTags = StickerWithTags(
-        sticker = StickerBean(title = "").apply { uuid = LocalCurrentStickerUuid.current },
-        tags = listOf(TagBean(tag = "Tag"), TagBean(tag = "LOL"))
-    )
-    val stickerBean = stickerWithTags.sticker
-    val tags = stickerWithTags.tags
-
-    Card(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
-            .fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.clickable { }
-        ) {
-            Box {
-                RaysImage(
-                    modifier = Modifier
-                        .animateContentSize(
-                            animationSpec = spring(
-                                dampingRatio = 1.3f,
-                                stiffness = Spring.StiffnessHigh,
-                            )
-                        )
-                        .fillMaxWidth(),
-                    uuid = stickerWithTags.sticker.uuid,
-                    contentScale = StickerScalePreference.toContentScale(LocalStickerScale.current),
-                )
-                Box(
-                    modifier = Modifier.matchParentSize(),
-                    contentAlignment = LocalHomeShareButtonAlignment.current
-                ) {
-                    RaysIconButton(
-                        style = RaysIconButtonStyle.FilledTonal,
-                        imageVector = Icons.Default.Share,
-                        contentDescription = stringResource(R.string.home_screen_send_sticker),
-                        onClick = { }
-                    )
-                }
-            }
-            if (stickerBean.title.isNotBlank()) {
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 16.dp, bottom = if (tags.isEmpty()) 16.dp else 0.dp)
-                        .basicMarquee(iterations = Int.MAX_VALUE),
-                    text = stickerBean.title,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            if (tags.isNotEmpty()) {
-                FlowRow(
-                    modifier = Modifier
-                        .padding(vertical = 6.dp, horizontal = 16.dp)
-                        .fillMaxWidth()
-                        .heightIn(max = 150.dp)
-                        .verticalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    repeat(tags.size) { index ->
-                        AssistChip(
-                            onClick = { },
-                            label = { Text(tags[index].tag) }
-                        )
-                    }
-                }
             }
         }
     }

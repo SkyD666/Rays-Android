@@ -16,7 +16,7 @@ sealed class GetStickersWithTagsUiEvent {
 }
 
 sealed class AddStickersResultUiEvent {
-    data object Duplicate : AddStickersResultUiEvent()
+    class Duplicate(val stickerUuid: String) : AddStickersResultUiEvent()
     class Success(val stickerUuid: String) : AddStickersResultUiEvent()
 }
 

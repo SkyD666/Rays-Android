@@ -17,17 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.skyd.rays.R
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
-import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalSearchResultSort
 import com.skyd.rays.ui.screen.add.openAddScreen
-import com.skyd.rays.ui.screen.home.HomeIntent
-import com.skyd.rays.ui.screen.home.HomeViewModel
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.util.stickerUuidToUri
 
@@ -70,7 +66,7 @@ internal fun SearchResultSortMenu(
 }
 
 @Composable
-internal fun HomeMenu(
+fun HomeMenu(
     expanded: Boolean,
     stickerMenuItemEnabled: Boolean,
     onDismissRequest: () -> Unit,

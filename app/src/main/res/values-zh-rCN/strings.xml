@@ -14,6 +14,7 @@
     <string name="add_screen_waiting_uris">处理列表</string>
     <string name="add_screen_sticker_is_not_set">表情包图片未设置！</string>
     <string name="add_screen_tag_field_hint">按下回车以添加</string>
+    <string name="add_screen_add_tag">添加</string>
     <string name="add_screen_add_tag_to_all">为待添加列表中的所有表情包加入此标签</string>
     <string name="add_screen_global_tags">全局标签</string>
     <string name="add_screen_global_tags_tips">待添加列表中的所有表情包都会加入这些标签。</string>
