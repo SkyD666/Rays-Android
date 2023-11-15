@@ -15,6 +15,7 @@ import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.get
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.db.AppDatabase
+import com.skyd.rays.model.preference.share.CopyStickerToClipboardPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.ui.service.RaysAccessibilityService
@@ -96,7 +97,13 @@ fun Context.sendStickersByFiles(
             FileProvider.getUriForFile(
                 this@sendStickersByFiles,
                 "${packageName}.fileprovider", it
-            )
+            ).apply {
+                if (dataStore.get(StickerExtNamePreference.key) == true &&
+                    dataStore.get(CopyStickerToClipboardPreference.key) == true
+                ) {
+                    copyStickerToClipboard(this)
+                }
+            }
         }
 
         with(AppDatabase.getInstance(this@sendStickersByFiles)) {
@@ -226,4 +233,9 @@ private fun List<Uri>.shareStickerUriString(context: Context, packages: List<Str
             if (size == 1) first().toString() else this.toString()
         )
     )
+}
+
+fun Context.copyStickerToClipboard(uri: Uri) {
+    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    clipboard.setPrimaryClip(ClipData.newUri(contentResolver, "Sticker", uri))
 }

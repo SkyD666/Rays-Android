@@ -47,7 +47,12 @@ object ShareUtil {
         startShare(context, uris)
     }
 
-    fun share(context: Context, topActivityFullName: String, uris: List<Uri>, appInfo: IAppInfo): Boolean {
+    fun share(
+        context: Context,
+        topActivityFullName: String,
+        uris: List<Uri>,
+        appInfo: IAppInfo
+    ): Boolean {
         if (!isInstalled(appInfo.packageName)) return false
         return appInfo.share(context, topActivityFullName, uris)
     }

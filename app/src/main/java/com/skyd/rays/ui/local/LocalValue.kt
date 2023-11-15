@@ -21,6 +21,7 @@ import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
+import com.skyd.rays.model.preference.share.CopyStickerToClipboardPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
@@ -72,6 +73,7 @@ val LocalHomeShareButtonAlignment =
 // Share
 val LocalUriStringShare = compositionLocalOf { UriStringSharePreference.default }
 val LocalStickerExtName = compositionLocalOf { StickerExtNamePreference.default }
+val LocalCopyStickerToClipboard = compositionLocalOf { CopyStickerToClipboardPreference.default }
 val LocalAutoShareIgnoreStrategy = compositionLocalOf { AutoShareIgnoreStrategyPreference.default }
 
 // Api

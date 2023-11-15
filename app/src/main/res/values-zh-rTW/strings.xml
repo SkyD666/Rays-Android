@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Rays</string>
+    <string name="more_screen_name">更多</string>
+    <string name="home_screen_name">首頁</string>
+    <string name="home_screen_search_hint">搜尋</string>
+    <string name="home_screen_add">添加</string>
+    <string name="add_screen_save">存檔</string>
+    <string name="add_screen_title">標題（可選）</string>
+    <string name="add_screen_add_tags">新增標籤（可選）</string>
+    <string name="add_screen_name">添加</string>
+    <string name="add_screen_name_edit">編輯</string>
+    <string name="back">返回</string>
+</resources>

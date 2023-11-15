@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.FileCopy
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.MoveDown
 import androidx.compose.material3.Scaffold
@@ -16,16 +17,21 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.datastore.preferences.core.edit
 import com.skyd.rays.R
+import com.skyd.rays.ext.dataStore
+import com.skyd.rays.model.preference.share.CopyStickerToClipboardPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SwitchSettingsItem
+import com.skyd.rays.ui.local.LocalCopyStickerToClipboard
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerExtName
 import com.skyd.rays.ui.screen.settings.shareconfig.autoshare.AUTO_SHARE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.URI_STRING_SHARE_SCREEN_ROUTE
+import kotlinx.coroutines.launch
 
 
 const val SHARE_CONFIG_SCREEN_ROUTE = "shareConfigScreen"
@@ -46,8 +52,6 @@ fun ShareConfigScreen() {
             )
         }
     ) { paddingValues ->
-        val stickerExtName = LocalStickerExtName.current
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -57,15 +61,36 @@ fun ShareConfigScreen() {
             item {
                 SwitchSettingsItem(
                     icon = Icons.Default.Description,
-                    checked = stickerExtName,
+                    checked = LocalStickerExtName.current,
                     text = stringResource(R.string.share_config_screen_file_extension),
                     description = stringResource(R.string.share_config_screen_file_extension_description),
                     onCheckedChange = {
-                        StickerExtNamePreference.put(
-                            context = context,
-                            scope = scope,
-                            value = it
-                        )
+                        scope.launch {
+                            context.dataStore.edit { pref ->
+                                pref[StickerExtNamePreference.key] = it
+                                if (!it) {
+                                    pref[CopyStickerToClipboardPreference.key] = false
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+            item {
+                SwitchSettingsItem(
+                    icon = Icons.Default.FileCopy,
+                    checked = LocalCopyStickerToClipboard.current,
+                    text = stringResource(R.string.share_config_screen_copy_sticker_to_clipboard),
+                    description = stringResource(R.string.share_config_screen_copy_sticker_to_clipboard_description),
+                    onCheckedChange = {
+                        scope.launch {
+                            context.dataStore.edit { pref ->
+                                pref[CopyStickerToClipboardPreference.key] = it
+                                if (it) {
+                                    pref[StickerExtNamePreference.key] = true
+                                }
+                            }
+                        }
                     }
                 )
             }
