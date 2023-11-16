@@ -210,7 +210,6 @@
     <string name="webdav_screen_download_description">從遠端拉取數據</string>
     <string name="webdav_screen_service_category">WebDAV 服務</string>
     <string name="about_screen_join_telegram">加入 Telegram 群組</string>
-    <string name="selfie_segmentation_screen_select_selfie_image"></string>
     <string name="api_grant_screen_description">管理外部應用程式的 API 權限</string>
     <string name="setting_screen_privacy_description">停用螢幕截圖</string>
     <string name="search_result_sort_share_count">分享次數</string>
