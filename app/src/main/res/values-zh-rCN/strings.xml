@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Rays</string>
     <string name="more_screen_name">更多</string>
@@ -15,9 +16,9 @@
     <string name="add_screen_sticker_is_not_set">表情包图片未设置！</string>
     <string name="add_screen_tag_field_hint">按下回车以添加</string>
     <string name="add_screen_add_tag">添加</string>
-    <string name="add_screen_add_tag_to_all">为待添加列表中的所有表情包加入此标签</string>
+    <string name="add_screen_add_tag_to_all">为处理清单中的所有表情包加入此标签</string>
     <string name="add_screen_global_tags">全局标签</string>
-    <string name="add_screen_global_tags_tips">待添加列表中的所有表情包都会加入这些标签。</string>
+    <string name="add_screen_global_tags_tips">处理清单中的所有表情包都会加入这些标签。</string>
     <string name="add_screen_skip_current_sticker">放弃当前编辑</string>
     <string name="search_config_screen_name">搜索</string>
     <string name="home_screen_close_search">关闭</string>
@@ -70,7 +71,7 @@
     </plurals>
     <string name="import_files_screen_failed">操作失败：%s</string>
     <string name="import_files_screen_on_conflict">冲突时策略</string>
-    <string name="import_files_screen_on_conflict_desc">“冲突”指的是当前要导入贴纸的 UUID 与已有贴纸的 UUID 相同，与这两个贴纸的内容是否相同无关。</string>
+    <string name="import_files_screen_on_conflict_desc">“冲突”指的是当前要导入表情包的 UUID 与已有贴纸的 UUID 相同，与这两个表情包图片的内容是否相同无关。</string>
     <string name="export_files_screen_name">导出为文件</string>
     <string name="export_files_screen_description">将表情包、标签等信息导出为文件</string>
     <string name="export_files_screen_select_dir">选择导出文件夹</string>
@@ -87,7 +88,7 @@
     <string name="handle_imported_sticker_proxy_skip">跳过</string>
     <string name="handle_imported_sticker_proxy_replace">替换原有</string>
     <string name="import_export_files_repo_invalid_magic_number">格式非法，备份文件的魔数不等于 0x0D000721</string>
-    <string name="import_export_files_repo_invalid_format">备份文件格式非法：%s</string>
+    <string name="import_export_files_repo_invalid_format">格式非法：%s</string>
     <string name="import_export_files_repo_error">错误：%s</string>
     <string name="webdav_screen_name">WebDAV</string>
     <string name="import_export_screen_webdav_description">通过 WebDAV 在云端同步数据</string>
@@ -138,7 +139,7 @@
     <string name="data_screen_name">数据</string>
     <string name="data_screen_import_export_description">导入与导出表情包数据</string>
     <string name="data_screen_delete_all">删除本地所有表情包</string>
-    <string name="data_screen_delete_all_description">删除 Rays 管理的本地所有表情包数据，包括表情包图像、标题和标签等，此操作不可逆</string>
+    <string name="data_screen_delete_all_description">删除 Rays 管理的所有本地表情包数据，包括表情包图像、标题和标签等，此操作不可逆</string>
     <string name="setting_screen_data_description">备份、同步、删除表情包数据等</string>
     <string name="data_screen_failed">操作失败：%s</string>
     <string name="data_screen_delete_all_success">所有表情包数据已清空，耗时 %.2f 秒</string>
@@ -161,10 +162,10 @@
     <string name="about_screen_other_works_night_screen_description">当您在夜间🌙使用手机时，Night Screen 可以帮助您减少屏幕亮度，减少对眼睛的伤害。</string>
     <string name="about_screen_other_works_night_screen_url">https://github.com/SkyD666/NightScreen</string>
     <string name="about_screen_other_works">其他作品</string>
-    <string name="add_screen_sticker_duplicate">表情包重复，已被添加过，正在展示已添加的信息！</string>
+    <string name="add_screen_sticker_duplicate">该表情包已经被添加，正在展示已添加的信息！</string>
     <string name="add_screen_suggest_tag">建议标签</string>
     <string name="ml_screen_name">Ai</string>
-    <string name="setting_screen_ml_description">配置 Ai 模型等</string>
+    <string name="setting_screen_ml_description">配置 AI 模型等</string>
     <string name="classification_screen_name">表情包分类</string>
     <string name="classification_screen_description">设置表情包分类模型、置信度阈值等</string>
     <string name="classification_model_screen_name">分类模型</string>
@@ -218,7 +219,7 @@
     <string name="home_screen_sticker_info_last_modified_time">上次修改时间</string>
     <string name="home_screen_select_export_folder">选择导出文件夹</string>
     <string name="home_screen_select_export_folder_tip">请选择导出文件夹</string>
-    <string name="home_screen_popular_tags_popular_value">常用度：%.2f</string>
+    <string name="home_screen_popular_tags_popular_value">热门值：%.2f</string>
     <string name="db_sticker_table">表情包表</string>
     <string name="db_sticker_table_uuid">UUID</string>
     <string name="db_sticker_table_title">标题</string>
