@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Rays</string>
     <string name="more_screen_name">More</string>
@@ -157,8 +158,8 @@
     <string name="webdav_screen_restore">Restore</string>
     <string name="home_screen_empty_tip">Create a new sticker or select a sticker from the search results~</string>
     <string name="home_screen_no_search_result_tip">It\'s empty~</string>
-    <string name="add_screen_select_sticker">Select a sticker</string>
-    <string name="import_export_screen_name">Sync Data</string>
+    <string name="add_screen_select_sticker">Select stickers</string>
+    <string name="import_export_screen_name">Sync data</string>
     <string name="home_screen_send_sticker">Send</string>
     <string name="send_sticker">Send sticker</string>
     <string name="home_screen_open_menu">Show menu</string>
@@ -171,8 +172,8 @@
     <string name="about_screen_other_works">Other works</string>
     <string name="add_screen_sticker_duplicate">The sticker has already been added and is showing the existing information!</string>
     <string name="add_screen_suggest_tag">Suggested tags</string>
-    <string name="ml_screen_name">Ai</string>
-    <string name="setting_screen_ml_description">Configure Ai models</string>
+    <string name="ml_screen_name">AI</string>
+    <string name="setting_screen_ml_description">Configure AI models</string>
     <string name="classification_screen_name">Sticker classification</string>
     <string name="classification_screen_description">Select a sticker classification model, set confidence thresholds</string>
     <string name="classification_model_screen_name">Classification model</string>
@@ -193,7 +194,7 @@
     <string name="home_style_screen_show_popular_tags_description">Show the tags corresponding to the most shared stickers below the search bar</string>
     <string name="default_tag">%s (Default)</string>
     <string name="update_check">Check updates</string>
-    <string name="update_no_update">This is the latest version!</string>
+    <string name="update_no_update">Already the latest version!</string>
     <string name="update_newer">Found new version</string>
     <string name="update_newer_text">New version: %1$s\nPublished on: %2$s\nDownloads: %3$s\n</string>
     <string name="download_update">Download</string>
