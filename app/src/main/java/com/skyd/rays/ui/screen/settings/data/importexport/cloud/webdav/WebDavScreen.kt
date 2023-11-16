@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.appContext
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.ext.dateTime
 import com.skyd.rays.ext.editor
@@ -125,7 +124,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             {
                 scope.launch {
                     snackbarHostState.showSnackbar(
-                        message = appContext.getString(R.string.webdav_screen_info_incomplete),
+                        message = context.getString(R.string.webdav_screen_info_incomplete),
                         withDismissAction = true
                     )
                 }
@@ -144,7 +143,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 password = password,
                 onServerItemClick = {
                     inputDialogInfo = Triple(
-                        appContext.getString(R.string.webdav_screen_input_server), server
+                        context.getString(R.string.webdav_screen_input_server), server
                     ) {
                         openInputDialog = false
                         WebDavServerPreference.put(
@@ -158,7 +157,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 },
                 onAccountItemClick = {
                     inputDialogInfo = Triple(
-                        appContext.getString(R.string.webdav_screen_input_account), account
+                        context.getString(R.string.webdav_screen_input_account), account
                     ) {
                         account = it
                         openInputDialog = false
@@ -169,7 +168,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 },
                 onPasswordItemClick = {
                     inputDialogInfo = Triple(
-                        appContext.getString(R.string.webdav_screen_input_password), password
+                        context.getString(R.string.webdav_screen_input_password), password
                     ) {
                         password = it
                         openInputDialog = false
@@ -221,10 +220,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
                     snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = appContext.getString(
-                            R.string.webdav_screen_failed,
-                            loadUiIntent.msg
-                        ),
+                        message = context.getString(R.string.failed_info, loadUiIntent.msg),
                         key2 = loadUiIntent,
                     )
                     openWaitingDialog = false
@@ -319,7 +315,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 when (val result = uploadResultUiEvent.result) {
                     is WebDavResultInfo -> {
                         snackbarHostState.showSnackbarWithLaunchedEffect(
-                            message = appContext.resources.getQuantityString(
+                            message = context.resources.getQuantityString(
                                 R.plurals.webdav_screen_upload_success,
                                 result.count,
                                 result.time / 1000.0f, result.count
@@ -341,7 +337,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 when (val result = downloadResultUiEvent.result) {
                     is WebDavResultInfo -> {
                         snackbarHostState.showSnackbarWithLaunchedEffect(
-                            message = appContext.resources.getQuantityString(
+                            message = context.resources.getQuantityString(
                                 R.plurals.webdav_screen_download_success,
                                 result.count,
                                 result.time / 1000.0f, result.count

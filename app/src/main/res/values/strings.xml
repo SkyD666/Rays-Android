@@ -12,6 +12,7 @@
     <string name="add_screen_name_edit">Edit</string>
     <string name="back">Back</string>
     <string name="add_screen_success">Operation successful</string>
+    <string name="failed_info">Failed: %s</string>
     <string name="add_screen_waiting_uris">Waiting list</string>
     <string name="add_screen_sticker_is_not_set">Please select a sticker!</string>
     <string name="add_screen_tag_field_hint">Press Enter to add</string>
@@ -71,7 +72,6 @@
         <item quantity="one">Updated %1$d sticker in total, took %2$.2f s</item>
         <item quantity="other">Updated %1$d stickers in total, took %2$.2f s</item>
     </plurals>
-    <string name="import_files_screen_failed">Operation failed: %s</string>
     <string name="import_files_screen_on_conflict">On conflict</string>
     <string name="import_files_screen_on_conflict_desc">"Conflict" refers to the situation where the UUID of the sticker you are currently importing is the same as the UUID of an existing sticker, regardless of whether the content of these two stickers is the same.</string>
     <string name="export_files_screen_name">Export to files</string>
@@ -86,13 +86,11 @@
         <item quantity="one">Exported %1$d sticker in total, took %2$.2f s</item>
         <item quantity="other">Exported %1$d stickers in total, took %2$.2f s</item>
     </plurals>
-    <string name="export_files_screen_failed">Operation failed: %s</string>
     <string name="export_files_screen_open_backup_file">Open backup file</string>
     <string name="handle_imported_sticker_proxy_skip">Skip</string>
     <string name="handle_imported_sticker_proxy_replace">Replace</string>
     <string name="import_export_files_repo_invalid_magic_number">Invalid format, Magic number not equals to 0x0D000721</string>
     <string name="import_export_files_repo_invalid_format">Invalid format: %s</string>
-    <string name="import_export_files_repo_error">Error: %s</string>
     <string name="webdav_screen_name">WebDAV</string>
     <string name="import_export_screen_webdav_description">Synchronize data via WebDAV</string>
     <string name="webdav_screen_service_category">Service</string>
@@ -118,7 +116,6 @@
         <item quantity="one">Push succeeded, spent %1$.2fs, update %2$d sticker</item>
         <item quantity="other">Push succeeded, spent %1$.2fs, update %2$d stickers</item>
     </plurals>
-    <string name="webdav_screen_failed">Operation failed: %s</string>
     <string name="webdav_screen_waiting">Please wait…</string>
     <string name="webdav_screen_input_server">Server URL</string>
     <string name="webdav_screen_input_account">Account</string>
@@ -146,11 +143,9 @@
     <string name="data_screen_delete_all">Delete all local stickers</string>
     <string name="data_screen_delete_all_description">Delete all local data managed by Rays, including images, titles and labels. This operation is irreversible</string>
     <string name="setting_screen_data_description">Backup, synchronize, delete sticker data</string>
-    <string name="data_screen_failed">Operation failed: %s</string>
     <string name="data_screen_delete_all_success">All sticker data cleared, spent %.2fs</string>
     <string name="search_config_screen_intersect_search_by_space">Intersection search</string>
     <string name="search_config_screen_intersect_search_by_space_description">Use spaces to split multiple keywords to achieve the \"and\" condition</string>
-    <string name="home_screen_failed">Operation failed: %s</string>
     <plurals name="home_screen_export_result">
         <item quantity="one">Export %d sticker</item>
         <item quantity="other">Export %d stickers</item>
@@ -165,10 +160,10 @@
     <string name="home_screen_open_menu">Show menu</string>
     <string name="about_screen_other_works_raca_name" translatable="false">Raca (Record All Classic Articles)</string>
     <string name="about_screen_other_works_raca_description">A tool to record and search abstract passages and mini-essays in the comments section locally. 🤗 Are you still having trouble remembering the content of your mini-essay and facing the embarrassing situation of forgetting the front, middle and back? Using this tool will help you record the mini-essays you come across and never worry about forgetting them again! 😋</string>
-    <string name="about_screen_other_works_raca_url">https://github.com/SkyD666/Raca-Android</string>
+    <string name="about_screen_other_works_raca_url" translatable="false">https://github.com/SkyD666/Raca-Android</string>
     <string name="about_screen_other_works_night_screen_name" translatable="false">Night Screen</string>
     <string name="about_screen_other_works_night_screen_description">When you use your phone at night 🌙, Night Screen can help you reduce the brightness of the screen and reduce the damage to your eyes.</string>
-    <string name="about_screen_other_works_night_screen_url">https://github.com/SkyD666/NightScreen</string>
+    <string name="about_screen_other_works_night_screen_url" translatable="false">https://github.com/SkyD666/NightScreen</string>
     <string name="about_screen_other_works">Other works</string>
     <string name="add_screen_sticker_duplicate">The sticker has already been added and is showing the existing information!</string>
     <string name="add_screen_suggest_tag">Suggested tags</string>
@@ -181,9 +176,7 @@
     <string name="classification_model_screen_default">Default</string>
     <string name="classification_model_screen_select">Select external model</string>
     <string name="classification_model_screen_select_description">Select an external model file (.tflite or .lite)</string>
-    <string name="classification_model_screen_failed">Operation failed: %s</string>
     <string name="classification_model_screen_default_name" translatable="false">EfficientNet-Lite2</string>
-    <string name="add_screen_error">Error: %s</string>
     <string name="home_screen_clear_current_sicker">Clear screen</string>
     <string name="appearance_screen_style_category">Style</string>
     <string name="home_style_screen_name">Home screen style</string>
@@ -249,7 +242,6 @@
     <string name="uri_string_share_screen_add_app_package">Add package</string>
     <string name="uri_string_share_screen_add_app_package_example">e.g., com.skyd.example</string>
     <string name="uri_string_share_repo_no_package">This package is unavailable: %s</string>
-    <string name="uri_string_share_screen_failed">Error: %s</string>
     <string name="setting_screen_share_config_description">Sticker file extension, URI string share</string>
     <string name="share_config_screen_file_extension">File extension</string>
     <string name="share_config_screen_file_extension_description">Add the file extension name when sharing a sticker</string>
@@ -273,12 +265,12 @@
     <string name="selfie_segmentation_screen_select_background_image">Select a background image</string>
     <string name="selfie_segmentation_screen_reset_selfie_transformations">Reset selfie</string>
     <string name="api_screen_name">API (Experimental)</string>
-    <string name="api_grant_screen_name">API Grant</string>
+    <string name="api_grant_screen_name">API grant</string>
     <string name="setting_screen_api_description">Application Programming Interface</string>
     <string name="api_grant_repo_no_package">No such package is available: %s</string>
     <string name="api_grant_screen_description">Manage API permissions for external applications</string>
     <string name="api_grant_screen_enable">Enable API</string>
-    <string name="accessibility_service_label">Rays</string>
+    <string name="accessibility_service_label" translatable="false">Rays</string>
     <string name="accessibility_service_description">It is recommended that Rays should be allowed to launch on startup, launch by other apps and keep running in background.\n\nThe following features of Rays are required for accessibility:\n\nAuto share</string>
     <string name="auto_share_screen_name">Auto share</string>
     <string name="auto_share_screen_description">Share sticker to the previous page automatically</string>

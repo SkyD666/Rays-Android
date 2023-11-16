@@ -111,10 +111,7 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
             when (it) {
                 is LoadUiIntent.Error -> {
                     snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = context.getString(
-                            R.string.classification_model_screen_failed,
-                            it.msg
-                        ),
+                        message = context.getString(R.string.failed_info, it.msg),
                         key2 = it,
                     )
                 }

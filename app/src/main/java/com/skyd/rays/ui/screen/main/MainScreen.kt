@@ -13,12 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Egg
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.outlined.Egg
+import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Widgets
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -107,8 +107,8 @@ private fun NavigationBarOrRail(navController: NavController) {
     )
     val icons = remember {
         mapOf(
-            true to listOf(Icons.Filled.Home, Icons.Filled.Extension, Icons.Filled.Egg),
-            false to listOf(Icons.Outlined.Home, Icons.Outlined.Extension, Icons.Outlined.Egg),
+            true to listOf(Icons.Filled.Home, Icons.Filled.Extension, Icons.Filled.Widgets),
+            false to listOf(Icons.Outlined.Home, Icons.Outlined.Extension, Icons.Outlined.Widgets),
         )
     }
 

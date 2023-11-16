@@ -79,7 +79,7 @@ fun ShareConfigScreen() {
             item {
                 SwitchSettingsItem(
                     icon = Icons.Default.FileCopy,
-                    checked = LocalCopyStickerToClipboard.current,
+                    checked = LocalStickerExtName.current && LocalCopyStickerToClipboard.current,
                     text = stringResource(R.string.share_config_screen_copy_sticker_to_clipboard),
                     description = stringResource(R.string.share_config_screen_copy_sticker_to_clipboard_description),
                     onCheckedChange = {

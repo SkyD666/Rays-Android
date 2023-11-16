@@ -152,10 +152,7 @@ class ImportExportFilesRepository @Inject constructor(
             // 添加最后四个字节 0x0D000721
             appContext.contentResolver.openOutputStream(zipFileUri, "wa").use { fos ->
                 check(fos != null) {
-                    appContext.getString(
-                        R.string.import_export_files_repo_error,
-                        "Zip file OutputStream is null!"
-                    )
+                    appContext.getString(R.string.failed_info, "Zip file OutputStream is null!")
                 }
                 fos.write(byteArrayOf(0x0D, 0x00, 0x07, 0x21))
             }

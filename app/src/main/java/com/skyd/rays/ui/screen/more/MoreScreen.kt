@@ -3,10 +3,10 @@ package com.skyd.rays.ui.screen.more
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Egg
 import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -57,7 +57,7 @@ fun MoreScreen() {
                 title = { Text(text = stringResource(id = R.string.more_screen_name)) },
                 navigationIcon = {
                     RaysIconButton(
-                        imageVector = Icons.Default.Egg,
+                        imageVector = Icons.Default.Widgets,
                         onClick = {
                             snackbarHostState.showSnackbar(
                                 message = "\uD83D\uDC31 Nya~",

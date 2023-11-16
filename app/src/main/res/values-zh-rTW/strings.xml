@@ -39,7 +39,6 @@
     <string name="about_screen_description_3">Rays 使用 MVI 架構，完全採用 Material You 設計風格。所有頁面都使用 Jetpack Compose 開發。</string>
     <string name="webdav_screen_account_description">請輸入 WebDAV 帳戶</string>
     <string name="share_config_screen_file_extension_description">在分享表情包時添加文件擴展名</string>
-    <string name="webdav_screen_failed">操作失敗：%s</string>
     <plurals name="import_files_screen_successful_desc">
         <item quantity="other">共更新 %1$d 張表情包，耗時 %2$.2f 秒</item>
     </plurals>
@@ -75,20 +74,7 @@
     <string name="about_screen_description_2">您還在為手機中的表情包太多，找不到想要的表情包而苦惱嗎？使用這款工具將幫助您管理您存儲的表情包，再也不因為找不到表情包而煩惱！ 😋</string>
     <string name="info">資訊</string>
     <string name="dark_mode_follow_system">跟隨系統</string>
-    <string name="auto_share_screen_supported_app">自動分享功能可將表情包直接分享到上一個頁面對應的應用程式。
-\n
-\n此功能需要無障礙權限。在結束 Rays 進程、升級或重新安裝 Rays 後，自動分享可能會被禁用，需要手動開啟無障礙權限才能再次啟用。
-\n
-\n建議允許 Rays 在啟動時啟動、由其他應用啟動、在背景中持續運行。
-\n
-\n支援的應用程式：
-\nQQ
-\n微信
-\n微博
-\nTelegram
-\nInstagram
-\nDiscord
-\nWhatsApp</string>
+    <string name="auto_share_screen_supported_app">自動分享功能可將表情包直接分享到上一個頁面對應的應用程式。\n\n此功能需要無障礙權限。在結束 Rays 進程、升級或重新安裝 Rays 後，自動分享可能會被禁用，需要手動開啟無障礙權限才能再次啟用。\n\n建議允許 Rays 在啟動時啟動、由其他應用啟動、在背景中持續運行。\n\n支援的應用程式：\nQQ\n微信\n微博\nTelegram\nInstagram\nDiscord\nWhatsApp</string>
     <string name="auto_share_screen_name">自動分享</string>
     <string name="home_screen_sticker_info_md5">表情包 MD5</string>
     <string name="webdav_screen_name">WebDAV</string>
@@ -139,22 +125,20 @@
     <string name="import_export_screen_using_cloud_category">透過雲端</string>
     <string name="style_transfer_screen_select_style_image">選擇風格圖片</string>
     <string name="auto_share_screen_accessibility_granted">現在已經授予無障礙權限</string>
-    <string name="import_export_files_repo_error">錯誤：%s</string>
     <string name="webdav_screen_progress_download_data_sticker">更新本地數據 + 表情包</string>
     <string name="webdav_screen_last_modified_time">上次修改時間：%s</string>
     <string name="data_screen_delete_all_success">所有表情包數據已清除，花費 %.2f 秒</string>
     <string name="text_recognize_screen_threshold">文字識別閾值</string>
     <string name="share_config_screen_copy_sticker_to_clipboard">分享時複製</string>
     <string name="selfie_segmentation_screen_background">背景</string>
+    <string name="selfie_segmentation_screen_select_selfie_image">選擇自拍照</string>
+    <string name="selfie_segmentation_screen_select_background_image">選擇背景</string>
     <string name="home_screen_delete">刪除</string>
     <string name="import_export_screen_using_file_category">透過文件</string>
     <string name="ml_screen_name">AI</string>
     <string name="style_transfer_screen_content">內容</string>
     <string name="selfie_segmentation_screen_reset_selfie_transformations">重置自拍照</string>
-    <string name="update_newer_text">新版本：%1$s
-\n發布日期：%2$s
-\n下載次數：%3$s
-\n</string>
+    <string name="update_newer_text">新版本：%1$s\n發布日期：%2$s\n下載次數：%3$s\n</string>
     <string name="classification_model_screen_description">選擇用於分類表情包的機器學習模型</string>
     <string name="data_sync_warning">請勿在推送和拉取時強制結束應用程式或斷開網路，否則可能會損壞數據！</string>
     <string name="search_config_screen_intersect_search_by_space">交集搜尋</string>
@@ -181,6 +165,7 @@
     <string name="style_transfer_screen_transfer">轉移</string>
     <string name="selfie_segmentation_screen_image_not_selected">在分割前請選擇一張自拍照片</string>
     <string name="add_screen_success">操作成功</string>
+    <string name="failed_info">操作失敗：%s</string>
     <string name="style_transfer_screen_style">風格</string>
     <string name="image_scale_crop">裁剪</string>
     <string name="collapse">收起</string>
@@ -222,11 +207,7 @@
     <string name="add_screen_add_tag_to_all">為處理清單中的所有表情包加入此標籤</string>
     <string name="send_sticker">發送表情包</string>
     <string name="setting_screen_search_description">搜尋方案、搜尋領域等</string>
-    <string name="accessibility_service_description">建議允許 Rays 自啟動、關聯啟動和背景運行。
-\n
-\nRays 的以下功能需要使用無障礙：
-\n
-\n自動分享</string>
+    <string name="accessibility_service_description">建議允許 Rays 自啟動、關聯啟動和背景運行。\n\nRays 的以下功能需要使用無障礙：\n\n自動分享</string>
     <string name="home_screen_empty_tip">創建新表情包或從搜尋結果中選擇表情包～</string>
     <string name="db_sticker_table_uuid">UUID</string>
     <string name="webdav_screen_remote_recycle_bin_is_empty">遠端回收站為空</string>
@@ -236,10 +217,8 @@
     <string name="privacy_screen_disable_screenshot_description">應用程式內禁止截圖</string>
     <string name="update_newer">發現新版本</string>
     <string name="image_scale_fill_bounds">填滿邊界</string>
-    <string name="data_screen_failed">操作失敗：%s</string>
     <string name="handle_imported_sticker_proxy_replace">替換原有</string>
     <string name="mini_tool_screen_name">小工具</string>
-    <string name="import_files_screen_failed">操作失敗：%s</string>
     <string name="export_files_screen_select_dir">選擇匯出目錄</string>
     <string name="search_result_sort">排序</string>
     <string name="webdav_screen_server_description">請輸入 WebDAV 伺服器 URL</string>
@@ -283,7 +262,6 @@
     <string name="setting_screen_data_description">備份、同步、刪除表情包數據等</string>
     <string name="search_config_screen_use_regex_description">將搜尋關鍵字視為正則表達式</string>
     <string name="webdav_screen_progress_delete">刪除本地數據 + 表情包</string>
-    <string name="export_files_screen_failed">操作失敗：%s</string>
     <string name="api_grant_repo_no_package">沒有軟體包可用：%s</string>
     <string name="add_screen_suggest_tag">建議的標籤</string>
     <string name="home_screen_popular_tags_popular_value">熱門值：%.2f</string>
@@ -304,7 +282,6 @@
     <string name="export_files_screen_export">匯出</string>
     <string name="home_style_screen_search_bar">搜索欄</string>
     <string name="data_screen_import_export_description">同步表情包數據</string>
-    <string name="home_screen_failed">操作失敗：%s</string>
     <string name="image_scale_fill_width">填滿寬度</string>
     <string name="classification_screen_name">表情包分類</string>
 </resources>

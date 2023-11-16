@@ -229,9 +229,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
                     snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = context.getString(
-                            R.string.home_screen_failed, loadUiIntent.msg
-                        ),
+                        message = context.getString(R.string.failed_info, loadUiIntent.msg),
                         key2 = loadUiIntent,
                     )
                 }

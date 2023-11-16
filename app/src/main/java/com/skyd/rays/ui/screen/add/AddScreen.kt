@@ -90,7 +90,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.skyd.rays.R
-import com.skyd.rays.appContext
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.addAllDistinctly
@@ -233,7 +232,7 @@ fun AddScreen(
                             if (currentSticker() == null) {
                                 snackbarHostState.showSnackbar(
                                     scope = scope,
-                                    message = appContext.getString(R.string.add_screen_sticker_is_not_set),
+                                    message = context.getString(R.string.add_screen_sticker_is_not_set),
                                 )
                             } else {
                                 keyboardController?.hide()
@@ -369,7 +368,7 @@ fun AddScreen(
             when (it) {
                 is LoadUiIntent.Error -> {
                     snackbarHostState.showSnackbarWithLaunchedEffect(
-                        context.getString(R.string.add_screen_error, it.msg),
+                        context.getString(R.string.failed_info, it.msg),
                         key2 = it,
                     )
                 }

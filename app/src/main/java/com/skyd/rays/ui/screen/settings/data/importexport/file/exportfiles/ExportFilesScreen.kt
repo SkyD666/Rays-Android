@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.appContext
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
@@ -160,7 +159,7 @@ fun ExportFilesScreen(viewModel: ExportFilesViewModel = hiltViewModel()) {
     when (val loadUi = loadUiIntent) {
         is LoadUiIntent.Error -> {
             snackbarHostState.showSnackbarWithLaunchedEffect(
-                message = appContext.getString(R.string.export_files_screen_failed, loadUi.msg),
+                message = context.getString(R.string.failed_info, loadUi.msg),
                 key2 = loadUiIntent,
             )
             openWaitingDialog = false

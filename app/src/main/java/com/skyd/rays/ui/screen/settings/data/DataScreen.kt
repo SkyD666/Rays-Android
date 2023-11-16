@@ -19,11 +19,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.appContext
 import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.ui.component.BaseSettingsItem
@@ -40,6 +40,7 @@ const val DATA_SCREEN_ROUTE = "dataScreen"
 fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val navController = LocalNavController.current
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var openDeleteWarningDialog by rememberSaveable { mutableStateOf(false) }
     var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
@@ -82,9 +83,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             when (loadUiIntent) {
                 is LoadUiIntent.Error -> {
                     snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = appContext.getString(
-                            R.string.data_screen_failed, loadUiIntent.msg
-                        ),
+                        message = context.getString(R.string.failed_info, loadUiIntent.msg),
                         key2 = loadUiIntent,
                     )
                 }
@@ -98,7 +97,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             when (deleteAllResultUiEvent) {
                 is DeleteAllResultUiEvent.Success -> {
                     snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = appContext.getString(
+                        message = context.getString(
                             R.string.data_screen_delete_all_success,
                             deleteAllResultUiEvent.time / 1000.0f
                         ),
