@@ -5,7 +5,7 @@
     <string name="home_screen_name">首頁</string>
     <string name="home_screen_search_hint">搜尋</string>
     <string name="home_screen_add">添加</string>
-    <string name="add_screen_save">存檔</string>
+    <string name="add_screen_save_current_sticker">儲存目前項</string>
     <string name="add_screen_title">標題（可選）</string>
     <string name="add_screen_add_tags">新增標籤（可選）</string>
     <string name="add_screen_name">添加</string>
@@ -46,7 +46,7 @@
     <string name="appearance_screen_sticker_color_theme">表情包顏色主題</string>
     <string name="webdav_screen_password">密碼</string>
     <string name="data_screen_delete_all_description">刪除 Rays 管理的所有本地數據，包括圖片、標題、標籤等。此操作無法撤銷</string>
-    <string name="classification_screen_description">選擇表情包分類模型，設置置信閾值等</string>
+    <string name="classification_screen_description">選擇表情包分類模型，設定置信閾值等</string>
     <string name="home_screen_delete_warning">刪除？此操作無法還原！</string>
     <string name="webdav_screen_password_entered">密碼已輸入</string>
     <string name="selfie_segmentation_screen_name">自拍分割</string>
@@ -97,11 +97,11 @@
     </plurals>
     <string name="export_files_screen_description">匯出表情包、標籤等至本地文件</string>
     <string name="home_style_screen_share_button_alignment_vert">垂直</string>
-    <string name="import_export_screen_name">導入與導出</string>
+    <string name="import_export_screen_name">導入與匯出</string>
     <string name="appearance_screen_dark_mode">深色模式</string>
     <string name="search_config_screen_use_regex">正則表達式</string>
     <string name="home_screen_sticker_info_click_count">點擊次數</string>
-    <string name="classification_screen_threshold_description">只有置信度高于此門檻值的標籤才會被建議，建議設置在 0.5 左右。</string>
+    <string name="classification_screen_threshold_description">只有置信度高于此門檻值的標籤才會被建議，建議設定在 0.5 左右。</string>
     <string name="webdav_screen_server">伺服器</string>
     <string name="about_screen_join_discord">加入 Discord 伺服器</string>
     <string name="webdav_screen_download">拉取</string>
@@ -115,7 +115,7 @@
     <string name="auto_share_screen_ignore_description">忽略匹配页面的存在</string>
     <string name="export_files_screen_successful">匯出成功</string>
     <string name="about_screen_description_1">一個用於在手機上記錄、搜尋和管理表情包的工具。</string>
-    <string name="appearance_screen_dark_mode_description">設置深色模式策略</string>
+    <string name="appearance_screen_dark_mode_description">設定深色模式策略</string>
     <string name="import_files_screen_description">從本地文件導入表情包、標籤等</string>
     <string name="appearance_screen_name">外觀和風格</string>
     <string name="webdav_screen_clear_remote_recycle_bin">清空回收站</string>
@@ -172,6 +172,8 @@
     <string name="search_config_screen_domain_category">搜尋領域（未選擇時搜索全部）</string>
     <string name="uri_string_share_screen_name">URI 字符串分享</string>
     <string name="home_screen_export">匯出</string>
+    <string name="home_screen_copy">複製</string>
+    <string name="home_screen_copied">已複製</string>
     <string name="dark_mode_light">亮色</string>
     <string name="home_screen_edit">編輯</string>
     <string name="about">關於</string>
@@ -240,7 +242,7 @@
     <string name="home_style_screen_sticker_card">表情包卡片</string>
     <string name="webdav_screen_progress_download_data">更新本地數據</string>
     <string name="search_config_screen_name">搜尋</string>
-    <string name="settings">設置</string>
+    <string name="settings">設定</string>
     <string name="appearance_screen_style_category">風格</string>
     <string name="setting_screen_appearance_description">主題、深色模式、風格等</string>
     <string name="home_screen_send_sticker">發送</string>
@@ -249,6 +251,8 @@
     <string name="import_export_screen_webdav_description">透過 WebDAV 同步數據</string>
     <string name="db_tag_table_tag">標籤</string>
     <string name="add_screen_select_sticker">選擇表情包</string>
+    <string name="add_screen_add_stickers">添加表情包</string>
+    <string name="add_screen_update_sticker">選擇新表情包</string>
     <string name="about_screen_other_works_night_screen_description">當您在晚上🌙使用手機時，Night Screen 可以幫助您降低屏幕的亮度，減少對眼睛的損害。</string>
     <string name="webdav_screen_remote_recycle_bin">遠端回收站</string>
     <string name="data_screen_name">數據</string>

@@ -5,7 +5,7 @@
     <string name="home_screen_name">首页</string>
     <string name="home_screen_search_hint">输入关键词搜索</string>
     <string name="home_screen_add">添加</string>
-    <string name="add_screen_save">保存</string>
+    <string name="add_screen_save_current_sticker">保存当前项</string>
     <string name="add_screen_title">标题（可选）</string>
     <string name="add_screen_add_tags">添加标签（可选）</string>
     <string name="add_screen_name">添加表情包</string>
@@ -31,6 +31,8 @@
     <string name="home_screen_edit">编辑</string>
     <string name="home_screen_delete">删除</string>
     <string name="home_screen_export">导出</string>
+    <string name="home_screen_copy">复制</string>
+    <string name="home_screen_copied">已复制</string>
     <string name="info">提示</string>
     <string name="dialog_ok">确定</string>
     <string name="dialog_close">关闭</string>
@@ -148,6 +150,8 @@
     <string name="home_screen_empty_tip">新建表情包或从搜索结果中选择一个表情包吧~</string>
     <string name="home_screen_no_search_result_tip">空空如也呢~</string>
     <string name="add_screen_select_sticker">选择表情包</string>
+    <string name="add_screen_add_stickers">添加表情包</string>
+    <string name="add_screen_update_sticker">选择新表情包</string>
     <string name="import_export_screen_name">导入与导出</string>
     <string name="home_screen_send_sticker">发送</string>
     <string name="send_sticker">发送表情包</string>

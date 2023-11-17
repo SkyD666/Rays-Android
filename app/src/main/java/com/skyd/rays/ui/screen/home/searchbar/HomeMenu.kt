@@ -2,6 +2,7 @@ package com.skyd.rays.ui.screen.home.searchbar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ManageSearch
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
@@ -72,6 +73,7 @@ fun HomeMenu(
     onDismissRequest: () -> Unit,
     onDeleteClick: () -> Unit,
     onExportClick: () -> Unit,
+    onCopyClick: () -> Unit,
     onStickerInfoClick: () -> Unit,
     onClearScreen: () -> Unit,
 ) {
@@ -143,6 +145,20 @@ fun HomeMenu(
             leadingIcon = {
                 Icon(
                     Icons.Default.Save,
+                    contentDescription = null
+                )
+            }
+        )
+        DropdownMenuItem(
+            enabled = stickerMenuItemEnabled,
+            text = { Text(stringResource(R.string.home_screen_copy)) },
+            onClick = {
+                onDismissRequest()
+                onCopyClick()
+            },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.ContentCopy,
                     contentDescription = null
                 )
             }

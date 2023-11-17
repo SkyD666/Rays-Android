@@ -124,6 +124,7 @@ private fun RaysSearchBarPreview() {
                             onDismissRequest = { menuExpanded = false },
                             onDeleteClick = {},
                             onExportClick = {},
+                            onCopyClick = {},
                             onStickerInfoClick = {},
                             onClearScreen = {},
                         )

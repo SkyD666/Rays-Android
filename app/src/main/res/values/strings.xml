@@ -5,7 +5,7 @@
     <string name="home_screen_name">Home</string>
     <string name="home_screen_search_hint">Search</string>
     <string name="home_screen_add">Add</string>
-    <string name="add_screen_save">Save</string>
+    <string name="add_screen_save_current_sticker">Save current sticker</string>
     <string name="add_screen_title">Title (Optional)</string>
     <string name="add_screen_add_tags">Add tags (Optional)</string>
     <string name="add_screen_name">Add</string>
@@ -31,6 +31,8 @@
     <string name="home_screen_edit">Edit</string>
     <string name="home_screen_delete">Delete</string>
     <string name="home_screen_export">Export</string>
+    <string name="home_screen_copy">Copy</string>
+    <string name="home_screen_copied">Copied</string>
     <string name="info">Info</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_close">Close</string>
@@ -154,6 +156,8 @@
     <string name="home_screen_empty_tip">Create a new sticker or select a sticker from the search results~</string>
     <string name="home_screen_no_search_result_tip">It\'s empty~</string>
     <string name="add_screen_select_sticker">Select stickers</string>
+    <string name="add_screen_add_stickers">Add stickers</string>
+    <string name="add_screen_update_sticker">Select a new sticker</string>
     <string name="import_export_screen_name">Sync data</string>
     <string name="home_screen_send_sticker">Send</string>
     <string name="send_sticker">Send sticker</string>
@@ -204,13 +208,13 @@
     <string name="home_style_screen_share_button_alignment">Share button position</string>
     <string name="home_style_screen_share_button_alignment_horiz">Horizontal</string>
     <string name="home_style_screen_share_button_alignment_vert">Vertical</string>
-    <string name="webdav_screen_progress_upload_data_sticker">Update remote data + sticker</string>
-    <string name="webdav_screen_progress_logical_delete_remote">Move to remote recycle bin</string>
-    <string name="webdav_screen_progress_upload_data">Update remote data</string>
-    <string name="webdav_screen_progress_download_data_sticker">Update local data + sticker</string>
-    <string name="webdav_screen_progress_download_data">Update local data</string>
-    <string name="webdav_screen_progress_delete">Delete local data + sticker</string>
-    <string name="webdav_screen_progress_refresh_backup_info">Update backup information</string>
+    <string name="webdav_screen_progress_upload_data_sticker">Updating remote data + sticker</string>
+    <string name="webdav_screen_progress_logical_delete_remote">Moving to remote recycle bin</string>
+    <string name="webdav_screen_progress_upload_data">Updating remote data</string>
+    <string name="webdav_screen_progress_download_data_sticker">Updating local data + sticker</string>
+    <string name="webdav_screen_progress_download_data">Updating local data</string>
+    <string name="webdav_screen_progress_delete">Deleting local data + sticker</string>
+    <string name="webdav_screen_progress_refresh_backup_info">Updating backup information</string>
     <string name="data_sync_warning">Please do not force kill the app or disconnect the network when pushing and pulling, as this may corrupt the data!</string>
     <string name="home_screen_sticker_info">Sticker info</string>
     <string name="home_screen_sticker_info_uuid">UUID</string>

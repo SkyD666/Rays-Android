@@ -160,21 +160,15 @@ fun Bitmap.shareToFile(outputDir: File = File(appContext.cacheDir, "TempSticker"
 }
 
 /**
- * 针对外部应用
+ * 把表情包复制到临时目录
  */
-fun externalShareStickerUuidToFile(uuid: String): File {
-    val originFile = stickerUuidToFile(uuid)
+fun File.copyStickerToTempFolder(fileExtension: Boolean): File {
     val outputDir = File(appContext.cacheDir, "TempSticker")
-    if (appContext.dataStore.get(StickerExtNamePreference.key) == false ||
-        (!outputDir.exists() && !outputDir.mkdirs())
-    ) {
-        return originFile
-    }
-    val extensionName = originFile.inputStream().use {
-        ImageFormatChecker.check(it).toString()
-    }
-    val resultFileName = uuid + "_" + Random.nextInt(0, Int.MAX_VALUE) + extensionName
-    val resultFile = originFile.copyTo(
+    check(outputDir.exists() || outputDir.mkdirs())
+    val resultFileName = name + "_" + Random.nextInt(0, Int.MAX_VALUE) + if (fileExtension) {
+        inputStream().use { ImageFormatChecker.check(it).toString() }
+    } else ""
+    val resultFile = copyTo(
         target = File(outputDir, resultFileName),
         overwrite = true
     )
@@ -188,6 +182,14 @@ fun externalShareStickerUuidToFile(uuid: String): File {
     }
     return resultFile
 }
+
+/**
+ * 针对外部应用
+ */
+fun externalShareStickerUuidToFile(uuid: String): File =
+    stickerUuidToFile(uuid).copyStickerToTempFolder(
+        fileExtension = appContext.dataStore.get(StickerExtNamePreference.key) ?: true
+    )
 
 /**
  * 针对内部操作，针对原图片本身
@@ -235,7 +237,20 @@ private fun List<Uri>.shareStickerUriString(context: Context, packages: List<Str
     )
 }
 
+/**
+ * 注意：此 uri 需要使用 FileProvider 提供
+ */
 fun Context.copyStickerToClipboard(uri: Uri) {
     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     clipboard.setPrimaryClip(ClipData.newUri(contentResolver, "Sticker", uri))
+}
+
+fun Context.copyStickerToClipboard(uuid: String) {
+    copyStickerToClipboard(
+        FileProvider.getUriForFile(
+            this,
+            "${packageName}.fileprovider",
+            stickerUuidToFile(uuid).copyStickerToTempFolder(fileExtension = true)
+        )
+    )
 }

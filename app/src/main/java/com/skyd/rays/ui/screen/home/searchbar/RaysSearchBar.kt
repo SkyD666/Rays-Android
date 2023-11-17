@@ -90,6 +90,7 @@ import com.skyd.rays.ui.screen.home.PopularTagsUiState
 import com.skyd.rays.ui.screen.home.SearchResultUiState
 import com.skyd.rays.ui.screen.home.StickerDetailInfo
 import com.skyd.rays.ui.screen.home.StickerDetailUiState
+import com.skyd.rays.util.copyStickerToClipboard
 
 
 @Composable
@@ -99,9 +100,11 @@ fun RaysSearchBar(
     active: Boolean,
     onActiveChange: (Boolean) -> Unit = {},
     stickerWithTags: StickerWithTags?,
+    onShowSnackbar: (String) -> Unit,
     uiState: HomeState,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     var menuExpanded by rememberSaveable { mutableStateOf(false) }
     var multiSelect by rememberSaveable { mutableStateOf(false) }
     val selectedStickers = remember { mutableStateListOf<StickerWithTags>() }
@@ -199,6 +202,10 @@ fun RaysSearchBar(
                             onDismissRequest = { menuExpanded = false },
                             onDeleteClick = { openDeleteWarningDialog = true },
                             onExportClick = { openExportPathDialog = true },
+                            onCopyClick = {
+                                context.copyStickerToClipboard(uuid = currentStickerUuid)
+                                onShowSnackbar(context.getString(R.string.home_screen_copied))
+                            },
                             onStickerInfoClick = { openStickerInfoDialog = true },
                             onClearScreen = {
                                 viewModel.sendUiIntent(

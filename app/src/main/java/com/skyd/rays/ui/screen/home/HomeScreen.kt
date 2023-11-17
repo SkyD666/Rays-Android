@@ -75,6 +75,7 @@ import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.dateTime
 import com.skyd.rays.ext.isCompact
+import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
@@ -173,6 +174,9 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     },
                     stickerWithTags = (stickerDetailUiState as? StickerDetailUiState.Success)
                         ?.stickerWithTags,
+                    onShowSnackbar = {
+                        snackbarHostState.showSnackbar(scope = scope, message = it)
+                    },
                     uiState = uiState,
                 )
                 when (stickerDetailUiState) {

@@ -219,7 +219,8 @@ fun AddScreen(
                             (if (isEdit) pickStickerLauncher else pickStickersLauncher)
                                 .launch("image/*")
                         },
-                        contentDescription = stringResource(R.string.add_screen_select_sticker),
+                        contentDescription = if (isEdit) stringResource(R.string.add_screen_update_sticker)
+                        else stringResource(R.string.add_screen_add_stickers),
                         imageVector = if (isEdit) Icons.Default.Image else Icons.Default.AddPhotoAlternate,
                     )
                     RaysIconButton(
@@ -252,7 +253,7 @@ fun AddScreen(
                                 )
                             }
                         },
-                        contentDescription = stringResource(R.string.add_screen_save),
+                        contentDescription = stringResource(R.string.add_screen_save_current_sticker),
                         imageVector = Icons.Default.Save,
                     )
                 }
