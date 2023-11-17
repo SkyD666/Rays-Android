@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="home_screen_search_hint">Procurar</string>
+    <string name="add_screen_title">Título (Opcional)</string>
+    <string name="home_screen_name">Início</string>
+    <string name="more_screen_name">Mais</string>
+    <string name="add_screen_save_current_sticker">Salvar o sticker atual</string>
+    <string name="app_name">Rays</string>
+    <string name="home_screen_add">Adicionar</string>
+</resources>
