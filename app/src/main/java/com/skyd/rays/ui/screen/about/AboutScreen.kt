@@ -6,10 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Balance
 import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -38,7 +41,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -59,6 +62,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.skyd.rays.R
 import com.skyd.rays.config.GITHUB_REPO
+import com.skyd.rays.config.NIGHT_SCREEN_URL
+import com.skyd.rays.config.RACA_ANDROID_URL
+import com.skyd.rays.config.WEBLATE_URL
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.model.bean.OtherWorksBean
@@ -124,8 +130,9 @@ fun AboutScreen() {
                     TextArea()
                 }
                 item {
-                    SponsorArea(
+                    HelpArea(
                         openSponsorDialog = openSponsorDialog,
+                        onTranslateClick = { openBrowser(WEBLATE_URL) },
                         onSponsorDialogVisibleChange = { openSponsorDialog = it }
                     )
                     ButtonArea()
@@ -138,12 +145,14 @@ fun AboutScreen() {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             IconArea()
-                            SponsorArea(
+                            HelpArea(
                                 openSponsorDialog = openSponsorDialog,
+                                onTranslateClick = { openBrowser(WEBLATE_URL) },
                                 onSponsorDialogVisibleChange = { openSponsorDialog = it }
                             )
                             ButtonArea()
                         }
+                        Spacer(modifier = Modifier.width(12.dp))
                         TextArea(modifier = Modifier.weight(1f))
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -240,15 +249,34 @@ private fun TextArea(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SponsorArea(
+private fun HelpArea(
     openSponsorDialog: Boolean,
-    onSponsorDialogVisibleChange: (Boolean) -> Unit
+    onTranslateClick: () -> Unit,
+    onSponsorDialogVisibleChange: (Boolean) -> Unit,
 ) {
     Spacer(modifier = Modifier.height(16.dp))
-    Button(onClick = { onSponsorDialogVisibleChange(true) }) {
-        Icon(imageVector = Icons.Default.Coffee, contentDescription = null)
-        Spacer(modifier = Modifier.width(10.dp))
-        Text(text = stringResource(id = R.string.sponsor))
+    Row(modifier = Modifier.height(IntrinsicSize.Min)) {
+        Button(
+            onClick = onTranslateClick,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            Icon(imageVector = Icons.Default.Translate, contentDescription = null)
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(text = stringResource(id = R.string.help_translate), textAlign = TextAlign.Center)
+        }
+        Spacer(modifier = Modifier.width(12.dp))
+        Button(
+            onClick = { onSponsorDialogVisibleChange(true) },
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            Icon(imageVector = Icons.Default.Coffee, contentDescription = null)
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(text = stringResource(id = R.string.sponsor), textAlign = TextAlign.Center)
+        }
     }
     SponsorDialog(visible = openSponsorDialog, onClose = { onSponsorDialogVisibleChange(false) })
 }
@@ -306,7 +334,10 @@ private fun ButtonArea() {
         Box(
             modifier = boxModifier.background(
                 color = MaterialTheme.colorScheme.primaryContainer,
-                shape = CurlyCornerShape(amp = 3f, count = 10),
+                shape = CurlyCornerShape(
+                    amp = with(LocalDensity.current) { 1.5.dp.toPx() },
+                    count = 10
+                ),
             ),
             contentAlignment = Alignment.Center
         ) {
@@ -354,13 +385,13 @@ private fun rememberOtherWorksList(): List<OtherWorksBean> {
                 name = context.getString(R.string.about_screen_other_works_raca_name),
                 icon = R.drawable.ic_raca,
                 description = context.getString(R.string.about_screen_other_works_raca_description),
-                url = context.getString(R.string.about_screen_other_works_raca_url)
+                url = RACA_ANDROID_URL,
             ),
             OtherWorksBean(
                 name = context.getString(R.string.about_screen_other_works_night_screen_name),
                 icon = R.drawable.ic_night_screen,
                 description = context.getString(R.string.about_screen_other_works_night_screen_description),
-                url = context.getString(R.string.about_screen_other_works_night_screen_url)
+                url = NIGHT_SCREEN_URL,
             ),
         )
     }

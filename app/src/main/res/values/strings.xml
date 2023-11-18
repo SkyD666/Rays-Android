@@ -164,10 +164,8 @@
     <string name="home_screen_open_menu">Show menu</string>
     <string name="about_screen_other_works_raca_name" translatable="false">Raca (Record All Classic Articles)</string>
     <string name="about_screen_other_works_raca_description">A tool to record and search abstract passages and mini-essays in the comments section locally. 🤗 Are you still having trouble remembering the content of your mini-essay and facing the embarrassing situation of forgetting the front, middle and back? Using this tool will help you record the mini-essays you come across and never worry about forgetting them again! 😋</string>
-    <string name="about_screen_other_works_raca_url" translatable="false">https://github.com/SkyD666/Raca-Android</string>
     <string name="about_screen_other_works_night_screen_name" translatable="false">Night Screen</string>
     <string name="about_screen_other_works_night_screen_description">When you use your phone at night 🌙, Night Screen can help you reduce the brightness of the screen and reduce the damage to your eyes.</string>
-    <string name="about_screen_other_works_night_screen_url" translatable="false">https://github.com/SkyD666/NightScreen</string>
     <string name="about_screen_other_works">Other works</string>
     <string name="add_screen_sticker_duplicate">The sticker has already been added and is showing the existing information!</string>
     <string name="add_screen_suggest_tag">Suggested tags</string>
@@ -285,6 +283,7 @@
     <string name="auto_share_screen_accessibility_granted">Accessibility permission granted now</string>
     <string name="auto_share_screen_accessibility_not_granted">No accessibility permission granted now</string>
     <string name="auto_share_screen_supported_app">Auto share allows you to share a sticker directly to the application corresponding to the previous page.\n\nThis feature requires accessibility permission. After killing the Rays process, upgrading or reinstalling Rays, Auto share may be disabled and needs to be enabled by manually granting accessibility permission. \n\nIt is recommended that Rays should be allowed to launch on startup, launch by other apps and keep running in background.\n\nSupported apps:\nTelegram\nDiscord\nWeChat\nInstagram\nQQ\nWhatsApp\nWeibo</string>
+    <string name="help_translate">Help translate</string>
     <string name="sponsor">Sponsor</string>
     <string name="sponsor_description">If you like the app, you can buy me a cup of coffee, thanks!</string>
     <string name="sponsor_afadian">Afadian</string>

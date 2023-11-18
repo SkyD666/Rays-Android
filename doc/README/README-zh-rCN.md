@@ -34,9 +34,10 @@
     </p>
     <p>
         <b><a href="../../README.md">English</a></b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-        <b><a href="https://github.com/SkyD666/Rays-Android/issues/4">帮助我们翻译</a></b>
+        <b><a href="https://hosted.weblate.org/engage/rays/">帮助我们翻译</a></b>
     </p>
 </div>
+
 
 
 ## 💡主要功能
@@ -113,7 +114,7 @@
 如果您对此项目有兴趣，请帮助我们进行**翻译工作**，谢谢。
 
 <a href="https://hosted.weblate.org/engage/rays/">
-<img src="https://hosted.weblate.org/widget/rays/string-xml/287x66-grey.png" alt="翻译状态" />
+<img src="https://hosted.weblate.org/widget/rays/string-xml/multi-auto.svg" alt="translate" />
 </a>
 
 ## 🛠主要技术栈

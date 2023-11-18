@@ -37,10 +37,9 @@
     </p>
     <p>
         <b><a href="doc/README/README-zh-rCN.md">中文</a></b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-        <b><a href="https://github.com/SkyD666/Rays-Android/issues/4">Help us translate</a></b>
+        <b><a href="https://hosted.weblate.org/engage/rays/">Help us translate</a></b>
     </p>
 </div>
-
 
 
 ## 💡 Features
@@ -117,7 +116,7 @@ Note: **and** logic is represented by **space, tab, line break**, multiple of th
 If you are interested, please help us **translate**, thank you.
 
 <a href="https://hosted.weblate.org/engage/rays/">
-<img src="https://hosted.weblate.org/widget/rays/string-xml/287x66-grey.png" alt="translate" />
+<img src="https://hosted.weblate.org/widget/rays/string-xml/multi-auto.svg" alt="translate" />
 </a>
 
 ## 🛠 Primary technology stack

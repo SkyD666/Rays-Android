@@ -178,6 +178,7 @@
     <string name="home_screen_edit">編輯</string>
     <string name="about">關於</string>
     <string name="webdav_screen_account">帳戶</string>
+    <string name="help_translate">幫助翻譯</string>
     <string name="sponsor">贊助</string>
     <string name="password_visibility_on">顯示</string>
     <string name="export_files_screen_open_backup_file">打開備份文件</string>
