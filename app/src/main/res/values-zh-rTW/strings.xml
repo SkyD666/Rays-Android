@@ -61,7 +61,7 @@
         <item quantity="other">推送成功，花費 %1$.2f 秒，更新 %2$d 張表情包</item>
     </plurals>
     <string name="webdav_screen_upload">推送</string>
-    <string name="import_export_files_repo_invalid_magic_number">無效格式，魔數不等於0x0D000721</string>
+    <string name="import_export_files_repo_invalid_magic_number">無效格式，魔數不等於 0x0D000721</string>
     <string name="webdav_screen_progress_logical_delete_remote">移動到遠端回收站</string>
     <string name="home_screen_sticker_info_create_time">創建時間</string>
     <string name="export_files_screen_progress_zipping">正在壓縮：%s</string>
@@ -69,7 +69,7 @@
     <string name="search_result_sort_tag_count">標籤數量</string>
     <string name="update_check">檢查更新</string>
     <string name="import_files_screen_successful">導入成功</string>
-    <string name="setting_screen_share_config_description">表情包文件擴展名，URI 字符串分享等</string>
+    <string name="setting_screen_share_config_description">表情包檔案副檔名，URI 字符串分享等</string>
     <string name="download_update">下載</string>
     <string name="about_screen_description_2">您還在為手機中的表情包太多，找不到想要的表情包而苦惱嗎？使用這款工具將幫助您管理您存儲的表情包，再也不因為找不到表情包而煩惱！ 😋</string>
     <string name="info">資訊</string>
@@ -82,7 +82,7 @@
     <string name="dark_mode_invalid">無效值</string>
     <string name="webdav_screen_upload_description">將本地數據推送到遠端</string>
     <string name="uri_string_share_repo_no_package">此包名不可用：%s</string>
-    <string name="share_config_screen_file_extension">文件擴展名</string>
+    <string name="share_config_screen_file_extension">檔案副檔名</string>
     <string name="add_screen_add_tag">添加</string>
     <string name="import_files_screen_name">從文件導入</string>
     <string name="webdav_screen_input_server">伺服器 URL</string>
@@ -230,7 +230,7 @@
     <string name="privacy_screen_name">隱私</string>
     <string name="text_recognize_screen_threshold_description">只有置信度高於此閾值的文字才會被推薦，建議設定在 0.4 左右。</string>
     <string name="text_recognize_screen_name">文本辨識</string>
-    <string name="share_config_screen_copy_sticker_to_clipboard_description">在分享時將表情包複製到剪貼板。需要啟用「文件擴展名」</string>
+    <string name="share_config_screen_copy_sticker_to_clipboard_description">在分享時將表情包複製到剪貼板。需要啟用「檔案副檔名」</string>
     <string name="home_screen_clear_search_text">清除查詢</string>
     <string name="expand">展開</string>
     <string name="about_screen_other_works_raca_description">一個在本地記錄、查找抽象段落/評論區小作文的工具。🤗 您還在為記不住小作文內容，面臨前面、中間、後面都忘了的尷尬處境嗎？使用這款工具將幫助您記錄您所遇到的小作文，再也不因為忘記而煩惱！😋</string>
