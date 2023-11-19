@@ -300,4 +300,8 @@
     <string name="privacy_screen_disable_screenshot_description">Screenshot is prohibited in the app</string>
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
+    <string name="share_sheet_action_copy">Copy</string>
+    <string name="share_sheet_action_save">Save</string>
+    <string name="share_sheet_action_save_toast_success">Saved to Pictures/Rays</string>
+    <string name="share_sheet_action_save_toast_failed">Save failed</string>
 </resources>
