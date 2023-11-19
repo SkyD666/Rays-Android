@@ -9,9 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object DisableScreenshotPreference {
+object DisableScreenshotPreference : BasePreference<Boolean> {
     private const val DISABLE_SCREENSHOT = "disableScreenshot"
-    const val default = false
+    override val default = false
 
     val key = booleanPreferencesKey(DISABLE_SCREENSHOT)
 
@@ -21,5 +21,5 @@ object DisableScreenshotPreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): Boolean = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences): Boolean = preferences[key] ?: default
 }

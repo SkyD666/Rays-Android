@@ -9,9 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object WebDavServerPreference {
+object WebDavServerPreference : BasePreference<String> {
     private const val WEB_DAV_SERVER = "webDavServer"
-    const val default = ""
+    override val default = ""
 
     val key = stringPreferencesKey(WEB_DAV_SERVER)
 
@@ -21,5 +21,5 @@ object WebDavServerPreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
 }

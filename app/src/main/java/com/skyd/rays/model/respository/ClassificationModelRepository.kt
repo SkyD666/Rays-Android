@@ -8,7 +8,7 @@ import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.CLASSIFICATION_MODEL_DIR_FILE
 import com.skyd.rays.ext.copyTo
 import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.get
+import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.bean.ModelBean
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import kotlinx.coroutines.flow.Flow
@@ -63,7 +63,7 @@ class ClassificationModelRepository @Inject constructor() : BaseRepository() {
                 val result = stickerFile.delete()
                 check(result) { "delete model ${modelUri.path} failed!" }
             }
-            if (name == appContext.dataStore.get(StickerClassificationModelPreference.key)) {
+            if (name == appContext.dataStore.getOrDefault(StickerClassificationModelPreference)) {
                 StickerClassificationModelPreference.put(
                     context = appContext,
                     value = StickerClassificationModelPreference.default

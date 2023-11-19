@@ -6,11 +6,12 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.put
+import com.skyd.rays.model.preference.BasePreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object ThemeNamePreference {
+object ThemeNamePreference : BasePreference<String> {
     private const val THEME_NAME = "themeName"
     const val CUSTOM_THEME_NAME = "Custom"
 
@@ -37,7 +38,7 @@ object ThemeNamePreference {
         ),
     )
 
-    val default = values[0].name
+    override val default = values[0].name
 
     val key = stringPreferencesKey(THEME_NAME)
 
@@ -47,7 +48,7 @@ object ThemeNamePreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences) = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences) = preferences[key] ?: default
 
     data class ThemeItem(val name: String, val keyColor: Color)
 }

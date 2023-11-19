@@ -12,12 +12,13 @@ import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.put
+import com.skyd.rays.model.preference.BasePreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-object DarkModePreference {
+object DarkModePreference : BasePreference<Int> {
     private const val DARK_MODE = "darkMode"
 
     val values: List<Int> = mutableListOf(
@@ -29,7 +30,7 @@ object DarkModePreference {
         }
     }
 
-    val default = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    override val default = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     } else {
         AppCompatDelegate.MODE_NIGHT_NO
@@ -69,7 +70,7 @@ object DarkModePreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): Int {
+    override fun fromPreferences(preferences: Preferences): Int {
         val scope = CoroutineScope(context = Dispatchers.Main)
         val value = preferences[key] ?: default
         scope.launch(Dispatchers.Main) {

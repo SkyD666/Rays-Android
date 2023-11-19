@@ -11,7 +11,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.skyd.rays.BuildConfig
 import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.get
+import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,8 +46,7 @@ class RaysAccessibilityService : AccessibilityService() {
                     ComponentName(event.packageName.toString(), event.className.toString())
                 val activityInfo = tryGetActivity(componentName)
                 scope.launch {
-                    val strategy = dataStore.get(AutoShareIgnoreStrategyPreference.key)
-                        ?: AutoShareIgnoreStrategyPreference.default
+                    val strategy = dataStore.getOrDefault(AutoShareIgnoreStrategyPreference)
                     val name = activityInfo?.name ?: return@launch
                     if (!name.startsWith(packageName.substringBeforeLast(".debug")) &&
                         runCatching { !name.matches(Regex(strategy)) }.getOrElse { true }

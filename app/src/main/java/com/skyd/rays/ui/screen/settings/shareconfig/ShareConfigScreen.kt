@@ -17,9 +17,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.datastore.preferences.core.edit
 import com.skyd.rays.R
-import com.skyd.rays.ext.dataStore
 import com.skyd.rays.model.preference.share.CopyStickerToClipboardPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.ui.component.BaseSettingsItem
@@ -65,31 +63,27 @@ fun ShareConfigScreen() {
                     text = stringResource(R.string.share_config_screen_file_extension),
                     description = stringResource(R.string.share_config_screen_file_extension_description),
                     onCheckedChange = {
-                        scope.launch {
-                            context.dataStore.edit { pref ->
-                                pref[StickerExtNamePreference.key] = it
-                                if (!it) {
-                                    pref[CopyStickerToClipboardPreference.key] = false
-                                }
-                            }
-                        }
+                        StickerExtNamePreference.put(
+                            scope = scope,
+                            context = context,
+                            value = it
+                        )
                     }
                 )
             }
             item {
                 SwitchSettingsItem(
                     icon = Icons.Default.FileCopy,
-                    checked = LocalStickerExtName.current && LocalCopyStickerToClipboard.current,
+                    checked = LocalCopyStickerToClipboard.current,
                     text = stringResource(R.string.share_config_screen_copy_sticker_to_clipboard),
                     description = stringResource(R.string.share_config_screen_copy_sticker_to_clipboard_description),
                     onCheckedChange = {
                         scope.launch {
-                            context.dataStore.edit { pref ->
-                                pref[CopyStickerToClipboardPreference.key] = it
-                                if (it) {
-                                    pref[StickerExtNamePreference.key] = true
-                                }
-                            }
+                            CopyStickerToClipboardPreference.put(
+                                scope = scope,
+                                context = context,
+                                value = it
+                            )
                         }
                     }
                 )

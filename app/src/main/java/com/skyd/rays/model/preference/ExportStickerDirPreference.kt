@@ -9,9 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object ExportStickerDirPreference {
+object ExportStickerDirPreference : BasePreference<String> {
     private const val EXPORT_STICKER_DIR = "exportStickerDir"
-    const val default = ""
+    override val default = ""
 
     val key = stringPreferencesKey(EXPORT_STICKER_DIR)
 
@@ -21,5 +21,5 @@ object ExportStickerDirPreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
 }

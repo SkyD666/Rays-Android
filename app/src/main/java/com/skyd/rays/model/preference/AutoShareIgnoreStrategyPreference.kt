@@ -9,9 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object AutoShareIgnoreStrategyPreference {
+object AutoShareIgnoreStrategyPreference : BasePreference<String> {
     private const val AUTO_SHARE_IGNORE_STRATEGY = "autoShareIgnoreStrategy"
-    const val default = ".*launcher.*"
+    override val default = ".*launcher.*"
 
     val key = stringPreferencesKey(AUTO_SHARE_IGNORE_STRATEGY)
 
@@ -21,5 +21,5 @@ object AutoShareIgnoreStrategyPreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
 }

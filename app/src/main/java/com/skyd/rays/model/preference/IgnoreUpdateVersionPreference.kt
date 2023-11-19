@@ -9,9 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object IgnoreUpdateVersionPreference {
+object IgnoreUpdateVersionPreference : BasePreference<Long> {
     private const val IGNORE_UPDATE_VERSION = "ignoreUpdateVersion"
-    const val default = 0L
+    override val default = 0L
 
     val key = longPreferencesKey(IGNORE_UPDATE_VERSION)
 
@@ -21,5 +21,5 @@ object IgnoreUpdateVersionPreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): Long = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences): Long = preferences[key] ?: default
 }

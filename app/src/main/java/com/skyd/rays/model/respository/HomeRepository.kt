@@ -8,7 +8,7 @@ import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.allSearchDomain
 import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.get
+import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.bean.STICKER_TABLE_NAME
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
@@ -112,8 +112,8 @@ class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : B
 
     suspend fun requestExportStickers(stickerUuids: List<String>): Flow<BaseData<Int>> {
         return flow {
-            val exportStickerDir = appContext.dataStore.get(ExportStickerDirPreference.key)
-            check(exportStickerDir != null) { "exportStickerDir is null" }
+            val exportStickerDir = appContext.dataStore.getOrDefault(ExportStickerDirPreference)
+            check(exportStickerDir.isNotBlank()) { "exportStickerDir is null" }
             var successCount = 0
             stickerUuids.forEach {
                 runCatching {
@@ -144,7 +144,7 @@ class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : B
             )
             // 是否使用多个关键字并集查询
             val intersectSearchBySpace =
-                appContext.dataStore.get(IntersectSearchBySpacePreference.key) ?: true
+                appContext.dataStore.getOrDefault(IntersectSearchBySpacePreference)
             return if (intersectSearchBySpace) {
                 // 以多个连续的空格/制表符/换行符分割
                 val keywords = k.trim().split("\\s+".toRegex()).toSet()
@@ -171,7 +171,8 @@ class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : B
         private fun getFilter(k: String, searchDomainDao: SearchDomainDao): String {
             if (k.isBlank()) return "1"
 
-            val useRegexSearch = appContext.dataStore.get(UseRegexSearchPreference.key) ?: false
+            val useRegexSearch =
+                appContext.dataStore.getOrDefault(UseRegexSearchPreference)
 
             var filter = "0"
 

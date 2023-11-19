@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.skyd.rays.api.strategy.SearchStickersStrategy
 import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.get
+import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.db.AppDatabase
 import com.skyd.rays.model.preference.ApiGrantPreference
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +25,7 @@ class ApiEventReceiver : BroadcastReceiver() {
 
         scope.launch {
             with(AppDatabase.getInstance(context)) {
-                if (context.dataStore.get(ApiGrantPreference.key) == false ||
+                if (!context.dataStore.getOrDefault(ApiGrantPreference) ||
                     !apiGrantPackageDao().packageEnable(requestPackage)
                 ) {
                     return@launch

@@ -5,13 +5,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.put
+import com.skyd.rays.model.preference.BasePreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object CopyStickerToClipboardPreference {
+object CopyStickerToClipboardPreference : BasePreference<Boolean> {
     private const val COPY_STICKER_TO_CLIPBOARD = "copyStickerToClipboard"
-    const val default = true
+    override val default = true
 
     val key = booleanPreferencesKey(COPY_STICKER_TO_CLIPBOARD)
 
@@ -21,5 +22,5 @@ object CopyStickerToClipboardPreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): Boolean = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences): Boolean = preferences[key] ?: default
 }

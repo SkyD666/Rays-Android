@@ -9,9 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object ShowPopularTagsPreference {
+object ShowPopularTagsPreference : BasePreference<Boolean> {
     private const val SHOW_POPULAR_TAGS = "showPopularTags"
-    const val default = true
+    override val default = true
 
     val key = booleanPreferencesKey(SHOW_POPULAR_TAGS)
 
@@ -21,5 +21,5 @@ object ShowPopularTagsPreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): Boolean = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences): Boolean = preferences[key] ?: default
 }

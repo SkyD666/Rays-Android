@@ -9,9 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object ApiGrantPreference {
+object ApiGrantPreference : BasePreference<Boolean> {
     private const val API_GRANT = "apiGrant"
-    const val default = false
+    override val default = false
 
     val key = booleanPreferencesKey(API_GRANT)
 
@@ -21,5 +21,5 @@ object ApiGrantPreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): Boolean = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences): Boolean = preferences[key] ?: default
 }

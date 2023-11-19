@@ -5,12 +5,13 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.put
+import com.skyd.rays.model.preference.BasePreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-object CustomPrimaryColorPreference {
+object CustomPrimaryColorPreference : BasePreference<String> {
     private const val CUSTOM_PRIMARY_COLOR = "customPrimaryColor"
-    const val default = ""
+    override val default = ""
 
     val key = stringPreferencesKey(CUSTOM_PRIMARY_COLOR)
 
@@ -20,5 +21,5 @@ object CustomPrimaryColorPreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences) = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences) = preferences[key] ?: default
 }

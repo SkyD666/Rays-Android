@@ -5,7 +5,7 @@ import androidx.sqlite.db.SupportSQLiteQuery
 import com.skyd.rays.appContext
 import com.skyd.rays.config.STICKER_DIR
 import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.get
+import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.bean.STICKER_TABLE_NAME
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerBean.Companion.CLICK_COUNT_COLUMN
@@ -113,7 +113,7 @@ interface StickerDao {
     @Transaction
     fun deleteStickerWithTags(stickerUuids: List<String>): Int {
         val scope = CoroutineScope(Dispatchers.IO)
-        val currentStickerUuid = appContext.dataStore.get(CurrentStickerUuidPreference.key)
+        val currentStickerUuid = appContext.dataStore.getOrDefault(CurrentStickerUuidPreference)
         stickerUuids.forEach { stickerUuid ->
             if (currentStickerUuid == stickerUuid) {
                 CurrentStickerUuidPreference.put(

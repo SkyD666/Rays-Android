@@ -9,9 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object CurrentStickerUuidPreference {
+object CurrentStickerUuidPreference : BasePreference<String> {
     private const val CURRENT_STICKER_UUID = "currentStickerUuid"
-    const val default = ""
+    override val default = ""
 
     val key = stringPreferencesKey(CURRENT_STICKER_UUID)
 
@@ -21,5 +21,5 @@ object CurrentStickerUuidPreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
 }

@@ -6,7 +6,8 @@ import com.skyd.rays.base.BaseViewModel
 import com.skyd.rays.base.IUIChange
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.get
+import com.skyd.rays.ext.getOrDefault
+import com.skyd.rays.ext.getOrNull
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.ShowPopularTagsPreference
@@ -29,7 +30,8 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
         return HomeState(
             StickerDetailUiState.Init(
                 appContext.dataStore
-                    .get(CurrentStickerUuidPreference.key) ?: CurrentStickerUuidPreference.default
+                    .getOrNull(CurrentStickerUuidPreference.key)
+                    ?: CurrentStickerUuidPreference.default
             ),
             SearchResultUiState.Init,
             PopularTagsUiState.Init,
@@ -144,9 +146,7 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
         },
 
         doIsInstance<HomeIntent.GetPopularTagsList> {
-            if (appContext.dataStore.get(ShowPopularTagsPreference.key)
-                    ?: ShowPopularTagsPreference.default
-            ) {
+            if (appContext.dataStore.getOrDefault(ShowPopularTagsPreference)) {
                 homeRepo.requestPopularTags(count = 15)
                     .mapToUIChange { data ->
                         copy(popularTagsUiState = PopularTagsUiState.Success(data))
@@ -162,48 +162,47 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
     private fun sortSearchResultList(
         unsortedUnreversedData: List<StickerWithTags>,
         applyReverse: Boolean = true
-    ): List<StickerWithTags> = when (appContext.dataStore.get(SearchResultSortPreference.key)) {
-        "CreateTime" -> unsortedUnreversedData.sortStickers(applyReverse) {
-            it.sticker.createTime
+    ): List<StickerWithTags> =
+        when (appContext.dataStore.getOrDefault(SearchResultSortPreference)) {
+            "CreateTime" -> unsortedUnreversedData.sortStickers(applyReverse) {
+                it.sticker.createTime
+            }
+
+            "ModifyTime" -> unsortedUnreversedData.sortStickers(
+                applyReverse,
+                compareBy({ it.sticker.modifyTime }, { it.sticker.createTime })
+            )
+
+            "TagCount" -> unsortedUnreversedData.sortStickers(
+                applyReverse,
+                compareBy({ it.tags.size }, { it.sticker.createTime })
+            )
+
+            "Title" -> unsortedUnreversedData.sortStickers(
+                applyReverse,
+                compareBy({ it.sticker.title }, { it.sticker.createTime })
+            )
+
+            "ClickCount" -> unsortedUnreversedData.sortStickers(
+                applyReverse,
+                compareBy({ it.sticker.clickCount }, { it.sticker.createTime })
+            )
+
+            "ShareCount" -> unsortedUnreversedData.sortStickers(
+                applyReverse,
+                compareBy({ it.sticker.shareCount }, { it.sticker.createTime })
+            )
+
+            else -> unsortedUnreversedData.sortStickers(applyReverse) {
+                it.sticker.createTime
+            }
         }
-
-        "ModifyTime" -> unsortedUnreversedData.sortStickers(
-            applyReverse,
-            compareBy({ it.sticker.modifyTime }, { it.sticker.createTime })
-        )
-
-        "TagCount" -> unsortedUnreversedData.sortStickers(
-            applyReverse,
-            compareBy({ it.tags.size }, { it.sticker.createTime })
-        )
-
-        "Title" -> unsortedUnreversedData.sortStickers(
-            applyReverse,
-            compareBy({ it.sticker.title }, { it.sticker.createTime })
-        )
-
-        "ClickCount" -> unsortedUnreversedData.sortStickers(
-            applyReverse,
-            compareBy({ it.sticker.clickCount }, { it.sticker.createTime })
-        )
-
-        "ShareCount" -> unsortedUnreversedData.sortStickers(
-            applyReverse,
-            compareBy({ it.sticker.shareCount }, { it.sticker.createTime })
-        )
-
-        else -> unsortedUnreversedData.sortStickers(applyReverse) {
-            it.sticker.createTime
-        }
-    }
 
     private fun <R : Comparable<R>> List<StickerWithTags>.sortStickers(
         applyReverse: Boolean = true,
         selector: (StickerWithTags) -> R?
     ): List<StickerWithTags> {
-        return if (applyReverse &&
-            appContext.dataStore.get(SearchResultReversePreference.key) == true
-        ) {
+        return if (applyReverse && appContext.dataStore.getOrDefault(SearchResultReversePreference)) {
             sortedByDescending(selector)
         } else {
             sortedBy(selector)
@@ -214,9 +213,7 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
         applyReverse: Boolean = true,
         comparator: Comparator<StickerWithTags>
     ): List<StickerWithTags> {
-        return if (applyReverse &&
-            appContext.dataStore.get(SearchResultReversePreference.key) == true
-        ) {
+        return if (applyReverse && appContext.dataStore.getOrDefault(SearchResultReversePreference)) {
             sortedWith(comparator).reversed()
         } else {
             sortedWith(comparator)

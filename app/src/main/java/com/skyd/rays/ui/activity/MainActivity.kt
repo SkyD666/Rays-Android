@@ -32,7 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.get
+import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.DisableScreenshotPreference
 import com.skyd.rays.model.preference.SettingsProvider
@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // 是否禁止截图
-        if (dataStore.get(DisableScreenshotPreference.key) == true) {
+        if (dataStore.getOrDefault(DisableScreenshotPreference)) {
             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)

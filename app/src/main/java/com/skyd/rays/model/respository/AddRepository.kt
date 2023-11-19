@@ -18,7 +18,7 @@ import com.skyd.rays.config.CLASSIFICATION_MODEL_DIR_FILE
 import com.skyd.rays.config.STICKER_DIR
 import com.skyd.rays.ext.copyTo
 import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.get
+import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.ext.md5
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.db.dao.sticker.StickerDao
@@ -105,8 +105,7 @@ class AddRepository @Inject constructor(
         return try {
             image = InputImage.fromFilePath(appContext, sticker)
             val dataStore = appContext.dataStore
-            val textRecognizeThreshold = dataStore.get(TextRecognizeThresholdPreference.key)
-                ?: TextRecognizeThresholdPreference.default
+            val textRecognizeThreshold = dataStore.getOrDefault(TextRecognizeThresholdPreference)
 
             flow {
                 emit(suspendCancellableCoroutine { cont ->
@@ -160,10 +159,9 @@ class AddRepository @Inject constructor(
                 other + korean
             }.zip(flow {
                 emit(suspendCancellableCoroutine { cont ->
-                    val model = dataStore.get(StickerClassificationModelPreference.key).orEmpty()
+                    val model = dataStore.getOrDefault(StickerClassificationModelPreference)
                     val classificationThreshold =
-                        dataStore.get(ClassificationThresholdPreference.key)
-                            ?: ClassificationThresholdPreference.default
+                        dataStore.getOrDefault(ClassificationThresholdPreference)
 
                     val localModel = LocalModel.Builder()
                         .apply {

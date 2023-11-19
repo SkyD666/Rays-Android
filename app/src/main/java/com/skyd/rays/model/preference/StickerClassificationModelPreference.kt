@@ -9,9 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object StickerClassificationModelPreference {
+object StickerClassificationModelPreference : BasePreference<String> {
     private const val STICKER_CLASSIFICATION_MODEL = "stickerClassificationModel"
-    const val default = ""
+    override val default = ""
 
     val key = stringPreferencesKey(STICKER_CLASSIFICATION_MODEL)
 
@@ -25,5 +25,5 @@ object StickerClassificationModelPreference {
         context.dataStore.put(key, value)
     }
 
-    fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
 }

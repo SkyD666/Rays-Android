@@ -230,7 +230,7 @@
     <string name="privacy_screen_name">隱私</string>
     <string name="text_recognize_screen_threshold_description">只有置信度高於此閾值的文字才會被推薦，建議設定在 0.4 左右。</string>
     <string name="text_recognize_screen_name">文本辨識</string>
-    <string name="share_config_screen_copy_sticker_to_clipboard_description">在分享時將表情包複製到剪貼板。需要啟用「檔案副檔名」</string>
+    <string name="share_config_screen_copy_sticker_to_clipboard_description">在分享時將表情包複製到剪貼板</string>
     <string name="home_screen_clear_search_text">清除查詢</string>
     <string name="expand">展開</string>
     <string name="about_screen_other_works_raca_description">一個在本地記錄、查找抽象段落/評論區小作文的工具。🤗 您還在為記不住小作文內容，面臨前面、中間、後面都忘了的尷尬處境嗎？使用這款工具將幫助您記錄您所遇到的小作文，再也不因為忘記而煩惱！😋</string>

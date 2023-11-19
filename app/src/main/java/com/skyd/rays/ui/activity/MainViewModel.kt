@@ -9,7 +9,7 @@ import com.skyd.rays.base.IUIChange
 import com.skyd.rays.base.IUiEvent
 import com.skyd.rays.base.IUiState
 import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.get
+import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
@@ -34,7 +34,7 @@ class MainViewModel @Inject constructor() :
         doIsInstance<MainIntent.UpdateThemeColor> { intent ->
             simpleFlow {
                 if (intent.stickerUuid.isNotBlank() &&
-                    appContext.dataStore.get(StickerColorThemePreference.key) == true
+                    appContext.dataStore.getOrDefault(StickerColorThemePreference)
                 ) {
                     setPrimaryColor(uuid = intent.stickerUuid)
                 }

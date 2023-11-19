@@ -5,13 +5,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.floatPreferencesKey
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.put
+import com.skyd.rays.model.preference.BasePreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object ClassificationThresholdPreference {
+object ClassificationThresholdPreference : BasePreference<Float> {
     private const val CLASSIFICATION_THRESHOLD_DIR = "classificationThreshold"
-    const val default = 0.5f
+    override val default = 0.5f
 
     val key = floatPreferencesKey(CLASSIFICATION_THRESHOLD_DIR)
 
@@ -21,5 +22,5 @@ object ClassificationThresholdPreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): Float = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences): Float = preferences[key] ?: default
 }

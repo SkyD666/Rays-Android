@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.skyd.rays.model.preference.BasePreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -25,9 +26,9 @@ suspend fun <T> DataStore<Preferences>.put(key: Preferences.Key<T>, value: T) {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <T> DataStore<Preferences>.get(key: Preferences.Key<T>): T? {
+fun <T> DataStore<Preferences>.getOrNull(key: Preferences.Key<T>): T? {
     return runBlocking {
-        this@get.data.catch { exception ->
+        this@getOrNull.data.catch { exception ->
             if (exception is IOException) {
                 exception.printStackTrace()
                 emit(emptyPreferences())
@@ -37,5 +38,20 @@ fun <T> DataStore<Preferences>.get(key: Preferences.Key<T>): T? {
         }.map {
             it[key]
         }.first() as T
+    }
+}
+
+fun <T> DataStore<Preferences>.getOrDefault(pref: BasePreference<T>): T {
+    return runBlocking {
+        this@getOrDefault.data.catch { exception ->
+            if (exception is IOException) {
+                exception.printStackTrace()
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }.map {
+            pref.fromPreferences(it)
+        }.first()
     }
 }

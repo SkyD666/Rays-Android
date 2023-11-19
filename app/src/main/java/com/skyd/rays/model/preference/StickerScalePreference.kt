@@ -13,9 +13,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object StickerScalePreference {
+object StickerScalePreference : BasePreference<String> {
     private const val STICKER_SCALE = "stickerScale"
-    const val default = "FillWidth"
+    override val default = "FillWidth"
 
     val key = stringPreferencesKey(STICKER_SCALE)
 
@@ -34,7 +34,7 @@ object StickerScalePreference {
         }
     }
 
-    fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
+    override fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
 
     fun toName(scale: ContentScale): String = when (scale) {
         ContentScale.Crop -> "Crop"

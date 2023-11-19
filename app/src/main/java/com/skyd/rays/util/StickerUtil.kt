@@ -12,10 +12,9 @@ import androidx.documentfile.provider.DocumentFile
 import com.skyd.rays.appContext
 import com.skyd.rays.config.STICKER_DIR
 import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.get
+import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.db.AppDatabase
-import com.skyd.rays.model.preference.share.CopyStickerToClipboardPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.ui.service.RaysAccessibilityService
@@ -30,6 +29,8 @@ import java.io.FileOutputStream
 import java.math.BigInteger
 import java.security.MessageDigest
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
 
 
 private val scope = CoroutineScope(Dispatchers.IO)
@@ -97,17 +98,13 @@ fun Context.sendStickersByFiles(
             FileProvider.getUriForFile(
                 this@sendStickersByFiles,
                 "${packageName}.fileprovider", it
-            ).apply {
-                if (dataStore.get(StickerExtNamePreference.key) == true &&
-                    dataStore.get(CopyStickerToClipboardPreference.key) == true
-                ) {
-                    copyStickerToClipboard(this)
-                }
-            }
+            )
         }
 
+        copyStickerToClipboard(*contentUris.toTypedArray())
+
         with(AppDatabase.getInstance(this@sendStickersByFiles)) {
-            if (dataStore.get(UriStringSharePreference.key) == true) {
+            if (dataStore.getOrDefault(UriStringSharePreference)) {
                 contentUris.shareStickerUriString(
                     context = this@sendStickersByFiles,
                     packages = uriStringSharePackageDao().getAllPackage().map { it.packageName }
@@ -137,24 +134,34 @@ fun StickerWithTags.md5(): String {
         .toString(16).padStart(32, '0')
 }
 
+private fun File.deleteDirs(
+    maxSize: Int = 5_242_880,
+    operation: (res: Boolean, file: File) -> Boolean
+) {
+    scope.launch {
+        // > 5MB
+        if (walkTopDown().filter { it.isFile }.map { it.length() }.sum() > maxSize) {
+            walkBottomUp().fold(true) { res, it -> operation(res, it) }
+        }
+    }
+}
+
 fun Bitmap.shareToFile(outputDir: File = File(appContext.cacheDir, "TempSticker")): File {
     if (!outputDir.exists()) {
         outputDir.mkdirs()
     }
-    val resultFileName = "${System.currentTimeMillis()}_${Random.nextInt(0, Int.MAX_VALUE)}.jpg"
+    val resultFileName = "${System.currentTimeMillis()}_${Random.nextInt(0, Int.MAX_VALUE)}.png"
     val tempFile = File(outputDir, resultFileName)
 
     FileOutputStream(tempFile).use {
         compress(Bitmap.CompressFormat.PNG, 100, it)
     }
-    scope.launch {
-        // > 5MB
-        if (outputDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum() > 5_242_880) {
-            outputDir.walkBottomUp().fold(true) { res, it ->
-                // it == tempFile || it == outputDir 可以排除当前文件和TempSticker文件夹
-                (it == tempFile || it == outputDir || it.delete() || !it.exists()) && res
-            }
-        }
+    val nowTime = System.currentTimeMillis().milliseconds
+    outputDir.deleteDirs { res, file ->
+        // file == tempFile || file == outputDir 可以排除当前文件和TempSticker文件夹
+        (file.name == resultFileName || file == outputDir ||
+                nowTime - file.lastModified().milliseconds < 1.hours ||
+                file.delete() || !file.exists()) && res
     }
     return tempFile
 }
@@ -162,7 +169,7 @@ fun Bitmap.shareToFile(outputDir: File = File(appContext.cacheDir, "TempSticker"
 /**
  * 把表情包复制到临时目录
  */
-fun File.copyStickerToTempFolder(fileExtension: Boolean): File {
+fun File.copyStickerToTempFolder(fileExtension: Boolean = true): File {
     val outputDir = File(appContext.cacheDir, "TempSticker")
     check(outputDir.exists() || outputDir.mkdirs())
     val resultFileName = name + "_" + Random.nextInt(0, Int.MAX_VALUE) + if (fileExtension) {
@@ -172,13 +179,12 @@ fun File.copyStickerToTempFolder(fileExtension: Boolean): File {
         target = File(outputDir, resultFileName),
         overwrite = true
     )
-    scope.launch {
-        // > 5MB
-        if (outputDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum() > 5_242_880) {
-            outputDir.walkBottomUp().fold(true) { res, it ->
-                (it.name == resultFileName || it.delete() || !it.exists()) && res
-            }
-        }
+    val nowTime = System.currentTimeMillis().milliseconds
+    outputDir.deleteDirs { res, file ->
+        // file == tempFile || file == outputDir 可以排除当前文件和TempSticker文件夹
+        (file.name == resultFileName || file == outputDir ||
+                nowTime - file.lastModified().milliseconds < 1.hours ||
+                file.delete() || !file.exists()) && res
     }
     return resultFile
 }
@@ -186,10 +192,10 @@ fun File.copyStickerToTempFolder(fileExtension: Boolean): File {
 /**
  * 针对外部应用
  */
-fun externalShareStickerUuidToFile(uuid: String): File =
-    stickerUuidToFile(uuid).copyStickerToTempFolder(
-        fileExtension = appContext.dataStore.get(StickerExtNamePreference.key) ?: true
-    )
+fun externalShareStickerUuidToFile(uuid: String): File = stickerUuidToFile(uuid).let {
+    if (appContext.dataStore.getOrDefault(StickerExtNamePreference)) it.copyStickerToTempFolder()
+    else it
+}
 
 /**
  * 针对内部操作，针对原图片本身
@@ -240,9 +246,22 @@ private fun List<Uri>.shareStickerUriString(context: Context, packages: List<Str
 /**
  * 注意：此 uri 需要使用 FileProvider 提供
  */
-fun Context.copyStickerToClipboard(uri: Uri) {
+fun Context.copyStickerToClipboard(vararg uris: Uri) {
+    val firstUri = uris.firstOrNull() ?: return
+//    uris.forEachIndexed { index, uri ->
+//        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+//        clipboard.setPrimaryClip(
+//            ClipData("Sticker", arrayOf("image/*"), ClipData.Item(uri))
+//        )
+//    }
     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    clipboard.setPrimaryClip(ClipData.newUri(contentResolver, "Sticker", uri))
+    clipboard.setPrimaryClip(
+        ClipData("Sticker", arrayOf("image/*"), ClipData.Item(firstUri)).apply {
+            for (i in 1..<uris.size) {
+                addItem(ClipData.Item(uris[i]))
+            }
+        }
+    )
 }
 
 fun Context.copyStickerToClipboard(uuid: String) {
@@ -250,7 +269,7 @@ fun Context.copyStickerToClipboard(uuid: String) {
         FileProvider.getUriForFile(
             this,
             "${packageName}.fileprovider",
-            stickerUuidToFile(uuid).copyStickerToTempFolder(fileExtension = true)
+            stickerUuidToFile(uuid)
         )
     )
 }
