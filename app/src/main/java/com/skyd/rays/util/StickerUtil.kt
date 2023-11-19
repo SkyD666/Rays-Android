@@ -19,6 +19,7 @@ import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.db.AppDatabase
+import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.ui.service.RaysAccessibilityService
@@ -107,7 +108,9 @@ fun Context.sendStickersByFiles(
             )
         }
 
-        copyStickerToClipboard(*contentUris.toTypedArray())
+        if (dataStore.getOrDefault(CopyStickerToClipboardWhenSharingPreference)) {
+            copyStickerToClipboard(*contentUris.toTypedArray())
+        }
 
         with(AppDatabase.getInstance(this@sendStickersByFiles)) {
             if (dataStore.getOrDefault(UriStringSharePreference)) {

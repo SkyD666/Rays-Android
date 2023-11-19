@@ -289,4 +289,8 @@
     <string name="data_screen_import_export_description">同步表情包數據</string>
     <string name="image_scale_fill_width">填滿寬度</string>
     <string name="classification_screen_name">表情包分類</string>
+    <string name="share_sheet_action_copy">複製</string>
+    <string name="share_sheet_action_save">儲存</string>
+    <string name="share_sheet_action_save_toast_success">已儲存到「Pictures/Rays」</string>
+    <string name="share_sheet_action_save_toast_failed">保存失敗</string>
 </resources>

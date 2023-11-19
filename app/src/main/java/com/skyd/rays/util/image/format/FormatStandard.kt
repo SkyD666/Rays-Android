@@ -10,7 +10,7 @@ sealed class FormatStandard(
 ) {
     companion object {
         val formatStandards by lazy {
-            arrayOf(PngFormat, JpgFormat, GifFormat, BmpFormat, WebpFormat)
+            arrayOf(PngFormat, JpgFormat, GifFormat, BmpFormat, WebpFormat, HeifFormat, HeicFormat)
         }
     }
 
@@ -177,6 +177,63 @@ sealed class FormatStandard(
             }
 
             return true
+        }
+    }
+
+    /**
+     * https://github.com/nokiatech/heif/issues/74
+     * https://zh.wikipedia.org/wiki/%E9%AB%98%E6%95%88%E7%8E%87%E5%9B%BE%E5%83%8F%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F#
+     */
+    data object HeifFormat : FormatStandard(
+        format = ImageFormat.HEIF,
+        requiredByteArraySize = 12,
+    ) {
+        private val ftyp = byteArrayOf(0x66.toByte(), 0x74.toByte(), 0x79.toByte(), 0x70.toByte())
+        private val mif1 = byteArrayOf(0x6d.toByte(), 0x69.toByte(), 0x66.toByte(), 0x31.toByte())
+        private val msf1 = byteArrayOf(0x6d.toByte(), 0x73.toByte(), 0x66.toByte(), 0x31.toByte())
+        private val m = arrayOf(mif1, msf1)
+
+        override fun check(tested: ByteArray): Boolean {
+            for (i in 4..7) {
+                if (tested[i] != ftyp[i - 4]) return false
+            }
+
+            m.forEach {
+                if (baseCheck(it, byteArrayOf(tested[8], tested[9], tested[10], tested[11]))) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+
+    data object HeicFormat : FormatStandard(
+        format = ImageFormat.HEIC,
+        requiredByteArraySize = 12,
+    ) {
+        private val ftyp = byteArrayOf(0x66.toByte(), 0x74.toByte(), 0x79.toByte(), 0x70.toByte())
+        private val he = byteArrayOf(0x68.toByte(), 0x65.toByte())
+        private val icIxIsVcVx = arrayOf(
+            byteArrayOf(0x69.toByte(), 0x63.toByte()),
+            byteArrayOf(0x69.toByte(), 0x78.toByte()),
+            byteArrayOf(0x69.toByte(), 0x73.toByte()),
+            byteArrayOf(0x76.toByte(), 0x63.toByte()),
+            byteArrayOf(0x76.toByte(), 0x78.toByte()),
+        )
+
+        override fun check(tested: ByteArray): Boolean {
+            for (i in 4..7) {
+                if (tested[i] != ftyp[i - 4]) return false
+            }
+            for (i in 8..9) {
+                if (tested[i] != he[i - 8]) return false
+            }
+            icIxIsVcVx.forEach {
+                if (baseCheck(it, byteArrayOf(tested[10], tested[11]))) {
+                    return true
+                }
+            }
+            return false
         }
     }
 }

@@ -10,11 +10,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object CopyStickerToClipboardPreference : BasePreference<Boolean> {
-    private const val COPY_STICKER_TO_CLIPBOARD = "copyStickerToClipboard"
+object CopyStickerToClipboardWhenSharingPreference : BasePreference<Boolean> {
+    private const val COPY_STICKER_TO_CLIPBOARD_WHEN_SHARING = "copyStickerToClipboardWhenSharing"
     override val default = true
 
-    val key = booleanPreferencesKey(COPY_STICKER_TO_CLIPBOARD)
+    val key = booleanPreferencesKey(COPY_STICKER_TO_CLIPBOARD_WHEN_SHARING)
 
     fun put(context: Context, scope: CoroutineScope, value: Boolean) {
         scope.launch(Dispatchers.IO) {

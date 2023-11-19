@@ -6,6 +6,8 @@ enum class ImageFormat {
     GIF,
     WEBP,
     BMP,
+    HEIF,
+    HEIC,
     UNDEFINED;
 
     override fun toString(): String {
@@ -15,6 +17,8 @@ enum class ImageFormat {
             GIF -> ".gif"
             WEBP -> ".webp"
             BMP -> ".bmp"
+            HEIF -> ".heif"
+            HEIC -> ".heic"
             UNDEFINED -> ""
         }
     }

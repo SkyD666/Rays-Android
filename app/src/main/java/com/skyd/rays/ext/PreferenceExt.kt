@@ -20,7 +20,7 @@ import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
-import com.skyd.rays.model.preference.share.CopyStickerToClipboardPreference
+import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
@@ -64,7 +64,7 @@ fun Preferences.toSettings(): Settings {
         // Share
         uriStringShare = UriStringSharePreference.fromPreferences(this),
         stickerExtName = StickerExtNamePreference.fromPreferences(this),
-        copyStickerToClipboard = CopyStickerToClipboardPreference.fromPreferences(this),
+        copyStickerToClipboardWhenSharing = CopyStickerToClipboardWhenSharingPreference.fromPreferences(this),
         autoShareIgnoreStrategy = AutoShareIgnoreStrategyPreference.fromPreferences(this),
 
         // Api

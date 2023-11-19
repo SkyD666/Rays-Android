@@ -18,13 +18,13 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.skyd.rays.R
-import com.skyd.rays.model.preference.share.CopyStickerToClipboardPreference
+import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SwitchSettingsItem
-import com.skyd.rays.ui.local.LocalCopyStickerToClipboard
+import com.skyd.rays.ui.local.LocalCopyStickerToClipboardWhenSharing
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerExtName
 import com.skyd.rays.ui.screen.settings.shareconfig.autoshare.AUTO_SHARE_SCREEN_ROUTE
@@ -74,12 +74,12 @@ fun ShareConfigScreen() {
             item {
                 SwitchSettingsItem(
                     icon = Icons.Default.FileCopy,
-                    checked = LocalCopyStickerToClipboard.current,
+                    checked = LocalCopyStickerToClipboardWhenSharing.current,
                     text = stringResource(R.string.share_config_screen_copy_sticker_to_clipboard),
                     description = stringResource(R.string.share_config_screen_copy_sticker_to_clipboard_description),
                     onCheckedChange = {
                         scope.launch {
-                            CopyStickerToClipboardPreference.put(
+                            CopyStickerToClipboardWhenSharingPreference.put(
                                 scope = scope,
                                 context = context,
                                 value = it

@@ -289,4 +289,8 @@
     <string name="privacy_screen_disable_screenshot_description">禁止在应用内截图</string>
     <string name="expand">展开</string>
     <string name="collapse">收起</string>
+    <string name="share_sheet_action_copy">复制</string>
+    <string name="share_sheet_action_save">保存</string>
+    <string name="share_sheet_action_save_toast_success">已保存到“Pictures/Rays”</string>
+    <string name="share_sheet_action_save_toast_failed">保存失败</string>
 </resources>

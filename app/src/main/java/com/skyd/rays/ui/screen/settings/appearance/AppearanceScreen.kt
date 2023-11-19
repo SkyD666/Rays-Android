@@ -8,9 +8,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,6 +50,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -206,9 +209,8 @@ private fun DarkModeSheet(onDismissRequest: () -> Unit) {
                 .selectableGroup()
         ) {
             DarkModePreference.values.forEach {
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-                ) {
+                Card(colors = CardDefaults.cardColors(containerColor = Color.Transparent)) {
+                    val interactionSource = remember { MutableInteractionSource() }
                     Row(
                         Modifier
                             .fillMaxWidth()
@@ -221,6 +223,8 @@ private fun DarkModeSheet(onDismissRequest: () -> Unit) {
                                         value = it
                                     )
                                 },
+                                interactionSource = interactionSource,
+                                indication = LocalIndication.current,
                                 role = Role.RadioButton
                             )
                             .padding(horizontal = 16.dp),
@@ -228,6 +232,7 @@ private fun DarkModeSheet(onDismissRequest: () -> Unit) {
                     ) {
                         RadioButton(
                             selected = (it == darkMode),
+                            interactionSource = interactionSource,
                             onClick = null // null recommended for accessibility with screen readers
                         )
                         Text(

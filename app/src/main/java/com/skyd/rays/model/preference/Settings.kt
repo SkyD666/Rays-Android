@@ -16,7 +16,7 @@ import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
-import com.skyd.rays.model.preference.share.CopyStickerToClipboardPreference
+import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
@@ -26,7 +26,7 @@ import com.skyd.rays.model.preference.theme.ThemeNamePreference
 import com.skyd.rays.ui.local.LocalApiGrant
 import com.skyd.rays.ui.local.LocalAutoShareIgnoreStrategy
 import com.skyd.rays.ui.local.LocalClassificationThreshold
-import com.skyd.rays.ui.local.LocalCopyStickerToClipboard
+import com.skyd.rays.ui.local.LocalCopyStickerToClipboardWhenSharing
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalDarkMode
@@ -79,7 +79,7 @@ data class Settings(
     // Share
     val uriStringShare: Boolean = UriStringSharePreference.default,
     val stickerExtName: Boolean = StickerExtNamePreference.default,
-    val copyStickerToClipboard: Boolean = CopyStickerToClipboardPreference.default,
+    val copyStickerToClipboardWhenSharing: Boolean = CopyStickerToClipboardWhenSharingPreference.default,
     val autoShareIgnoreStrategy: String = AutoShareIgnoreStrategyPreference.default,
     // Api
     val apiGrant: Boolean = ApiGrantPreference.default,
@@ -126,7 +126,7 @@ fun SettingsProvider(
         // Share
         LocalUriStringShare provides settings.uriStringShare,
         LocalStickerExtName provides settings.stickerExtName,
-        LocalCopyStickerToClipboard provides settings.copyStickerToClipboard,
+        LocalCopyStickerToClipboardWhenSharing provides settings.copyStickerToClipboardWhenSharing,
         LocalAutoShareIgnoreStrategy provides settings.autoShareIgnoreStrategy,
         // Api
         LocalApiGrant provides settings.apiGrant,
