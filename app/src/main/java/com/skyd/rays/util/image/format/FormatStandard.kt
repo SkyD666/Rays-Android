@@ -199,7 +199,7 @@ sealed class FormatStandard(
             }
 
             m.forEach {
-                if (baseCheck(it, byteArrayOf(tested[8], tested[9], tested[10], tested[11]))) {
+                if (baseCheck(it, tested.copyOfRange(8, 12))) {
                     return true
                 }
             }
@@ -229,7 +229,7 @@ sealed class FormatStandard(
                 if (tested[i] != he[i - 8]) return false
             }
             icIxIsVcVx.forEach {
-                if (baseCheck(it, byteArrayOf(tested[10], tested[11]))) {
+                if (baseCheck(it, tested.copyOfRange(10, 12))) {
                     return true
                 }
             }

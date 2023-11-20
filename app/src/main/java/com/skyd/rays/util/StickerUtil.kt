@@ -128,7 +128,7 @@ fun Context.sendStickersByFiles(
                 topActivityFullName = topActivityFullName,
             )
         }
-
+    }.invokeOnCompletion {
         onSuccess?.invoke()
     }
 }
@@ -240,10 +240,9 @@ fun exportSticker(uuid: String, outputDir: Uri) {
 fun exportStickerToPictures(uri: Uri) {
     val contentResolver = appContext.contentResolver
 
-    val fileData = contentResolver.openInputStream(uri)?.use { inputStream ->
-        inputStream.readBytes().also { inputStream.close() }
-    } ?: throw IOException("can not open sticker file")
-    val extensionName = ImageFormatChecker.check(fileData).toString()
+    val extensionName = contentResolver.openInputStream(uri)?.use { inputStream ->
+        ImageFormatChecker.check(inputStream).toString()
+    } ?: throw IOException("Can not open sticker file")
     val filename = uri.lastPathSegment + "_" + Random.nextInt(0, Int.MAX_VALUE) + extensionName
 
     var outputStream: OutputStream
@@ -260,10 +259,10 @@ fun exportStickerToPictures(uri: Uri) {
     contentResolver.also { resolver ->
         imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
         outputStream = imageUri?.let { resolver.openOutputStream(it) }
-            ?: throw IOException("can not write file")
+            ?: throw IOException("Can not write file")
+        resolver.openInputStream(uri)?.use { inputStream -> inputStream.copyTo(outputStream) }
     }
 
-    outputStream.write(fileData)
     outputStream.close()
 
     contentValues.clear()

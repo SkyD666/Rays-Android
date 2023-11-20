@@ -47,7 +47,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -73,6 +72,7 @@ import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
+import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalSearchResultReverse
 import com.skyd.rays.ui.local.LocalSearchResultSort
 import com.skyd.rays.ui.local.LocalWindowSizeClass
@@ -268,14 +268,20 @@ internal fun MultiSelectActionBar(
 ) {
     val context = LocalContext.current
     val windowSizeClass = LocalWindowSizeClass.current
+    var showWaitingDialog by rememberSaveable { mutableStateOf(false) }
+
     val items = remember {
         arrayOf<@Composable () -> Unit>(
             @Composable {
                 RaysIconButton(
                     onClick = {
+                        showWaitingDialog = true
                         context.sendStickersByUuids(
                             uuids = selectedStickers.map { it.sticker.uuid },
-                            onSuccess = { selectedStickers.forEach { it.sticker.shareCount++ } }
+                            onSuccess = {
+                                selectedStickers.forEach { it.sticker.shareCount++ }
+                                showWaitingDialog = false
+                            }
                         )
                     },
                     enabled = selectedStickers.isNotEmpty(),
@@ -310,6 +316,8 @@ internal fun MultiSelectActionBar(
             items.forEachIndexed { _, function -> function() }
         }
     }
+
+    WaitingDialog(visible = showWaitingDialog)
 }
 
 @Composable
