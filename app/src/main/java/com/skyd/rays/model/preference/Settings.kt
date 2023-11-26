@@ -5,7 +5,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.platform.LocalContext
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.toSettings
@@ -32,7 +31,6 @@ import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalDarkMode
 import com.skyd.rays.ui.local.LocalDisableScreenshot
 import com.skyd.rays.ui.local.LocalExportStickerDir
-import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
 import com.skyd.rays.ui.local.LocalIgnoreUpdateVersion
 import com.skyd.rays.ui.local.LocalIntersectSearchBySpace
 import com.skyd.rays.ui.local.LocalQuery
@@ -75,7 +73,6 @@ data class Settings(
     val stickerClassificationModel: String = StickerClassificationModelPreference.default,
     // Style
     val stickerScale: String = StickerScalePreference.default,
-    val homeShareButtonAlignment: BiasAlignment = HomeShareButtonAlignmentPreference.default,
     // Share
     val uriStringShare: Boolean = UriStringSharePreference.default,
     val stickerExtName: Boolean = StickerExtNamePreference.default,
@@ -122,7 +119,6 @@ fun SettingsProvider(
         LocalStickerClassificationModel provides settings.stickerClassificationModel,
         // Style
         LocalStickerScale provides settings.stickerScale,
-        LocalHomeShareButtonAlignment provides settings.homeShareButtonAlignment,
         // Share
         LocalUriStringShare provides settings.uriStringShare,
         LocalStickerExtName provides settings.stickerExtName,

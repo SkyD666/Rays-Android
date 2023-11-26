@@ -1,9 +1,5 @@
 package com.skyd.rays.ui.screen.home.searchbar
 
-import android.content.Intent
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandHorizontally
@@ -33,15 +29,12 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.VerticalDivider
@@ -52,13 +45,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
@@ -73,24 +64,19 @@ import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.model.bean.StickerWithTags
-import com.skyd.rays.model.preference.CurrentStickerUuidPreference
-import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
-import com.skyd.rays.ui.component.dialog.RaysDialog
-import com.skyd.rays.ui.local.LocalCurrentStickerUuid
-import com.skyd.rays.ui.local.LocalExportStickerDir
+import com.skyd.rays.ui.component.dialog.ExportDialog
+import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
+import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.home.HomeIntent
 import com.skyd.rays.ui.screen.home.HomeState
 import com.skyd.rays.ui.screen.home.HomeViewModel
 import com.skyd.rays.ui.screen.home.PopularTagsUiState
 import com.skyd.rays.ui.screen.home.SearchResultUiState
-import com.skyd.rays.ui.screen.home.StickerDetailInfo
-import com.skyd.rays.ui.screen.home.StickerDetailUiState
-import com.skyd.rays.util.copyStickerToClipboard
 
 
 @Composable
@@ -99,17 +85,13 @@ fun RaysSearchBar(
     onQueryChange: (String) -> Unit,
     active: Boolean,
     onActiveChange: (Boolean) -> Unit = {},
-    stickerWithTags: StickerWithTags?,
-    onShowSnackbar: (String) -> Unit,
     uiState: HomeState,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    var menuExpanded by rememberSaveable { mutableStateOf(false) }
+    val navController = LocalNavController.current
     var multiSelect by rememberSaveable { mutableStateOf(false) }
     val selectedStickers = remember { mutableStateListOf<StickerWithTags>() }
     val windowSizeClass = LocalWindowSizeClass.current
-    val currentStickerUuid = LocalCurrentStickerUuid.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchBarHorizontalPadding: Dp by animateDpAsState(
         targetValue = if (active) 0.dp else 16.dp,
@@ -119,23 +101,25 @@ fun RaysSearchBar(
     val showPopularTags = LocalShowPopularTags.current
     val popularTags =
         (uiState.popularTagsUiState as? PopularTagsUiState.Success)?.popularTags.orEmpty()
-    var openDeleteWarningDialog by rememberSaveable { mutableStateOf(false) }
-    var openExportPathDialog by rememberSaveable { mutableStateOf(false) }
-    var openStickerInfoDialog by rememberSaveable { mutableStateOf(false) }
     var openDeleteMultiStickersDialog by rememberSaveable {
         mutableStateOf<Set<StickerWithTags>?>(null)
     }
 
     refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
         value ?: return@apply
+        viewModel.sendUiIntent(HomeIntent.GetStickerWithTagsList(query))
         if (showPopularTags && active) {
-            viewModel.sendUiIntent(HomeIntent.GetPopularTagsList)
+            viewModel.sendUiIntent(HomeIntent.GetSearchBarPopularTagsList)
         }
+    }
+
+    LaunchedEffect(query) {
+        viewModel.sendUiIntent(HomeIntent.GetStickerWithTagsList(query))
     }
 
     LaunchedEffect(showPopularTags) {
         if (showPopularTags && active) {
-            viewModel.sendUiIntent(HomeIntent.GetPopularTagsList)
+            viewModel.sendUiIntent(HomeIntent.GetSearchBarPopularTagsList)
         }
     }
 
@@ -164,7 +148,7 @@ fun RaysSearchBar(
                 onActiveChange = {
                     if (it) {
                         if (showPopularTags) {
-                            viewModel.sendUiIntent(HomeIntent.GetPopularTagsList)
+                            viewModel.sendUiIntent(HomeIntent.GetSearchBarPopularTagsList)
                         }
                     } else {
                         onQueryChange(query)
@@ -190,29 +174,6 @@ fun RaysSearchBar(
                                 onQueryChange(QueryPreference.default)
                             }
                         }
-                    } else {
-                        RaysIconButton(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = stringResource(id = R.string.home_screen_open_menu),
-                            onClick = { menuExpanded = true }
-                        )
-                        HomeMenu(
-                            expanded = menuExpanded,
-                            stickerMenuItemEnabled = uiState.stickerDetailUiState is StickerDetailUiState.Success,
-                            onDismissRequest = { menuExpanded = false },
-                            onDeleteClick = { openDeleteWarningDialog = true },
-                            onExportClick = { openExportPathDialog = true },
-                            onCopyClick = {
-                                context.copyStickerToClipboard(uuid = currentStickerUuid)
-                                onShowSnackbar(context.getString(R.string.home_screen_copied))
-                            },
-                            onStickerInfoClick = { openStickerInfoDialog = true },
-                            onClearScreen = {
-                                viewModel.sendUiIntent(
-                                    HomeIntent.GetStickerDetails(CurrentStickerUuidPreference.default)
-                                )
-                            }
-                        )
                     }
                 },
             ) {
@@ -234,11 +195,12 @@ fun RaysSearchBar(
                                     if (selected) selectedStickers.add(data)
                                     else selectedStickers.remove(data)
                                 } else {
-                                    onActiveChange(false)
+                                    openDetailScreen(
+                                        navController = navController,
+                                        stickerUuid = data.sticker.uuid
+                                    )
                                     viewModel.sendUiIntent(
-                                        HomeIntent.AddClickCountAndGetStickerDetails(
-                                            stickerUuid = data.sticker.uuid,
-                                        )
+                                        HomeIntent.AddClickCount(stickerUuid = data.sticker.uuid)
                                     )
                                 }
                             },
@@ -301,36 +263,6 @@ fun RaysSearchBar(
             }
         }
 
-        RaysDialog(
-            visible = openStickerInfoDialog && stickerWithTags != null,
-            title = { Text(text = stringResource(id = R.string.home_screen_sticker_info)) },
-            text = {
-                StickerDetailInfo(stickerWithTags = stickerWithTags!!)
-            },
-            confirmButton = {
-                TextButton(onClick = { openStickerInfoDialog = false }) {
-                    Text(text = stringResource(id = R.string.dialog_ok))
-                }
-            },
-            onDismissRequest = { openStickerInfoDialog = false }
-        )
-
-        if (currentStickerUuid.isNotBlank()) {
-            DeleteWarningDialog(
-                visible = openDeleteWarningDialog,
-                onDismissRequest = { openDeleteWarningDialog = false },
-                onDismiss = { openDeleteWarningDialog = false },
-                onConfirm = {
-                    openDeleteWarningDialog = false
-                    viewModel.sendUiIntent(
-                        HomeIntent.DeleteStickerWithTags(
-                            listOf(currentStickerUuid)
-                        )
-                    )
-                }
-            )
-        }
-
         // 删除多选的表情包警告
         DeleteWarningDialog(
             visible = openDeleteMultiStickersDialog != null,
@@ -347,77 +279,7 @@ fun RaysSearchBar(
                 openDeleteMultiStickersDialog = null
             }
         )
-
-        ExportDialog(
-            visible = openExportPathDialog,
-            onDismissRequest = { openExportPathDialog = false },
-            onExport = { viewModel.sendUiIntent(HomeIntent.ExportStickers(listOf(currentStickerUuid))) },
-        )
     }
-}
-
-@Composable
-internal fun ExportDialog(
-    visible: Boolean,
-    onDismissRequest: () -> Unit = {},
-    onExport: () -> Unit,
-) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val exportStickerDir = LocalExportStickerDir.current
-    val pickExportDirLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocumentTree()
-    ) { uri ->
-        if (uri != null) {
-            context.contentResolver.takePersistableUriPermission(
-                uri, Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            )
-            ExportStickerDirPreference.put(
-                context = context,
-                scope = scope,
-                value = uri.toString()
-            )
-        }
-    }
-    RaysDialog(
-        visible = visible,
-        title = { Text(text = stringResource(R.string.home_screen_export)) },
-        text = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = exportStickerDir.ifBlank {
-                        stringResource(id = R.string.home_screen_select_export_folder_tip)
-                    }
-                )
-                RaysIconButton(
-                    onClick = {
-                        pickExportDirLauncher.launch(Uri.parse(exportStickerDir))
-                    },
-                    imageVector = Icons.Default.Folder,
-                    contentDescription = stringResource(R.string.home_screen_select_export_folder)
-                )
-            }
-        },
-        onDismissRequest = onDismissRequest,
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text(text = stringResource(id = R.string.cancel))
-            }
-        },
-        confirmButton = {
-            TextButton(
-                enabled = exportStickerDir.isNotBlank(),
-                onClick = {
-                    onDismissRequest()
-                    onExport()
-                }
-            ) {
-                Text(text = stringResource(id = R.string.dialog_ok))
-            }
-        }
-    )
 }
 
 @Composable

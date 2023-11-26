@@ -6,7 +6,7 @@ import com.skyd.rays.model.bean.StickerWithTags
 sealed class HomeIntent : IUiIntent {
     override val showLoading: Boolean = false
 
-    data class GetStickerDetails(val stickerUuid: String) : HomeIntent()
+    data object GetHomeList : HomeIntent()
 
     data class DeleteStickerWithTags(val stickerUuids: List<String>) : HomeIntent() {
         override val showLoading: Boolean = true
@@ -15,12 +15,11 @@ sealed class HomeIntent : IUiIntent {
     data class GetStickerWithTagsList(val keyword: String) : HomeIntent()
     data class SortStickerWithTagsList(val data: List<StickerWithTags>) : HomeIntent()
     data class ReverseStickerWithTagsList(val data: List<StickerWithTags>) : HomeIntent()
-    data class AddClickCountAndGetStickerDetails(val stickerUuid: String, val count: Int = 1) :
-        HomeIntent()
+    data class AddClickCount(val stickerUuid: String, val count: Int = 1) : HomeIntent()
 
     data class ExportStickers(val stickerUuids: List<String>) : HomeIntent() {
         override val showLoading: Boolean = true
     }
 
-    data object GetPopularTagsList : HomeIntent()
+    data object GetSearchBarPopularTagsList : HomeIntent()
 }

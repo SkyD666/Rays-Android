@@ -22,3 +22,9 @@ sealed class LoadUiIntent {
     data class Loading(var isShow: Boolean) : LoadUiIntent()
     data class Error(val msg: String) : LoadUiIntent()
 }
+
+// 部分变化
+interface PartialChange<T> {
+    // 描述如何从老状态变化为新状态
+    fun reduce(oldState: T): T
+}

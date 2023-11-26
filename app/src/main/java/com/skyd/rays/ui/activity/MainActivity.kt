@@ -48,6 +48,8 @@ import com.skyd.rays.ui.screen.about.update.UpdateDialog
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.add.AddScreen
 import com.skyd.rays.ui.screen.add.openAddScreen
+import com.skyd.rays.ui.screen.detail.DETAIL_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.detail.DetailScreen
 import com.skyd.rays.ui.screen.main.MAIN_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.main.MainScreen
 import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SELFIE_SEGMENTATION_SCREEN_ROUTE
@@ -62,8 +64,8 @@ import com.skyd.rays.ui.screen.settings.api.apigrant.API_GRANT_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.api.apigrant.ApiGrantScreen
 import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.appearance.AppearanceScreen
-import com.skyd.rays.ui.screen.settings.appearance.style.HOME_STYLE_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.appearance.style.HomeStyleScreen
+import com.skyd.rays.ui.screen.settings.appearance.style.SEARCH_STYLE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.appearance.style.SearchStyleScreen
 import com.skyd.rays.ui.screen.settings.data.DATA_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.DataScreen
 import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
@@ -212,8 +214,8 @@ class MainActivity : AppCompatActivity() {
                 composable(route = APPEARANCE_SCREEN_ROUTE) {
                     AppearanceScreen()
                 }
-                composable(route = HOME_STYLE_SCREEN_ROUTE) {
-                    HomeStyleScreen()
+                composable(route = SEARCH_STYLE_SCREEN_ROUTE) {
+                    SearchStyleScreen()
                 }
                 composable(route = ABOUT_SCREEN_ROUTE) {
                     AboutScreen()
@@ -259,6 +261,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = PRIVACY_SCREEN_ROUTE) {
                     PrivacyScreen()
+                }
+                composable(route = "$DETAIL_SCREEN_ROUTE?stickerUuid={stickerUuid}") {
+                    DetailScreen(stickerUuid = it.arguments?.getString("stickerUuid").orEmpty())
                 }
             }
 

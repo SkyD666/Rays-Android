@@ -5,6 +5,7 @@
     <string name="home_screen_name">Home</string>
     <string name="home_screen_search_hint">Search</string>
     <string name="home_screen_add">Add</string>
+    <string name="search_screen_name">Search</string>
     <string name="add_screen_save_current_sticker">Save current sticker</string>
     <string name="add_screen_title">Title (Optional)</string>
     <string name="add_screen_add_tags">Add tags (Optional)</string>
@@ -28,11 +29,11 @@
     <string name="search_config_screen_use_regex">Regular expression</string>
     <string name="search_config_screen_use_regex_description">Consider search keywords as regular expression</string>
     <string name="search_config_screen_domain_category">Search domain (search all when not selected)</string>
-    <string name="home_screen_edit">Edit</string>
+    <string name="detail_screen_edit">Edit</string>
     <string name="home_screen_delete">Delete</string>
     <string name="home_screen_export">Export</string>
-    <string name="home_screen_copy">Copy</string>
-    <string name="home_screen_copied">Copied</string>
+    <string name="detail_screen_copy">Copy</string>
+    <string name="detail_screen_copied">Copied</string>
     <string name="info">Info</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_close">Close</string>
@@ -56,7 +57,7 @@
     <string name="appearance_screen_dark_mode">Dark mode</string>
     <string name="appearance_screen_dark_mode_description">Set dark mode strategy</string>
     <string name="appearance_screen_sticker_color_theme">Sticker color theme</string>
-    <string name="appearance_screen_sticker_color_theme_description">When changing the homepage sticker, update the theme color to the main color of the sticker</string>
+    <string name="appearance_screen_sticker_color_theme_description">When open the sticker detail page, update the theme color to the main color of the sticker</string>
     <string name="dark_mode_dark">Dark mode</string>
     <string name="dark_mode_light">Light mode</string>
     <string name="dark_mode_follow_system">System default</string>
@@ -148,18 +149,17 @@
     <string name="data_screen_delete_all_success">All sticker data cleared, spent %.2fs</string>
     <string name="search_config_screen_intersect_search_by_space">Intersection search</string>
     <string name="search_config_screen_intersect_search_by_space_description">Use spaces to split multiple keywords to achieve the \"and\" condition</string>
-    <plurals name="home_screen_export_result">
+    <plurals name="export_stickers_result">
         <item quantity="one">Export %d sticker</item>
         <item quantity="other">Export %d stickers</item>
     </plurals>
     <string name="webdav_screen_restore">Restore</string>
-    <string name="home_screen_empty_tip">Create a new sticker or select a sticker from the search results~</string>
+    <string name="home_screen_empty_tip">Please create a new sticker~</string>
     <string name="home_screen_no_search_result_tip">It\'s empty~</string>
     <string name="add_screen_select_sticker">Select stickers</string>
     <string name="add_screen_add_stickers">Add stickers</string>
     <string name="add_screen_update_sticker">Select a new sticker</string>
     <string name="import_export_screen_name">Sync data</string>
-    <string name="home_screen_send_sticker">Send</string>
     <string name="send_sticker">Send sticker</string>
     <string name="home_screen_open_menu">Show menu</string>
     <string name="about_screen_other_works_raca_name" translatable="false">Raca (Record All Classic Articles)</string>
@@ -181,10 +181,8 @@
     <string name="classification_model_screen_default_name" translatable="false">EfficientNet-Lite2</string>
     <string name="home_screen_clear_current_sicker">Clear screen</string>
     <string name="appearance_screen_style_category">Style</string>
-    <string name="home_style_screen_name">Home screen style</string>
-    <string name="home_style_screen_search_bar">Search bar</string>
-    <string name="home_style_screen_sticker_card">Sticker card</string>
-    <string name="home_style_screen_sticker_scale">Sticker scale</string>
+    <string name="search_style_screen_name">Search screen style</string>
+    <string name="detail_screen_sticker_scale">Sticker scale</string>
     <string name="home_style_screen_show_popular_tags">Show popular tags</string>
     <string name="home_style_screen_show_popular_tags_description">Show the tags corresponding to the most shared stickers below the search bar</string>
     <string name="default_tag">%s (Default)</string>
@@ -214,13 +212,13 @@
     <string name="webdav_screen_progress_delete">Deleting local data + sticker</string>
     <string name="webdav_screen_progress_refresh_backup_info">Updating backup information</string>
     <string name="data_sync_warning">Please do not force kill the app or disconnect the network when pushing and pulling, as this may corrupt the data!</string>
-    <string name="home_screen_sticker_info">Sticker info</string>
-    <string name="home_screen_sticker_info_uuid">UUID</string>
-    <string name="home_screen_sticker_info_md5">Sticker MD5</string>
-    <string name="home_screen_sticker_info_click_count">Click count</string>
-    <string name="home_screen_sticker_info_share_count">Share count</string>
-    <string name="home_screen_sticker_info_create_time">Create time</string>
-    <string name="home_screen_sticker_info_last_modified_time">Last modified time</string>
+    <string name="detail_screen_sticker_info">Sticker info</string>
+    <string name="detail_screen_sticker_info_uuid">UUID</string>
+    <string name="detail_screen_sticker_info_md5">Sticker MD5</string>
+    <string name="detail_screen_sticker_info_click_count">Click count</string>
+    <string name="detail_screen_sticker_info_share_count">Share count</string>
+    <string name="detail_screen_sticker_info_create_time">Create time</string>
+    <string name="detail_screen_sticker_info_last_modified_time">Last modified time</string>
     <string name="home_screen_select_export_folder">Select export folder</string>
     <string name="home_screen_select_export_folder_tip">Please select an export folder</string>
     <string name="home_screen_popular_tags_popular_value">Popular value: %.2f</string>
@@ -304,4 +302,10 @@
     <string name="share_sheet_action_save">Save</string>
     <string name="share_sheet_action_save_toast_success">Saved to \"Pictures/Rays\"</string>
     <string name="share_sheet_action_save_toast_failed">Save failed</string>
+    <string name="detail_screen_name">Detail</string>
+    <string name="detail_screen_empty_tip">Nothing</string>
+    <string name="more">More</string>
+    <string name="home_screen_recommend_tags">Recommend tags</string>
+    <string name="home_screen_random_tags">Random tags</string>
+    <string name="home_screen_recent_create_stickers">Recently created</string>
 </resources>

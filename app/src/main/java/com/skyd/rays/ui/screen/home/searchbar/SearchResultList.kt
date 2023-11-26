@@ -286,7 +286,7 @@ internal fun MultiSelectActionBar(
                     },
                     enabled = selectedStickers.isNotEmpty(),
                     imageVector = Icons.Default.Share,
-                    contentDescription = stringResource(id = R.string.home_screen_send_sticker)
+                    contentDescription = stringResource(id = R.string.send_sticker)
                 )
             },
             @Composable {

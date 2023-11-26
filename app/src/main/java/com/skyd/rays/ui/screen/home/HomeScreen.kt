@@ -1,46 +1,31 @@
 package com.skyd.rays.ui.screen.home
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.AdsClick
-import androidx.compose.material.icons.filled.Badge
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -58,46 +43,34 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
-import com.skyd.rays.config.refreshStickerData
-import com.skyd.rays.ext.dateTime
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
-import com.skyd.rays.model.bean.StickerWithTags
-import com.skyd.rays.model.bean.UriWithStickerUuidBean
-import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysFloatingActionButton
-import com.skyd.rays.ui.component.RaysIconButton
-import com.skyd.rays.ui.component.RaysIconButtonStyle
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.dialog.WaitingDialog
-import com.skyd.rays.ui.local.LocalCurrentStickerUuid
-import com.skyd.rays.ui.local.LocalHomeShareButtonAlignment
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalQuery
-import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.openAddScreen
+import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.home.searchbar.RaysSearchBar
-import com.skyd.rays.util.sendStickerByUuid
-import com.skyd.rays.util.stickerUuidToUri
 
 
 const val HOME_SCREEN_ROUTE = "homeScreen"
@@ -105,29 +78,21 @@ const val HOME_SCREEN_ROUTE = "homeScreen"
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val density = LocalDensity.current
+    val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
-    val currentStickerUuid = LocalCurrentStickerUuid.current
-    val windowSizeClass = LocalWindowSizeClass.current
     val initQuery = LocalQuery.current
     var active by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable(initQuery) { mutableStateOf(initQuery) }
     var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiStateFlow2.collectAsStateWithLifecycle()
     val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
     val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
-    val mainCardScrollState = rememberScrollState()
     var fabHeight by remember { mutableStateOf(0.dp) }
 
-    refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
-        value ?: return@apply
-        viewModel.sendUiIntent(HomeIntent.GetStickerWithTagsList(query))
-        viewModel.sendUiIntent(HomeIntent.GetStickerDetails(currentStickerUuid))
-    }
-
-    LaunchedEffect(query) {
-        viewModel.sendUiIntent(HomeIntent.GetStickerWithTagsList(query))
+    LaunchedEffect(Unit) {
+        viewModel.sendUiIntent(HomeIntent.GetHomeList)
     }
 
     Scaffold(
@@ -152,64 +117,72 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             bottom = ScaffoldDefaults.contentWindowInsets.getBottom(LocalDensity.current),
         )
     ) { innerPaddings ->
-        Row(
+        Column(
             modifier = Modifier
                 .padding(innerPaddings)
                 .fillMaxSize()
         ) {
-            val stickerDetailUiState = uiState.stickerDetailUiState
-            val showStickerDetailInfo = !active && !windowSizeClass.isCompact &&
-                    stickerDetailUiState is StickerDetailUiState.Success
+            RaysSearchBar(
+                query = query,
+                onQueryChange = {
+                    query = it
+                    QueryPreference.put(context, scope, it)
+                },
+                active = active,
+                onActiveChange = {
+                    active = it
+                },
+                uiState = uiState,
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            when (val homeUiState = uiState.homeUiState) {
+                is HomeUiState.Init -> {
+                    Log.e("TAG", "HomeScreen: ？？？")
+                    HomeEmptyPlaceholder()
+                }
+                is HomeUiState.Success -> {
+                    Log.e("TAG", "HomeScreen: ")
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 16.dp + fabHeight)
+                    ) {
+                        item {
+                            val recentCreatedStickersList = homeUiState.recentCreatedStickersList
+                            DisplayStickersRow(
+                                title = stringResource(id = R.string.home_screen_recent_create_stickers),
+                                count = homeUiState.recentCreatedStickersList.size,
+                                itemImage = { recentCreatedStickersList[it].sticker.uuid },
+                                itemTitle = { recentCreatedStickersList[it].sticker.title },
+                                onItemClick = {
+                                    openDetailScreen(
+                                        navController = navController,
+                                        stickerUuid = recentCreatedStickersList[it].sticker.uuid
+                                    )
+                                },
+                            )
+                        }
+                        item {
+                            DisplayTagsRow(
+                                title = stringResource(id = R.string.home_screen_recommend_tags),
+                                count = homeUiState.recommendTagsList.size,
+                                itemImage = { homeUiState.recommendTagsList[it].stickerUuid },
+                                itemTitle = { homeUiState.recommendTagsList[it].tag },
+                                onItemClick = {},
+                            )
+                        }
 
-            Column(modifier = Modifier.weight(1f)) {
-                RaysSearchBar(
-                    query = query,
-                    onQueryChange = {
-                        query = it
-                        QueryPreference.put(context, scope, it)
-                    },
-                    active = active,
-                    onActiveChange = {
-                        active = it
-                    },
-                    stickerWithTags = (stickerDetailUiState as? StickerDetailUiState.Success)
-                        ?.stickerWithTags,
-                    onShowSnackbar = {
-                        snackbarHostState.showSnackbar(scope = scope, message = it)
-                    },
-                    uiState = uiState,
-                )
-                when (stickerDetailUiState) {
-                    is StickerDetailUiState.Init -> {
-                        HomeEmptyPlaceholder()
-                        if (stickerDetailUiState.stickerUuid.isNotBlank()) {
-                            viewModel.sendUiIntent(
-                                HomeIntent.GetStickerDetails(stickerDetailUiState.stickerUuid)
+                        item {
+                            DisplayTagsRow(
+                                title = stringResource(id = R.string.home_screen_random_tags),
+                                count = homeUiState.randomTagsList.size,
+                                itemImage = { homeUiState.randomTagsList[it].stickerUuid },
+                                itemTitle = { homeUiState.randomTagsList[it].tag },
+                                onItemClick = {},
                             )
                         }
                     }
-
-                    is StickerDetailUiState.Success -> {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        MainCard(
-                            stickerWithTags = stickerDetailUiState.stickerWithTags,
-                            scrollState = mainCardScrollState,
-                            bottomPadding = if (windowSizeClass.isCompact) fabHeight else 0.dp,
-                        )
-                    }
                 }
             }
-            StickerDetailInfoCard(
-                visible = showStickerDetailInfo,
-                modifier = Modifier
-                    .fillMaxWidth(0.4f)
-                    .padding(end = 16.dp, top = 8.dp, bottom = 16.dp + fabHeight)
-                    .statusBarsPadding(),
-                stickerWithTags = {
-                    (stickerDetailUiState as StickerDetailUiState.Success).stickerWithTags
-                }
-            )
-
         }
 
         uiEvent?.apply {
@@ -217,7 +190,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 is HomeResultUiEvent.Success -> {
                     snackbarHostState.showSnackbarWithLaunchedEffect(
                         message = context.resources.getQuantityString(
-                            R.plurals.home_screen_export_result,
+                            R.plurals.export_stickers_result,
                             homeResultUiEvent.successCount,
                             homeResultUiEvent.successCount
                         ),
@@ -243,6 +216,108 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
         }
 
         WaitingDialog(visible = openWaitingDialog)
+    }
+}
+
+@Composable
+private fun DisplayStickersRow(
+    title: String,
+    count: Int,
+    itemImage: (Int) -> String,
+    itemTitle: (Int) -> String,
+    onItemClick: (Int) -> Unit,
+) {
+    Column {
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            text = title,
+            style = MaterialTheme.typography.headlineSmall,
+        )
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
+        ) {
+            items(count) { index ->
+                Column(modifier = Modifier.width(IntrinsicSize.Min)) {
+                    ElevatedCard(onClick = { onItemClick(index) }) {
+                        RaysImage(
+                            modifier = Modifier
+                                .height(150.dp)
+                                .aspectRatio(1f),
+                            uuid = itemImage(index),
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
+                    Text(
+                        modifier = Modifier.padding(top = 6.dp),
+                        text = itemTitle(index),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(5.dp))
+    }
+}
+
+
+@Composable
+private fun DisplayTagsRow(
+    title: String,
+    count: Int,
+    itemImage: (Int) -> String,
+    itemTitle: (Int) -> String,
+    onItemClick: (Int) -> Unit,
+) {
+    Column {
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            text = title,
+            style = MaterialTheme.typography.headlineSmall,
+        )
+        LazyHorizontalStaggeredGrid(
+            modifier = Modifier.height(160.dp),
+            rows = StaggeredGridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalItemSpacing = 8.dp,
+            contentPadding = PaddingValues(horizontal = 16.dp)
+        ) {
+            items(count) { index ->
+                ElevatedCard(
+                    modifier = Modifier.aspectRatio(2f),
+                    onClick = { onItemClick(index) }
+                ) {
+                    Box {
+                        RaysImage(
+                            modifier = Modifier.fillMaxSize(),
+                            uuid = itemImage(index),
+                            contentScale = ContentScale.Crop,
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.2f))
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(6.dp)
+                                    .align(Alignment.Center),
+                                text = itemTitle(index),
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.labelLarge,
+                                textAlign = TextAlign.Center,
+                                color = Color.White,
+                            )
+                        }
+
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(5.dp))
     }
 }
 
@@ -292,186 +367,4 @@ fun HomeEmptyPlaceholder() {
         resId = R.raw.lottie_genshin_impact_keqing_1,
         tip = stringResource(id = R.string.home_screen_empty_tip)
     )
-}
-
-@Composable
-fun MainCard(
-    stickerWithTags: StickerWithTags,
-    scrollState: ScrollState = rememberScrollState(),
-    bottomPadding: Dp = 0.dp,
-) {
-    val navController = LocalNavController.current
-    val clipboardManager: ClipboardManager = LocalClipboardManager.current
-    val context = LocalContext.current
-
-    val stickerBean = stickerWithTags.sticker
-    val tags = stickerWithTags.tags
-
-    Card(
-        modifier = Modifier
-            .verticalScroll(scrollState)
-            .padding(horizontal = 16.dp)
-            .padding(bottom = bottomPadding + 16.dp)
-            .fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier
-                .combinedClickable(
-                    onLongClick = {
-                        context.sendStickerByUuid(
-                            uuid = stickerBean.uuid,
-                            onSuccess = { stickerBean.shareCount++ }
-                        )
-                    },
-                    onDoubleClick = {
-                        openAddScreen(
-                            navController = navController,
-                            stickers = mutableListOf(
-                                UriWithStickerUuidBean(
-                                    uri = stickerUuidToUri(stickerBean.uuid),
-                                    stickerUuid = stickerBean.uuid,
-                                )
-                            ),
-                            isEdit = true,
-                        )
-                    },
-                    onClick = {}
-                )
-        ) {
-            Box {
-                RaysImage(
-                    modifier = Modifier
-                        .animateContentSize(
-                            animationSpec = spring(
-                                dampingRatio = 1.3f,
-                                stiffness = Spring.StiffnessHigh,
-                            )
-                        )
-                        .fillMaxWidth(),
-                    uuid = stickerBean.uuid,
-                    contentScale = StickerScalePreference.toContentScale(LocalStickerScale.current),
-                )
-                Box(
-                    modifier = Modifier.matchParentSize(),
-                    contentAlignment = LocalHomeShareButtonAlignment.current
-                ) {
-                    RaysIconButton(
-                        style = RaysIconButtonStyle.FilledTonal,
-                        imageVector = Icons.Default.Share,
-                        contentDescription = stringResource(R.string.home_screen_send_sticker),
-                        onClick = {
-                            context.sendStickerByUuid(
-                                uuid = stickerBean.uuid,
-                                onSuccess = { stickerBean.shareCount++ }
-                            )
-                        },
-                    )
-                }
-            }
-            if (stickerBean.title.isNotBlank()) {
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 16.dp, bottom = if (tags.isEmpty()) 16.dp else 0.dp)
-                        .basicMarquee(iterations = Int.MAX_VALUE),
-                    text = stickerBean.title,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            if (tags.isNotEmpty()) {
-                FlowRow(
-                    modifier = Modifier
-                        .padding(vertical = 6.dp, horizontal = 16.dp)
-                        .fillMaxWidth()
-                        .heightIn(max = 150.dp)
-                        .verticalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    repeat(tags.size) { index ->
-                        AssistChip(
-                            onClick = { clipboardManager.setText(AnnotatedString(tags[index].tag)) },
-                            label = { Text(tags[index].tag) }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun StickerDetailInfo(modifier: Modifier = Modifier, stickerWithTags: StickerWithTags) {
-    @Composable
-    fun DetailInfoItem(icon: ImageVector, title: String, text: String) {
-        Row(
-            modifier = Modifier.padding(vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(imageVector = icon, contentDescription = null)
-            Spacer(modifier = Modifier.width(10.dp))
-            Column {
-                Text(text = title, style = MaterialTheme.typography.labelSmall)
-                SelectionContainer {
-                    Text(text = text, style = MaterialTheme.typography.labelLarge)
-                }
-            }
-        }
-    }
-
-    val sticker = stickerWithTags.sticker
-    Column(modifier = modifier) {
-        DetailInfoItem(
-            icon = Icons.Default.Badge,
-            title = stringResource(id = R.string.home_screen_sticker_info_uuid),
-            text = sticker.uuid,
-        )
-        DetailInfoItem(
-            icon = Icons.Default.Image,
-            title = stringResource(id = R.string.home_screen_sticker_info_md5),
-            text = sticker.stickerMd5,
-        )
-        DetailInfoItem(
-            icon = Icons.Default.AdsClick,
-            title = stringResource(id = R.string.home_screen_sticker_info_click_count),
-            text = sticker.clickCount.toString(),
-        )
-        DetailInfoItem(
-            icon = Icons.Default.Share,
-            title = stringResource(id = R.string.home_screen_sticker_info_share_count),
-            text = sticker.shareCount.toString()
-        )
-        DetailInfoItem(
-            icon = Icons.Default.AddCircle,
-            title = stringResource(id = R.string.home_screen_sticker_info_create_time),
-            text = dateTime(sticker.createTime)
-        )
-        DetailInfoItem(
-            icon = Icons.Default.Edit,
-            title = stringResource(id = R.string.home_screen_sticker_info_last_modified_time),
-            text = sticker.modifyTime?.let { dateTime(it) } ?: dateTime(sticker.createTime)
-        )
-    }
-}
-
-@Composable
-fun StickerDetailInfoCard(
-    visible: Boolean,
-    modifier: Modifier,
-    stickerWithTags: () -> StickerWithTags
-) {
-    AnimatedVisibility(
-        visible = visible,
-        modifier = Modifier
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState()),
-        enter = expandHorizontally(expandFrom = Alignment.Start),
-        exit = shrinkHorizontally(shrinkTowards = Alignment.End),
-    ) {
-        Card(modifier = modifier) {
-            StickerDetailInfo(
-                modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
-                stickerWithTags = stickerWithTags()
-            )
-        }
-    }
 }

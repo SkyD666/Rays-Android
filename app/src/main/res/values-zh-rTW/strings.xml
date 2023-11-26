@@ -29,7 +29,7 @@
     <string name="dialog_ok">確定</string>
     <string name="import_files_screen_select_file">選擇備份文件</string>
     <string name="classification_screen_threshold">分类阈值</string>
-    <plurals name="home_screen_export_result">
+    <plurals name="export_stickers_result">
         <item quantity="other">已匯出 %d 張表情包</item>
     </plurals>
     <string name="import_files_screen_on_conflict">有衝突時</string>
@@ -63,7 +63,7 @@
     <string name="webdav_screen_upload">推送</string>
     <string name="import_export_files_repo_invalid_magic_number">無效格式，魔數不等於 0x0D000721</string>
     <string name="webdav_screen_progress_logical_delete_remote">移動到遠端回收站</string>
-    <string name="home_screen_sticker_info_create_time">創建時間</string>
+    <string name="detail_screen_sticker_info_create_time">創建時間</string>
     <string name="export_files_screen_progress_zipping">正在壓縮：%s</string>
     <string name="home_style_screen_show_popular_tags_description">在搜尋欄下方顯示分享次數最多的表情包對應的標籤</string>
     <string name="search_result_sort_tag_count">標籤數量</string>
@@ -76,7 +76,7 @@
     <string name="dark_mode_follow_system">跟隨系統</string>
     <string name="auto_share_screen_supported_app">自動分享功能可將表情包直接分享到上一個頁面對應的應用程式。\n\n此功能需要無障礙權限。在結束 Rays 進程、升級或重新安裝 Rays 後，自動分享可能會被禁用，需要手動開啟無障礙權限才能再次啟用。\n\n建議允許 Rays 在啟動時啟動、由其他應用啟動、在背景中持續運行。\n\n支援的應用程式：\nQQ\n微信\n微博\nTelegram\nInstagram\nDiscord\nWhatsApp</string>
     <string name="auto_share_screen_name">自動分享</string>
-    <string name="home_screen_sticker_info_md5">表情包 MD5</string>
+    <string name="detail_screen_sticker_info_md5">表情包 MD5</string>
     <string name="webdav_screen_name">WebDAV</string>
     <string name="uri_string_share_screen_description">分享時複製表情包 URI 字符串</string>
     <string name="dark_mode_invalid">無效值</string>
@@ -100,7 +100,7 @@
     <string name="import_export_screen_name">導入與匯出</string>
     <string name="appearance_screen_dark_mode">深色模式</string>
     <string name="search_config_screen_use_regex">正則表達式</string>
-    <string name="home_screen_sticker_info_click_count">點擊次數</string>
+    <string name="detail_screen_sticker_info_click_count">點擊次數</string>
     <string name="classification_screen_threshold_description">只有置信度高于此門檻值的標籤才會被建議，建議設定在 0.5 左右。</string>
     <string name="webdav_screen_server">伺服器</string>
     <string name="about_screen_join_discord">加入 Discord 伺服器</string>
@@ -172,10 +172,10 @@
     <string name="search_config_screen_domain_category">搜尋領域（未選擇時搜索全部）</string>
     <string name="uri_string_share_screen_name">URI 字符串分享</string>
     <string name="home_screen_export">匯出</string>
-    <string name="home_screen_copy">複製</string>
-    <string name="home_screen_copied">已複製</string>
+    <string name="detail_screen_copy">複製</string>
+    <string name="detail_screen_copied">已複製</string>
     <string name="dark_mode_light">亮色</string>
-    <string name="home_screen_edit">編輯</string>
+    <string name="detail_screen_edit">編輯</string>
     <string name="about">關於</string>
     <string name="webdav_screen_account">帳戶</string>
     <string name="help_translate">幫助翻譯</string>
@@ -185,7 +185,7 @@
     <plurals name="export_files_screen_successful_desc">
         <item quantity="other">共匯出 %1$d 張表情包，耗時 %2$.2f 秒</item>
     </plurals>
-    <string name="home_screen_sticker_info_share_count">分享次數</string>
+    <string name="detail_screen_sticker_info_share_count">分享次數</string>
     <string name="webdav_screen_upload_tip">在將本地數據推送到遠端時，如果存在衝突，本地表情包將覆蓋遠端內容。如果本地不存在但在遠端存在的表情包，將被移動到遠端回收站。</string>
     <string name="webdav_screen_sync_category">同步</string>
     <string name="home_screen_close_search">關閉</string>
@@ -204,18 +204,18 @@
     <string name="classification_model_screen_select">選擇外部模型</string>
     <string name="home_screen_select_export_folder">選擇匯出文件夾</string>
     <string name="home_screen_no_search_result_tip">空空如也呢~</string>
-    <string name="home_screen_sticker_info_last_modified_time">上次修改時間</string>
-    <string name="home_style_screen_sticker_scale">表情包顯示比例</string>
+    <string name="detail_screen_sticker_info_last_modified_time">上次修改時間</string>
+    <string name="detail_screen_sticker_scale">顯示比例</string>
     <string name="search_result_reverse">逆序</string>
     <string name="add_screen_add_tag_to_all">為處理清單中的所有表情包加入此標籤</string>
     <string name="send_sticker">發送表情包</string>
     <string name="setting_screen_search_description">搜尋方案、搜尋領域等</string>
     <string name="accessibility_service_description">建議允許 Rays 自啟動、關聯啟動和背景運行。\n\nRays 的以下功能需要使用無障礙：\n\n自動分享</string>
-    <string name="home_screen_empty_tip">創建新表情包或從搜尋結果中選擇表情包～</string>
+    <string name="home_screen_empty_tip">創建新的表情包吧～</string>
     <string name="db_sticker_table_uuid">UUID</string>
     <string name="webdav_screen_remote_recycle_bin_is_empty">遠端回收站為空</string>
     <string name="webdav_screen_remote_recycle_bin_description">查看遠端回收站（邏輯上已刪除的項目）</string>
-    <string name="appearance_screen_sticker_color_theme_description">更改主頁表情包時，將主題顏色更新為表情包的主色調</string>
+    <string name="appearance_screen_sticker_color_theme_description">當查看表情包詳情時，將主題顏色更新為表情包的主色調</string>
     <string name="enable">啟用</string>
     <string name="privacy_screen_disable_screenshot_description">應用程式內禁止截圖</string>
     <string name="update_newer">發現新版本</string>
@@ -240,13 +240,11 @@
     <string name="webdav_screen_info_incomplete">WebDAV 信息不完整！</string>
     <string name="home_style_screen_show_popular_tags">顯示常用標籤</string>
     <string name="webdav_screen_progress_upload_data">更新遠端數據</string>
-    <string name="home_style_screen_sticker_card">表情包卡片</string>
     <string name="webdav_screen_progress_download_data">更新本地數據</string>
     <string name="search_config_screen_name">搜尋</string>
     <string name="settings">設定</string>
     <string name="appearance_screen_style_category">風格</string>
     <string name="setting_screen_appearance_description">主題、深色模式、風格等</string>
-    <string name="home_screen_send_sticker">發送</string>
     <string name="sponsor_description">如果您喜歡這個應用，可以請我喝杯咖啡，謝謝！</string>
     <string name="no_browser_found">找不到瀏覽器！連結：%s</string>
     <string name="import_export_screen_webdav_description">透過 WebDAV 同步數據</string>
@@ -259,7 +257,7 @@
     <string name="data_screen_name">數據</string>
     <string name="dialog_warning">警告</string>
     <string name="update_ignore">忽略此更新</string>
-    <string name="home_screen_sticker_info_uuid">UUID</string>
+    <string name="detail_screen_sticker_info_uuid">UUID</string>
     <string name="dialog_close">關閉</string>
     <string name="import_files_screen_progress_checking_backup_format">檢查備份文件格式中…</string>
     <string name="webdav_screen_delete">刪除</string>
@@ -276,16 +274,15 @@
     <string name="import_files_screen_on_conflict_desc">「衝突」指的是您當前正在導入的表情包的 UUID 與現有表情包的 UUID 相同，與這兩個表情包的內容是否相同無關。</string>
     <string name="theme_no_palettes">沒有調色板</string>
     <string name="search_result_sort_click_count">點擊次數</string>
-    <string name="home_style_screen_name">首頁風格</string>
+    <string name="search_style_screen_name">搜尋頁風格</string>
     <string name="add_screen_skip_current_sticker">放棄目前的編輯</string>
     <string name="add_screen_waiting_uris">處理清單</string>
     <string name="home_screen_search_result_list_to_top">至頂</string>
-    <string name="home_screen_sticker_info">表情包信息</string>
+    <string name="detail_screen_sticker_info">表情包信息</string>
     <string name="webdav_screen_input_password">密碼</string>
     <string name="dark_mode_dark">深色</string>
     <string name="uri_string_share_screen_add_app_package_example">例如，com.skyd.example</string>
     <string name="export_files_screen_export">匯出</string>
-    <string name="home_style_screen_search_bar">搜索欄</string>
     <string name="data_screen_import_export_description">同步表情包數據</string>
     <string name="image_scale_fill_width">填滿寬度</string>
     <string name="classification_screen_name">表情包分類</string>
@@ -293,4 +290,10 @@
     <string name="share_sheet_action_save">儲存</string>
     <string name="share_sheet_action_save_toast_success">已儲存到「Pictures/Rays」</string>
     <string name="share_sheet_action_save_toast_failed">保存失敗</string>
+    <string name="detail_screen_name">詳情</string>
+    <string name="detail_screen_empty_tip">什麼都沒有</string>
+    <string name="more">更多</string>
+    <string name="home_screen_recommend_tags">推薦標籤</string>
+    <string name="home_screen_random_tags">隨機標籤</string>
+    <string name="home_screen_recent_create_stickers">最近創建</string>
 </resources>

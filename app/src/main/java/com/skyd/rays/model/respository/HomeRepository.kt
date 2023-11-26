@@ -14,6 +14,7 @@ import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.db.dao.SearchDomainDao
+import com.skyd.rays.model.db.dao.TagDao
 import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
@@ -23,11 +24,16 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : BaseRepository() {
+class HomeRepository @Inject constructor(
+    private val stickerDao: StickerDao,
+    private val tagDao: TagDao
+) : BaseRepository() {
     suspend fun requestStickerWithTagsList(keyword: String): Flow<BaseData<List<StickerWithTags>>> {
         return flow {
             emitBaseData(BaseData<List<StickerWithTags>>().apply {
@@ -37,14 +43,16 @@ class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : B
         }
     }
 
-    suspend fun requestStickerWithTagsDetail(stickerUuid: String): Flow<BaseData<StickerWithTags>> {
-        return flow {
-            val stickerWithTags = stickerDao.getStickerWithTags(stickerUuid)
-            emitBaseData(BaseData<StickerWithTags>().apply {
-                code = if (stickerWithTags == null) 1 else 0
-                data = stickerWithTags
-            })
-        }
+    fun requestRecommendTags(): Flow<List<TagBean>> {
+        return tagDao.getRecommendTagsList(count = 20).distinctUntilChanged()
+    }
+
+    fun requestRandomTags(): Flow<List<TagBean>> {
+        return tagDao.getRandomTagsList(count = 20).distinctUntilChanged()
+    }
+
+    fun requestRecentCreateStickers(): Flow<List<StickerWithTags>> {
+        return stickerDao.getRecentCreateStickersList(count = 20).distinctUntilChanged()
     }
 
     suspend fun requestDeleteStickerWithTagsDetail(stickerUuids: List<String>): Flow<BaseData<Int>> {
@@ -65,7 +73,7 @@ class HomeRepository @Inject constructor(private val stickerDao: StickerDao) : B
         }
     }
 
-    suspend fun requestPopularTags(count: Int): Flow<BaseData<List<Pair<String, Float>>>> {
+    suspend fun requestSearchBarPopularTags(count: Int): Flow<BaseData<List<Pair<String, Float>>>> {
         return flow {
             val popularStickersList = stickerDao.getPopularStickersList(count = count)
             val tagsMap: MutableMap<Pair<String, String>, Long> = mutableMapOf()

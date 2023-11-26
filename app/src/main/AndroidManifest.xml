@@ -21,7 +21,8 @@
         <activity
             android:name=".ui.activity.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Rays.NoActionBar.Splash">
+            android:theme="@style/Theme.Rays.NoActionBar.Splash"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -72,7 +73,7 @@
 
         <receiver
             android:name=".model.broadcast.ShareSheetActionsReceiver"
-            android:enabled="true"/>
+            android:enabled="true" />
     </application>
 
 </manifest>

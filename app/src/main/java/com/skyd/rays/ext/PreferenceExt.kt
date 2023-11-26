@@ -6,7 +6,6 @@ import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.DisableScreenshotPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
-import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
 import com.skyd.rays.model.preference.Settings
 import com.skyd.rays.model.preference.ShowPopularTagsPreference
@@ -59,7 +58,6 @@ fun Preferences.toSettings(): Settings {
 
         // Style
         stickerScale = StickerScalePreference.fromPreferences(this),
-        homeShareButtonAlignment = HomeShareButtonAlignmentPreference.fromPreferences(this),
 
         // Share
         uriStringShare = UriStringSharePreference.fromPreferences(this),

@@ -5,6 +5,7 @@
     <string name="home_screen_name">首页</string>
     <string name="home_screen_search_hint">输入关键词搜索</string>
     <string name="home_screen_add">添加</string>
+    <string name="search_screen_name">搜索</string>
     <string name="add_screen_save_current_sticker">保存当前项</string>
     <string name="add_screen_title">标题（可选）</string>
     <string name="add_screen_add_tags">添加标签（可选）</string>
@@ -28,11 +29,11 @@
     <string name="search_config_screen_use_regex">使用正则表达式</string>
     <string name="search_config_screen_use_regex_description">将搜索框中的内容作为正则表达式进行搜索</string>
     <string name="search_config_screen_domain_category">搜索域（未选择默认搜索全部）</string>
-    <string name="home_screen_edit">编辑</string>
+    <string name="detail_screen_edit">编辑</string>
     <string name="home_screen_delete">删除</string>
     <string name="home_screen_export">导出</string>
-    <string name="home_screen_copy">复制</string>
-    <string name="home_screen_copied">已复制</string>
+    <string name="detail_screen_copy">复制</string>
+    <string name="detail_screen_copied">已复制</string>
     <string name="info">提示</string>
     <string name="dialog_ok">确定</string>
     <string name="dialog_close">关闭</string>
@@ -55,7 +56,7 @@
     <string name="appearance_screen_dark_mode">深色模式</string>
     <string name="appearance_screen_dark_mode_description">设置深色模式策略</string>
     <string name="appearance_screen_sticker_color_theme">表情包色主题</string>
-    <string name="appearance_screen_sticker_color_theme_description">当切换首页表情包时，更新应用的主题色为表情包的主色调</string>
+    <string name="appearance_screen_sticker_color_theme_description">当查看表情包详情时，更新应用的主题色为表情包的主色调</string>
     <string name="dark_mode_dark">深色</string>
     <string name="dark_mode_light">亮色</string>
     <string name="dark_mode_follow_system">跟随系统</string>
@@ -143,17 +144,16 @@
     <string name="data_screen_delete_all_success">所有表情包数据已清空，耗时 %.2f 秒</string>
     <string name="search_config_screen_intersect_search_by_space">交集搜索</string>
     <string name="search_config_screen_intersect_search_by_space_description">使用空格分割多个搜索关键字以实现“并且”条件，即对这些关键字的结果进行交集操作</string>
-    <plurals name="home_screen_export_result">
+    <plurals name="export_stickers_result">
         <item quantity="other">导出了 %d 个表情包</item>
     </plurals>
     <string name="webdav_screen_restore">还原</string>
-    <string name="home_screen_empty_tip">新建表情包或从搜索结果中选择一个表情包吧~</string>
+    <string name="home_screen_empty_tip">开始新建表情包吧~</string>
     <string name="home_screen_no_search_result_tip">空空如也呢~</string>
     <string name="add_screen_select_sticker">选择表情包</string>
     <string name="add_screen_add_stickers">添加表情包</string>
     <string name="add_screen_update_sticker">选择新表情包</string>
     <string name="import_export_screen_name">导入与导出</string>
-    <string name="home_screen_send_sticker">发送</string>
     <string name="send_sticker">发送表情包</string>
     <string name="home_screen_open_menu">显示菜单</string>
     <string name="about_screen_other_works_raca_description">一个在本地记录、查找抽象段落/评论区小作文的工具。🤗 您还在为记不住小作文内容，面临前面、中间、后面都忘了的尴尬处境吗？使用这款工具将帮助您记录您所遇到的小作文，再也不因为忘记而烦恼！😋</string>
@@ -172,10 +172,8 @@
     <string name="classification_model_screen_select_description">选择外部模型文件 (.tflite 或 .lite)</string>
     <string name="home_screen_clear_current_sicker">清空主屏幕</string>
     <string name="appearance_screen_style_category">样式</string>
-    <string name="home_style_screen_name">首页样式</string>
-    <string name="home_style_screen_search_bar">搜索栏</string>
-    <string name="home_style_screen_sticker_card">表情包卡片</string>
-    <string name="home_style_screen_sticker_scale">表情包显示比例</string>
+    <string name="search_style_screen_name">搜索样式</string>
+    <string name="detail_screen_sticker_scale">显示比例</string>
     <string name="home_style_screen_show_popular_tags">显示常用标签</string>
     <string name="home_style_screen_show_popular_tags_description">在搜索栏下方显示分享次数最多的表情包对应的标签</string>
     <string name="default_tag">%s（默认）</string>
@@ -205,13 +203,13 @@
     <string name="webdav_screen_progress_delete">删除本地数据 + 表情包</string>
     <string name="webdav_screen_progress_refresh_backup_info">更新备份信息</string>
     <string name="data_sync_warning">请勿在推送和拉取时强制杀死应用或断开网络，否则可能会损坏数据！</string>
-    <string name="home_screen_sticker_info">表情包信息</string>
-    <string name="home_screen_sticker_info_uuid">UUID</string>
-    <string name="home_screen_sticker_info_md5">表情包 MD5</string>
-    <string name="home_screen_sticker_info_click_count">点击数</string>
-    <string name="home_screen_sticker_info_share_count">分享数</string>
-    <string name="home_screen_sticker_info_create_time">创建时间</string>
-    <string name="home_screen_sticker_info_last_modified_time">上次修改时间</string>
+    <string name="detail_screen_sticker_info">表情包信息</string>
+    <string name="detail_screen_sticker_info_uuid">UUID</string>
+    <string name="detail_screen_sticker_info_md5">表情包 MD5</string>
+    <string name="detail_screen_sticker_info_click_count">点击数</string>
+    <string name="detail_screen_sticker_info_share_count">分享数</string>
+    <string name="detail_screen_sticker_info_create_time">创建时间</string>
+    <string name="detail_screen_sticker_info_last_modified_time">上次修改时间</string>
     <string name="home_screen_select_export_folder">选择导出文件夹</string>
     <string name="home_screen_select_export_folder_tip">请选择导出文件夹</string>
     <string name="home_screen_popular_tags_popular_value">热门值：%.2f</string>
@@ -293,4 +291,10 @@
     <string name="share_sheet_action_save">保存</string>
     <string name="share_sheet_action_save_toast_success">已保存到“Pictures/Rays”</string>
     <string name="share_sheet_action_save_toast_failed">保存失败</string>
+    <string name="detail_screen_name">详情</string>
+    <string name="detail_screen_empty_tip">什么也没有</string>
+    <string name="more">更多</string>
+    <string name="home_screen_recommend_tags">推荐标签</string>
+    <string name="home_screen_random_tags">随机标签</string>
+    <string name="home_screen_recent_create_stickers">最近创建</string>
 </resources>

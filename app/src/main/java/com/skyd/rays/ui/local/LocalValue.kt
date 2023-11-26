@@ -8,7 +8,6 @@ import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.DisableScreenshotPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
-import com.skyd.rays.model.preference.HomeShareButtonAlignmentPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
 import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
@@ -67,8 +66,6 @@ val LocalStickerClassificationModel =
 
 // Style
 val LocalStickerScale = compositionLocalOf { StickerScalePreference.default }
-val LocalHomeShareButtonAlignment =
-    compositionLocalOf { HomeShareButtonAlignmentPreference.default }
 
 // Share
 val LocalUriStringShare = compositionLocalOf { UriStringSharePreference.default }

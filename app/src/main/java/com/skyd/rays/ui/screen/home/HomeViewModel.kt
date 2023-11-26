@@ -1,25 +1,28 @@
 package com.skyd.rays.ui.screen.home
 
-import androidx.lifecycle.viewModelScope
+import android.util.Log
 import com.skyd.rays.appContext
+import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseViewModel
 import com.skyd.rays.base.IUIChange
+import com.skyd.rays.base.PartialChange
+import com.skyd.rays.base.ReqState
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
-import com.skyd.rays.ext.getOrNull
 import com.skyd.rays.model.bean.StickerWithTags
-import com.skyd.rays.model.preference.CurrentStickerUuidPreference
+import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.respository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 
@@ -28,11 +31,7 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
     BaseViewModel<HomeState, HomeEvent, HomeIntent>() {
     override fun initUiState(): HomeState {
         return HomeState(
-            StickerDetailUiState.Init(
-                appContext.dataStore
-                    .getOrNull(CurrentStickerUuidPreference.key)
-                    ?: CurrentStickerUuidPreference.default
-            ),
+            HomeUiState.Init,
             SearchResultUiState.Init,
             PopularTagsUiState.Init,
         )
@@ -53,28 +52,31 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
                 .defaultFinally()
         },
 
-        doIsInstance<HomeIntent.GetStickerDetails> { intent ->
-            if (intent.stickerUuid.isBlank()) {
-                flow {
-                    CurrentStickerUuidPreference.put(
-                        context = appContext,
-                        scope = viewModelScope,
-                        value = CurrentStickerUuidPreference.default,
-                    )
-                    emit(uiStateFlow.value.copy(stickerDetailUiState = StickerDetailUiState.Init()))
-                }.defaultFinally()
-            } else {
-                homeRepo.requestStickerWithTagsDetail(intent.stickerUuid)
-                    .mapToUIChange { data ->
-                        CurrentStickerUuidPreference.put(
-                            context = appContext,
-                            scope = viewModelScope,
-                            value = data.sticker.uuid
-                        )
-                        copy(stickerDetailUiState = StickerDetailUiState.Success(data))
+        doIsInstance<HomeIntent.GetHomeList> {
+            homeRepo.requestRecommendTags()
+                .combine(homeRepo.requestRandomTags()) { recommendTags, randomTags ->
+                    recommendTags to randomTags
+                }
+                .combine(homeRepo.requestRecentCreateStickers()) { other, recentCreateStickers ->
+                    Triple(other.first, other.second, recentCreateStickers)
+                }.map {
+                    BaseData<Triple<List<TagBean>, List<TagBean>, List<StickerWithTags>>>().apply {
+                        state = ReqState.Success
+                        data = it
                     }
-                    .defaultFinally()
-            }
+                }
+                .mapToUIChange { data ->
+                    Log.e("TAG", "GetHomeList: ")
+                    copy(
+                        homeUiState = HomeUiState.Success(
+                            recommendTagsList = data.first,
+                            recentCreatedStickersList = data.third,
+                            randomTagsList = data.second
+                        )
+                    )
+                }.defaultFinally().onStart {
+                    Log.e("TAG", "GetHomeList: onStart")
+                }
         },
 
         doIsInstance<HomeIntent.DeleteStickerWithTags> { intent ->
@@ -121,19 +123,9 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
                 .defaultFinally()
         },
 
-        doIsInstance<HomeIntent.AddClickCountAndGetStickerDetails> { intent ->
+        doIsInstance<HomeIntent.AddClickCount> { intent ->
             homeRepo.requestAddClickCount(stickerUuid = intent.stickerUuid, count = intent.count)
-                .flatMapConcat {
-                    homeRepo.requestStickerWithTagsDetail(stickerUuid = intent.stickerUuid)
-                }
-                .mapToUIChange { data ->
-                    CurrentStickerUuidPreference.put(
-                        context = appContext,
-                        scope = viewModelScope,
-                        value = intent.stickerUuid
-                    )
-                    copy(stickerDetailUiState = StickerDetailUiState.Success(data))
-                }
+                .mapToUIChange { this }
                 .defaultFinally()
         },
 
@@ -145,15 +137,103 @@ class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
                 .defaultFinally()
         },
 
-        doIsInstance<HomeIntent.GetPopularTagsList> {
+        doIsInstance<HomeIntent.GetSearchBarPopularTagsList> {
             if (appContext.dataStore.getOrDefault(ShowPopularTagsPreference)) {
-                homeRepo.requestPopularTags(count = 15)
+                homeRepo.requestSearchBarPopularTags(count = 15)
                     .mapToUIChange { data ->
                         copy(popularTagsUiState = PopularTagsUiState.Success(data))
                     }
             } else {
                 emptyFlow()
                     .mapToUIChange { this }
+                    .defaultFinally()
+            }
+        },
+    )
+
+    override fun Flow<HomeIntent>.handleIntent2(): Flow<PartialChange<HomeState>> = merge(
+        doIsInstance2<HomeIntent.GetStickerWithTagsList> { intent ->
+            homeRepo.requestStickerWithTagsList(intent.keyword)
+                .mapToPartialChange { data ->
+                    SearchResultUiState.Success(sortSearchResultList(data))
+                }
+                .defaultFinally()
+        },
+
+        doIsInstance2<HomeIntent.GetHomeList> {
+            homeRepo.requestRecommendTags()
+                .combine(homeRepo.requestRandomTags()) { recommendTags, randomTags ->
+                    recommendTags to randomTags
+                }
+                .combine(homeRepo.requestRecentCreateStickers()) { other, recentCreateStickers ->
+                    Triple(other.first, other.second, recentCreateStickers)
+                }.map {
+                    BaseData<Triple<List<TagBean>, List<TagBean>, List<StickerWithTags>>>().apply {
+                        state = ReqState.Success
+                        data = it
+                    }
+                }
+                .mapToPartialChange { data ->
+                    HomeUiState.Success(
+                        recommendTagsList = data.first,
+                        recentCreatedStickersList = data.third,
+                        randomTagsList = data.second
+                    )
+                }.defaultFinally().onStart {
+                    Log.e("TAG", "GetHomeList: onStart")
+                }
+        },
+
+        doIsInstance2<HomeIntent.DeleteStickerWithTags> { intent ->
+            homeRepo.requestDeleteStickerWithTagsDetail(intent.stickerUuids)
+                .mapToPartialChange {
+                    DeleteStickerWithTagsResultUiEvent.Success(intent.stickerUuids)
+                }
+                .defaultFinally()
+                .onCompletion {
+                    refreshStickerData.tryEmit(Unit)
+                }
+        },
+
+        doIsInstance2<HomeIntent.SortStickerWithTagsList> { intent ->
+            emptyFlow()
+                .mapToPartialChange {
+                    SearchResultUiState.Success(sortSearchResultList(intent.data))
+                }
+                .defaultFinally()
+        },
+
+        doIsInstance2<HomeIntent.ReverseStickerWithTagsList> { intent ->
+            emptyFlow()
+                .mapToPartialChange {
+                    SearchResultUiState.Success(sortSearchResultList(intent.data))
+                }
+                .defaultFinally()
+        },
+
+        doIsInstance2<HomeIntent.AddClickCount> { intent ->
+            homeRepo.requestAddClickCount(stickerUuid = intent.stickerUuid, count = intent.count)
+                .mapToPartialChange { AddClickCountResultUiEvent.Success }
+                .defaultFinally()
+        },
+
+        doIsInstance2<HomeIntent.ExportStickers> { intent ->
+            homeRepo.requestExportStickers(intent.stickerUuids)
+                .mapToPartialChange { data ->
+                    HomeResultUiEvent.Success(data)
+                }
+                .defaultFinally()
+        },
+
+        doIsInstance2<HomeIntent.GetSearchBarPopularTagsList> {
+            if (appContext.dataStore.getOrDefault(ShowPopularTagsPreference)) {
+                homeRepo.requestSearchBarPopularTags(count = 15)
+                    .mapToPartialChange { data ->
+                        PopularTagsUiState.Success(data)
+                    }
+            } else {
+                emptyFlow()
+                    .mapToPartialChange { PopularTagsUiState.Init }
                     .defaultFinally()
             }
         },

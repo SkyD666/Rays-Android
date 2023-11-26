@@ -9,6 +9,7 @@ import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.bean.STICKER_TABLE_NAME
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerBean.Companion.CLICK_COUNT_COLUMN
+import com.skyd.rays.model.bean.StickerBean.Companion.CREATE_TIME_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.SHARE_COUNT_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.STICKER_MD5_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.UUID_COLUMN
@@ -22,6 +23,7 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import java.io.File
 import java.util.*
 
@@ -48,6 +50,16 @@ interface StickerDao {
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN LIKE :stickerUuid")
     fun getStickerWithTags(stickerUuid: String): StickerWithTags?
+
+    @Transaction
+    @Query(
+        """SELECT *
+        FROM $STICKER_TABLE_NAME
+        ORDER BY $CREATE_TIME_COLUMN DESC
+        LIMIT :count
+        """
+    )
+    fun getRecentCreateStickersList(count: Int): Flow<List<StickerWithTags>>
 
     @Transaction
     @Query("SELECT $UUID_COLUMN FROM $STICKER_TABLE_NAME WHERE $STICKER_MD5_COLUMN LIKE :stickerMd5")
