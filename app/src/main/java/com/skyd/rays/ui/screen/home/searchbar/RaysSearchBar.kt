@@ -45,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -63,6 +64,7 @@ import com.skyd.rays.R
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
+import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.ui.component.RaysIconButton
@@ -75,8 +77,15 @@ import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.home.HomeIntent
 import com.skyd.rays.ui.screen.home.HomeState
 import com.skyd.rays.ui.screen.home.HomeViewModel
-import com.skyd.rays.ui.screen.home.PopularTagsUiState
-import com.skyd.rays.ui.screen.home.SearchResultUiState
+import com.skyd.rays.ui.screen.home.PopularTagsState
+import com.skyd.rays.ui.screen.home.SearchResultState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -89,6 +98,7 @@ fun RaysSearchBar(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
+    val scope = rememberCoroutineScope()
     var multiSelect by rememberSaveable { mutableStateOf(false) }
     val selectedStickers = remember { mutableStateListOf<StickerWithTags>() }
     val windowSizeClass = LocalWindowSizeClass.current
@@ -100,26 +110,44 @@ fun RaysSearchBar(
     val searchResultListState = rememberLazyStaggeredGridState()
     val showPopularTags = LocalShowPopularTags.current
     val popularTags =
-        (uiState.popularTagsUiState as? PopularTagsUiState.Success)?.popularTags.orEmpty()
+        (uiState.popularTagsState as? PopularTagsState.Success)?.popularTags.orEmpty()
     var openDeleteMultiStickersDialog by rememberSaveable {
         mutableStateOf<Set<StickerWithTags>?>(null)
     }
 
+    val intentChannel = remember { Channel<HomeIntent>(Channel.UNLIMITED) }
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Main.immediate) {
+            intentChannel
+                .consumeAsFlow()
+                .startWith(HomeIntent.Initial)
+                .onEach(viewModel::processIntent)
+                .collect()
+        }
+    }
+    val dispatch = remember {
+        { intent: HomeIntent ->
+            intentChannel.trySend(intent).getOrThrow()
+        }
+    }
+
     refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
         value ?: return@apply
-        viewModel.sendUiIntent(HomeIntent.GetStickerWithTagsList(query))
-        if (showPopularTags && active) {
-            viewModel.sendUiIntent(HomeIntent.GetSearchBarPopularTagsList)
+        scope.launch {
+            dispatch(HomeIntent.GetStickerWithTagsList(query))
+            if (showPopularTags && active) {
+                dispatch(HomeIntent.GetSearchBarPopularTagsList)
+            }
         }
     }
 
     LaunchedEffect(query) {
-        viewModel.sendUiIntent(HomeIntent.GetStickerWithTagsList(query))
+        dispatch(HomeIntent.GetStickerWithTagsList(query))
     }
 
-    LaunchedEffect(showPopularTags) {
+    LaunchedEffect(active) {
         if (showPopularTags && active) {
-            viewModel.sendUiIntent(HomeIntent.GetSearchBarPopularTagsList)
+            dispatch(HomeIntent.GetSearchBarPopularTagsList)
         }
     }
 
@@ -142,15 +170,11 @@ fun RaysSearchBar(
                 onSearch = { keyword ->
                     keyboardController?.hide()
                     onQueryChange(keyword)
-                    viewModel.sendUiIntent(HomeIntent.GetStickerWithTagsList(keyword))
+                    dispatch(HomeIntent.GetStickerWithTagsList(keyword))
                 },
                 active = active,
                 onActiveChange = {
-                    if (it) {
-                        if (showPopularTags) {
-                            viewModel.sendUiIntent(HomeIntent.GetSearchBarPopularTagsList)
-                        }
-                    } else {
+                    if (!it) {
                         onQueryChange(query)
                     }
                     onActiveChange(it)
@@ -183,8 +207,8 @@ fun RaysSearchBar(
                         tags = popularTags,
                     )
                 }
-                val searchResultUiState = uiState.searchResultUiState
-                if (searchResultUiState is SearchResultUiState.Success) {
+                val searchResultUiState = uiState.searchResultState
+                if (searchResultUiState is SearchResultState.Success) {
                     val searchResultList = @Composable {
                         if (!active) multiSelect = false
                         SearchResultList(
@@ -199,7 +223,7 @@ fun RaysSearchBar(
                                         navController = navController,
                                         stickerUuid = data.sticker.uuid
                                     )
-                                    viewModel.sendUiIntent(
+                                    dispatch(
                                         HomeIntent.AddClickCount(stickerUuid = data.sticker.uuid)
                                     )
                                 }
@@ -216,6 +240,20 @@ fun RaysSearchBar(
                                     searchResultUiState.stickerWithTagsList - selectedStickers
                                 selectedStickers.clear()
                                 selectedStickers.addAll(newSelectedStickers)
+                            },
+                            onSortStickerWithTagsList = {
+                                dispatch(
+                                    HomeIntent.SortStickerWithTagsList(
+                                        searchResultUiState.stickerWithTagsList
+                                    )
+                                )
+                            },
+                            onReverseStickerWithTagsList = {
+                                dispatch(
+                                    HomeIntent.ReverseStickerWithTagsList(
+                                        searchResultUiState.stickerWithTagsList
+                                    )
+                                )
                             },
                             selectedStickers = selectedStickers,
                         )
@@ -245,7 +283,7 @@ fun RaysSearchBar(
                                     },
                                     onExport = {
                                         val uuidList = selectedStickers.map { it.sticker.uuid }
-                                        viewModel.sendUiIntent(HomeIntent.ExportStickers(uuidList))
+                                        dispatch(HomeIntent.ExportStickers(uuidList))
                                     },
                                 )
                             }
@@ -269,7 +307,7 @@ fun RaysSearchBar(
             onDismissRequest = { openDeleteMultiStickersDialog = null },
             onDismiss = { openDeleteMultiStickersDialog = null },
             onConfirm = {
-                viewModel.sendUiIntent(
+                dispatch(
                     HomeIntent.DeleteStickerWithTags(
                         selectedStickers.map { it.sticker.uuid }
                     )

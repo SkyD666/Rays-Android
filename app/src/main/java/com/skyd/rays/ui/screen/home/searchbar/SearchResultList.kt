@@ -62,7 +62,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.skyd.rays.R
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
@@ -76,8 +75,6 @@ import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalSearchResultReverse
 import com.skyd.rays.ui.local.LocalSearchResultSort
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.home.HomeIntent
-import com.skyd.rays.ui.screen.home.HomeViewModel
 import com.skyd.rays.util.sendStickerByUuid
 import com.skyd.rays.util.sendStickersByUuids
 import kotlinx.coroutines.launch
@@ -90,8 +87,9 @@ fun SearchResultList(
     multiSelect: Boolean,
     onMultiSelectChanged: (Boolean) -> Unit,
     onInvertSelectClick: () -> Unit,
+    onSortStickerWithTagsList: () -> Unit,
+    onReverseStickerWithTagsList: () -> Unit,
     selectedStickers: List<StickerWithTags>,
-    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val searchResultSort = LocalSearchResultSort.current
     val searchResultReverse = LocalSearchResultReverse.current
@@ -99,10 +97,10 @@ fun SearchResultList(
     var fabHeight by remember { mutableStateOf(0.dp) }
 
     LaunchedEffect(searchResultSort) {
-        viewModel.sendUiIntent(HomeIntent.SortStickerWithTagsList(dataList))
+        onSortStickerWithTagsList()
     }
     LaunchedEffect(searchResultReverse) {
-        viewModel.sendUiIntent(HomeIntent.ReverseStickerWithTagsList(dataList))
+        onReverseStickerWithTagsList()
     }
 
     Column {

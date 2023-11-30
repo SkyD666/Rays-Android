@@ -308,4 +308,6 @@
     <string name="home_screen_recommend_tags">Recommend tags</string>
     <string name="home_screen_random_tags">Random tags</string>
     <string name="home_screen_recent_create_stickers">Recently created</string>
+    <string name="home_screen_most_shared_stickers">Most shared</string>
+    <string name="stickers_list_screen_name">Stickers list</string>
 </resources>

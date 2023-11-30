@@ -62,6 +62,16 @@ interface StickerDao {
     fun getRecentCreateStickersList(count: Int): Flow<List<StickerWithTags>>
 
     @Transaction
+    @Query(
+        """SELECT *
+        FROM $STICKER_TABLE_NAME
+        ORDER BY $SHARE_COUNT_COLUMN DESC
+        LIMIT :count
+        """
+    )
+    fun getMostSharedStickersList(count: Int): Flow<List<StickerWithTags>>
+
+    @Transaction
     @Query("SELECT $UUID_COLUMN FROM $STICKER_TABLE_NAME WHERE $STICKER_MD5_COLUMN LIKE :stickerMd5")
     fun containsByMd5(stickerMd5: String): String?
 

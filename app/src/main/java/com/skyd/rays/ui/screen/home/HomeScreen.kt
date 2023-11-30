@@ -1,6 +1,5 @@
 package com.skyd.rays.ui.screen.home
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -34,7 +33,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,7 +54,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.preference.search.QueryPreference
@@ -71,6 +68,7 @@ import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.home.searchbar.RaysSearchBar
+import com.skyd.rays.ui.screen.stickerslist.openStickersListScreen
 
 
 const val HOME_SCREEN_ROUTE = "homeScreen"
@@ -85,15 +83,9 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val initQuery = LocalQuery.current
     var active by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable(initQuery) { mutableStateOf(initQuery) }
-    var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
-    val uiState by viewModel.uiStateFlow2.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
-    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
     var fabHeight by remember { mutableStateOf(0.dp) }
-
-    LaunchedEffect(Unit) {
-        viewModel.sendUiIntent(HomeIntent.GetHomeList)
-    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -135,22 +127,36 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 uiState = uiState,
             )
             Spacer(modifier = Modifier.height(10.dp))
-            when (val homeUiState = uiState.homeUiState) {
-                is HomeUiState.Init -> {
-                    Log.e("TAG", "HomeScreen: ？？？")
+            when (val homeUiState = uiState.homeListState) {
+                is HomeListState.Init -> {
                     HomeEmptyPlaceholder()
                 }
-                is HomeUiState.Success -> {
-                    Log.e("TAG", "HomeScreen: ")
+
+                is HomeListState.Success -> {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(bottom = 16.dp + fabHeight)
                     ) {
                         item {
+                            val mostSharedStickersList = homeUiState.mostSharedStickersList
+                            DisplayStickersRow(
+                                title = stringResource(id = R.string.home_screen_most_shared_stickers),
+                                count = mostSharedStickersList.size,
+                                itemImage = { mostSharedStickersList[it].sticker.uuid },
+                                itemTitle = { mostSharedStickersList[it].sticker.title },
+                                onItemClick = {
+                                    openDetailScreen(
+                                        navController = navController,
+                                        stickerUuid = mostSharedStickersList[it].sticker.uuid
+                                    )
+                                },
+                            )
+                        }
+                        item {
                             val recentCreatedStickersList = homeUiState.recentCreatedStickersList
                             DisplayStickersRow(
                                 title = stringResource(id = R.string.home_screen_recent_create_stickers),
-                                count = homeUiState.recentCreatedStickersList.size,
+                                count = recentCreatedStickersList.size,
                                 itemImage = { recentCreatedStickersList[it].sticker.uuid },
                                 itemTitle = { recentCreatedStickersList[it].sticker.title },
                                 onItemClick = {
@@ -161,23 +167,35 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                 },
                             )
                         }
-                        item {
-                            DisplayTagsRow(
-                                title = stringResource(id = R.string.home_screen_recommend_tags),
-                                count = homeUiState.recommendTagsList.size,
-                                itemImage = { homeUiState.recommendTagsList[it].stickerUuid },
-                                itemTitle = { homeUiState.recommendTagsList[it].tag },
-                                onItemClick = {},
-                            )
-                        }
+//                        item {
+//                            val recommendTagsList = homeUiState.recommendTagsList
+//                            DisplayTagsRow(
+//                                title = stringResource(id = R.string.home_screen_recommend_tags),
+//                                count = recommendTagsList.size,
+//                                itemImage = { recommendTagsList[it].stickerUuid },
+//                                itemTitle = { recommendTagsList[it].tag },
+//                                onItemClick = {
+//                                    openStickersListScreen(
+//                                        navController = navController,
+//                                        query = recommendTagsList[it].tag,
+//                                    )
+//                                },
+//                            )
+//                        }
 
                         item {
+                            val randomTagsList = homeUiState.randomTagsList
                             DisplayTagsRow(
                                 title = stringResource(id = R.string.home_screen_random_tags),
-                                count = homeUiState.randomTagsList.size,
-                                itemImage = { homeUiState.randomTagsList[it].stickerUuid },
-                                itemTitle = { homeUiState.randomTagsList[it].tag },
-                                onItemClick = {},
+                                count = randomTagsList.size,
+                                itemImage = { randomTagsList[it].stickerUuid },
+                                itemTitle = { randomTagsList[it].tag },
+                                onItemClick = {
+                                    openStickersListScreen(
+                                        navController = navController,
+                                        query = randomTagsList[it].tag,
+                                    )
+                                },
                             )
                         }
                     }
@@ -185,37 +203,22 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             }
         }
 
-        uiEvent?.apply {
-            when (homeResultUiEvent) {
-                is HomeResultUiEvent.Success -> {
-                    snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = context.resources.getQuantityString(
-                            R.plurals.export_stickers_result,
-                            homeResultUiEvent.successCount,
-                            homeResultUiEvent.successCount
-                        ),
-                        key2 = homeResultUiEvent,
-                    )
-                }
+        when (val event = uiEvent) {
+            is HomeEvent.ExportStickers.Success -> snackbarHostState.showSnackbarWithLaunchedEffect(
+                message = context.resources.getQuantityString(
+                    R.plurals.export_stickers_result,
+                    event.successCount,
+                    event.successCount,
+                ),
+                key2 = uiEvent,
+            )
 
-                null -> Unit
-            }
+            HomeEvent.AddClickCount.Success,
+            is HomeEvent.DeleteStickerWithTags.Success,
+            null -> Unit
         }
 
-        loadUiIntent?.also { loadUiIntent ->
-            when (loadUiIntent) {
-                is LoadUiIntent.Error -> {
-                    snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = context.getString(R.string.failed_info, loadUiIntent.msg),
-                        key2 = loadUiIntent,
-                    )
-                }
-
-                is LoadUiIntent.Loading -> openWaitingDialog = loadUiIntent.isShow
-            }
-        }
-
-        WaitingDialog(visible = openWaitingDialog)
+        WaitingDialog(visible = uiState.loadingDialog)
     }
 }
 

@@ -4,7 +4,6 @@ import android.database.DatabaseUtils
 import android.net.Uri
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.skyd.rays.appContext
-import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.allSearchDomain
 import com.skyd.rays.ext.dataStore
@@ -24,56 +23,57 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class HomeRepository @Inject constructor(
     private val stickerDao: StickerDao,
     private val tagDao: TagDao
 ) : BaseRepository() {
-    suspend fun requestStickerWithTagsList(keyword: String): Flow<BaseData<List<StickerWithTags>>> {
+    suspend fun requestStickerWithTagsList(keyword: String): Flow<List<StickerWithTags>> {
         return flow {
-            emitBaseData(BaseData<List<StickerWithTags>>().apply {
-                code = 0
-                data = stickerDao.getStickerWithTagsList(genSql(keyword))
-            })
-        }
+            emit(stickerDao.getStickerWithTagsList(genSql(keyword)))
+        }.flowOn(Dispatchers.IO)
     }
 
     fun requestRecommendTags(): Flow<List<TagBean>> {
-        return tagDao.getRecommendTagsList(count = 20).distinctUntilChanged()
+        return tagDao.getRecommendTagsList(count = 10).distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     fun requestRandomTags(): Flow<List<TagBean>> {
-        return tagDao.getRandomTagsList(count = 20).distinctUntilChanged()
+        return tagDao.getRandomTagsList(count = 10).distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     fun requestRecentCreateStickers(): Flow<List<StickerWithTags>> {
-        return stickerDao.getRecentCreateStickersList(count = 20).distinctUntilChanged()
+        return stickerDao.getRecentCreateStickersList(count = 10)
+            .distinctUntilChanged()
+            .flowOn(Dispatchers.IO)
     }
 
-    suspend fun requestDeleteStickerWithTagsDetail(stickerUuids: List<String>): Flow<BaseData<Int>> {
+    fun requestMostSharedStickers(): Flow<List<StickerWithTags>> {
+        return stickerDao.getMostSharedStickersList(count = 10)
+            .distinctUntilChanged()
+            .flowOn(Dispatchers.IO)
+    }
+
+    suspend fun requestDeleteStickerWithTagsDetail(stickerUuids: List<String>): Flow<List<String>> {
         return flow {
-            emitBaseData(BaseData<Int>().apply {
-                code = 0
-                data = stickerDao.deleteStickerWithTags(stickerUuids)
-            })
-        }
+            stickerDao.deleteStickerWithTags(stickerUuids)
+            emit(stickerUuids)
+        }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun requestAddClickCount(stickerUuid: String, count: Int = 1): Flow<BaseData<Int>> {
+    suspend fun requestAddClickCount(stickerUuid: String, count: Int = 1): Flow<Int> {
         return flow {
-            emitBaseData(BaseData<Int>().apply {
-                code = 0
-                data = stickerDao.addClickCount(uuid = stickerUuid, count = count)
-            })
-        }
+            emit(stickerDao.addClickCount(uuid = stickerUuid, count = count))
+        }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun requestSearchBarPopularTags(count: Int): Flow<BaseData<List<Pair<String, Float>>>> {
+    suspend fun requestSearchBarPopularTags(count: Int): Flow<List<Pair<String, Float>>> {
         return flow {
             val popularStickersList = stickerDao.getPopularStickersList(count = count)
             val tagsMap: MutableMap<Pair<String, String>, Long> = mutableMapOf()
@@ -111,14 +111,11 @@ class HomeRepository @Inject constructor(
                 }
             }.distinctBy { it.first.first }
             val maxPopularValue = result.getOrNull(0)?.second ?: 1
-            emitBaseData(BaseData<List<Pair<String, Float>>>().apply {
-                code = 0
-                data = result.map { it.first.first to it.second.toFloat() / maxPopularValue }
-            })
-        }
+            emit(result.map { it.first.first to it.second.toFloat() / maxPopularValue })
+        }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun requestExportStickers(stickerUuids: List<String>): Flow<BaseData<Int>> {
+    suspend fun requestExportStickers(stickerUuids: List<String>): Flow<Int> {
         return flow {
             val exportStickerDir = appContext.dataStore.getOrDefault(ExportStickerDirPreference)
             check(exportStickerDir.isNotBlank()) { "exportStickerDir is null" }
@@ -132,11 +129,8 @@ class HomeRepository @Inject constructor(
                     it.printStackTrace()
                 }
             }
-            emitBaseData(BaseData<Int>().apply {
-                code = 0
-                data = successCount
-            })
-        }
+            emit(successCount)
+        }.flowOn(Dispatchers.IO)
     }
 
     companion object {

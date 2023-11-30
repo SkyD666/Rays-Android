@@ -89,6 +89,8 @@ private fun RaysSearchBarPreview() {
                     multiSelect = false,
                     onMultiSelectChanged = {},
                     onInvertSelectClick = {},
+                    onReverseStickerWithTagsList = {},
+                    onSortStickerWithTagsList = {},
                     selectedStickers = emptyList()
                 )
             }

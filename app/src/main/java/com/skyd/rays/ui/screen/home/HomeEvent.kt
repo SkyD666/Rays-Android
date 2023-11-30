@@ -1,44 +1,17 @@
 package com.skyd.rays.ui.screen.home
 
-import com.skyd.rays.base.IUiEvent
-import com.skyd.rays.base.PartialChange
+import com.skyd.rays.base.mvi.MviSingleEvent
 
-class HomeEvent(
-    val homeResultUiEvent: HomeResultUiEvent? = null,
-) : IUiEvent
-
-sealed class HomeResultUiEvent : PartialChange<HomeState> {
-    override fun reduce(oldState: HomeState): HomeState = when (this) {
-        is Success -> oldState
+sealed interface HomeEvent : MviSingleEvent {
+    sealed interface ExportStickers : HomeEvent {
+        class Success(val successCount: Int) : ExportStickers
     }
 
-    class Success(val successCount: Int) : HomeResultUiEvent()
-}
-
-sealed class DeleteStickerWithTagsResultUiEvent : PartialChange<HomeState> {
-    override fun reduce(oldState: HomeState): HomeState = when (this) {
-        is Success -> {
-            val searchResultUiState = oldState.searchResultUiState
-            if (searchResultUiState is SearchResultUiState.Success) {
-                oldState.copy(
-                    searchResultUiState = searchResultUiState.copy(
-                        stickerWithTagsList = searchResultUiState.stickerWithTagsList
-                            .filter { !stickerUuids.contains(it.sticker.uuid) }
-                    )
-                )
-            } else {
-                oldState
-            }
-        }
+    sealed interface DeleteStickerWithTags : HomeEvent {
+        class Success(val stickerUuids: List<String>) : DeleteStickerWithTags
     }
 
-    class Success(val stickerUuids: List<String>) : DeleteStickerWithTagsResultUiEvent()
-}
-
-sealed class AddClickCountResultUiEvent : PartialChange<HomeState> {
-    override fun reduce(oldState: HomeState): HomeState = when (this) {
-        Success -> oldState
+    sealed interface AddClickCount : HomeEvent {
+        data object Success : AddClickCount
     }
-
-    data object Success : AddClickCountResultUiEvent()
 }

@@ -1,243 +1,132 @@
 package com.skyd.rays.ui.screen.home
 
-import android.util.Log
+import androidx.lifecycle.viewModelScope
 import com.skyd.rays.appContext
-import com.skyd.rays.base.BaseData
-import com.skyd.rays.base.BaseViewModel
-import com.skyd.rays.base.IUIChange
-import com.skyd.rays.base.PartialChange
-import com.skyd.rays.base.ReqState
-import com.skyd.rays.config.refreshStickerData
+import com.skyd.rays.base.mvi.AbstractMviViewModel
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
+import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.StickerWithTags
-import com.skyd.rays.model.bean.TagBean
-import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.respository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
-
 @HiltViewModel
-class HomeViewModel @Inject constructor(private var homeRepo: HomeRepository) :
-    BaseViewModel<HomeState, HomeEvent, HomeIntent>() {
-    override fun initUiState(): HomeState {
-        return HomeState(
-            HomeUiState.Init,
-            SearchResultUiState.Init,
-            PopularTagsUiState.Init,
+class HomeViewModel @Inject constructor(
+    private val homeRepo: HomeRepository,
+) : AbstractMviViewModel<HomeIntent, HomeState, HomeEvent>() {
+
+    override val viewState: StateFlow<HomeState>
+
+    init {
+        val initialVS = HomeState.initial()
+
+        viewState = merge(
+            intentSharedFlow.filterIsInstance<HomeIntent.Initial>().take(1),
+            intentSharedFlow.filterNot { it is HomeIntent.Initial }
         )
+            .shareWhileSubscribed()
+            .toPartialStateChangeFlow()
+            .debugLog("PartialStateChange")
+            .sendSingleEvent()
+            .scan(initialVS) { vs, change -> change.reduce(vs) }
+            .debugLog("ViewState")
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                initialVS
+            )
     }
 
-    override fun IUIChange.checkStateOrEvent() = this as? HomeState? to this as? HomeEvent
+    private fun Flow<HomePartialStateChange>.sendSingleEvent(): Flow<HomePartialStateChange> {
+        return onEach { change ->
+            val event = when (change) {
+                HomePartialStateChange.AddClickCount.Success -> HomeEvent.AddClickCount.Success
+                is HomePartialStateChange.DeleteStickerWithTags.Success ->
+                    HomeEvent.DeleteStickerWithTags.Success(change.stickerUuids)
 
-    override fun Flow<HomeIntent>.handleIntent(): Flow<IUIChange> = merge(
-        doIsInstance<HomeIntent.GetStickerWithTagsList> { intent ->
-            homeRepo.requestStickerWithTagsList(intent.keyword)
-                .mapToUIChange { data ->
-                    copy(
-                        searchResultUiState = SearchResultUiState.Success(
-                            sortSearchResultList(data)
-                        )
-                    )
-                }
-                .defaultFinally()
-        },
+                is HomePartialStateChange.ExportStickers.Success ->
+                    HomeEvent.ExportStickers.Success(change.successCount)
 
-        doIsInstance<HomeIntent.GetHomeList> {
-            homeRepo.requestRecommendTags()
-                .combine(homeRepo.requestRandomTags()) { recommendTags, randomTags ->
-                    recommendTags to randomTags
-                }
-                .combine(homeRepo.requestRecentCreateStickers()) { other, recentCreateStickers ->
-                    Triple(other.first, other.second, recentCreateStickers)
-                }.map {
-                    BaseData<Triple<List<TagBean>, List<TagBean>, List<StickerWithTags>>>().apply {
-                        state = ReqState.Success
-                        data = it
-                    }
-                }
-                .mapToUIChange { data ->
-                    Log.e("TAG", "GetHomeList: ")
-                    copy(
-                        homeUiState = HomeUiState.Success(
-                            recommendTagsList = data.first,
-                            recentCreatedStickersList = data.third,
-                            randomTagsList = data.second
-                        )
-                    )
-                }.defaultFinally().onStart {
-                    Log.e("TAG", "GetHomeList: onStart")
-                }
-        },
-
-        doIsInstance<HomeIntent.DeleteStickerWithTags> { intent ->
-            homeRepo.requestDeleteStickerWithTagsDetail(intent.stickerUuids)
-                .mapToUIChange {
-                    if (searchResultUiState is SearchResultUiState.Success) {
-                        copy(
-                            searchResultUiState = searchResultUiState.copy(
-                                stickerWithTagsList = searchResultUiState.stickerWithTagsList
-                                    .filter { !intent.stickerUuids.contains(it.sticker.uuid) }
-                            )
-                        )
-                    } else {
-                        this
-                    }
-                }
-                .defaultFinally()
-                .onCompletion {
-                    refreshStickerData.tryEmit(Unit)
-                }
-        },
-
-        doIsInstance<HomeIntent.SortStickerWithTagsList> { intent ->
-            emptyFlow()
-                .mapToUIChange {
-                    copy(
-                        searchResultUiState = SearchResultUiState.Success(
-                            sortSearchResultList(intent.data)
-                        )
-                    )
-                }
-                .defaultFinally()
-        },
-
-        doIsInstance<HomeIntent.ReverseStickerWithTagsList> { intent ->
-            emptyFlow()
-                .mapToUIChange {
-                    copy(
-                        searchResultUiState = SearchResultUiState.Success(
-                            sortSearchResultList(intent.data)
-                        )
-                    )
-                }
-                .defaultFinally()
-        },
-
-        doIsInstance<HomeIntent.AddClickCount> { intent ->
-            homeRepo.requestAddClickCount(stickerUuid = intent.stickerUuid, count = intent.count)
-                .mapToUIChange { this }
-                .defaultFinally()
-        },
-
-        doIsInstance<HomeIntent.ExportStickers> { intent ->
-            homeRepo.requestExportStickers(intent.stickerUuids)
-                .mapToUIChange { data ->
-                    HomeEvent(homeResultUiEvent = HomeResultUiEvent.Success(data))
-                }
-                .defaultFinally()
-        },
-
-        doIsInstance<HomeIntent.GetSearchBarPopularTagsList> {
-            if (appContext.dataStore.getOrDefault(ShowPopularTagsPreference)) {
-                homeRepo.requestSearchBarPopularTags(count = 15)
-                    .mapToUIChange { data ->
-                        copy(popularTagsUiState = PopularTagsUiState.Success(data))
-                    }
-            } else {
-                emptyFlow()
-                    .mapToUIChange { this }
-                    .defaultFinally()
+                else -> return@onEach
             }
-        },
-    )
+            sendEvent(event)
+        }
+    }
 
-    override fun Flow<HomeIntent>.handleIntent2(): Flow<PartialChange<HomeState>> = merge(
-        doIsInstance2<HomeIntent.GetStickerWithTagsList> { intent ->
-            homeRepo.requestStickerWithTagsList(intent.keyword)
-                .mapToPartialChange { data ->
-                    SearchResultUiState.Success(sortSearchResultList(data))
-                }
-                .defaultFinally()
-        },
-
-        doIsInstance2<HomeIntent.GetHomeList> {
-            homeRepo.requestRecommendTags()
-                .combine(homeRepo.requestRandomTags()) { recommendTags, randomTags ->
-                    recommendTags to randomTags
-                }
-                .combine(homeRepo.requestRecentCreateStickers()) { other, recentCreateStickers ->
-                    Triple(other.first, other.second, recentCreateStickers)
-                }.map {
-                    BaseData<Triple<List<TagBean>, List<TagBean>, List<StickerWithTags>>>().apply {
-                        state = ReqState.Success
-                        data = it
-                    }
-                }
-                .mapToPartialChange { data ->
-                    HomeUiState.Success(
-                        recommendTagsList = data.first,
-                        recentCreatedStickersList = data.third,
-                        randomTagsList = data.second
+    private fun SharedFlow<HomeIntent>.toPartialStateChangeFlow(): Flow<HomePartialStateChange> {
+        return merge(
+            merge(
+                filterIsInstance<HomeIntent.Initial>(),
+                filterIsInstance<HomeIntent.RefreshHomeList>()
+            ).flatMapLatest {
+                combine(
+                    homeRepo.requestRecommendTags(),
+                    homeRepo.requestRandomTags(),
+                    homeRepo.requestRecentCreateStickers(),
+                    homeRepo.requestMostSharedStickers(),
+                ) { recommendTagsList, randomTagsList, recentCreatedStickersList, mostSharedStickersList ->
+                    HomePartialStateChange.HomeList.Success(
+                        recommendTagsList = recommendTagsList,
+                        randomTagsList = randomTagsList,
+                        recentCreatedStickersList = recentCreatedStickersList,
+                        mostSharedStickersList = mostSharedStickersList,
                     )
-                }.defaultFinally().onStart {
-                    Log.e("TAG", "GetHomeList: onStart")
-                }
-        },
+                }.startWith(HomePartialStateChange.HomeList.Loading)
+            },
 
-        doIsInstance2<HomeIntent.DeleteStickerWithTags> { intent ->
-            homeRepo.requestDeleteStickerWithTagsDetail(intent.stickerUuids)
-                .mapToPartialChange {
-                    DeleteStickerWithTagsResultUiEvent.Success(intent.stickerUuids)
-                }
-                .defaultFinally()
-                .onCompletion {
-                    refreshStickerData.tryEmit(Unit)
-                }
-        },
+            filterIsInstance<HomeIntent.GetSearchBarPopularTagsList>()
+                .flatMapConcat { homeRepo.requestSearchBarPopularTags(count = 20) }
+                .map { HomePartialStateChange.PopularTags.Success(it) }
+                .startWith(HomePartialStateChange.PopularTags.Loading),
 
-        doIsInstance2<HomeIntent.SortStickerWithTagsList> { intent ->
-            emptyFlow()
-                .mapToPartialChange {
-                    SearchResultUiState.Success(sortSearchResultList(intent.data))
-                }
-                .defaultFinally()
-        },
+            filterIsInstance<HomeIntent.GetStickerWithTagsList>()
+                .flatMapConcat { homeRepo.requestStickerWithTagsList(keyword = it.keyword) }
+                .map { HomePartialStateChange.SearchResult.Success(sortSearchResultList(it)) }
+                .startWith(HomePartialStateChange.SearchResult.Loading),
 
-        doIsInstance2<HomeIntent.ReverseStickerWithTagsList> { intent ->
-            emptyFlow()
-                .mapToPartialChange {
-                    SearchResultUiState.Success(sortSearchResultList(intent.data))
-                }
-                .defaultFinally()
-        },
+            filterIsInstance<HomeIntent.ExportStickers>()
+                .flatMapConcat { homeRepo.requestExportStickers(stickerUuids = it.stickerUuids) }
+                .map { HomePartialStateChange.ExportStickers.Success(it) }
+                .startWith(HomePartialStateChange.LoadingDialog),
 
-        doIsInstance2<HomeIntent.AddClickCount> { intent ->
-            homeRepo.requestAddClickCount(stickerUuid = intent.stickerUuid, count = intent.count)
-                .mapToPartialChange { AddClickCountResultUiEvent.Success }
-                .defaultFinally()
-        },
+            filterIsInstance<HomeIntent.DeleteStickerWithTags>()
+                .flatMapConcat { homeRepo.requestDeleteStickerWithTagsDetail(stickerUuids = it.stickerUuids) }
+                .map { HomePartialStateChange.DeleteStickerWithTags.Success(it) }
+                .startWith(HomePartialStateChange.LoadingDialog),
 
-        doIsInstance2<HomeIntent.ExportStickers> { intent ->
-            homeRepo.requestExportStickers(intent.stickerUuids)
-                .mapToPartialChange { data ->
-                    HomeResultUiEvent.Success(data)
-                }
-                .defaultFinally()
-        },
-
-        doIsInstance2<HomeIntent.GetSearchBarPopularTagsList> {
-            if (appContext.dataStore.getOrDefault(ShowPopularTagsPreference)) {
-                homeRepo.requestSearchBarPopularTags(count = 15)
-                    .mapToPartialChange { data ->
-                        PopularTagsUiState.Success(data)
-                    }
-            } else {
-                emptyFlow()
-                    .mapToPartialChange { PopularTagsUiState.Init }
-                    .defaultFinally()
+            merge(
+                filterIsInstance<HomeIntent.ReverseStickerWithTagsList>(),
+                filterIsInstance<HomeIntent.SortStickerWithTagsList>()
+            ).map {
+                val data = if (it is HomeIntent.ReverseStickerWithTagsList) it.data
+                else (it as HomeIntent.SortStickerWithTagsList).data
+                HomePartialStateChange.SearchResult.Success(sortSearchResultList(data))
             }
-        },
-    )
+                .startWith(HomePartialStateChange.LoadingDialog),
+
+            filterIsInstance<HomeIntent.AddClickCount>()
+                .flatMapConcat { homeRepo.requestAddClickCount(stickerUuid = it.stickerUuid) }
+                .map { HomePartialStateChange.AddClickCount.Success },
+        )
+    }
 
     private fun sortSearchResultList(
         unsortedUnreversedData: List<StickerWithTags>,

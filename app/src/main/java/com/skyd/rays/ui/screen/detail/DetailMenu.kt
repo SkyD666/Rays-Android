@@ -35,6 +35,22 @@ fun DetailMenu(
     ) {
         DropdownMenuItem(
             enabled = stickerMenuItemEnabled,
+            text = { Text(stringResource(R.string.detail_screen_sticker_scale)) },
+            onClick = {
+                onDismissRequest()
+                onStickerScaleClick()
+            },
+            leadingIcon = { Icon(Icons.Default.AspectRatio, contentDescription = null) },
+            trailingIcon = {
+                RaysIconButton(
+                    onClick = { openBrowser(IMAGE_CONTENT_SCALE_HELP_URL) },
+                    imageVector = Icons.AutoMirrored.Default.Help,
+                )
+            }
+        )
+        HorizontalDivider()
+        DropdownMenuItem(
+            enabled = stickerMenuItemEnabled,
             text = { Text(stringResource(R.string.home_screen_delete)) },
             onClick = {
                 onDismissRequest()
@@ -59,22 +75,6 @@ fun DetailMenu(
                 onStickerInfoClick()
             },
             leadingIcon = { Icon(Icons.Default.Info, contentDescription = null) }
-        )
-        HorizontalDivider()
-        DropdownMenuItem(
-            enabled = stickerMenuItemEnabled,
-            text = { Text(stringResource(R.string.detail_screen_sticker_scale)) },
-            onClick = {
-                onDismissRequest()
-                onStickerScaleClick()
-            },
-            leadingIcon = { Icon(Icons.Default.AspectRatio, contentDescription = null) },
-            trailingIcon = {
-                RaysIconButton(
-                    onClick = { openBrowser(IMAGE_CONTENT_SCALE_HELP_URL) },
-                    imageVector = Icons.AutoMirrored.Default.Help,
-                )
-            }
         )
     }
 }

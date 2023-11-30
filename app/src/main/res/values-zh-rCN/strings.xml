@@ -297,4 +297,6 @@
     <string name="home_screen_recommend_tags">推荐标签</string>
     <string name="home_screen_random_tags">随机标签</string>
     <string name="home_screen_recent_create_stickers">最近创建</string>
+    <string name="home_screen_most_shared_stickers">最多分享</string>
+    <string name="stickers_list_screen_name">表情包列表</string>
 </resources>

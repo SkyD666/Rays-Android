@@ -57,7 +57,7 @@ class SearchStickersStrategy : IApiStrategy {
         val requestPackage = data.getStringExtra("requestPackage")
         val result = hiltEntryPoint.homeRepository()
             .requestStickerWithTagsList(data.getStringExtra("keyword").orEmpty())
-            .first().data.orEmpty()
+            .first()
             .map {
                 val uri = FileProvider.getUriForFile(
                     appContext,

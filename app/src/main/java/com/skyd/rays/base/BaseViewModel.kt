@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : IUiIntent> :
     ViewModel() {
 
-    private val _uiIntentFlow: MutableSharedFlow<UiIntent> = MutableSharedFlow()
+    private val _uiIntentFlow: MutableSharedFlow<UiIntent> = MutableSharedFlow(extraBufferCapacity = 10)
 
     protected abstract fun initUiState(): UiState
 
@@ -37,7 +37,6 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
      * 若 IUIChange 是 Event，则发送出去，不纳入 UiState
      */
     private fun Flow<IUIChange>.sendEvent(): Flow<UiState> = transform { value ->
-        Log.e("TAG", "sendEvent: $value")
         val (state, event) = value.checkStateOrEvent()
         if (event != null) {
             uiEventChannel.send(event)      // 此时 state 为 null
@@ -65,7 +64,9 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
             if (uiIntent.showLoading) {
                 sendLoadUiIntent(LoadUiIntent.Loading(true))
             }
+            Log.e("TAG", "bf sendUiIntent: $uiIntent", )
             _uiIntentFlow.emit(uiIntent)
+            Log.e("TAG", "sendUiIntent: $uiIntent", )
         }
     }
 
@@ -199,10 +200,10 @@ abstract class BaseViewModel<UiState : IUiState, UiEvent : IUiEvent, UiIntent : 
         .flowOn(Dispatchers.IO)
         .stateIn(viewModelScope, SharingStarted.Eagerly, initUiState())
 
-    val uiStateFlow2: StateFlow<UiState> = _uiIntentFlow
-        .handleIntent2()
-        .scan(initUiState()) { oldState, partialChange -> partialChange.reduce(oldState) }
-        .sendEvent()
-        .flowOn(Dispatchers.IO)
-        .stateIn(viewModelScope, SharingStarted.Eagerly, initUiState())
+//    val uiStateFlow2: StateFlow<UiState> = _uiIntentFlow
+//        .handleIntent2()
+//        .scan(initUiState()) { oldState, partialChange -> partialChange.reduce(oldState) }
+//        .sendEvent()
+//        .flowOn(Dispatchers.IO)
+//        .stateIn(viewModelScope, SharingStarted.Eagerly, initUiState())
 }

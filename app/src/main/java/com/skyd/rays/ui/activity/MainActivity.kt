@@ -94,6 +94,8 @@ import com.skyd.rays.ui.screen.settings.shareconfig.autoshare.AUTO_SHARE_SCREEN_
 import com.skyd.rays.ui.screen.settings.shareconfig.autoshare.AutoShareScreen
 import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.URI_STRING_SHARE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.UriStringShareScreen
+import com.skyd.rays.ui.screen.stickerslist.STICKERS_LIST_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.stickerslist.StickersListScreen
 import com.skyd.rays.ui.theme.RaysTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -264,6 +266,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = "$DETAIL_SCREEN_ROUTE?stickerUuid={stickerUuid}") {
                     DetailScreen(stickerUuid = it.arguments?.getString("stickerUuid").orEmpty())
+                }
+                composable(route = "$STICKERS_LIST_SCREEN_ROUTE?query={query}") {
+                    StickersListScreen(query = it.arguments?.getString("query").orEmpty())
                 }
             }
 
