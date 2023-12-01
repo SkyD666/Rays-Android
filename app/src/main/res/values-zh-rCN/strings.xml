@@ -155,7 +155,6 @@
     <string name="add_screen_update_sticker">选择新表情包</string>
     <string name="import_export_screen_name">导入与导出</string>
     <string name="send_sticker">发送表情包</string>
-    <string name="home_screen_open_menu">显示菜单</string>
     <string name="about_screen_other_works_raca_description">一个在本地记录、查找抽象段落/评论区小作文的工具。🤗 您还在为记不住小作文内容，面临前面、中间、后面都忘了的尴尬处境吗？使用这款工具将帮助您记录您所遇到的小作文，再也不因为忘记而烦恼！😋</string>
     <string name="about_screen_other_works_night_screen_description">当您在夜间🌙使用手机时，Night Screen 可以帮助您减少屏幕亮度，减少对眼睛的伤害。</string>
     <string name="about_screen_other_works">其他作品</string>
@@ -170,7 +169,6 @@
     <string name="classification_model_screen_default">默认</string>
     <string name="classification_model_screen_select">选择外部模型</string>
     <string name="classification_model_screen_select_description">选择外部模型文件 (.tflite 或 .lite)</string>
-    <string name="home_screen_clear_current_sicker">清空主屏幕</string>
     <string name="appearance_screen_style_category">样式</string>
     <string name="search_style_screen_name">搜索样式</string>
     <string name="detail_screen_sticker_scale">显示比例</string>
@@ -192,9 +190,6 @@
     <string name="search_result_multi_select">多选</string>
     <string name="search_result_invert_selection">反选</string>
     <string name="home_screen_search_result_list_to_top">到顶部</string>
-    <string name="home_style_screen_share_button_alignment">分享按钮位置</string>
-    <string name="home_style_screen_share_button_alignment_horiz">水平</string>
-    <string name="home_style_screen_share_button_alignment_vert">竖直</string>
     <string name="webdav_screen_progress_upload_data_sticker">更新远端数据 + 表情包</string>
     <string name="webdav_screen_progress_logical_delete_remote">移动到远端回收站</string>
     <string name="webdav_screen_progress_upload_data">更新远端数据</string>

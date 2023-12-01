@@ -16,7 +16,7 @@
     <string name="about_screen_description_3">Rays utiliza a arquitetura MVI e adota totalmente o estilo de design Material You. Todas as páginas são desenvolvidas usando Jetpack Compose.</string>
     <string name="appearance_screen_sticker_color_theme">Tema de cor do sticker</string>
     <string name="home_screen_delete_warning">Excluir? A operação é irreversível!</string>
-    <string name="home_screen_copied">Copiado</string>
+    <string name="detail_screen_copied">Copiado</string>
     <string name="import_files_screen_progress_saving_data">Salvando dados…</string>
     <string name="import_files_screen_successful">Importação bem-sucedida</string>
     <string name="failed_info">Falha: %s</string>
@@ -32,7 +32,7 @@
     <string name="about_screen_description_1">Uma ferramenta para gravar, pesquisar e gerenciar stickers no seu telefone.</string>
     <string name="appearance_screen_dark_mode_description">Defina a estratégia do modo escuro</string>
     <string name="import_files_screen_description">Importe stickers, tags e outras informações dos arquivos locais</string>
-    <string name="home_screen_copy">Copiar</string>
+    <string name="detail_screen_copy">Copiar</string>
     <string name="appearance_screen_name">Aparência e estilo</string>
     <string name="add_screen_add_tags">Adicionar tags (opcional)</string>
     <string name="import_export_screen_using_cloud_category">Via cloud</string>
@@ -45,7 +45,7 @@
     <string name="search_config_screen_domain_category">Domínio de pesquisa (pesquisar todos quando não selecionado)</string>
     <string name="home_screen_export">Exportar</string>
     <string name="dark_mode_light">Modo claro</string>
-    <string name="home_screen_edit">Editar</string>
+    <string name="detail_screen_edit">Editar</string>
     <string name="about">Sobre</string>
     <string name="home_screen_close_search">Fechar</string>
     <string name="import_files_screen_progress_unzipping">Descompactando: %s</string>

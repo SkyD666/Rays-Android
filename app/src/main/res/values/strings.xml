@@ -5,7 +5,6 @@
     <string name="home_screen_name">Home</string>
     <string name="home_screen_search_hint">Search</string>
     <string name="home_screen_add">Add</string>
-    <string name="search_screen_name">Search</string>
     <string name="add_screen_save_current_sticker">Save current sticker</string>
     <string name="add_screen_title">Title (Optional)</string>
     <string name="add_screen_add_tags">Add tags (Optional)</string>
@@ -161,7 +160,6 @@
     <string name="add_screen_update_sticker">Select a new sticker</string>
     <string name="import_export_screen_name">Sync data</string>
     <string name="send_sticker">Send sticker</string>
-    <string name="home_screen_open_menu">Show menu</string>
     <string name="about_screen_other_works_raca_name" translatable="false">Raca (Record All Classic Articles)</string>
     <string name="about_screen_other_works_raca_description">A tool to record and search abstract passages and mini-essays in the comments section locally. 🤗 Are you still having trouble remembering the content of your mini-essay and facing the embarrassing situation of forgetting the front, middle and back? Using this tool will help you record the mini-essays you come across and never worry about forgetting them again! 😋</string>
     <string name="about_screen_other_works_night_screen_name" translatable="false">Night Screen</string>
@@ -179,7 +177,6 @@
     <string name="classification_model_screen_select">Select external model</string>
     <string name="classification_model_screen_select_description">Select an external model file (.tflite or .lite)</string>
     <string name="classification_model_screen_default_name" translatable="false">EfficientNet-Lite2</string>
-    <string name="home_screen_clear_current_sicker">Clear screen</string>
     <string name="appearance_screen_style_category">Style</string>
     <string name="search_style_screen_name">Search screen style</string>
     <string name="detail_screen_sticker_scale">Sticker scale</string>
@@ -201,9 +198,6 @@
     <string name="search_result_multi_select">Select</string>
     <string name="search_result_invert_selection">Invert</string>
     <string name="home_screen_search_result_list_to_top">To the top</string>
-    <string name="home_style_screen_share_button_alignment">Share button position</string>
-    <string name="home_style_screen_share_button_alignment_horiz">Horizontal</string>
-    <string name="home_style_screen_share_button_alignment_vert">Vertical</string>
     <string name="webdav_screen_progress_upload_data_sticker">Updating remote data + sticker</string>
     <string name="webdav_screen_progress_logical_delete_remote">Moving to remote recycle bin</string>
     <string name="webdav_screen_progress_upload_data">Updating remote data</string>
