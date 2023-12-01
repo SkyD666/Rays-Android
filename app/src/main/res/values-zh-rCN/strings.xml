@@ -5,7 +5,6 @@
     <string name="home_screen_name">首页</string>
     <string name="home_screen_search_hint">输入关键词搜索</string>
     <string name="home_screen_add">添加</string>
-    <string name="search_screen_name">搜索</string>
     <string name="add_screen_save_current_sticker">保存当前项</string>
     <string name="add_screen_title">标题（可选）</string>
     <string name="add_screen_add_tags">添加标签（可选）</string>
