@@ -37,6 +37,9 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -75,13 +78,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.skyd.rays.R
-import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.ext.dateTime
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
+import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.StickerScalePreference
@@ -94,7 +97,6 @@ import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.ExportDialog
 import com.skyd.rays.ui.component.dialog.RaysDialog
-import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalWindowSizeClass
@@ -102,6 +104,12 @@ import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.util.copyStickerToClipboard
 import com.skyd.rays.util.sendStickerByUuid
 import com.skyd.rays.util.stickerUuidToUri
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 
 const val DETAIL_SCREEN_ROUTE = "detailScreen"
 
@@ -125,21 +133,29 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var openMenu by rememberSaveable { mutableStateOf(false) }
-    var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
     var openDeleteWarningDialog by rememberSaveable { mutableStateOf(false) }
     var openExportPathDialog by rememberSaveable { mutableStateOf(false) }
     var openStickerInfoDialog by rememberSaveable { mutableStateOf(false) }
     var openStickerScaleSheet by rememberSaveable { mutableStateOf(false) }
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
-    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
     val mainCardScrollState = rememberScrollState()
     val windowSizeClass = LocalWindowSizeClass.current
     var fabHeight by remember { mutableStateOf(0.dp) }
 
-    LaunchedEffect(stickerUuid) {
-        if (stickerUuid.isNotBlank()) {
-            viewModel.sendUiIntent(DetailIntent.GetStickerDetails(stickerUuid))
+    val intentChannel = remember { Channel<DetailIntent>(Channel.UNLIMITED) }
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Main.immediate) {
+            intentChannel
+                .consumeAsFlow()
+                .startWith(DetailIntent.RefreshStickerDetails(stickerUuid))
+                .onEach(viewModel::processIntent)
+                .collect()
+        }
+    }
+    val dispatch = remember {
+        { intent: DetailIntent ->
+            intentChannel.trySend(intent).getOrThrow()
         }
     }
 
@@ -174,9 +190,9 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                             context.sendStickerByUuid(
                                 uuid = stickerUuid,
                                 onSuccess = {
-                                    val stickerDetailUiState = uiState.stickerDetailUiState
-                                    if (stickerDetailUiState is StickerDetailUiState.Success) {
-                                        stickerDetailUiState.stickerWithTags.sticker.clickCount++
+                                    val stickerDetailState = uiState.stickerDetailState
+                                    if (stickerDetailState is StickerDetailState.Success) {
+                                        stickerDetailState.stickerWithTags.sticker.clickCount++
                                     }
                                 }
                             )
@@ -200,7 +216,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                     )
                     DetailMenu(
                         expanded = openMenu,
-                        stickerMenuItemEnabled = uiState.stickerDetailUiState !is StickerDetailUiState.Empty,
+                        stickerMenuItemEnabled = uiState.stickerDetailState !is StickerDetailState.Init,
                         onDismissRequest = { openMenu = false },
                         onDeleteClick = { openDeleteWarningDialog = true },
                         onExportClick = { openExportPathDialog = true },
@@ -211,86 +227,91 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
             )
         }
     ) { paddingValues ->
-        Row(
+        val pullRefreshState = rememberPullRefreshState(
+            refreshing = uiState.stickerDetailState.loading,
+            onRefresh = {
+                dispatch(DetailIntent.RefreshStickerDetails(stickerUuid))
+            },
+        )
+        Box(
             modifier = Modifier
                 .padding(paddingValues)
-                .fillMaxSize()
+                .pullRefresh(pullRefreshState)
         ) {
-            val stickerDetailUiState = uiState.stickerDetailUiState
-            val showStickerDetailInfo = !windowSizeClass.isCompact &&
-                    stickerDetailUiState is StickerDetailUiState.Success
+            Row(modifier = Modifier.fillMaxSize()) {
+                val stickerDetailUiState = uiState.stickerDetailState
+                val showStickerDetailInfo = !windowSizeClass.isCompact &&
+                        stickerDetailUiState is StickerDetailState.Success
 
-            Column(modifier = Modifier.weight(1f)) {
-                when (stickerDetailUiState) {
-                    is StickerDetailUiState.Empty -> {
-                        DetailScreenEmptyPlaceholder()
-                    }
 
-                    is StickerDetailUiState.Success -> {
-                        val stickerWithTags = stickerDetailUiState.stickerWithTags
-                        MainCard(
-                            stickerWithTags = stickerWithTags,
-                            scrollState = mainCardScrollState,
-                            bottomPadding = if (windowSizeClass.isCompact) fabHeight else 0.dp,
-                        )
-                        RaysDialog(
-                            visible = openStickerInfoDialog,
-                            title = { Text(text = stringResource(id = R.string.detail_screen_sticker_info)) },
-                            text = { StickerDetailInfo(stickerWithTags = stickerWithTags) },
-                            confirmButton = {
-                                TextButton(onClick = { openStickerInfoDialog = false }) {
-                                    Text(text = stringResource(id = R.string.dialog_ok))
-                                }
-                            },
-                            onDismissRequest = { openStickerInfoDialog = false }
-                        )
+                Column(modifier = Modifier.weight(1f)) {
+                    when (stickerDetailUiState) {
+                        is StickerDetailState.Init -> DetailScreenEmptyPlaceholder()
+
+                        is StickerDetailState.Success -> {
+                            val stickerWithTags = stickerDetailUiState.stickerWithTags
+                            MainCard(
+                                stickerWithTags = stickerWithTags,
+                                scrollState = mainCardScrollState,
+                                bottomPadding = if (windowSizeClass.isCompact) fabHeight else 0.dp,
+                            )
+                            RaysDialog(
+                                visible = openStickerInfoDialog,
+                                title = { Text(text = stringResource(id = R.string.detail_screen_sticker_info)) },
+                                text = { StickerDetailInfo(stickerWithTags = stickerWithTags) },
+                                confirmButton = {
+                                    TextButton(onClick = { openStickerInfoDialog = false }) {
+                                        Text(text = stringResource(id = R.string.dialog_ok))
+                                    }
+                                },
+                                onDismissRequest = { openStickerInfoDialog = false }
+                            )
+                        }
                     }
                 }
+                StickerDetailInfoCard(
+                    visible = showStickerDetailInfo,
+                    modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .padding(end = 16.dp, top = 16.dp, bottom = 16.dp + fabHeight),
+                    stickerWithTags = {
+                        (stickerDetailUiState as StickerDetailState.Success).stickerWithTags
+                    },
+                )
             }
-            StickerDetailInfoCard(
-                visible = showStickerDetailInfo,
-                modifier = Modifier
-                    .fillMaxWidth(0.4f)
-                    .padding(end = 16.dp, top = 16.dp, bottom = 16.dp + fabHeight),
-                stickerWithTags = {
-                    (stickerDetailUiState as StickerDetailUiState.Success).stickerWithTags
-                }
+            PullRefreshIndicator(
+                refreshing = uiState.stickerDetailState.loading,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
             )
-
         }
 
-        uiEvent?.apply {
-            when (detailResultUiEvent) {
-                is DetailResultUiEvent.Success -> {
-                    snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = context.resources.getQuantityString(
-                            R.plurals.export_stickers_result,
-                            detailResultUiEvent.successCount,
-                            detailResultUiEvent.successCount
-                        ),
-                        key2 = detailResultUiEvent,
-                    )
-                }
+        when (uiEvent) {
+            is DetailEvent.DeleteResult.Success -> navController.popBackStackWithLifecycle()
 
-                DeleteResultUiEvent.Success -> navController.popBackStackWithLifecycle()
-                null -> Unit
+            DetailEvent.ExportResult.Success -> {
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    message = context.getString(R.string.export_sticker_success),
+                    key2 = uiEvent,
+                )
             }
-        }
 
-        loadUiIntent?.also { loadUiIntent ->
-            when (loadUiIntent) {
-                is LoadUiIntent.Error -> {
-                    snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = context.getString(R.string.failed_info, loadUiIntent.msg),
-                        key2 = loadUiIntent,
-                    )
-                }
-
-                is LoadUiIntent.Loading -> openWaitingDialog = loadUiIntent.isShow
+            DetailEvent.ExportResult.Failed -> {
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    message = context.getString(R.string.export_sticker_failed),
+                    key2 = uiEvent,
+                )
             }
-        }
 
-        WaitingDialog(visible = openWaitingDialog)
+            DetailEvent.DeleteResult.Failed -> {
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    message = context.getString(R.string.delete_sticker_failed),
+                    key2 = uiEvent,
+                )
+            }
+
+            null -> Unit
+        }
 
         DeleteWarningDialog(
             visible = openDeleteWarningDialog,
@@ -298,14 +319,14 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
             onDismiss = { openDeleteWarningDialog = false },
             onConfirm = {
                 openDeleteWarningDialog = false
-                viewModel.sendUiIntent(DetailIntent.DeleteStickerWithTags(listOf(stickerUuid)))
+                dispatch(DetailIntent.DeleteStickerWithTags(stickerUuid))
             }
         )
 
         ExportDialog(
             visible = openExportPathDialog,
             onDismissRequest = { openExportPathDialog = false },
-            onExport = { viewModel.sendUiIntent(DetailIntent.ExportStickers(listOf(stickerUuid))) },
+            onExport = { dispatch(DetailIntent.ExportStickers(stickerUuid)) },
         )
 
         if (openStickerScaleSheet) {

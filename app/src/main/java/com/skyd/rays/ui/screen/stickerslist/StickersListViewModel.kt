@@ -65,12 +65,13 @@ class StickersListViewModel @Inject constructor(
             merge(
                 filterIsInstance<StickersListIntent.Initial>(),
                 filterIsInstance<StickersListIntent.RefreshStickersList>()
-            ).flatMapConcat {
-                val keyword = if (it is StickersListIntent.RefreshStickersList) it.query else ""
-                homeRepo.requestStickerWithTagsList(keyword = keyword)
-            }.map {
-                StickersListPartialStateChange.StickersList.Success(stickerWithTagsList = it)
-            }.startWith(StickersListPartialStateChange.StickersList.Loading),
+            ).flatMapConcat { intent ->
+                val keyword = if (intent is StickersListIntent.RefreshStickersList) intent.query
+                else ""
+                homeRepo.requestStickerWithTagsList(keyword = keyword).map {
+                    StickersListPartialStateChange.StickersList.Success(stickerWithTagsList = it)
+                }.startWith(StickersListPartialStateChange.StickersList.Loading)
+            },
 
             filterIsInstance<StickersListIntent.AddClickCount>()
                 .flatMapConcat { homeRepo.requestAddClickCount(stickerUuid = it.stickerUuid) }

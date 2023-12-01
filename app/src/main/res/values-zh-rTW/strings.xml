@@ -89,14 +89,15 @@
     <string name="image_scale_fill_height">填滿高度</string>
     <string name="webdav_screen_waiting">請等待…</string>
     <string name="selfie_segmentation_screen_segment">分割</string>
-    <string name="home_style_screen_share_button_alignment_horiz">水平</string>
     <string name="search_config_screen_intersect_search_by_space_description">使用空格分割多個關鍵字，以實現「且」條件</string>
+    <string name="delete_sticker_failed">刪除失敗</string>
+    <string name="export_sticker_success">匯出成功</string>
+    <string name="export_sticker_failed">匯出失敗</string>
     <string name="export_files_screen_progress_exporting">正在匯出…</string>
     <plurals name="webdav_screen_download_success">
         <item quantity="other">拉取成功，花費 %1$.2f 秒，更新 %2$d 張表情包</item>
     </plurals>
     <string name="export_files_screen_description">匯出表情包、標籤等至本地文件</string>
-    <string name="home_style_screen_share_button_alignment_vert">垂直</string>
     <string name="import_export_screen_name">導入與匯出</string>
     <string name="appearance_screen_dark_mode">深色模式</string>
     <string name="search_config_screen_use_regex">正則表達式</string>
@@ -121,7 +122,6 @@
     <string name="webdav_screen_clear_remote_recycle_bin">清空回收站</string>
     <string name="home_screen_select_export_folder_tip">請選擇一個匯出文件夾</string>
     <string name="export_files_screen_name">匯出至檔案</string>
-    <string name="home_screen_open_menu">顯示菜單</string>
     <string name="import_export_screen_using_cloud_category">透過雲端</string>
     <string name="style_transfer_screen_select_style_image">選擇風格圖片</string>
     <string name="auto_share_screen_accessibility_granted">現在已經授予無障礙權限</string>
@@ -158,7 +158,6 @@
     <string name="api_grant_screen_name">API 授權</string>
     <string name="webdav_screen_remote_recycle_bin_tip">遠端回收站中的內容是邏輯上已刪除的表情包。對遠端回收站的操作僅會影響遠端內容，不會修改本地內容。</string>
     <string name="classification_model_screen_name">分類模型</string>
-    <string name="home_style_screen_share_button_alignment">分享按鈕位置</string>
     <string name="paste">貼上</string>
     <string name="search_result_invert_selection">反選</string>
     <string name="add_screen_sticker_is_not_set">表情包圖片未設定！</string>
@@ -192,7 +191,6 @@
     <string name="sponsor_afadian">愛發電</string>
     <string name="auto_share_screen_ignore_input_dialog_title">忽略策略正則表達式</string>
     <string name="image_scale_fit">適應</string>
-    <string name="home_screen_clear_current_sicker">清空首頁</string>
     <string name="import_files_screen_progress_unzipping">解壓縮中：%s</string>
     <string name="cancel">取消</string>
     <string name="webdav_screen_download_description">從遠端拉取數據</string>

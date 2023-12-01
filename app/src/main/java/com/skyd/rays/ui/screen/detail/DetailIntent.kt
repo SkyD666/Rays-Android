@@ -1,11 +1,9 @@
 package com.skyd.rays.ui.screen.detail
 
-import com.skyd.rays.base.IUiIntent
+import com.skyd.rays.base.mvi.MviIntent
 
-sealed class DetailIntent : IUiIntent {
-    data class GetStickerDetails(val stickerUuid: String) : DetailIntent()
-
-    data class DeleteStickerWithTags(val stickerUuids: List<String>) : DetailIntent()
-
-    data class ExportStickers(val stickerUuids: List<String>) : DetailIntent()
+sealed interface DetailIntent : MviIntent {
+    data class RefreshStickerDetails(val stickerUuid: String) : DetailIntent
+    data class DeleteStickerWithTags(val stickerUuid: String) : DetailIntent
+    data class ExportStickers(val stickerUuid: String) : DetailIntent
 }

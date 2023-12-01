@@ -14,11 +14,11 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.Segmentation
 import com.google.mlkit.vision.segmentation.selfie.SelfieSegmenterOptions
 import com.skyd.rays.appContext
-import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.ext.cropTransparency
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
@@ -36,8 +36,8 @@ class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
         foregroundRotation: Float,
         foregroundSize: IntSize,
         borderSize: IntSize,
-    ): Flow<BaseData<Bitmap>> {
-        return flow {
+    ): Flow<Bitmap> {
+        return flowOnIo {
             // 在Compose里显示的大小和真实Bitmap大小的比率
             val foregroundRatio = foregroundSize.width.toFloat() / foregroundBitmap.width
             val backgroundRatio: Float
@@ -84,15 +84,12 @@ class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
                 matrix,
                 Paint(Paint.FILTER_BITMAP_FLAG).apply { isAntiAlias = true }
             )
-            emitBaseData(BaseData<Bitmap>().apply {
-                code = 0
-                data = underlayBitmap
-            })
+            emit(underlayBitmap)
         }
     }
 
-    suspend fun requestSelfieSegment(foregroundUri: Uri): Flow<BaseData<Pair<Bitmap, Long>>> {
-        return flow {
+    suspend fun requestSelfieSegment(foregroundUri: Uri): Flow<Bitmap> {
+        return flowOnIo {
             emit(suspendCancellableCoroutine { cont ->
                 val options = SelfieSegmenterOptions.Builder()
                     .setDetectorMode(SelfieSegmenterOptions.SINGLE_IMAGE_MODE)
@@ -130,10 +127,7 @@ class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
                     }
                 }
             }
-            checkBaseData(BaseData<Pair<Bitmap, Long>>().apply {
-                code = 0
-                data = (foregroundBitmap.cropTransparency() ?: foregroundBitmap) to 0L
-            })
-        }
+            foregroundBitmap.cropTransparency() ?: foregroundBitmap
+        }.flowOn(Dispatchers.IO)
     }
 }

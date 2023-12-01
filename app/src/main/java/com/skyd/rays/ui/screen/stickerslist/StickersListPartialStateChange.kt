@@ -5,11 +5,6 @@ import com.skyd.rays.model.bean.StickerWithTags
 internal sealed interface StickersListPartialStateChange {
     fun reduce(oldState: StickersListState): StickersListState
 
-    data object LoadingDialog : StickersListPartialStateChange {
-        override fun reduce(oldState: StickersListState): StickersListState =
-            oldState.copy(loadingDialog = true)
-    }
-
     sealed interface StickersList : StickersListPartialStateChange {
         override fun reduce(oldState: StickersListState): StickersListState {
             return when (this) {

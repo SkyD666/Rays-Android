@@ -1,13 +1,21 @@
 package com.skyd.rays.ui.screen.minitool.selfiesegmentation
 
 import android.graphics.Bitmap
-import com.skyd.rays.base.IUiState
+import com.skyd.rays.base.mvi.MviViewState
 
 data class SelfieSegmentationState(
-    val selfieSegmentationResultUiState: SelfieSegmentationResultUiState,
-) : IUiState
+    val selfieSegmentationResultState: SelfieSegmentationResultState,
+    val loadingDialog: Boolean,
+) : MviViewState {
+    companion object {
+        fun initial() = SelfieSegmentationState(
+            selfieSegmentationResultState = SelfieSegmentationResultState.Init,
+            loadingDialog = false,
+        )
+    }
+}
 
-sealed class SelfieSegmentationResultUiState {
-    data object Init : SelfieSegmentationResultUiState()
-    data class Success(val image: Bitmap) : SelfieSegmentationResultUiState()
+sealed class SelfieSegmentationResultState {
+    data object Init : SelfieSegmentationResultState()
+    data class Success(val image: Bitmap) : SelfieSegmentationResultState()
 }

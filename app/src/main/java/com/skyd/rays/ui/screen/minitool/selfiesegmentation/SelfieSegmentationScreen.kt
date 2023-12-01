@@ -2,6 +2,7 @@ package com.skyd.rays.ui.screen.minitool.selfiesegmentation
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -65,10 +66,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.base.LoadUiIntent
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbar
+import com.skyd.rays.ext.startWith
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysIconButtonStyle
@@ -79,6 +80,12 @@ import com.skyd.rays.ui.component.shape.CloverShape
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.sendSticker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 
 const val SELFIE_SEGMENTATION_SCREEN_ROUTE = "selfieSegmentationScreen"
 
@@ -87,10 +94,8 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    var openWaitingDialog by remember { mutableStateOf(false) }
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
-    val loadUiIntentFlow by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
     var selfieUri by rememberSaveable { mutableStateOf<Uri?>(null) }
     val pickSelfieLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
@@ -101,6 +106,22 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
     ) { if (it != null) backgroundUri = it }
     val lazyListState = rememberLazyListState()
     var fabHeight by remember { mutableStateOf(0.dp) }
+
+    val intentChannel = remember { Channel<SelfieSegmentationIntent>(Channel.UNLIMITED) }
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Main.immediate) {
+            intentChannel
+                .consumeAsFlow()
+                .startWith(SelfieSegmentationIntent.Initial)
+                .onEach(viewModel::processIntent)
+                .collect()
+        }
+    }
+    val dispatch = remember {
+        { intent: SelfieSegmentationIntent ->
+            intentChannel.trySend(intent).getOrThrow()
+        }
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -117,9 +138,7 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
                         )
                         return@RaysExtendedFloatingActionButton
                     }
-                    viewModel.sendUiIntent(
-                        SelfieSegmentationIntent.Segment(foregroundUri = foreground)
-                    )
+                    dispatch(SelfieSegmentationIntent.Segment(foregroundUri = foreground))
                 },
                 onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
                 contentDescription = stringResource(R.string.selfie_segmentation_screen_segment)
@@ -140,15 +159,15 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
                     onSelectBackgroundImage = { pickBackgroundLauncher.launch("image/*") },
                     onRemoveBackgroundImage = { backgroundUri = null }
                 )
-                val selfieSegmentationResultUiState = uiState.selfieSegmentationResultUiState
-                if (selfieSegmentationResultUiState is SelfieSegmentationResultUiState.Success) {
+                val selfieSegmentationResultState = uiState.selfieSegmentationResultState
+                if (selfieSegmentationResultState is SelfieSegmentationResultState.Success) {
                     ResultArea(
-                        bitmap = selfieSegmentationResultUiState.image,
+                        bitmap = selfieSegmentationResultState.image,
                         backgroundUri = backgroundUri,
                         onExport = { scale, offset, rotation, foregroundSize, backgroundSize, borderSize ->
-                            viewModel.sendUiIntent(
+                            dispatch(
                                 SelfieSegmentationIntent.Export(
-                                    foregroundBitmap = selfieSegmentationResultUiState.image,
+                                    foregroundBitmap = selfieSegmentationResultState.image,
                                     backgroundUri = backgroundUri,
                                     backgroundSize = backgroundSize,
                                     foregroundScale = scale,
@@ -176,26 +195,18 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
             }
         }
 
-        when (val exportUiEvent = uiEvent?.exportUiEvent) {
-            is ExportUiEvent.Success -> {
+        when (val event = uiEvent) {
+            is SelfieSegmentationEvent.ExportUiEvent.Success -> {
                 LaunchedEffect(uiEvent) {
-                    context.sendSticker(bitmap = exportUiEvent.bitmap)
+                    context.sendSticker(bitmap = event.bitmap)
                 }
             }
 
-            ExportUiEvent.Init,
             null -> Unit
         }
 
-        loadUiIntentFlow?.also { loadUiIntent ->
-            when (loadUiIntent) {
-                is LoadUiIntent.Error -> {}
-                is LoadUiIntent.Loading -> {
-                    openWaitingDialog = loadUiIntent.isShow
-                }
-            }
-        }
-        WaitingDialog(visible = openWaitingDialog)
+        Log.e("TAG", "SelfieSegmentationScreen: ${uiState.loadingDialog}", )
+        WaitingDialog(visible = uiState.loadingDialog)
     }
 }
 

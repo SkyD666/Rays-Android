@@ -11,6 +11,7 @@ import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.respository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,6 +21,8 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
@@ -92,35 +95,42 @@ class HomeViewModel @Inject constructor(
                 }.startWith(HomePartialStateChange.HomeList.Loading)
             },
 
-            filterIsInstance<HomeIntent.GetSearchBarPopularTagsList>()
-                .flatMapConcat { homeRepo.requestSearchBarPopularTags(count = 20) }
-                .map { HomePartialStateChange.PopularTags.Success(it) }
-                .startWith(HomePartialStateChange.PopularTags.Loading),
+            filterIsInstance<HomeIntent.GetSearchBarPopularTagsList>().flatMapConcat {
+                homeRepo.requestSearchBarPopularTags(count = 20)
+                    .map { HomePartialStateChange.PopularTags.Success(it) }
+                    .startWith(HomePartialStateChange.PopularTags.Loading)
+            },
 
-            filterIsInstance<HomeIntent.GetStickerWithTagsList>()
-                .flatMapConcat { homeRepo.requestStickerWithTagsList(keyword = it.keyword) }
-                .map { HomePartialStateChange.SearchResult.Success(sortSearchResultList(it)) }
-                .startWith(HomePartialStateChange.SearchResult.Loading),
+            filterIsInstance<HomeIntent.GetStickerWithTagsList>().flatMapConcat { intent ->
+                homeRepo.requestStickerWithTagsList(keyword = intent.keyword)
+                    .map { HomePartialStateChange.SearchResult.Success(sortSearchResultList(it)) }
+                    .startWith(HomePartialStateChange.SearchResult.Loading)
+            },
 
-            filterIsInstance<HomeIntent.ExportStickers>()
-                .flatMapConcat { homeRepo.requestExportStickers(stickerUuids = it.stickerUuids) }
-                .map { HomePartialStateChange.ExportStickers.Success(it) }
-                .startWith(HomePartialStateChange.LoadingDialog),
+            filterIsInstance<HomeIntent.ExportStickers>().flatMapConcat { intent ->
+                homeRepo.requestExportStickers(stickerUuids = intent.stickerUuids)
+                    .map { HomePartialStateChange.ExportStickers.Success(it) }
+                    .startWith(HomePartialStateChange.LoadingDialog)
+            },
 
-            filterIsInstance<HomeIntent.DeleteStickerWithTags>()
-                .flatMapConcat { homeRepo.requestDeleteStickerWithTagsDetail(stickerUuids = it.stickerUuids) }
-                .map { HomePartialStateChange.DeleteStickerWithTags.Success(it) }
-                .startWith(HomePartialStateChange.LoadingDialog),
+            filterIsInstance<HomeIntent.DeleteStickerWithTags>().flatMapConcat { intent ->
+                homeRepo.requestDeleteStickerWithTagsDetail(stickerUuids = intent.stickerUuids)
+                    .map { HomePartialStateChange.DeleteStickerWithTags.Success(it) }
+                    .startWith(HomePartialStateChange.LoadingDialog)
+            },
 
             merge(
                 filterIsInstance<HomeIntent.ReverseStickerWithTagsList>(),
                 filterIsInstance<HomeIntent.SortStickerWithTagsList>()
-            ).map {
-                val data = if (it is HomeIntent.ReverseStickerWithTagsList) it.data
-                else (it as HomeIntent.SortStickerWithTagsList).data
-                HomePartialStateChange.SearchResult.Success(sortSearchResultList(data))
-            }
-                .startWith(HomePartialStateChange.LoadingDialog),
+            ).flatMapConcat { intent ->
+                val data = if (intent is HomeIntent.ReverseStickerWithTagsList) intent.data
+                else (intent as HomeIntent.SortStickerWithTagsList).data
+                flowOf(sortSearchResultList(data))
+                    .flowOn(Dispatchers.IO)
+                    .map { HomePartialStateChange.SearchResult.Success(it) }
+                    .startWith(HomePartialStateChange.SearchResult.Loading)
+
+            },
 
             filterIsInstance<HomeIntent.AddClickCount>()
                 .flatMapConcat { homeRepo.requestAddClickCount(stickerUuid = it.stickerUuid) }

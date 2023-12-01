@@ -26,7 +26,6 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
@@ -35,9 +34,9 @@ class HomeRepository @Inject constructor(
     private val tagDao: TagDao
 ) : BaseRepository() {
     suspend fun requestStickerWithTagsList(keyword: String): Flow<List<StickerWithTags>> {
-        return flow {
+        return flowOnIo {
             emit(stickerDao.getStickerWithTagsList(genSql(keyword)))
-        }.flowOn(Dispatchers.IO)
+        }
     }
 
     fun requestRecommendTags(): Flow<List<TagBean>> {
@@ -61,20 +60,20 @@ class HomeRepository @Inject constructor(
     }
 
     suspend fun requestDeleteStickerWithTagsDetail(stickerUuids: List<String>): Flow<List<String>> {
-        return flow {
+        return flowOnIo {
             stickerDao.deleteStickerWithTags(stickerUuids)
             emit(stickerUuids)
-        }.flowOn(Dispatchers.IO)
+        }
     }
 
     suspend fun requestAddClickCount(stickerUuid: String, count: Int = 1): Flow<Int> {
-        return flow {
+        return flowOnIo {
             emit(stickerDao.addClickCount(uuid = stickerUuid, count = count))
-        }.flowOn(Dispatchers.IO)
+        }
     }
 
     suspend fun requestSearchBarPopularTags(count: Int): Flow<List<Pair<String, Float>>> {
-        return flow {
+        return flowOnIo {
             val popularStickersList = stickerDao.getPopularStickersList(count = count)
             val tagsMap: MutableMap<Pair<String, String>, Long> = mutableMapOf()
             val tagsCountMap: MutableMap<Pair<String, String>, Long> = mutableMapOf()
@@ -112,11 +111,11 @@ class HomeRepository @Inject constructor(
             }.distinctBy { it.first.first }
             val maxPopularValue = result.getOrNull(0)?.second ?: 1
             emit(result.map { it.first.first to it.second.toFloat() / maxPopularValue })
-        }.flowOn(Dispatchers.IO)
+        }
     }
 
     suspend fun requestExportStickers(stickerUuids: List<String>): Flow<Int> {
-        return flow {
+        return flowOnIo {
             val exportStickerDir = appContext.dataStore.getOrDefault(ExportStickerDirPreference)
             check(exportStickerDir.isNotBlank()) { "exportStickerDir is null" }
             var successCount = 0
@@ -130,7 +129,7 @@ class HomeRepository @Inject constructor(
                 }
             }
             emit(successCount)
-        }.flowOn(Dispatchers.IO)
+        }
     }
 
     companion object {

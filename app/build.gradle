@@ -21,8 +21,8 @@ android {
         applicationId "com.skyd.rays"
         minSdk 24
         targetSdk 34
-        versionCode 47
-        versionName "2.0-alpha01"
+        versionCode 48
+        versionName "2.0-alpha02"
         flavorDimensions = ["versionName"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -106,6 +106,7 @@ tasks.withType(KotlinCompile).configureEach {
     //noinspection GrDeprecatedAPIUsage
     kotlinOptions {
         freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+        freeCompilerArgs += "-opt-in=androidx.compose.material.ExperimentalMaterialApi"
         freeCompilerArgs += "-opt-in=androidx.compose.animation.ExperimentalAnimationApi"
         freeCompilerArgs += "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi"
         freeCompilerArgs += "-opt-in=coil.annotation.ExperimentalCoilApi"
@@ -128,6 +129,7 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material3:material3:$md3_version"
     implementation "androidx.compose.material3:material3-window-size-class:$md3_version"
+    implementation "androidx.compose.material:material:1.5.4"
     implementation "androidx.compose.material:material-icons-extended:1.5.4"
     implementation "androidx.compose.ui:ui-tooling-preview:$md3_version"
     implementation "com.google.android.material:material:1.10.0"

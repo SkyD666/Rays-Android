@@ -1,16 +1,15 @@
 package com.skyd.rays.ui.screen.detail
 
-import com.skyd.rays.base.IUiEvent
+import com.skyd.rays.base.mvi.MviSingleEvent
 
-class DetailEvent(
-    val detailResultUiEvent: DetailResultUiEvent? = null,
-    val deleteResultUiEvent: DeleteResultUiEvent? = null,
-) : IUiEvent
+sealed interface DetailEvent : MviSingleEvent {
+    sealed interface ExportResult : DetailEvent {
+        data object Success : ExportResult
+        data object Failed : ExportResult
+    }
 
-sealed class DetailResultUiEvent {
-    class Success(val successCount: Int) : DetailResultUiEvent()
-}
-
-sealed class DeleteResultUiEvent {
-    data object Success : DetailResultUiEvent()
+    sealed interface DeleteResult : DetailEvent {
+        data object Success : DeleteResult
+        data object Failed : DeleteResult
+    }
 }

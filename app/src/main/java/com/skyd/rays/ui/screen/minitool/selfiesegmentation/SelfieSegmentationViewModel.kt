@@ -1,48 +1,93 @@
 package com.skyd.rays.ui.screen.minitool.selfiesegmentation
 
-import com.skyd.rays.base.BaseViewModel
-import com.skyd.rays.base.IUIChange
+import androidx.lifecycle.viewModelScope
+import com.skyd.rays.base.mvi.AbstractMviViewModel
+import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.SelfieSegmentationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 
 @HiltViewModel
 class SelfieSegmentationViewModel @Inject constructor(private var selfieSegmentationRepo: SelfieSegmentationRepository) :
-    BaseViewModel<SelfieSegmentationState, SelfieSegmentationEvent, SelfieSegmentationIntent>() {
-    override fun initUiState(): SelfieSegmentationState {
-        return SelfieSegmentationState(selfieSegmentationResultUiState = SelfieSegmentationResultUiState.Init)
+    AbstractMviViewModel<SelfieSegmentationIntent, SelfieSegmentationState, SelfieSegmentationEvent>() {
+
+    override val viewState: StateFlow<SelfieSegmentationState>
+
+    init {
+        val initialVS = SelfieSegmentationState.initial()
+
+        viewState = merge(
+            intentSharedFlow.filterIsInstance<SelfieSegmentationIntent.Initial>().take(1),
+            intentSharedFlow.filterNot { it is SelfieSegmentationIntent.Initial }
+        )
+            .shareWhileSubscribed()
+            .toSelfieSegmentationPartialStateChangeFlow()
+            .debugLog("SelfieSegmentationPartialStateChange")
+            .sendSingleEvent()
+            .scan(initialVS) { vs, change -> change.reduce(vs) }
+            .debugLog("ViewState")
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                initialVS
+            )
     }
 
-    override fun IUIChange.checkStateOrEvent() =
-        this as? SelfieSegmentationState to this as? SelfieSegmentationEvent
+    private fun Flow<SelfieSegmentationPartialStateChange>.sendSingleEvent(): Flow<SelfieSegmentationPartialStateChange> {
+        return onEach { change ->
+            val event = when (change) {
+                is SelfieSegmentationPartialStateChange.Export.Success -> {
+                    SelfieSegmentationEvent.ExportUiEvent.Success(change.bitmap)
+                }
 
-    override fun Flow<SelfieSegmentationIntent>.handleIntent(): Flow<IUIChange> = merge(
-        doIsInstance<SelfieSegmentationIntent.Segment> { intent ->
-            selfieSegmentationRepo.requestSelfieSegment(foregroundUri = intent.foregroundUri)
-                .mapToUIChange { data ->
-                    copy(
-                        selfieSegmentationResultUiState =
-                        SelfieSegmentationResultUiState.Success(data.first)
-                    )
-                }.defaultFinally()
-        },
+                else -> return@onEach
+            }
+            sendEvent(event)
+        }
+    }
 
-        doIsInstance<SelfieSegmentationIntent.Export> { intent ->
-            selfieSegmentationRepo.requestExport(
-                foregroundBitmap = intent.foregroundBitmap,
-                backgroundUri = intent.backgroundUri,
-                backgroundSize = intent.backgroundSize,
-                foregroundScale = intent.foregroundScale,
-                foregroundOffset = intent.foregroundOffset,
-                foregroundRotation = intent.foregroundRotation,
-                foregroundSize = intent.foregroundSize,
-                borderSize = intent.borderSize,
-            ).mapToUIChange { data ->
-                SelfieSegmentationEvent(exportUiEvent = ExportUiEvent.Success(data))
-            }.defaultFinally()
-        },
-    )
+    private fun SharedFlow<SelfieSegmentationIntent>.toSelfieSegmentationPartialStateChangeFlow()
+            : Flow<SelfieSegmentationPartialStateChange> {
+        return merge(
+            filterIsInstance<SelfieSegmentationIntent.Initial>()
+                .map { SelfieSegmentationPartialStateChange.Init },
+
+            filterIsInstance<SelfieSegmentationIntent.Segment>().flatMapConcat { intent ->
+                selfieSegmentationRepo.requestSelfieSegment(foregroundUri = intent.foregroundUri)
+                    .map { SelfieSegmentationPartialStateChange.SelfieSegmentation.Success(it) }
+                    .startWith(SelfieSegmentationPartialStateChange.LoadingDialog)
+            },
+
+            filterIsInstance<SelfieSegmentationIntent.Export>().flatMapConcat {
+                selfieSegmentationRepo.requestExport(
+                    foregroundBitmap = it.foregroundBitmap,
+                    backgroundUri = it.backgroundUri,
+                    backgroundSize = it.backgroundSize,
+                    foregroundScale = it.foregroundScale,
+                    foregroundOffset = it.foregroundOffset,
+                    foregroundRotation = it.foregroundRotation,
+                    foregroundSize = it.foregroundSize,
+                    borderSize = it.borderSize,
+                )
+                    .map { SelfieSegmentationPartialStateChange.Export.Success(it) }
+                    .startWith(SelfieSegmentationPartialStateChange.LoadingDialog)
+            },
+        )
+    }
 }
