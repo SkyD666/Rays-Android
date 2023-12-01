@@ -102,7 +102,6 @@ fun MainScreen() {
 private fun NavigationBarOrRail(navController: NavController) {
     val items = listOf(
         stringResource(R.string.home_screen_name) to HOME_SCREEN_ROUTE,
-//        stringResource(R.string.search_screen_name) to MINI_TOOL_SCREEN_ROUTE,
         stringResource(R.string.mini_tool_screen_name) to MINI_TOOL_SCREEN_ROUTE,
         stringResource(R.string.more_screen_name) to MORE_SCREEN_ROUTE
     )
