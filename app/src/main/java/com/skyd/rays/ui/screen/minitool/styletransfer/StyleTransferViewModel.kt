@@ -1,35 +1,66 @@
 package com.skyd.rays.ui.screen.minitool.styletransfer
 
-import com.skyd.rays.base.BaseViewModel
-import com.skyd.rays.base.IUIChange
-import com.skyd.rays.base.IUiEvent
-import com.skyd.rays.ext.toBitmap
+import androidx.lifecycle.viewModelScope
+import com.skyd.rays.base.mvi.AbstractMviViewModel
+import com.skyd.rays.base.mvi.MviSingleEvent
+import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.StyleTransferRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 
 @HiltViewModel
-class StyleTransferViewModel @Inject constructor(private var styleTransferRepo: StyleTransferRepository) :
-    BaseViewModel<StyleTransferState, IUiEvent, StyleTransferIntent>() {
-    override fun initUiState(): StyleTransferState {
-        return StyleTransferState(styleTransferResultUiState = StyleTransferResultUiState.Init)
+class StyleTransferViewModel @Inject constructor(
+    private var styleTransferRepo: StyleTransferRepository
+) : AbstractMviViewModel<StyleTransferIntent, StyleTransferState, MviSingleEvent>() {
+
+    override val viewState: StateFlow<StyleTransferState>
+
+    init {
+        val initialVS = StyleTransferState.initial()
+
+        viewState = merge(
+            intentSharedFlow.filterIsInstance<StyleTransferIntent.Initial>().take(1),
+            intentSharedFlow.filterNot { it is StyleTransferIntent.Initial }
+        )
+            .shareWhileSubscribed()
+            .toStyleTransferPartialStateChangeFlow()
+            .debugLog("StyleTransferPartialStateChange")
+            .scan(initialVS) { vs, change -> change.reduce(vs) }
+            .debugLog("ViewState")
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                initialVS
+            )
     }
 
-    override fun IUIChange.checkStateOrEvent() = this as? StyleTransferState to this as? IUiEvent
+    private fun SharedFlow<StyleTransferIntent>.toStyleTransferPartialStateChangeFlow()
+            : Flow<StyleTransferPartialStateChange> {
+        return merge(
+            filterIsInstance<StyleTransferIntent.Initial>()
+                .map { StyleTransferPartialStateChange.Init },
 
-    override fun Flow<StyleTransferIntent>.handleIntent(): Flow<IUIChange> = merge(
-        doIsInstance<StyleTransferIntent.Transfer> { intent ->
-            styleTransferRepo.requestTransferredImage(
-                style = intent.style.toBitmap(),
-                content = intent.content.toBitmap(),
-            )
-                .mapToUIChange { data ->
-                    copy(styleTransferResultUiState = StyleTransferResultUiState.Success(data.first))
-                }
-                .defaultFinally()
-        },
-    )
+            filterIsInstance<StyleTransferIntent.Transfer>().flatMapConcat { intent ->
+                styleTransferRepo.requestTransferredImage(
+                    style = intent.style,
+                    content = intent.content
+                )
+                    .map { StyleTransferPartialStateChange.StyleTransfer.Success(it.first) }
+                    .startWith(StyleTransferPartialStateChange.LoadingDialog)
+            },
+        )
+    }
 }

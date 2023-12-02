@@ -4,7 +4,6 @@ import com.skyd.rays.base.mvi.MviIntent
 import com.skyd.rays.model.bean.StickerWithTags
 
 sealed interface HomeIntent : MviIntent {
-    data object Initial : HomeIntent
     data object RefreshHomeList : HomeIntent
     data class DeleteStickerWithTags(val stickerUuids: List<String>) : HomeIntent
     data class GetStickerWithTagsList(val keyword: String) : HomeIntent

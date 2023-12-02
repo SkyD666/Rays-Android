@@ -1,5 +1,6 @@
 package com.skyd.rays.ui.screen.settings.api.apigrant
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -7,13 +8,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,12 +32,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ApiGrantPackageBean
 import com.skyd.rays.model.preference.ApiGrantPreference
 import com.skyd.rays.ui.component.BannerItem
 import com.skyd.rays.ui.component.LocalUseColorfulIcon
 import com.skyd.rays.ui.component.RaysIconButton
+import com.skyd.rays.ui.component.RaysSwipeToDismiss
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SwitchSettingsItem
@@ -53,25 +59,21 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
     var openAddDialog by rememberSaveable { mutableStateOf(false) }
     var openDeleteDialog by rememberSaveable { mutableStateOf<String?>(null) }
     var inputPackageName by rememberSaveable { mutableStateOf("") }
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
 
-    LaunchedEffect(Unit) {
-        viewModel.sendUiIntent(ApiGrantIntent.GetAllApiGrant)
-    }
+    val dispatch = viewModel.getDispatcher(startWith = ApiGrantIntent.GetAllApiGrant)
 
-    uiEvent?.apply {
-        when (addPackageNameUiEvent) {
-            is AddPackageNameUiEvent.Failed -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(R.string.failed_info, addPackageNameUiEvent.msg),
-                    key2 = addPackageNameUiEvent,
-                )
-            }
-
-            AddPackageNameUiEvent.Success,
-            null -> Unit
+    when (val event = uiEvent) {
+        is ApiGrantEvent.AddPackageName.Failed -> {
+            snackbarHostState.showSnackbarWithLaunchedEffect(
+                message = context.getString(R.string.failed_info, event.msg),
+                key2 = event,
+            )
         }
+
+        ApiGrantEvent.AddPackageName.Success,
+        null -> Unit
     }
 
     Scaffold(
@@ -113,27 +115,37 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
                     )
                 }
             }
-            val uriStringShareResultUiState = uiState.apiGrantResultUiState
-            if (uriStringShareResultUiState is ApiGrantResultUiState.Success) {
-                itemsIndexed(uriStringShareResultUiState.data) { _, item ->
+            val uriStringShareResultState = uiState.apiGrantResultState
+            if (uriStringShareResultState is ApiGrantResultState.Success) {
+                itemsIndexed(uriStringShareResultState.data) { _, item ->
                     CompositionLocalProvider(LocalUseColorfulIcon provides true) {
-                        SwitchSettingsItem(
-                            icon = rememberDrawablePainter(drawable = item.appIcon),
-                            checked = item.apiGrantPackageBean.enabled,
-                            enabled = apiGrant,
-                            text = item.appName,
-                            description = item.apiGrantPackageBean.packageName,
-                            onCheckedChange = {
-                                viewModel.sendUiIntent(
-                                    ApiGrantIntent.UpdateApiGrant(
-                                        item.apiGrantPackageBean.copy(enabled = it)
+                        RaysSwipeToDismiss(
+                            state = rememberDismissState(
+                                confirmValueChange = { dismissValue ->
+                                    if (dismissValue == DismissValue.DismissedToStart) {
+                                        openDeleteDialog = item.apiGrantPackageBean.packageName
+                                    }
+                                    false
+                                }
+                            ),
+                            directions = setOf(DismissDirection.EndToStart),
+                        ) {
+                            SwitchSettingsItem(
+                                modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                                icon = rememberDrawablePainter(drawable = item.appIcon),
+                                checked = item.apiGrantPackageBean.enabled,
+                                enabled = apiGrant,
+                                text = item.appName,
+                                description = item.apiGrantPackageBean.packageName,
+                                onCheckedChange = {
+                                    dispatch(
+                                        ApiGrantIntent.UpdateApiGrant(
+                                            item.apiGrantPackageBean.copy(enabled = it)
+                                        )
                                     )
-                                )
-                            },
-                            onLongClick = {
-                                openDeleteDialog = item.apiGrantPackageBean.packageName
-                            }
-                        )
+                                },
+                            )
+                        }
                     }
                 }
             }
@@ -148,7 +160,7 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
             value = inputPackageName,
             onValueChange = { inputPackageName = it },
             onConfirm = {
-                viewModel.sendUiIntent(
+                dispatch(
                     ApiGrantIntent.UpdateApiGrant(
                         ApiGrantPackageBean(packageName = it, enabled = true)
                     )
@@ -163,9 +175,7 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
             onDismissRequest = { openDeleteDialog = null },
             onDismiss = { openDeleteDialog = null },
             onConfirm = {
-                viewModel.sendUiIntent(
-                    ApiGrantIntent.DeleteApiGrant(openDeleteDialog!!)
-                )
+                dispatch(ApiGrantIntent.DeleteApiGrant(openDeleteDialog!!))
                 openDeleteDialog = null
             }
         )

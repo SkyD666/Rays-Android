@@ -58,13 +58,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.config.refreshStickerData
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
-import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.ui.component.RaysIconButton
@@ -76,16 +74,9 @@ import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.home.HomeIntent
 import com.skyd.rays.ui.screen.home.HomeState
-import com.skyd.rays.ui.screen.home.HomeViewModel
 import com.skyd.rays.ui.screen.home.PopularTagsState
 import com.skyd.rays.ui.screen.home.SearchResultState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -95,7 +86,7 @@ fun RaysSearchBar(
     active: Boolean,
     onActiveChange: (Boolean) -> Unit = {},
     uiState: HomeState,
-    viewModel: HomeViewModel = hiltViewModel()
+    onDispatch: (HomeIntent) -> Unit,
 ) {
     val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
@@ -115,39 +106,23 @@ fun RaysSearchBar(
         mutableStateOf<Set<StickerWithTags>?>(null)
     }
 
-    val intentChannel = remember { Channel<HomeIntent>(Channel.UNLIMITED) }
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.Main.immediate) {
-            intentChannel
-                .consumeAsFlow()
-                .startWith(HomeIntent.Initial)
-                .onEach(viewModel::processIntent)
-                .collect()
-        }
-    }
-    val dispatch = remember {
-        { intent: HomeIntent ->
-            intentChannel.trySend(intent).getOrThrow()
-        }
-    }
-
     refreshStickerData.collectAsStateWithLifecycle(initialValue = null).apply {
         value ?: return@apply
         scope.launch {
-            dispatch(HomeIntent.GetStickerWithTagsList(query))
+            onDispatch(HomeIntent.GetStickerWithTagsList(query))
             if (showPopularTags && active) {
-                dispatch(HomeIntent.GetSearchBarPopularTagsList)
+                onDispatch(HomeIntent.GetSearchBarPopularTagsList)
             }
         }
     }
 
     LaunchedEffect(query) {
-        dispatch(HomeIntent.GetStickerWithTagsList(query))
+        onDispatch(HomeIntent.GetStickerWithTagsList(query))
     }
 
     LaunchedEffect(active) {
         if (showPopularTags && active) {
-            dispatch(HomeIntent.GetSearchBarPopularTagsList)
+            onDispatch(HomeIntent.GetSearchBarPopularTagsList)
         }
     }
 
@@ -170,7 +145,7 @@ fun RaysSearchBar(
                 onSearch = { keyword ->
                     keyboardController?.hide()
                     onQueryChange(keyword)
-                    dispatch(HomeIntent.GetStickerWithTagsList(keyword))
+                    onDispatch(HomeIntent.GetStickerWithTagsList(keyword))
                 },
                 active = active,
                 onActiveChange = {
@@ -223,7 +198,7 @@ fun RaysSearchBar(
                                         navController = navController,
                                         stickerUuid = data.sticker.uuid
                                     )
-                                    dispatch(
+                                    onDispatch(
                                         HomeIntent.AddClickCount(stickerUuid = data.sticker.uuid)
                                     )
                                 }
@@ -242,14 +217,14 @@ fun RaysSearchBar(
                                 selectedStickers.addAll(newSelectedStickers)
                             },
                             onSortStickerWithTagsList = {
-                                dispatch(
+                                onDispatch(
                                     HomeIntent.SortStickerWithTagsList(
                                         searchResultUiState.stickerWithTagsList
                                     )
                                 )
                             },
                             onReverseStickerWithTagsList = {
-                                dispatch(
+                                onDispatch(
                                     HomeIntent.ReverseStickerWithTagsList(
                                         searchResultUiState.stickerWithTagsList
                                     )
@@ -282,8 +257,9 @@ fun RaysSearchBar(
                                         openMultiStickersExportPathDialog = false
                                     },
                                     onExport = {
-                                        val uuidList = selectedStickers.map { it.sticker.uuid }
-                                        dispatch(HomeIntent.ExportStickers(uuidList))
+                                        onDispatch(HomeIntent.ExportStickers(
+                                            selectedStickers.map { it.sticker.uuid }
+                                        ))
                                     },
                                 )
                             }
@@ -307,10 +283,8 @@ fun RaysSearchBar(
             onDismissRequest = { openDeleteMultiStickersDialog = null },
             onDismiss = { openDeleteMultiStickersDialog = null },
             onConfirm = {
-                dispatch(
-                    HomeIntent.DeleteStickerWithTags(
-                        selectedStickers.map { it.sticker.uuid }
-                    )
+                onDispatch(
+                    HomeIntent.DeleteStickerWithTags(selectedStickers.map { it.sticker.uuid })
                 )
                 // 去除所有被删除了，但还在selectedStickers中的数据
                 selectedStickers -= openDeleteMultiStickersDialog!!

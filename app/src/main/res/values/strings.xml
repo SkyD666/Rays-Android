@@ -307,4 +307,5 @@
     <string name="home_screen_recent_create_stickers">Recently created</string>
     <string name="home_screen_most_shared_stickers">Most shared</string>
     <string name="stickers_list_screen_name">Stickers list</string>
+    <string name="delete">Delete</string>
 </resources>

@@ -15,7 +15,7 @@ data class SelfieSegmentationState(
     }
 }
 
-sealed class SelfieSegmentationResultState {
-    data object Init : SelfieSegmentationResultState()
-    data class Success(val image: Bitmap) : SelfieSegmentationResultState()
+sealed interface SelfieSegmentationResultState {
+    data object Init : SelfieSegmentationResultState
+    data class Success(val image: Bitmap) : SelfieSegmentationResultState
 }

@@ -43,7 +43,6 @@ class DetailViewModel @Inject constructor(private var detailRepo: DetailReposito
             )
     }
 
-
     private fun Flow<DetailPartialStateChange>.sendSingleEvent(): Flow<DetailPartialStateChange> {
         return onEach { change ->
             val event = when (change) {

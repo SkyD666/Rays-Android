@@ -1,26 +1,23 @@
 package com.skyd.rays.model.respository
 
 import android.graphics.Bitmap
-import com.skyd.rays.base.BaseData
+import android.net.Uri
 import com.skyd.rays.base.BaseRepository
+import com.skyd.rays.ext.toBitmap
 import com.skyd.rays.util.StyleTransferUtil
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class StyleTransferRepository @Inject constructor() : BaseRepository() {
 
     suspend fun requestTransferredImage(
-        style: Bitmap,
-        content: Bitmap
-    ): Flow<BaseData<Pair<Bitmap, Long>>> {
-        return flow {
+        style: Uri,
+        content: Uri
+    ): Flow<Pair<Bitmap, Long>> {
+        return flowOnIo {
             val styleTransferUtil = StyleTransferUtil()
-            styleTransferUtil.setStyleImage(style = style)
-            emitBaseData(BaseData<Pair<Bitmap, Long>>().apply {
-                code = 0
-                data = styleTransferUtil.transfer(image = content)
-            })
+            styleTransferUtil.setStyleImage(style = style.toBitmap())
+            emit(styleTransferUtil.transfer(image = content.toBitmap()))
         }
     }
 }

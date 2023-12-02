@@ -1,16 +1,21 @@
 package com.skyd.rays.ui.screen.settings.shareconfig.uristringshare
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Link
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +39,7 @@ import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.ui.component.BannerItem
 import com.skyd.rays.ui.component.LocalUseColorfulIcon
 import com.skyd.rays.ui.component.RaysIconButton
+import com.skyd.rays.ui.component.RaysSwipeToDismiss
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SwitchSettingsItem
@@ -118,23 +124,34 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
             if (uriStringShareResultUiState is UriStringShareResultUiState.Success) {
                 itemsIndexed(uriStringShareResultUiState.data) { _, item ->
                     CompositionLocalProvider(LocalUseColorfulIcon provides true) {
-                        SwitchSettingsItem(
-                            icon = rememberDrawablePainter(drawable = item.appIcon),
-                            checked = item.uriStringSharePackageBean.enabled,
-                            enabled = uriStringShare,
-                            text = item.appName,
-                            description = item.uriStringSharePackageBean.packageName,
-                            onCheckedChange = {
-                                viewModel.sendUiIntent(
-                                    UriStringShareIntent.UpdateUriStringShare(
-                                        item.uriStringSharePackageBean.copy(enabled = it)
+                        RaysSwipeToDismiss(
+                            state = rememberDismissState(
+                                confirmValueChange = { dismissValue ->
+                                    if (dismissValue == DismissValue.DismissedToStart) {
+                                        openDeleteDialog =
+                                            item.uriStringSharePackageBean.packageName
+                                    }
+                                    false
+                                }
+                            ),
+                            directions = setOf(DismissDirection.EndToStart),
+                        ) {
+                            SwitchSettingsItem(
+                                modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                                icon = rememberDrawablePainter(drawable = item.appIcon),
+                                checked = item.uriStringSharePackageBean.enabled,
+                                enabled = uriStringShare,
+                                text = item.appName,
+                                description = item.uriStringSharePackageBean.packageName,
+                                onCheckedChange = {
+                                    viewModel.sendUiIntent(
+                                        UriStringShareIntent.UpdateUriStringShare(
+                                            item.uriStringSharePackageBean.copy(enabled = it)
+                                        )
                                     )
-                                )
-                            },
-                            onLongClick = {
-                                openDeleteDialog = item.uriStringSharePackageBean.packageName
-                            }
-                        )
+                                },
+                            )
+                        }
                     }
                 }
             }

@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -28,7 +27,6 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,11 +39,7 @@ class HomeViewModel @Inject constructor(
     init {
         val initialVS = HomeState.initial()
 
-        viewState = merge(
-            intentSharedFlow.filterIsInstance<HomeIntent.Initial>().take(1),
-            intentSharedFlow.filterNot { it is HomeIntent.Initial }
-        )
-            .shareWhileSubscribed()
+        viewState = intentSharedFlow
             .toPartialStateChangeFlow()
             .debugLog("PartialStateChange")
             .sendSingleEvent()
@@ -76,10 +70,7 @@ class HomeViewModel @Inject constructor(
 
     private fun SharedFlow<HomeIntent>.toPartialStateChangeFlow(): Flow<HomePartialStateChange> {
         return merge(
-            merge(
-                filterIsInstance<HomeIntent.Initial>(),
-                filterIsInstance<HomeIntent.RefreshHomeList>()
-            ).flatMapLatest {
+            filterIsInstance<HomeIntent.RefreshHomeList>().flatMapLatest {
                 combine(
                     homeRepo.requestRecommendTags(),
                     homeRepo.requestRandomTags(),

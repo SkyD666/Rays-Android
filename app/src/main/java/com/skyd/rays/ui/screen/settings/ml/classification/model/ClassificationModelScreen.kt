@@ -3,6 +3,7 @@ package com.skyd.rays.ui.screen.settings.ml.classification.model
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,11 +12,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CreateNewFolder
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.LightbulbCircle
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +44,7 @@ import com.skyd.rays.model.bean.ModelBean
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RadioSettingsItem
+import com.skyd.rays.ui.component.RaysSwipeToDismiss
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
@@ -196,18 +202,30 @@ private fun ModelList(
             )
         }
         itemsIndexed(models) { _, item ->
-            RadioSettingsItem(
-                selected = item.name == classificationModelName,
-                icon = rememberVectorPainter(image = Icons.Default.Lightbulb),
-                text = item.name,
-                description = item.path,
-                onLongClick = { onDelete(item) },
-                onClick = {
-                    if (item.name != classificationModelName) {
-                        onSetModel(item)
+            RaysSwipeToDismiss(
+                state = rememberDismissState(
+                    confirmValueChange = { dismissValue ->
+                        if (dismissValue == DismissValue.DismissedToStart) {
+                            onDelete(item)
+                        }
+                        false
                     }
-                }
-            )
+                ),
+                directions = setOf(DismissDirection.EndToStart),
+            ) {
+                RadioSettingsItem(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                    selected = item.name == classificationModelName,
+                    icon = rememberVectorPainter(image = Icons.Default.Lightbulb),
+                    text = item.name,
+                    description = item.path,
+                    onClick = {
+                        if (item.name != classificationModelName) {
+                            onSetModel(item)
+                        }
+                    }
+                )
+            }
         }
     }
 }

@@ -1,13 +1,23 @@
 package com.skyd.rays.ui.screen.minitool.styletransfer
 
 import android.graphics.Bitmap
-import com.skyd.rays.base.IUiState
+import com.skyd.rays.base.mvi.MviViewState
+import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SelfieSegmentationResultState
+import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SelfieSegmentationState
 
 data class StyleTransferState(
-    val styleTransferResultUiState: StyleTransferResultUiState,
-) : IUiState
+    val styleTransferResultState: StyleTransferResultState,
+    val loadingDialog: Boolean,
+) : MviViewState {
+    companion object {
+        fun initial() = StyleTransferState(
+            styleTransferResultState = StyleTransferResultState.Init,
+            loadingDialog = false,
+        )
+    }
+}
 
-sealed class StyleTransferResultUiState {
-    data object Init : StyleTransferResultUiState()
-    data class Success(val image: Bitmap) : StyleTransferResultUiState()
+sealed interface StyleTransferResultState {
+    data object Init : StyleTransferResultState
+    data class Success(val image: Bitmap) : StyleTransferResultState
 }

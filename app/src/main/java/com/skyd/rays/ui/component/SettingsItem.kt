@@ -70,20 +70,20 @@ fun BannerItem(content: @Composable () -> Unit) {
 fun SwitchSettingsItem(
     icon: ImageVector,
     text: String,
+    modifier: Modifier = Modifier,
     description: String? = null,
     checked: Boolean = false,
     enabled: Boolean = true,
     onCheckedChange: ((Boolean) -> Unit)?,
-    onLongClick: (() -> Unit)? = null,
 ) {
     SwitchSettingsItem(
         icon = rememberVectorPainter(image = icon),
         text = text,
+        modifier = modifier,
         description = description,
         checked = checked,
         enabled = enabled,
         onCheckedChange = onCheckedChange,
-        onLongClick = onLongClick,
     )
 }
 
@@ -91,15 +91,15 @@ fun SwitchSettingsItem(
 fun SwitchSettingsItem(
     icon: Painter,
     text: String,
+    modifier: Modifier = Modifier,
     description: String? = null,
     checked: Boolean = false,
     enabled: Boolean = true,
     onCheckedChange: ((Boolean) -> Unit)?,
-    onLongClick: (() -> Unit)? = null,
 ) {
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     BaseSettingsItem(
-        modifier = Modifier.toggleable(
+        modifier = modifier.toggleable(
             value = checked,
             interactionSource = interactionSource,
             indication = LocalIndication.current,
@@ -111,7 +111,6 @@ fun SwitchSettingsItem(
         text = text,
         descriptionText = description,
         enabled = enabled,
-        onLongClick = onLongClick,
     ) {
         Switch(
             checked = checked,
@@ -126,19 +125,19 @@ fun SwitchSettingsItem(
 fun RadioSettingsItem(
     icon: ImageVector,
     text: String,
+    modifier: Modifier = Modifier,
     description: String? = null,
     selected: Boolean = false,
     enabled: Boolean = true,
-    onLongClick: (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
 ) {
     RadioSettingsItem(
         icon = rememberVectorPainter(image = icon),
         text = text,
+        modifier = modifier,
         description = description,
         selected = selected,
         enabled = enabled,
-        onLongClick = onLongClick,
         onClick = onClick
     )
 }
@@ -147,15 +146,15 @@ fun RadioSettingsItem(
 fun RadioSettingsItem(
     icon: Painter,
     text: String,
+    modifier: Modifier = Modifier,
     description: String? = null,
     selected: Boolean = false,
     enabled: Boolean = true,
-    onLongClick: (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
 ) {
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     BaseSettingsItem(
-        modifier = Modifier
+        modifier = modifier
             .selectable(
                 selected = selected,
                 interactionSource = interactionSource,
@@ -168,7 +167,6 @@ fun RadioSettingsItem(
         text = text,
         descriptionText = description,
         enabled = enabled,
-        onLongClick = onLongClick,
     ) {
         RadioButton(
             selected = selected,
@@ -183,6 +181,7 @@ fun RadioSettingsItem(
 fun ColorSettingsItem(
     icon: ImageVector,
     text: String,
+    modifier: Modifier = Modifier,
     description: String? = null,
     onClick: (() -> Unit)? = null,
     initColor: Color,
@@ -190,6 +189,7 @@ fun ColorSettingsItem(
     ColorSettingsItem(
         icon = rememberVectorPainter(image = icon),
         text = text,
+        modifier = modifier,
         description = description,
         onClick = onClick,
         initColor = initColor,
@@ -200,6 +200,7 @@ fun ColorSettingsItem(
 fun ColorSettingsItem(
     icon: Painter,
     text: String,
+    modifier: Modifier = Modifier,
     description: String? = null,
     onClick: (() -> Unit)? = null,
     initColor: Color,
@@ -207,6 +208,7 @@ fun ColorSettingsItem(
     BaseSettingsItem(
         icon = icon,
         text = text,
+        modifier = modifier,
         descriptionText = description,
         onClick = onClick
     ) {

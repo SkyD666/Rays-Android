@@ -13,7 +13,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -21,21 +20,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
-import com.skyd.rays.ext.startWith
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.home.searchbar.SearchResultItem
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.withContext
 
 const val STICKERS_LIST_SCREEN_ROUTE = "stickersListScreen"
 
@@ -58,21 +51,8 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     val windowSizeClass = LocalWindowSizeClass.current
 
-    val intentChannel = remember { Channel<StickersListIntent>(Channel.UNLIMITED) }
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.Main.immediate) {
-            intentChannel
-                .consumeAsFlow()
-                .startWith(StickersListIntent.RefreshStickersList(query))
-                .onEach(viewModel::processIntent)
-                .collect()
-        }
-    }
-    val dispatch = remember {
-        { intent: StickersListIntent ->
-            intentChannel.trySend(intent).getOrThrow()
-        }
-    }
+    val dispatch =
+        viewModel.getDispatcher(startWith = StickersListIntent.RefreshStickersList(query))
 
     LaunchedEffect(query) {
         dispatch(StickersListIntent.RefreshStickersList(query))

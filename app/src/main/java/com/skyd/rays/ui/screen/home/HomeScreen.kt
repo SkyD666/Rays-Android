@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.preference.search.QueryPreference
@@ -86,6 +87,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
     var fabHeight by remember { mutableStateOf(0.dp) }
+
+    val dispatch = viewModel.getDispatcher(startWith = HomeIntent.RefreshHomeList)
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -125,6 +128,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     active = it
                 },
                 uiState = uiState,
+                onDispatch = dispatch,
             )
             Spacer(modifier = Modifier.height(10.dp))
             when (val homeUiState = uiState.homeListState) {

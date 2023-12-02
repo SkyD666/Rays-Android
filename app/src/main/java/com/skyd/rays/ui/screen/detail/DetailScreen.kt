@@ -55,7 +55,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -78,13 +77,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.dateTime
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
-import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.StickerScalePreference
@@ -104,12 +103,6 @@ import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.util.copyStickerToClipboard
 import com.skyd.rays.util.sendStickerByUuid
 import com.skyd.rays.util.stickerUuidToUri
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.withContext
 
 const val DETAIL_SCREEN_ROUTE = "detailScreen"
 
@@ -143,21 +136,8 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
     val windowSizeClass = LocalWindowSizeClass.current
     var fabHeight by remember { mutableStateOf(0.dp) }
 
-    val intentChannel = remember { Channel<DetailIntent>(Channel.UNLIMITED) }
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.Main.immediate) {
-            intentChannel
-                .consumeAsFlow()
-                .startWith(DetailIntent.RefreshStickerDetails(stickerUuid))
-                .onEach(viewModel::processIntent)
-                .collect()
-        }
-    }
-    val dispatch = remember {
-        { intent: DetailIntent ->
-            intentChannel.trySend(intent).getOrThrow()
-        }
-    }
+    val dispatch =
+        viewModel.getDispatcher(startWith = DetailIntent.RefreshStickerDetails(stickerUuid))
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },

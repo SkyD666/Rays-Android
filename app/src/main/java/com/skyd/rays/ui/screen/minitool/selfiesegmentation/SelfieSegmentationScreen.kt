@@ -66,10 +66,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbar
-import com.skyd.rays.ext.startWith
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysIconButtonStyle
@@ -80,12 +80,6 @@ import com.skyd.rays.ui.component.shape.CloverShape
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.sendSticker
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.withContext
 
 const val SELFIE_SEGMENTATION_SCREEN_ROUTE = "selfieSegmentationScreen"
 
@@ -107,21 +101,7 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
     val lazyListState = rememberLazyListState()
     var fabHeight by remember { mutableStateOf(0.dp) }
 
-    val intentChannel = remember { Channel<SelfieSegmentationIntent>(Channel.UNLIMITED) }
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.Main.immediate) {
-            intentChannel
-                .consumeAsFlow()
-                .startWith(SelfieSegmentationIntent.Initial)
-                .onEach(viewModel::processIntent)
-                .collect()
-        }
-    }
-    val dispatch = remember {
-        { intent: SelfieSegmentationIntent ->
-            intentChannel.trySend(intent).getOrThrow()
-        }
-    }
+    val dispatch = viewModel.getDispatcher(startWith = SelfieSegmentationIntent.Initial)
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -205,7 +185,7 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
             null -> Unit
         }
 
-        Log.e("TAG", "SelfieSegmentationScreen: ${uiState.loadingDialog}", )
+        Log.e("TAG", "SelfieSegmentationScreen: ${uiState.loadingDialog}")
         WaitingDialog(visible = uiState.loadingDialog)
     }
 }

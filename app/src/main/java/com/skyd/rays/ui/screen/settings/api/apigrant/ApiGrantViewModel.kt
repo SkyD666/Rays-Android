@@ -1,92 +1,90 @@
 package com.skyd.rays.ui.screen.settings.api.apigrant
 
-import com.skyd.rays.base.BaseViewModel
-import com.skyd.rays.base.IUIChange
+import androidx.lifecycle.viewModelScope
+import com.skyd.rays.base.mvi.AbstractMviViewModel
+import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.ApiGrantDataBean
 import com.skyd.rays.model.bean.EmptyApiGrantDataBean
 import com.skyd.rays.model.respository.ApiGrantRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class ApiGrantViewModel @Inject constructor(
     private var apiGrantRepo: ApiGrantRepository
-) : BaseViewModel<ApiGrantState, ApiGrantEvent, ApiGrantIntent>() {
-    override fun initUiState(): ApiGrantState {
-        return ApiGrantState(
-            apiGrantResultUiState = ApiGrantResultUiState.Init
-        )
+) : AbstractMviViewModel<ApiGrantIntent, ApiGrantState, ApiGrantEvent>() {
+
+    override val viewState: StateFlow<ApiGrantState>
+
+    init {
+        val initialVS = ApiGrantState.initial()
+
+        viewState = intentSharedFlow
+            .toApiGrantPartialStateChangeFlow()
+            .debugLog("ApiGrantPartialStateChange")
+            .sendSingleEvent()
+            .scan(initialVS) { vs, change -> change.reduce(vs) }
+            .debugLog("ViewState")
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                initialVS
+            )
     }
 
-    override fun IUIChange.checkStateOrEvent() =
-        this as? ApiGrantState to this as? ApiGrantEvent
-
-    override fun Flow<ApiGrantIntent>.handleIntent(): Flow<IUIChange> = merge(
-        doIsInstance<ApiGrantIntent.GetAllApiGrant> {
-            apiGrantRepo.requestAllPackages()
-                .mapToUIChange { data ->
-                    copy(apiGrantResultUiState = ApiGrantResultUiState.Success(data.reversed()))
+    private fun Flow<ApiGrantPartialStateChange>.sendSingleEvent(): Flow<ApiGrantPartialStateChange> {
+        return onEach { change ->
+            val event = when (change) {
+                is ApiGrantPartialStateChange.AddPackageName.Success -> {
+                    ApiGrantEvent.AddPackageName.Success
                 }
-                .defaultFinally()
-        },
 
-        doIsInstance<ApiGrantIntent.UpdateApiGrant> { intent ->
-            apiGrantRepo.requestUpdate(intent.bean)
-                .mapToUIChange { data ->
-                    if (data is EmptyApiGrantDataBean) {
-                        ApiGrantEvent(
-                            addPackageNameUiEvent = AddPackageNameUiEvent.Failed(data.msg)
-                        )
-                    } else if (data is ApiGrantDataBean &&
-                        apiGrantResultUiState is ApiGrantResultUiState.Success
-                    ) {
-                        val dataList = apiGrantResultUiState.data
-                        val packageName = intent.bean.packageName
-                        val beanIndex = dataList.indexOfFirst {
-                            it.apiGrantPackageBean.packageName == packageName
+                is ApiGrantPartialStateChange.AddPackageName.Failed -> {
+                    ApiGrantEvent.AddPackageName.Failed(change.msg)
+                }
+
+                else -> return@onEach
+            }
+            sendEvent(event)
+        }
+    }
+
+    private fun SharedFlow<ApiGrantIntent>.toApiGrantPartialStateChangeFlow(): Flow<ApiGrantPartialStateChange> {
+        return merge(
+            filterIsInstance<ApiGrantIntent.GetAllApiGrant>().flatMapConcat {
+                apiGrantRepo.requestAllPackages().map {
+                    ApiGrantPartialStateChange.ApiGrantList.Success(it.reversed())
+                }.startWith(ApiGrantPartialStateChange.ApiGrantList.Loading)
+            },
+
+            filterIsInstance<ApiGrantIntent.UpdateApiGrant>()
+                .flatMapConcat { apiGrantRepo.requestUpdate(it.bean) }
+                .map { data ->
+                    when (data) {
+                        is ApiGrantDataBean -> {
+                            ApiGrantPartialStateChange.AddPackageName.Success(data)
                         }
-                        if (beanIndex == -1) {
-                            copy(
-                                apiGrantResultUiState = ApiGrantResultUiState.Success(
-                                    dataList.toMutableList().apply { add(0, data) }
-                                )
-                            )
-                        } else {
-                            val newDataBean = dataList[beanIndex]
-                                .copy(apiGrantPackageBean = intent.bean)
-                            copy(
-                                apiGrantResultUiState = ApiGrantResultUiState.Success(
-                                    dataList
-                                        .toMutableList()
-                                        .apply { set(index = beanIndex, element = newDataBean) }
-                                )
-                            )
-                        }
-                    } else {
-                        this
-                    }
-                }
-                .defaultFinally()
-        },
 
-        doIsInstance<ApiGrantIntent.DeleteApiGrant> { intent ->
-            apiGrantRepo.requestDelete(intent.packageName)
-                .mapToUIChange {
-                    if (apiGrantResultUiState is ApiGrantResultUiState.Success) {
-                        val dataList = apiGrantResultUiState.data
-                        copy(
-                            apiGrantResultUiState = ApiGrantResultUiState.Success(
-                                dataList.toMutableList()
-                                    .apply { removeIf { it.apiGrantPackageBean.packageName == intent.packageName } }
-                            )
-                        )
-                    } else {
-                        this
+                        is EmptyApiGrantDataBean -> {
+                            ApiGrantPartialStateChange.AddPackageName.Failed(data.msg)
+                        }
                     }
-                }
-                .defaultFinally()
-        },
-    )
+                },
+
+            filterIsInstance<ApiGrantIntent.DeleteApiGrant>()
+                .flatMapConcat { apiGrantRepo.requestDelete(it.packageName) }
+                .map { ApiGrantPartialStateChange.Delete.Success(it.first) },
+        )
+    }
 }

@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.base.LoadUiIntent
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbar
@@ -70,9 +70,7 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    var openWaitingDialog by remember { mutableStateOf(false) }
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val loadUiIntentFlow by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     var styleUri by rememberSaveable { mutableStateOf<Uri?>(null) }
     var contentUri by rememberSaveable { mutableStateOf<Uri?>(null) }
     val pickStyleLauncher = rememberLauncherForActivityResult(
@@ -83,6 +81,8 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
     ) { if (it != null) contentUri = it }
     val lazyListState = rememberLazyListState()
     var fabHeight by remember { mutableStateOf(0.dp) }
+
+    val dispatch = viewModel.getDispatcher(startWith = StyleTransferIntent.Initial)
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -100,12 +100,7 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
                         )
                         return@RaysExtendedFloatingActionButton
                     }
-                    viewModel.sendUiIntent(
-                        StyleTransferIntent.Transfer(
-                            style = style,
-                            content = content,
-                        )
-                    )
+                    dispatch(StyleTransferIntent.Transfer(style = style, content = content))
                 },
                 onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
                 contentDescription = stringResource(R.string.style_transfer_screen_transfer)
@@ -125,9 +120,9 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
                     onSelectStyleImage = { pickStyleLauncher.launch("image/*") },
                     onSelectContentImage = { pickContentLauncher.launch("image/*") },
                 )
-                val styleTransferResultUiState = uiState.styleTransferResultUiState
-                if (styleTransferResultUiState is StyleTransferResultUiState.Success) {
-                    ResultArea(bitmap = styleTransferResultUiState.image)
+                val styleTransferResultState = uiState.styleTransferResultState
+                if (styleTransferResultState is StyleTransferResultState.Success) {
+                    ResultArea(bitmap = styleTransferResultState.image)
                 }
             }
         }
@@ -144,15 +139,7 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
             }
         }
 
-        loadUiIntentFlow?.also { loadUiIntent ->
-            when (loadUiIntent) {
-                is LoadUiIntent.Error -> {}
-                is LoadUiIntent.Loading -> {
-                    openWaitingDialog = loadUiIntent.isShow
-                }
-            }
-        }
-        WaitingDialog(visible = openWaitingDialog)
+        WaitingDialog(visible = uiState.loadingDialog)
     }
 }
 

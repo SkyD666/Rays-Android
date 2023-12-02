@@ -3,7 +3,6 @@ package com.skyd.rays.model.respository
 import android.content.pm.PackageManager
 import com.skyd.rays.R
 import com.skyd.rays.appContext
-import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.model.bean.ApiGrantDataBean
 import com.skyd.rays.model.bean.ApiGrantPackageBean
@@ -12,14 +11,13 @@ import com.skyd.rays.model.bean.IApiGrantData
 import com.skyd.rays.model.db.dao.ApiGrantPackageDao
 import com.skyd.rays.util.CommonUtil.getAppInfo
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class ApiGrantRepository @Inject constructor(
     private val apiGrantPackageDao: ApiGrantPackageDao
 ) : BaseRepository() {
-    suspend fun requestUpdate(bean: ApiGrantPackageBean): Flow<BaseData<IApiGrantData>> {
-        return flow {
+    suspend fun requestUpdate(bean: ApiGrantPackageBean): Flow<IApiGrantData> {
+        return flowOnIo {
             val pm: PackageManager = appContext.packageManager
             val data = runCatching {
                 val info = getAppInfo(pm = pm, packageName = bean.packageName)
@@ -37,24 +35,18 @@ class ApiGrantRepository @Inject constructor(
                     bean.packageName
                 )
             )
-            emitBaseData(BaseData<IApiGrantData>().apply {
-                this.code = 0
-                this.data = data
-            })
+            emit(data)
         }
     }
 
-    suspend fun requestDelete(packageName: String): Flow<BaseData<Int>> {
-        return flow {
-            emitBaseData(BaseData<Int>().apply {
-                this.code = 0
-                this.data = apiGrantPackageDao.deletePackage(pkgName = packageName)
-            })
+    suspend fun requestDelete(packageName: String): Flow<Pair<String, Int>> {
+        return flowOnIo {
+            emit(packageName to apiGrantPackageDao.deletePackage(pkgName = packageName))
         }
     }
 
-    suspend fun requestAllPackages(): Flow<BaseData<List<ApiGrantDataBean>>> {
-        return flow {
+    suspend fun requestAllPackages(): Flow<List<ApiGrantDataBean>> {
+        return flowOnIo {
             val pm: PackageManager = appContext.packageManager
             val data = apiGrantPackageDao.getAllPackage().mapNotNull { bean ->
                 runCatching {
@@ -71,10 +63,7 @@ class ApiGrantRepository @Inject constructor(
                     }
                 }.getOrNull()
             }
-            emitBaseData(BaseData<List<ApiGrantDataBean>>().apply {
-                code = 0
-                this.data = data
-            })
+            emit(data)
         }
     }
 }

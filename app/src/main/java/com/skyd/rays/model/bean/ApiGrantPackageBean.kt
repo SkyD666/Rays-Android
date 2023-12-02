@@ -32,4 +32,4 @@ data class ApiGrantDataBean(
 
 data class EmptyApiGrantDataBean(val msg: String) : IApiGrantData
 
-interface IApiGrantData : BaseBean
+sealed interface IApiGrantData : BaseBean

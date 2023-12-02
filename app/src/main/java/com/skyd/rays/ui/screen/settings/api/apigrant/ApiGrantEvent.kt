@@ -1,12 +1,10 @@
 package com.skyd.rays.ui.screen.settings.api.apigrant
 
-import com.skyd.rays.base.IUiEvent
+import com.skyd.rays.base.mvi.MviSingleEvent
 
-class ApiGrantEvent(
-    val addPackageNameUiEvent: AddPackageNameUiEvent? = null,
-) : IUiEvent
-
-sealed class AddPackageNameUiEvent {
-    data object Success : AddPackageNameUiEvent()
-    class Failed(val msg: String) : AddPackageNameUiEvent()
+sealed interface ApiGrantEvent : MviSingleEvent {
+    sealed interface AddPackageName : ApiGrantEvent {
+        data object Success : AddPackageName
+        class Failed(val msg: String) : AddPackageName
+    }
 }
