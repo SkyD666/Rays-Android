@@ -157,7 +157,8 @@
     </plurals>
     <string name="webdav_screen_restore">Restore</string>
     <string name="home_screen_empty_tip">Please create a new sticker~</string>
-    <string name="home_screen_no_search_result_tip">It\'s empty~</string>
+    <string name="empty_tip">Empty~</string>
+    <string name="search_screen_no_search_result_tip">It\'s empty~</string>
     <string name="add_screen_select_sticker">Select stickers</string>
     <string name="add_screen_add_stickers">Add stickers</string>
     <string name="add_screen_update_sticker">Select a new sticker</string>

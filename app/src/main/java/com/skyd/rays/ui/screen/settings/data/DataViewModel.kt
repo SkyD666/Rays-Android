@@ -1,35 +1,73 @@
 package com.skyd.rays.ui.screen.settings.data
 
-import com.skyd.rays.base.BaseViewModel
-import com.skyd.rays.base.IUIChange
-import com.skyd.rays.base.IUiState
-import com.skyd.rays.config.refreshStickerData
+import androidx.lifecycle.viewModelScope
+import com.skyd.rays.base.mvi.AbstractMviViewModel
+import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.DataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 @HiltViewModel
 class DataViewModel @Inject constructor(private var dataRepo: DataRepository) :
-    BaseViewModel<IUiState, DataEvent, DataIntent>() {
-    override fun initUiState(): IUiState {
-        return object : IUiState {}
+    AbstractMviViewModel<DataIntent, DataState, DataEvent>() {
+
+    override val viewState: StateFlow<DataState>
+
+    init {
+        val initialVS = DataState.initial()
+
+        viewState = merge(
+            intentSharedFlow.filterIsInstance<DataIntent.Init>().take(1),
+            intentSharedFlow.filterNot { it is DataIntent.Init }
+        )
+            .shareWhileSubscribed()
+            .toPartialStateChangeFlow()
+            .debugLog("DataPartialStateChange")
+            .sendSingleEvent()
+            .scan(initialVS) { vs, change -> change.reduce(vs) }
+            .debugLog("ViewState")
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                initialVS
+            )
     }
 
-    override fun IUIChange.checkStateOrEvent() = this as? IUiState to this as? DataEvent
 
-    override fun Flow<DataIntent>.handleIntent(): Flow<IUIChange> = merge(
-        doIsInstance<DataIntent.Start> {
-            dataRepo.requestDeleteAllData()
-                .mapToUIChange { data ->
-                    DataEvent(deleteAllResultUiEvent = DeleteAllResultUiEvent.Success(data))
-                }
-                .defaultFinally()
-                .onCompletion {
-                    refreshStickerData.tryEmit(Unit)
-                }
-        },
-    )
+    private fun Flow<DataPartialStateChange>.sendSingleEvent(): Flow<DataPartialStateChange> {
+        return onEach { change ->
+            val event = when (change) {
+                is DataPartialStateChange.DeleteAllData.Success ->
+                    DataEvent.DeleteAllResultEvent.Success(change.time)
+
+                else -> return@onEach
+            }
+            sendEvent(event)
+        }
+    }
+
+    private fun SharedFlow<DataIntent>.toPartialStateChangeFlow(): Flow<DataPartialStateChange> {
+        return merge(
+            filterIsInstance<DataIntent.Init>().map { DataPartialStateChange.Init },
+
+            filterIsInstance<DataIntent.DeleteAllData>().flatMapConcat {
+                dataRepo.requestDeleteAllData()
+                    .map { DataPartialStateChange.DeleteAllData.Success(it) }
+                    .startWith(DataPartialStateChange.LoadingDialog)
+            },
+        )
+    }
 }

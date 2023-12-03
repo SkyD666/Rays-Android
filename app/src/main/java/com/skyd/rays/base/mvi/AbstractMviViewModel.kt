@@ -74,6 +74,7 @@ abstract class AbstractMviViewModel<I : MviIntent, S : MviViewState, E : MviSing
         debugCheckMainThread()
         debugCheckImmediateMainDispatcher()
 
+        Log.i(logTag, "processIntent: $intent")
         check(intentMutableFlow.tryEmit(intent)) { "Failed to emit intent: $intent" }
     }
 
@@ -97,7 +98,7 @@ abstract class AbstractMviViewModel<I : MviIntent, S : MviViewState, E : MviSing
         debugCheckImmediateMainDispatcher()
 
         eventChannel.trySend(event)
-            .onSuccess { Log.e(logTag, "sendEvent: event=$event") }
+            .onSuccess { Log.i(logTag, "sendEvent: event=$event") }
             .onFailure {
                 Log.e(logTag, "$it. Failed to send event: $event")
             }
@@ -110,7 +111,7 @@ abstract class AbstractMviViewModel<I : MviIntent, S : MviViewState, E : MviSing
 
     protected fun <T> Flow<T>.debugLog(subject: String): Flow<T> =
         if (BuildConfig.DEBUG) {
-            onEach { Log.e(logTag, ">>> $subject: $it") }
+            onEach { Log.i(logTag, ">>> $subject: $it") }
         } else {
             this
         }
@@ -126,7 +127,7 @@ abstract class AbstractMviViewModel<I : MviIntent, S : MviViewState, E : MviSing
                     val count = subscriberCount.getAndIncrement()
 
                     self.collect {
-                        Log.e(logTag, ">>> $subject ~ $count: $it")
+                        Log.i(logTag, ">>> $subject ~ $count: $it")
                         collector.emit(it)
                     }
                 }

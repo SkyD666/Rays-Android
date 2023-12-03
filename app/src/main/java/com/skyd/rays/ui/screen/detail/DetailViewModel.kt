@@ -12,12 +12,14 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 
@@ -30,7 +32,11 @@ class DetailViewModel @Inject constructor(private var detailRepo: DetailReposito
     init {
         val initialVS = DetailState.initial()
 
-        viewState = intentSharedFlow
+        viewState = merge(
+            intentSharedFlow.filterIsInstance<DetailIntent.GetStickerDetails>().take(1),
+            intentSharedFlow.filterNot { it is DetailIntent.RefreshStickerDetails }
+        )
+            .shareWhileSubscribed()
             .toDetailPartialStateChangeFlow()
             .debugLog("DetailPartialStateChange")
             .sendSingleEvent()
@@ -58,8 +64,16 @@ class DetailViewModel @Inject constructor(private var detailRepo: DetailReposito
 
     private fun SharedFlow<DetailIntent>.toDetailPartialStateChangeFlow(): Flow<DetailPartialStateChange> {
         return merge(
-            filterIsInstance<DetailIntent.RefreshStickerDetails>().flatMapConcat { intent ->
-                detailRepo.requestStickerWithTagsDetail(intent.stickerUuid).map {
+            merge(
+                filterIsInstance<DetailIntent.GetStickerDetails>(),
+                filterIsInstance<DetailIntent.RefreshStickerDetails>(),
+            ).flatMapConcat { intent ->
+                val keyword = when (intent) {
+                    is DetailIntent.GetStickerDetails -> intent.stickerUuid
+                    is DetailIntent.RefreshStickerDetails -> intent.stickerUuid
+                    else -> error("DetailIntent type error")
+                }
+                detailRepo.requestStickerWithTagsDetail(keyword).map {
                     if (it == null) DetailPartialStateChange.DetailInfo.Empty
                     else {
                         CurrentStickerUuidPreference.put(
@@ -72,19 +86,19 @@ class DetailViewModel @Inject constructor(private var detailRepo: DetailReposito
                 }.startWith(DetailPartialStateChange.DetailInfo.Loading)
             },
 
-            filterIsInstance<DetailIntent.ExportStickers>()
-                .flatMapConcat { detailRepo.requestExportStickers(it.stickerUuid) }
-                .map {
+            filterIsInstance<DetailIntent.ExportStickers>().flatMapConcat { intent ->
+                detailRepo.requestExportStickers(intent.stickerUuid).map {
                     if (it > 0) DetailPartialStateChange.Export.Success
                     else DetailPartialStateChange.Export.Failed
-                },
+                }
+            },
 
-            filterIsInstance<DetailIntent.DeleteStickerWithTags>()
-                .flatMapConcat { detailRepo.requestDeleteStickerWithTagsDetail(it.stickerUuid) }
-                .map { result ->
+            filterIsInstance<DetailIntent.DeleteStickerWithTags>().flatMapConcat {
+                detailRepo.requestDeleteStickerWithTagsDetail(it.stickerUuid).map { result ->
                     if (result > 0) DetailPartialStateChange.Delete.Success
                     else DetailPartialStateChange.Delete.Failed
-                },
+                }
+            },
         )
     }
 }

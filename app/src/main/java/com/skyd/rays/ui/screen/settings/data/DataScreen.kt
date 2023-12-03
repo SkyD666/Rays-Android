@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.base.LoadUiIntent
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
@@ -43,9 +43,10 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var openDeleteWarningDialog by rememberSaveable { mutableStateOf(false) }
-    var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
-    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
-    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
+
+    val dispatch = viewModel.getDispatcher(startWith = DataIntent.Init)
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -79,43 +80,27 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             }
         }
 
-        loadUiIntent?.also { loadUiIntent ->
-            when (loadUiIntent) {
-                is LoadUiIntent.Error -> {
-                    snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = context.getString(R.string.failed_info, loadUiIntent.msg),
-                        key2 = loadUiIntent,
-                    )
-                }
-
-                is LoadUiIntent.Loading -> {
-                    openWaitingDialog = loadUiIntent.isShow
-                }
+        when (val event = uiEvent) {
+            is DataEvent.DeleteAllResultEvent.Success -> {
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    message = context.getString(
+                        R.string.data_screen_delete_all_success,
+                        event.time / 1000.0f
+                    ),
+                    key2 = event,
+                )
             }
-        }
-        uiEvent?.apply {
-            when (deleteAllResultUiEvent) {
-                is DeleteAllResultUiEvent.Success -> {
-                    snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = context.getString(
-                            R.string.data_screen_delete_all_success,
-                            deleteAllResultUiEvent.time / 1000.0f
-                        ),
-                        key2 = deleteAllResultUiEvent,
-                    )
-                }
 
-                null -> Unit
-            }
+            null -> Unit
         }
 
-        WaitingDialog(visible = openWaitingDialog)
+        WaitingDialog(visible = uiState.loadingDialog)
         DeleteWarningDialog(
             visible = openDeleteWarningDialog,
             onDismissRequest = { openDeleteWarningDialog = false },
             onDismiss = { openDeleteWarningDialog = false },
             onConfirm = {
-                viewModel.sendUiIntent(DataIntent.Start)
+                dispatch(DataIntent.DeleteAllData)
                 openDeleteWarningDialog = false
             }
         )

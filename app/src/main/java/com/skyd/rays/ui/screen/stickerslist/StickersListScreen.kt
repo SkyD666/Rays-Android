@@ -11,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,7 +27,7 @@ import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.detail.openDetailScreen
-import com.skyd.rays.ui.screen.home.searchbar.SearchResultItem
+import com.skyd.rays.ui.screen.search.SearchResultItem
 
 const val STICKERS_LIST_SCREEN_ROUTE = "stickersListScreen"
 
@@ -51,12 +50,7 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     val windowSizeClass = LocalWindowSizeClass.current
 
-    val dispatch =
-        viewModel.getDispatcher(startWith = StickersListIntent.RefreshStickersList(query))
-
-    LaunchedEffect(query) {
-        dispatch(StickersListIntent.RefreshStickersList(query))
-    }
+    val dispatch = viewModel.getDispatcher(startWith = StickersListIntent.GetStickersList(query))
 
     Scaffold(
         topBar = {
@@ -71,9 +65,7 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
             is ListState.Success -> {
                 LazyVerticalStaggeredGrid(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = paddingValues +
-                            PaddingValues(horizontal = 16.dp) +
-                            PaddingValues(bottom = 16.dp),
+                    contentPadding = paddingValues + PaddingValues(16.dp),
                     columns = StaggeredGridCells.Fixed(if (windowSizeClass.isCompact) 2 else 4),
                     verticalItemSpacing = 12.dp,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)

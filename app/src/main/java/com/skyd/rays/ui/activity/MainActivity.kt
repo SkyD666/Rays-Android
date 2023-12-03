@@ -56,6 +56,8 @@ import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SELFIE_SEGMENTATION_S
 import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SelfieSegmentationScreen
 import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.minitool.styletransfer.StyleTransferScreen
+import com.skyd.rays.ui.screen.search.SEARCH_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.search.SearchScreen
 import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.SettingsScreen
 import com.skyd.rays.ui.screen.settings.api.API_SCREEN_ROUTE
@@ -269,6 +271,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = "$STICKERS_LIST_SCREEN_ROUTE?query={query}") {
                     StickersListScreen(query = it.arguments?.getString("query").orEmpty())
+                }
+                composable(route = SEARCH_SCREEN_ROUTE) {
+                    SearchScreen()
                 }
             }
 

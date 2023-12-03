@@ -1,11 +1,9 @@
 package com.skyd.rays.ui.screen.settings.data
 
-import com.skyd.rays.base.IUiEvent
+import com.skyd.rays.base.mvi.MviSingleEvent
 
-class DataEvent(
-    val deleteAllResultUiEvent: DeleteAllResultUiEvent? = null,
-) : IUiEvent
-
-sealed class DeleteAllResultUiEvent {
-    class Success(val time: Long) : DeleteAllResultUiEvent()
+sealed interface DataEvent : MviSingleEvent {
+    sealed interface DeleteAllResultEvent : DataEvent {
+        data class Success(val time: Long) : DeleteAllResultEvent
+    }
 }

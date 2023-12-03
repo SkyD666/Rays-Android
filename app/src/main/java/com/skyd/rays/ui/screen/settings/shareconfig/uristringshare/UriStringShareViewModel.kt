@@ -1,92 +1,99 @@
 package com.skyd.rays.ui.screen.settings.shareconfig.uristringshare
 
-import com.skyd.rays.base.BaseViewModel
-import com.skyd.rays.base.IUIChange
+import androidx.lifecycle.viewModelScope
+import com.skyd.rays.base.mvi.AbstractMviViewModel
+import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.EmptyUriStringShareDataBean
 import com.skyd.rays.model.bean.UriStringShareDataBean
 import com.skyd.rays.model.respository.UriStringShareRepository
+import com.skyd.rays.ui.screen.stickerslist.StickersListIntent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 @HiltViewModel
 class UriStringShareViewModel @Inject constructor(
     private var uriStringShareRepo: UriStringShareRepository
-) : BaseViewModel<UriStringShareState, UriStringShareEvent, UriStringShareIntent>() {
-    override fun initUiState(): UriStringShareState {
-        return UriStringShareState(
-            uriStringShareResultUiState = UriStringShareResultUiState.Init
+) : AbstractMviViewModel<UriStringShareIntent, UriStringShareState, UriStringShareEvent>() {
+
+    override val viewState: StateFlow<UriStringShareState>
+
+    init {
+        val initialVS = UriStringShareState.initial()
+
+        viewState = merge(
+            intentSharedFlow.filterIsInstance<UriStringShareIntent.GetAllUriStringShare>().take(1),
+            intentSharedFlow.filterNot { it is UriStringShareIntent.GetAllUriStringShare }
         )
+            .shareWhileSubscribed()
+            .toStickersListPartialStateChangeFlow()
+            .debugLog("UriStringSharePartialStateChange")
+            .sendSingleEvent()
+            .scan(initialVS) { vs, change -> change.reduce(vs) }
+            .debugLog("ViewState")
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                initialVS
+            )
     }
 
-    override fun IUIChange.checkStateOrEvent() =
-        this as? UriStringShareState to this as? UriStringShareEvent
-
-    override fun Flow<UriStringShareIntent>.handleIntent(): Flow<IUIChange> = merge(
-        doIsInstance<UriStringShareIntent.GetAllUriStringShare> {
-            uriStringShareRepo.requestAllPackages()
-                .mapToUIChange { data ->
-                    copy(uriStringShareResultUiState = UriStringShareResultUiState.Success(data.reversed()))
+    private fun Flow<UriStringSharePartialStateChange>.sendSingleEvent(): Flow<UriStringSharePartialStateChange> {
+        return onEach { change ->
+            val event = when (change) {
+                is UriStringSharePartialStateChange.UpdateUriStringShare.Success -> {
+                    UriStringShareEvent.AddPackageNameUiEvent.Success
                 }
-                .defaultFinally()
-        },
 
-        doIsInstance<UriStringShareIntent.UpdateUriStringShare> { intent ->
-            uriStringShareRepo.requestUpdate(intent.bean)
-                .mapToUIChange { data ->
-                    if (data is EmptyUriStringShareDataBean) {
-                        UriStringShareEvent(
-                            addPackageNameUiEvent = AddPackageNameUiEvent.Failed(data.msg)
-                        )
-                    } else if (data is UriStringShareDataBean &&
-                        uriStringShareResultUiState is UriStringShareResultUiState.Success
-                    ) {
-                        val dataList = uriStringShareResultUiState.data
-                        val packageName = intent.bean.packageName
-                        val beanIndex = dataList.indexOfFirst {
-                            it.uriStringSharePackageBean.packageName == packageName
+                is UriStringSharePartialStateChange.UpdateUriStringShare.Failed -> {
+                    UriStringShareEvent.AddPackageNameUiEvent.Failed(change.msg)
+                }
+
+                else -> return@onEach
+            }
+            sendEvent(event)
+        }
+    }
+
+    private fun SharedFlow<UriStringShareIntent>.toStickersListPartialStateChangeFlow(): Flow<UriStringSharePartialStateChange> {
+        return merge(
+            filterIsInstance<UriStringShareIntent.GetAllUriStringShare>().flatMapConcat {
+                uriStringShareRepo.requestAllPackages().map {
+                    UriStringSharePartialStateChange.GetAllUriStringShare.Success(it.reversed())
+                }.startWith(UriStringSharePartialStateChange.GetAllUriStringShare.Loading)
+            },
+
+            filterIsInstance<UriStringShareIntent.UpdateUriStringShare>().flatMapConcat { intent ->
+                uriStringShareRepo.requestUpdate(intent.bean).map { data ->
+                    when (data) {
+                        is EmptyUriStringShareDataBean -> {
+                            UriStringSharePartialStateChange.UpdateUriStringShare.Failed(data.msg)
                         }
-                        if (beanIndex == -1) {
-                            copy(
-                                uriStringShareResultUiState = UriStringShareResultUiState.Success(
-                                    dataList.toMutableList().apply { add(0, data) }
-                                )
-                            )
-                        } else {
-                            val newDataBean = dataList[beanIndex]
-                                .copy(uriStringSharePackageBean = intent.bean)
-                            copy(
-                                uriStringShareResultUiState = UriStringShareResultUiState.Success(
-                                    dataList
-                                        .toMutableList()
-                                        .apply { set(index = beanIndex, element = newDataBean) }
-                                )
-                            )
-                        }
-                    } else {
-                        this
-                    }
-                }
-                .defaultFinally()
-        },
 
-        doIsInstance<UriStringShareIntent.DeleteUriStringShare> { intent ->
-            uriStringShareRepo.requestDelete(intent.packageName)
-                .mapToUIChange {
-                    if (uriStringShareResultUiState is UriStringShareResultUiState.Success) {
-                        val dataList = uriStringShareResultUiState.data
-                        copy(
-                            uriStringShareResultUiState = UriStringShareResultUiState.Success(
-                                dataList.toMutableList()
-                                    .apply { removeIf { it.uriStringSharePackageBean.packageName == intent.packageName } }
-                            )
-                        )
-                    } else {
-                        this
+                        is UriStringShareDataBean -> {
+                            UriStringSharePartialStateChange.UpdateUriStringShare.Success(data)
+                        }
                     }
-                }
-                .defaultFinally()
-        },
-    )
+                }.startWith(UriStringSharePartialStateChange.GetAllUriStringShare.Loading)
+            },
+
+            filterIsInstance<UriStringShareIntent.DeleteUriStringShare>().flatMapConcat { intent ->
+                uriStringShareRepo.requestDelete(intent.packageName).map {
+                    UriStringSharePartialStateChange.Delete.Success(it.first, it.second)
+                }.startWith(UriStringSharePartialStateChange.Delete.Loading)
+            },
+        )
+    }
 }

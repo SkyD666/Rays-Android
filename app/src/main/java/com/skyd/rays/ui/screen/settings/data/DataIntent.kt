@@ -1,7 +1,8 @@
 package com.skyd.rays.ui.screen.settings.data
 
-import com.skyd.rays.base.IUiIntent
+import com.skyd.rays.base.mvi.MviIntent
 
-sealed class DataIntent : IUiIntent {
-    data object Start : DataIntent()
+sealed class DataIntent : MviIntent {
+    data object Init : DataIntent()
+    data object DeleteAllData : DataIntent()
 }

@@ -8,7 +8,7 @@ import com.skyd.rays.model.bean.BaseBean
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
-import com.skyd.rays.model.respository.HomeRepository
+import com.skyd.rays.model.respository.SearchRepository
 import com.skyd.rays.util.stickerUuidToFile
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -45,7 +45,7 @@ class SearchStickersStrategy : IApiStrategy {
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     interface StrategyEntryPoint {
-        fun homeRepository(): HomeRepository
+        fun searchRepository(): SearchRepository
         fun json(): Json
     }
 
@@ -55,7 +55,7 @@ class SearchStickersStrategy : IApiStrategy {
             EntryPointAccessors.fromApplication(appContext, StrategyEntryPoint::class.java)
 
         val requestPackage = data.getStringExtra("requestPackage")
-        val result = hiltEntryPoint.homeRepository()
+        val result = hiltEntryPoint.searchRepository()
             .requestStickerWithTagsList(data.getStringExtra("keyword").orEmpty())
             .first()
             .map {

@@ -1,8 +1,7 @@
-package com.skyd.rays.ui.screen.home.searchbar
+package com.skyd.rays.ui.screen.search
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,7 +30,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
@@ -43,12 +40,10 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,44 +59,28 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.plus
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.ui.component.AnimatedPlaceholder
-import com.skyd.rays.ui.component.RaysFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalSearchResultReverse
-import com.skyd.rays.ui.local.LocalSearchResultSort
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.sendStickerByUuid
 import com.skyd.rays.util.sendStickersByUuids
-import kotlinx.coroutines.launch
 
 @Composable
 fun SearchResultList(
     state: LazyStaggeredGridState,
+    contentPadding: PaddingValues,
     dataList: List<StickerWithTags>,
     onItemClickListener: ((data: StickerWithTags, selected: Boolean) -> Unit)? = null,
     multiSelect: Boolean,
     onMultiSelectChanged: (Boolean) -> Unit,
     onInvertSelectClick: () -> Unit,
-    onSortStickerWithTagsList: () -> Unit,
-    onReverseStickerWithTagsList: () -> Unit,
     selectedStickers: List<StickerWithTags>,
 ) {
-    val searchResultSort = LocalSearchResultSort.current
-    val searchResultReverse = LocalSearchResultReverse.current
-    val scope = rememberCoroutineScope()
-    var fabHeight by remember { mutableStateOf(0.dp) }
-
-    LaunchedEffect(searchResultSort) {
-        onSortStickerWithTagsList()
-    }
-    LaunchedEffect(searchResultReverse) {
-        onReverseStickerWithTagsList()
-    }
 
     Column {
         SearchResultConfigBar(
@@ -113,47 +92,27 @@ fun SearchResultList(
         if (dataList.isEmpty()) {
             AnimatedPlaceholder(
                 resId = R.raw.lottie_genshin_impact_klee_2,
-                tip = stringResource(id = R.string.home_screen_no_search_result_tip)
+                tip = stringResource(id = R.string.search_screen_no_search_result_tip)
             )
         } else {
-            Scaffold(
-                floatingActionButton = {
-                    AnimatedVisibility(visible = state.firstVisibleItemIndex > 2) {
-                        RaysFloatingActionButton(
-                            onClick = { scope.launch { state.animateScrollToItem(0) } },
-                            onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
-                            contentDescription = stringResource(R.string.home_screen_search_result_list_to_top),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowUpward,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                },
-                contentWindowInsets = WindowInsets(0.dp),
-            ) { paddingValues ->
-                val windowSizeClass = LocalWindowSizeClass.current
-                LazyVerticalStaggeredGrid(
-                    modifier = Modifier.fillMaxSize(),
-                    state = state,
-                    contentPadding = paddingValues + PaddingValues(bottom = fabHeight) +
-                            PaddingValues(horizontal = 16.dp) +
-                            PaddingValues(bottom = 16.dp),
-                    columns = StaggeredGridCells.Fixed(
-                        if (windowSizeClass.isCompact) 2 else 4
-                    ),
-                    verticalItemSpacing = 12.dp,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(items = dataList, key = { it.sticker.uuid }) {
-                        SearchResultItem(
-                            data = it,
-                            selectable = multiSelect,
-                            selected = selectedStickers.contains(it),
-                            onClickListener = onItemClickListener
-                        )
-                    }
+            val windowSizeClass = LocalWindowSizeClass.current
+            LazyVerticalStaggeredGrid(
+                modifier = Modifier.fillMaxSize(),
+                state = state,
+                contentPadding = contentPadding,
+                columns = StaggeredGridCells.Fixed(
+                    if (windowSizeClass.isCompact) 2 else 4
+                ),
+                verticalItemSpacing = 12.dp,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(items = dataList, key = { it.sticker.uuid }) {
+                    SearchResultItem(
+                        data = it,
+                        selectable = multiSelect,
+                        selected = selectedStickers.contains(it),
+                        onClickListener = onItemClickListener
+                    )
                 }
             }
         }
@@ -219,7 +178,8 @@ fun SearchResultConfigBar(
                 )
                 SearchResultSortMenu(
                     expanded = expandMenu,
-                    onDismissRequest = { expandMenu = false })
+                    onDismissRequest = { expandMenu = false },
+                )
             }
         }
 

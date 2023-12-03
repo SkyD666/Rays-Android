@@ -6,15 +6,11 @@ import com.skyd.rays.model.bean.TagBean
 
 data class HomeState(
     val homeListState: HomeListState,
-    val searchResultState: SearchResultState,
-    val popularTagsState: PopularTagsState,
     val loadingDialog: Boolean,
 ) : MviViewState {
     companion object {
         fun initial() = HomeState(
             homeListState = HomeListState.Init,
-            searchResultState = SearchResultState.Init,
-            popularTagsState = PopularTagsState.Init,
             loadingDialog = false,
         )
     }
@@ -30,17 +26,4 @@ sealed class HomeListState {
         val recentCreatedStickersList: List<StickerWithTags>,
         val mostSharedStickersList: List<StickerWithTags>,
     ) : HomeListState()
-}
-
-sealed class SearchResultState {
-    var loading: Boolean = false
-
-    data object Init : SearchResultState()
-    data class Success(val stickerWithTagsList: List<StickerWithTags>) : SearchResultState()
-}
-
-sealed class PopularTagsState {
-    data object Init : PopularTagsState()
-    data object Loading : PopularTagsState()
-    data class Success(val popularTags: List<Pair<String, Float>>) : PopularTagsState()
 }

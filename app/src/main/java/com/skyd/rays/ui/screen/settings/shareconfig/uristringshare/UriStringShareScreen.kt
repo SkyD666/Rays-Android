@@ -18,7 +18,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.UriStringSharePackageBean
 import com.skyd.rays.model.preference.share.UriStringSharePreference
@@ -59,25 +59,21 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
     var openAddDialog by rememberSaveable { mutableStateOf(false) }
     var openDeleteDialog by rememberSaveable { mutableStateOf<String?>(null) }
     var inputPackageName by rememberSaveable { mutableStateOf("") }
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
 
-    LaunchedEffect(Unit) {
-        viewModel.sendUiIntent(UriStringShareIntent.GetAllUriStringShare)
-    }
+    val dispatch = viewModel.getDispatcher(startWith = UriStringShareIntent.GetAllUriStringShare)
 
-    uiEvent?.apply {
-        when (addPackageNameUiEvent) {
-            is AddPackageNameUiEvent.Failed -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(R.string.failed_info, addPackageNameUiEvent.msg),
-                    key2 = addPackageNameUiEvent,
-                )
-            }
-
-            AddPackageNameUiEvent.Success,
-            null -> Unit
+    when (val event = uiEvent) {
+        is UriStringShareEvent.AddPackageNameUiEvent.Failed -> {
+            snackbarHostState.showSnackbarWithLaunchedEffect(
+                message = context.getString(R.string.failed_info, event.msg),
+                key2 = event,
+            )
         }
+
+        UriStringShareEvent.AddPackageNameUiEvent.Success,
+        null -> Unit
     }
 
     Scaffold(
@@ -120,8 +116,8 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
                     )
                 }
             }
-            val uriStringShareResultUiState = uiState.uriStringShareResultUiState
-            if (uriStringShareResultUiState is UriStringShareResultUiState.Success) {
+            val uriStringShareResultUiState = uiState.uriStringShareResultState
+            if (uriStringShareResultUiState is UriStringShareResultState.Success) {
                 itemsIndexed(uriStringShareResultUiState.data) { _, item ->
                     CompositionLocalProvider(LocalUseColorfulIcon provides true) {
                         RaysSwipeToDismiss(
@@ -144,7 +140,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
                                 text = item.appName,
                                 description = item.uriStringSharePackageBean.packageName,
                                 onCheckedChange = {
-                                    viewModel.sendUiIntent(
+                                    dispatch(
                                         UriStringShareIntent.UpdateUriStringShare(
                                             item.uriStringSharePackageBean.copy(enabled = it)
                                         )
@@ -166,7 +162,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
             value = inputPackageName,
             onValueChange = { inputPackageName = it },
             onConfirm = {
-                viewModel.sendUiIntent(
+                dispatch(
                     UriStringShareIntent.UpdateUriStringShare(
                         UriStringSharePackageBean(packageName = it, enabled = true)
                     )
@@ -181,7 +177,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
             onDismissRequest = { openDeleteDialog = null },
             onDismiss = { openDeleteDialog = null },
             onConfirm = {
-                viewModel.sendUiIntent(
+                dispatch(
                     UriStringShareIntent.DeleteUriStringShare(openDeleteDialog!!)
                 )
                 openDeleteDialog = null

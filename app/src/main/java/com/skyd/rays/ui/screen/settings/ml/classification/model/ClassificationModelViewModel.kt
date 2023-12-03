@@ -1,66 +1,100 @@
 package com.skyd.rays.ui.screen.settings.ml.classification.model
 
-import com.skyd.rays.base.BaseViewModel
-import com.skyd.rays.base.IUIChange
-import com.skyd.rays.base.IUiEvent
-import com.skyd.rays.base.LoadUiIntent
+import androidx.lifecycle.viewModelScope
+import com.skyd.rays.base.mvi.AbstractMviViewModel
+import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.ClassificationModelRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class ClassificationModelViewModel @Inject constructor(
     private var classificationModelRepo: ClassificationModelRepository
-) : BaseViewModel<ClassificationModelState, ClassificationModelEvent, ClassificationModelIntent>() {
-    override fun initUiState(): ClassificationModelState {
-        return ClassificationModelState(
-            GetModelsUiState.Init,
-        )
+) : AbstractMviViewModel<ClassificationModelIntent, ClassificationModelState, ClassificationModelEvent>() {
+
+    override val viewState: StateFlow<ClassificationModelState>
+
+    init {
+        val initialVS = ClassificationModelState.initial()
+
+        viewState = intentSharedFlow
+            .toClassificationModelStateChangeFlow()
+            .debugLog("ClassificationModelPartialStateChange")
+            .sendSingleEvent()
+            .scan(initialVS) { vs, change -> change.reduce(vs) }
+            .debugLog("ViewState")
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                initialVS
+            )
     }
 
-    override fun IUIChange.checkStateOrEvent() =
-        this as? ClassificationModelState? to this as? ClassificationModelEvent
+    private fun Flow<ClassificationModelPartialStateChange>.sendSingleEvent(): Flow<ClassificationModelPartialStateChange> {
+        return onEach { change ->
+            val event = when (change) {
+                is ClassificationModelPartialStateChange.Import.Success -> {
+                    ClassificationModelEvent.ImportEvent.Success(change.newModel)
+                }
 
-    override fun Flow<ClassificationModelIntent>.handleIntent(): Flow<IUIChange> = merge(
-        doIsInstance<ClassificationModelIntent.GetModels> {
-            classificationModelRepo.requestGetModels()
-                .mapToUIChange { data ->
-                    copy(getModelsUiState = GetModelsUiState.Success(data))
+                is ClassificationModelPartialStateChange.Import.Failed -> {
+                    ClassificationModelEvent.ImportEvent.Failed(change.msg)
                 }
-                .defaultFinally()
-        },
 
-        doIsInstance<ClassificationModelIntent.SetModel> { intent ->
-            classificationModelRepo.requestSetModel(intent.modelBean.uri)
-                .mapToUIChange {
-                    object : IUiEvent {}
+                is ClassificationModelPartialStateChange.Delete.Success -> {
+                    ClassificationModelEvent.DeleteEvent.Success(change.deletedUri)
                 }
-                .defaultFinally()
-        },
 
-        doIsInstance<ClassificationModelIntent.ImportModel> { intent ->
-            classificationModelRepo.requestImportModel(intent.uri)
-                .mapToUIChange {
-                    ClassificationModelEvent(importUiEvent = ImportUiEvent.Success(intent.uri))
+                is ClassificationModelPartialStateChange.Delete.Failed -> {
+                    ClassificationModelEvent.DeleteEvent.Failed(change.msg)
                 }
-                .catch {
-                    it.printStackTrace()
-                    sendLoadUiIntent(LoadUiIntent.Error(it.message.toString()))
-                }
-        },
 
-        doIsInstance<ClassificationModelIntent.DeleteModel> { intent ->
-            classificationModelRepo.requestDeleteModel(intent.modelBean.uri)
-                .mapToUIChange {
-                    ClassificationModelEvent(deleteUiEvent = DeleteUiEvent.Success(intent.modelBean.path))
-                }
-                .catch {
-                    it.printStackTrace()
-                    sendLoadUiIntent(LoadUiIntent.Error(it.message.toString()))
-                }
-        },
-    )
+                else -> return@onEach
+            }
+            sendEvent(event)
+        }
+    }
+
+    private fun SharedFlow<ClassificationModelIntent>.toClassificationModelStateChangeFlow()
+            : Flow<ClassificationModelPartialStateChange> {
+        return merge(
+            filterIsInstance<ClassificationModelIntent.GetModels>().flatMapConcat {
+                classificationModelRepo.requestGetModels()
+                    .map { ClassificationModelPartialStateChange.GetModels.Success(it) }
+                    .startWith(ClassificationModelPartialStateChange.LoadingDialog)
+            },
+
+            filterIsInstance<ClassificationModelIntent.ImportModel>().flatMapConcat { intent ->
+                classificationModelRepo.requestImportModel(intent.uri)
+                    .map { ClassificationModelPartialStateChange.Import.Success(it) }
+                    .catch { ClassificationModelPartialStateChange.Import.Failed(it.message.toString()) }
+                    .startWith(ClassificationModelPartialStateChange.LoadingDialog)
+            },
+
+            filterIsInstance<ClassificationModelIntent.SetModel>().flatMapConcat { intent ->
+                classificationModelRepo.requestSetModel(intent.modelBean.uri)
+                    .map { ClassificationModelPartialStateChange.SetModel.Success }
+                    .startWith(ClassificationModelPartialStateChange.LoadingDialog)
+            },
+
+            filterIsInstance<ClassificationModelIntent.DeleteModel>().flatMapConcat { intent ->
+                classificationModelRepo.requestDeleteModel(intent.modelBean.uri)
+                    .map { ClassificationModelPartialStateChange.Delete.Success(it) }
+                    .catch { ClassificationModelPartialStateChange.Delete.Failed(it.message.toString()) }
+                    .startWith(ClassificationModelPartialStateChange.LoadingDialog)
+            },
+        )
+    }
 }

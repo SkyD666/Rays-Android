@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.base.LoadUiIntent
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ModelBean
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
@@ -59,34 +58,11 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-    var openWaitingDialog by remember { mutableStateOf(false) }
     var openDeleteWarningDialog by remember { mutableStateOf<ModelBean?>(null) }
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
-    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
 
-    LaunchedEffect(Unit) {
-        if (uiState.getModelsUiState is GetModelsUiState.Init) {
-            viewModel.sendUiIntent(ClassificationModelIntent.GetModels)
-        }
-    }
-
-    uiEvent?.apply {
-        when (importUiEvent) {
-            is ImportUiEvent.Success -> {
-                viewModel.sendUiIntent(ClassificationModelIntent.GetModels)
-            }
-
-            null -> Unit
-        }
-        when (deleteUiEvent) {
-            is DeleteUiEvent.Success -> {
-                viewModel.sendUiIntent(ClassificationModelIntent.GetModels)
-            }
-
-            null -> Unit
-        }
-    }
+    val dispatch = viewModel.getDispatcher(startWith = ClassificationModelIntent.GetModels)
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -106,36 +82,41 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
             classificationModelState = uiState,
             onDelete = { openDeleteWarningDialog = it },
             onImportModel = { uri ->
-                viewModel.sendUiIntent(ClassificationModelIntent.ImportModel(uri))
+                dispatch(ClassificationModelIntent.ImportModel(uri))
             },
             onSetModel = { model ->
-                viewModel.sendUiIntent(ClassificationModelIntent.SetModel(model))
+                dispatch(ClassificationModelIntent.SetModel(model))
             }
         )
 
-        loadUiIntent?.also {
-            when (it) {
-                is LoadUiIntent.Error -> {
-                    snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = context.getString(R.string.failed_info, it.msg),
-                        key2 = it,
-                    )
-                }
-
-                is LoadUiIntent.Loading -> {
-                    openWaitingDialog = it.isShow
-                }
+        when (val event = uiEvent) {
+            is ClassificationModelEvent.DeleteEvent.Failed -> {
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    message = context.getString(R.string.failed_info, event.msg),
+                    key2 = event,
+                )
             }
+
+            is ClassificationModelEvent.ImportEvent.Failed -> {
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    message = context.getString(R.string.failed_info, event.msg),
+                    key2 = event,
+                )
+            }
+
+            is ClassificationModelEvent.DeleteEvent.Success,
+            is ClassificationModelEvent.ImportEvent.Success,
+            null -> Unit
         }
 
-        WaitingDialog(visible = openWaitingDialog && openDeleteWarningDialog == null)
+        WaitingDialog(visible = uiState.loadingDialog && openDeleteWarningDialog == null)
 
         DeleteWarningDialog(
             visible = openDeleteWarningDialog != null,
             onDismissRequest = { openDeleteWarningDialog = null },
             onDismiss = { openDeleteWarningDialog = null },
             onConfirm = {
-                viewModel.sendUiIntent(ClassificationModelIntent.DeleteModel(openDeleteWarningDialog!!))
+                dispatch(ClassificationModelIntent.DeleteModel(openDeleteWarningDialog!!))
                 openDeleteWarningDialog = null
             }
         )
@@ -164,8 +145,8 @@ private fun ModelList(
             onImportModel(uri)
         }
     }
-    val getModelsUiState = classificationModelState.getModelsUiState
-    val models = if (getModelsUiState is GetModelsUiState.Success) {
+    val getModelsUiState = classificationModelState.getModelsState
+    val models = if (getModelsUiState is GetModelsState.Success) {
         getModelsUiState.models
     } else {
         emptyList()

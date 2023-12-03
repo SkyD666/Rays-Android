@@ -17,6 +17,7 @@ class DetailRepository @Inject constructor(private val stickerDao: StickerDao) :
         return flowOnIo {
             val stickerWithTags = if (stickerUuid.isBlank()) null
             else stickerDao.getStickerWithTags(stickerUuid)
+            if (stickerWithTags != null) stickerDao.addClickCount(uuid = stickerUuid, count = 1)
             emit(stickerWithTags)
         }
     }

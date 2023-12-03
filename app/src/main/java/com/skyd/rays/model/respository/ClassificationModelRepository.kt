@@ -3,7 +3,6 @@ package com.skyd.rays.model.respository
 import android.net.Uri
 import androidx.core.net.toUri
 import com.skyd.rays.appContext
-import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.CLASSIFICATION_MODEL_DIR_FILE
 import com.skyd.rays.ext.copyTo
@@ -12,50 +11,46 @@ import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.bean.ModelBean
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import java.io.File
 import javax.inject.Inject
 
 class ClassificationModelRepository @Inject constructor() : BaseRepository() {
-    suspend fun requestGetModels(): Flow<BaseData<List<ModelBean>>> {
-        return flow {
-            emitBaseData(BaseData<List<ModelBean>>().apply {
-                code = 0
-                data = getModels()
-            })
+    suspend fun requestGetModels(): Flow<List<ModelBean>> {
+        return flowOnIo {
+            emit(getModels())
         }
     }
 
-    suspend fun requestSetModel(modelUri: Uri): Flow<BaseData<String>> {
-        return flow {
+    suspend fun requestSetModel(modelUri: Uri): Flow<String> {
+        return flowOnIo {
             val name = modelUri.path?.substringAfterLast("/")
                 ?: System.currentTimeMillis().toString()
             StickerClassificationModelPreference.put(
                 context = appContext,
                 value = name
             )
-            emitBaseData(BaseData<String>().apply {
-                code = 0
-                data = name
-            })
+            emit(name)
         }
     }
 
-    suspend fun requestImportModel(modelUri: Uri): Flow<BaseData<List<ModelBean>>> {
-        return flow {
+    suspend fun requestImportModel(modelUri: Uri): Flow<ModelBean> {
+        return flowOnIo {
             val name = modelUri.path?.substringAfterLast("/")
                 ?: System.currentTimeMillis().toString()
             val file = File(CLASSIFICATION_MODEL_DIR_FILE, name)
             modelUri.copyTo(file)
-            emitBaseData(BaseData<List<ModelBean>>().apply {
-                code = 0
-                data = getModels()
-            })
+            emit(
+                ModelBean(
+                    uri = file.toUri(),
+                    path = file.absolutePath,
+                    name = file.name,
+                )
+            )
         }
     }
 
-    suspend fun requestDeleteModel(modelUri: Uri): Flow<BaseData<List<ModelBean>>> {
-        return flow {
+    suspend fun requestDeleteModel(modelUri: Uri): Flow<Uri> {
+        return flowOnIo {
             val name = modelUri.path?.substringAfterLast("/")
                 ?: System.currentTimeMillis().toString()
             val stickerFile = File(CLASSIFICATION_MODEL_DIR_FILE, name)
@@ -69,10 +64,7 @@ class ClassificationModelRepository @Inject constructor() : BaseRepository() {
                     value = StickerClassificationModelPreference.default
                 )
             }
-            emitBaseData(BaseData<List<ModelBean>>().apply {
-                code = 0
-                data = getModels()
-            })
+            emit(modelUri)
         }
     }
 

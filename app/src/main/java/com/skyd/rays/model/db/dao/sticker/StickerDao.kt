@@ -37,7 +37,7 @@ interface StickerDao {
 
     @Transaction
     @RawQuery
-    fun getStickerWithTagsList(sql: SupportSQLiteQuery): List<StickerWithTags>
+    fun getStickerWithTagsList(sql: SupportSQLiteQuery): Flow<List<StickerWithTags>>
 
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME")
@@ -97,7 +97,7 @@ interface StickerDao {
 
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME ORDER BY $SHARE_COUNT_COLUMN DESC LIMIT :count")
-    fun getPopularStickersList(count: Int = 15): List<StickerWithTags>
+    fun getPopularStickersList(count: Int = 15): Flow<List<StickerWithTags>>
 
     @Transaction
     fun addStickerWithTags(

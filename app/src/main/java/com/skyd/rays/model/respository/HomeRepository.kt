@@ -1,7 +1,6 @@
 package com.skyd.rays.model.respository
 
 import android.database.DatabaseUtils
-import android.net.Uri
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseRepository
@@ -15,10 +14,8 @@ import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.db.dao.SearchDomainDao
 import com.skyd.rays.model.db.dao.TagDao
 import com.skyd.rays.model.db.dao.sticker.StickerDao
-import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
-import com.skyd.rays.util.exportSticker
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -33,12 +30,6 @@ class HomeRepository @Inject constructor(
     private val stickerDao: StickerDao,
     private val tagDao: TagDao
 ) : BaseRepository() {
-    suspend fun requestStickerWithTagsList(keyword: String): Flow<List<StickerWithTags>> {
-        return flowOnIo {
-            emit(stickerDao.getStickerWithTagsList(genSql(keyword)))
-        }
-    }
-
     fun requestRecommendTags(): Flow<List<TagBean>> {
         return tagDao.getRecommendTagsList(count = 10).distinctUntilChanged().flowOn(Dispatchers.IO)
     }
@@ -57,79 +48,6 @@ class HomeRepository @Inject constructor(
         return stickerDao.getMostSharedStickersList(count = 10)
             .distinctUntilChanged()
             .flowOn(Dispatchers.IO)
-    }
-
-    suspend fun requestDeleteStickerWithTagsDetail(stickerUuids: List<String>): Flow<List<String>> {
-        return flowOnIo {
-            stickerDao.deleteStickerWithTags(stickerUuids)
-            emit(stickerUuids)
-        }
-    }
-
-    suspend fun requestAddClickCount(stickerUuid: String, count: Int = 1): Flow<Int> {
-        return flowOnIo {
-            emit(stickerDao.addClickCount(uuid = stickerUuid, count = count))
-        }
-    }
-
-    suspend fun requestSearchBarPopularTags(count: Int): Flow<List<Pair<String, Float>>> {
-        return flowOnIo {
-            val popularStickersList = stickerDao.getPopularStickersList(count = count)
-            val tagsMap: MutableMap<Pair<String, String>, Long> = mutableMapOf()
-            val tagsCountMap: MutableMap<Pair<String, String>, Long> = mutableMapOf()
-            val stickerUuidCountMap: MutableMap<String, Long> = mutableMapOf()
-            popularStickersList.forEach {
-                it.tags.forEach { tag ->
-                    val tagString = tag.tag
-                    if (tagString.length < 6) {
-                        tagsCountMap[tagString to it.sticker.uuid] = tagsCountMap
-                            .getOrDefault(tagString to it.sticker.uuid, 0) + 1
-                        tagsMap[tagString to it.sticker.uuid] = tagsMap
-                            .getOrDefault(tagString to it.sticker.uuid, 0) + it.sticker.shareCount
-                    }
-                }
-                stickerUuidCountMap[it.sticker.uuid] = 0
-            }
-            tagsCountMap.forEach { (t, u) ->
-                tagsMap[t] = tagsMap.getOrDefault(t, 0) * u
-            }
-            var result = tagsMap.toList().sortedByDescending { (_, value) -> value }
-            result = result.filter {
-                val stickUuid = it.first.second
-                val cnt = stickerUuidCountMap[stickUuid]
-                if (cnt != null) {
-                    // 限制每个表情包只能推荐两个标签
-                    if (cnt >= 2) {
-                        false
-                    } else {
-                        stickerUuidCountMap[stickUuid] = cnt + 1
-                        true
-                    }
-                } else {
-                    false
-                }
-            }.distinctBy { it.first.first }
-            val maxPopularValue = result.getOrNull(0)?.second ?: 1
-            emit(result.map { it.first.first to it.second.toFloat() / maxPopularValue })
-        }
-    }
-
-    suspend fun requestExportStickers(stickerUuids: List<String>): Flow<Int> {
-        return flowOnIo {
-            val exportStickerDir = appContext.dataStore.getOrDefault(ExportStickerDirPreference)
-            check(exportStickerDir.isNotBlank()) { "exportStickerDir is null" }
-            var successCount = 0
-            stickerUuids.forEach {
-                runCatching {
-                    exportSticker(uuid = it, outputDir = Uri.parse(exportStickerDir))
-                }.onSuccess {
-                    successCount++
-                }.onFailure {
-                    it.printStackTrace()
-                }
-            }
-            emit(successCount)
-        }
     }
 
     companion object {

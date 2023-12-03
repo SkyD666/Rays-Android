@@ -116,7 +116,9 @@ fun Context.sendStickersByFiles(
             if (dataStore.getOrDefault(UriStringSharePreference)) {
                 contentUris.shareStickerUriString(
                     context = this@sendStickersByFiles,
-                    packages = uriStringSharePackageDao().getAllPackage().map { it.packageName }
+                    packages = uriStringSharePackageDao().getAllPackage()
+                        .filter { it.enabled }
+                        .map { it.packageName }
                 )
             }
         }

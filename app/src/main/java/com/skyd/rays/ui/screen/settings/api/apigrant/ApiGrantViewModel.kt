@@ -6,18 +6,21 @@ import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.ApiGrantDataBean
 import com.skyd.rays.model.bean.EmptyApiGrantDataBean
 import com.skyd.rays.model.respository.ApiGrantRepository
+import com.skyd.rays.ui.screen.search.SearchIntent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +33,11 @@ class ApiGrantViewModel @Inject constructor(
     init {
         val initialVS = ApiGrantState.initial()
 
-        viewState = intentSharedFlow
+        viewState = merge(
+            intentSharedFlow.filterIsInstance<ApiGrantIntent.GetAllApiGrant>().take(1),
+            intentSharedFlow.filterNot { it is ApiGrantIntent.GetAllApiGrant }
+        )
+            .shareWhileSubscribed()
             .toApiGrantPartialStateChangeFlow()
             .debugLog("ApiGrantPartialStateChange")
             .sendSingleEvent()
@@ -68,9 +75,8 @@ class ApiGrantViewModel @Inject constructor(
                 }.startWith(ApiGrantPartialStateChange.ApiGrantList.Loading)
             },
 
-            filterIsInstance<ApiGrantIntent.UpdateApiGrant>()
-                .flatMapConcat { apiGrantRepo.requestUpdate(it.bean) }
-                .map { data ->
+            filterIsInstance<ApiGrantIntent.UpdateApiGrant>().flatMapConcat { intent ->
+                apiGrantRepo.requestUpdate(intent.bean).map { data ->
                     when (data) {
                         is ApiGrantDataBean -> {
                             ApiGrantPartialStateChange.AddPackageName.Success(data)
@@ -80,11 +86,13 @@ class ApiGrantViewModel @Inject constructor(
                             ApiGrantPartialStateChange.AddPackageName.Failed(data.msg)
                         }
                     }
-                },
+                }
+            },
 
-            filterIsInstance<ApiGrantIntent.DeleteApiGrant>()
-                .flatMapConcat { apiGrantRepo.requestDelete(it.packageName) }
-                .map { ApiGrantPartialStateChange.Delete.Success(it.first) },
+            filterIsInstance<ApiGrantIntent.DeleteApiGrant>().flatMapConcat { intent ->
+                apiGrantRepo.requestDelete(intent.packageName)
+                    .map { ApiGrantPartialStateChange.Delete.Success(it.first) }
+            },
         )
     }
 }

@@ -1,4 +1,4 @@
-package com.skyd.rays.ui.screen.home.searchbar
+package com.skyd.rays.ui.screen.search
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done

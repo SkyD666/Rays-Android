@@ -2,6 +2,7 @@ package com.skyd.rays.ui.screen.settings.appearance.style
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
@@ -26,9 +27,9 @@ import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalShowPopularTags
-import com.skyd.rays.ui.screen.home.searchbar.PopularTagsBar
-import com.skyd.rays.ui.screen.home.searchbar.SearchResultList
-import com.skyd.rays.ui.screen.home.searchbar.TrailingIcon
+import com.skyd.rays.ui.screen.search.PopularTagsBar
+import com.skyd.rays.ui.screen.search.SearchResultList
+import com.skyd.rays.ui.screen.search.TrailingIcon
 
 @Composable
 fun SearchScreenPreview() {
@@ -73,6 +74,7 @@ private fun RaysSearchBarPreview() {
                 }
                 SearchResultList(
                     state = searchResultListState,
+                    contentPadding = PaddingValues(horizontal = 16.dp),
                     dataList = if (currentStickerUuid.isBlank()) {
                         emptyList()
                     } else {
@@ -89,8 +91,6 @@ private fun RaysSearchBarPreview() {
                     multiSelect = false,
                     onMultiSelectChanged = {},
                     onInvertSelectClick = {},
-                    onReverseStickerWithTagsList = {},
-                    onSortStickerWithTagsList = {},
                     selectedStickers = emptyList()
                 )
             }

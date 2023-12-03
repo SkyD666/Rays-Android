@@ -1,10 +1,5 @@
 package com.skyd.rays.ui.screen.home
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,9 +7,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -24,11 +21,13 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGri
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -36,15 +35,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -56,19 +51,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
-import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysFloatingActionButton
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.local.LocalQuery
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.detail.openDetailScreen
-import com.skyd.rays.ui.screen.home.searchbar.RaysSearchBar
+import com.skyd.rays.ui.screen.search.SEARCH_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.stickerslist.openStickersListScreen
 
 
@@ -76,61 +68,54 @@ const val HOME_SCREEN_ROUTE = "homeScreen"
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
-    val density = LocalDensity.current
     val navController = LocalNavController.current
-    val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
-    val initQuery = LocalQuery.current
-    var active by rememberSaveable { mutableStateOf(false) }
-    var query by rememberSaveable(initQuery) { mutableStateOf(initQuery) }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
     var fabHeight by remember { mutableStateOf(0.dp) }
 
-    val dispatch = viewModel.getDispatcher(startWith = HomeIntent.RefreshHomeList)
+    val dispatch = viewModel.getDispatcher(startWith = HomeIntent.GetHomeList)
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
-            AnimatedVisibility(
-                visible = !active,
-                enter = slideInVertically { with(density) { 40.dp.roundToPx() } } + fadeIn(),
-                exit = slideOutVertically { with(density) { 40.dp.roundToPx() } } + fadeOut(),
-            ) {
-                HomeScreenFloatingActionButton(
-                    onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height }
-                )
-            }
-        },
-        contentWindowInsets = WindowInsets(
-            left = ScaffoldDefaults.contentWindowInsets
-                .getLeft(LocalDensity.current, LocalLayoutDirection.current),
-            top = 0,
-            right = ScaffoldDefaults.contentWindowInsets
-                .getRight(LocalDensity.current, LocalLayoutDirection.current),
-            bottom = ScaffoldDefaults.contentWindowInsets.getBottom(LocalDensity.current),
-        )
+            HomeScreenFloatingActionButton(
+                onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height }
+            )
+        }
     ) { innerPaddings ->
         Column(
             modifier = Modifier
-                .padding(innerPaddings)
+                .padding(
+                    start = innerPaddings.calculateStartPadding(LocalLayoutDirection.current),
+                    end = innerPaddings.calculateEndPadding(LocalLayoutDirection.current),
+                    bottom = innerPaddings.calculateBottomPadding(),
+                )
                 .fillMaxSize()
+                .padding(top = innerPaddings.calculateTopPadding()),
         ) {
-            RaysSearchBar(
-                query = query,
-                onQueryChange = {
-                    query = it
-                    QueryPreference.put(context, scope, it)
-                },
-                active = active,
-                onActiveChange = {
-                    active = it
-                },
-                uiState = uiState,
-                onDispatch = dispatch,
-            )
-            Spacer(modifier = Modifier.height(10.dp))
+            FilledTonalButton(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
+                    .height(56.dp),
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+                onClick = { navController.navigate(SEARCH_SCREEN_ROUTE) }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    contentDescription = null
+                )
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 16.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    text = stringResource(R.string.home_screen_search_hint),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
             when (val homeUiState = uiState.homeListState) {
                 is HomeListState.Init -> {
                     HomeEmptyPlaceholder()
@@ -207,21 +192,6 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             }
         }
 
-        when (val event = uiEvent) {
-            is HomeEvent.ExportStickers.Success -> snackbarHostState.showSnackbarWithLaunchedEffect(
-                message = context.resources.getQuantityString(
-                    R.plurals.export_stickers_result,
-                    event.successCount,
-                    event.successCount,
-                ),
-                key2 = uiEvent,
-            )
-
-            HomeEvent.AddClickCount.Success,
-            is HomeEvent.DeleteStickerWithTags.Success,
-            null -> Unit
-        }
-
         WaitingDialog(visible = uiState.loadingDialog)
     }
 }
@@ -240,6 +210,15 @@ private fun DisplayStickersRow(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
         )
+        if (count == 0) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(6.dp),
+                textAlign = TextAlign.Center,
+                text = stringResource(id = R.string.empty_tip)
+            )
+        }
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 16.dp)
@@ -284,6 +263,15 @@ private fun DisplayTagsRow(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
         )
+        if (count == 0) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(6.dp),
+                textAlign = TextAlign.Center,
+                text = stringResource(id = R.string.empty_tip)
+            )
+        }
         LazyHorizontalStaggeredGrid(
             modifier = Modifier.height(160.dp),
             rows = StaggeredGridCells.Fixed(2),

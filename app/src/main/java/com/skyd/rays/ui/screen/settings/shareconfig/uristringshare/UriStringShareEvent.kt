@@ -1,12 +1,11 @@
 package com.skyd.rays.ui.screen.settings.shareconfig.uristringshare
 
-import com.skyd.rays.base.IUiEvent
+import com.skyd.rays.base.mvi.MviSingleEvent
 
-class UriStringShareEvent(
-    val addPackageNameUiEvent: AddPackageNameUiEvent? = null,
-) : IUiEvent
+sealed interface UriStringShareEvent : MviSingleEvent {
 
-sealed class AddPackageNameUiEvent {
-    data object Success : AddPackageNameUiEvent()
-    class Failed(val msg: String) : AddPackageNameUiEvent()
+    sealed interface AddPackageNameUiEvent : UriStringShareEvent {
+        data object Success : AddPackageNameUiEvent
+        class Failed(val msg: String) : AddPackageNameUiEvent
+    }
 }

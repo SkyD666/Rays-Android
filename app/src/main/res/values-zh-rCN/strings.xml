@@ -151,7 +151,8 @@
     </plurals>
     <string name="webdav_screen_restore">还原</string>
     <string name="home_screen_empty_tip">开始新建表情包吧~</string>
-    <string name="home_screen_no_search_result_tip">空空如也呢~</string>
+    <string name="empty_tip">空~</string>
+    <string name="search_screen_no_search_result_tip">空空如也呢~</string>
     <string name="add_screen_select_sticker">选择表情包</string>
     <string name="add_screen_add_stickers">添加表情包</string>
     <string name="add_screen_update_sticker">选择新表情包</string>

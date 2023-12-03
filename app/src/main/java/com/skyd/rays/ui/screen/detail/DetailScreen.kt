@@ -137,7 +137,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
     var fabHeight by remember { mutableStateOf(0.dp) }
 
     val dispatch =
-        viewModel.getDispatcher(startWith = DetailIntent.RefreshStickerDetails(stickerUuid))
+        viewModel.getDispatcher(startWith = DetailIntent.GetStickerDetails(stickerUuid))
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },

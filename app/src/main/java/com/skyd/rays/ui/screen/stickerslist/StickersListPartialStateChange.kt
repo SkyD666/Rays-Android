@@ -22,10 +22,4 @@ internal sealed interface StickersListPartialStateChange {
         data object Loading : StickersList
         data class Success(val stickerWithTagsList: List<StickerWithTags>) : StickersList
     }
-
-    sealed interface AddClickCount : StickersListPartialStateChange {
-        data object Success : AddClickCount {
-            override fun reduce(oldState: StickersListState): StickersListState = oldState
-        }
-    }
 }

@@ -32,4 +32,4 @@ data class UriStringShareDataBean(
 
 data class EmptyUriStringShareDataBean(val msg: String) : IUriStringShareData
 
-interface IUriStringShareData : BaseBean
+sealed interface IUriStringShareData : BaseBean
