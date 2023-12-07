@@ -21,6 +21,8 @@ fun <T> concat(flow1: Flow<T>, flow2: Flow<T>): Flow<T> = flow {
 
 fun <T> Flow<T>.startWith(item: T): Flow<T> = concat(flowOf(item), this)
 
+fun <T> Flow<T>.endWith(item: T): Flow<T> = concat(this, flowOf(item))
+
 
 /**
  * Projects each source value to a [Flow] which is merged in the output [Flow] only if the previous projected [Flow] has completed.

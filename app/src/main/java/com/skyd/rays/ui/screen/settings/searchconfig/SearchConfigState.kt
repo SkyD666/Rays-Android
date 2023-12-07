@@ -1,12 +1,20 @@
 package com.skyd.rays.ui.screen.settings.searchconfig
 
-import com.skyd.rays.base.IUiState
+import com.skyd.rays.base.mvi.MviViewState
 
 data class SearchConfigState(
-    val searchDomainResultUiState: SearchDomainResultUiState,
-) : IUiState
+    val searchDomainResultState: SearchDomainResultState,
+    val loadingDialog: Boolean,
+) : MviViewState {
+    companion object {
+        fun initial() = SearchConfigState(
+            searchDomainResultState = SearchDomainResultState.Init,
+            loadingDialog = false,
+        )
+    }
+}
 
-sealed class SearchDomainResultUiState {
-    data object Init : SearchDomainResultUiState()
-    data class Success(val searchDomainMap: Map<String, Boolean>) : SearchDomainResultUiState()
+sealed class SearchDomainResultState {
+    data object Init : SearchDomainResultState()
+    data class Success(val searchDomainMap: Map<String, Boolean>) : SearchDomainResultState()
 }

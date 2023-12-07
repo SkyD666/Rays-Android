@@ -18,14 +18,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -37,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.base.LoadUiIntent
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.config.allSearchDomain
 import com.skyd.rays.model.bean.SearchDomainBean
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
@@ -60,13 +56,9 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val useRegexSearch = LocalUseRegexSearch.current
     val intersectSearchBySpace = LocalIntersectSearchBySpace.current
-    var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.sendUiIntent(SearchConfigIntent.GetSearchDomain)
-    }
+    val dispatch = viewModel.getDispatcher(startWith = SearchConfigIntent.GetSearchDomain)
 
     Scaffold(
         topBar = {
@@ -124,8 +116,8 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
                     text = stringResource(id = R.string.search_config_screen_domain_category)
                 )
             }
-            val searchDomainResultUiState = uiState.searchDomainResultUiState
-            if (searchDomainResultUiState is SearchDomainResultUiState.Success) {
+            val searchDomainResultUiState = uiState.searchDomainResultState
+            if (searchDomainResultUiState is SearchDomainResultState.Success) {
                 repeat(tables.size) { tableIndex ->
                     selected[tableIndex] = mutableStateMapOf()
                     item {
@@ -133,23 +125,14 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
                             selected = selected[tableIndex]!!,
                             table = tables[tableIndex],
                             searchDomain = searchDomainResultUiState.searchDomainMap,
-                            onSetSearchDomain = {
-                                viewModel.sendUiIntent(SearchConfigIntent.SetSearchDomain(it))
-                            }
+                            onSetSearchDomain = { dispatch(SearchConfigIntent.SetSearchDomain(it)) }
                         )
                     }
                 }
             }
         }
-        loadUiIntent?.also {
-            when (it) {
-                is LoadUiIntent.Error -> Unit
-                is LoadUiIntent.Loading -> {
-                    openWaitingDialog = it.isShow
-                }
-            }
-        }
-        WaitingDialog(visible = openWaitingDialog)
+
+        WaitingDialog(visible = uiState.loadingDialog)
     }
 }
 

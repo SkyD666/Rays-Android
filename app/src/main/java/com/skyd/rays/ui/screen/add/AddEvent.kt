@@ -1,25 +1,16 @@
 package com.skyd.rays.ui.screen.add
 
-import com.skyd.rays.base.IUiEvent
+import com.skyd.rays.base.mvi.MviSingleEvent
 import com.skyd.rays.model.bean.StickerWithTags
 
-class AddEvent(
-    val getStickersWithTagsUiEvent: GetStickersWithTagsUiEvent? = null,
-    val addStickersResultUiEvent: AddStickersResultUiEvent? = null,
-    val recognizeTextUiEvent: RecognizeTextUiEvent? = null,
-) : IUiEvent
+sealed interface AddEvent : MviSingleEvent {
+    sealed interface AddStickersResultEvent : AddEvent {
+        data class Duplicate(val stickerWithTags: StickerWithTags) : AddStickersResultEvent
+        data class Success(val stickerUuid: String) : AddStickersResultEvent
+        data class Failed(val msg: String) : AddStickersResultEvent
+    }
 
-sealed class GetStickersWithTagsUiEvent {
-    class Success(val stickerWithTags: StickerWithTags) : GetStickersWithTagsUiEvent()
-    data object Init : GetStickersWithTagsUiEvent()
-    data object Failed : GetStickersWithTagsUiEvent()
-}
+    data object CurrentStickerChanged : AddEvent
 
-sealed class AddStickersResultUiEvent {
-    class Duplicate(val stickerUuid: String) : AddStickersResultUiEvent()
-    class Success(val stickerUuid: String) : AddStickersResultUiEvent()
-}
-
-sealed class RecognizeTextUiEvent {
-    class Success(val texts: Set<String>) : RecognizeTextUiEvent()
+    data object GetStickersWithTagsStateChanged : AddEvent
 }

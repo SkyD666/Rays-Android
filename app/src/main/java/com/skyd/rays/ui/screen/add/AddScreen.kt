@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -69,7 +68,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -92,10 +90,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.skyd.rays.R
-import com.skyd.rays.base.LoadUiIntent
-import com.skyd.rays.config.refreshStickerData
-import com.skyd.rays.ext.addAllDistinctly
-import com.skyd.rays.ext.addIfAny
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
@@ -108,8 +103,8 @@ import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.RaysDialog
+import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.util.stickerUuidToUri
 import kotlinx.coroutines.launch
 
 const val ADD_SCREEN_ROUTE = "addScreen"
@@ -142,65 +137,43 @@ fun AddScreen(
     val navController = LocalNavController.current
     var titleText by rememberSaveable { mutableStateOf("") }
     var currentTagText by rememberSaveable { mutableStateOf("") }
-    var stickerCreateTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    val tagsToAllWaitingStickers = remember { mutableStateListOf<TagBean>() }
-    val tags = remember { mutableStateListOf<TagBean>() }
-    val stickersWaitingList = remember { mutableStateListOf<UriWithStickerUuidBean>() }
-    val suggestedTags = remember { mutableStateListOf<String>() }
-    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
-    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
+    var stickerCreateTime by rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
 
-    fun currentSticker(): UriWithStickerUuidBean? = stickersWaitingList.firstOrNull()
+    val dispatch = viewModel.getDispatcher(startWith = AddIntent.Init(initStickers))
 
     // 添加/修改完成后重设页面数据
     fun resetStickerData() {
         titleText = ""
         currentTagText = ""
         stickerCreateTime = System.currentTimeMillis()
-        suggestedTags.clear()
-        tags.clear()
-        tags.addAll(tagsToAllWaitingStickers)
-        if (stickersWaitingList.isNotEmpty()) {
-            stickersWaitingList.removeAt(0)
-        }
     }
 
-    LaunchedEffect(Unit) {
-        stickersWaitingList.addAll(initStickers)
-        currentSticker()?.let { currentSticker ->
-            if (currentSticker.stickerUuid.isNotBlank()) {
-                viewModel.sendUiIntent(AddIntent.GetStickerWithTags(currentSticker.stickerUuid))
-            }
-        }
-    }
-
-    LaunchedEffect(currentSticker()) {
-        val currentSticker = currentSticker()
-        if (currentSticker != null) {
-            currentSticker.uri?.let { uri ->
-                viewModel.sendUiIntent(AddIntent.GetSuggestTags(uri))
-            }
-        } else {
-            resetStickerData()
+    fun processNext() {
+        if (uiState.waitingList.size <= 1) {
             if (isEdit) {
                 navController.popBackStackWithLifecycle()
             }
         }
+        dispatch(AddIntent.ProcessNext(uiState.waitingList.getOrNull(1)))
     }
 
     val pickStickerLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { result ->
         if (result != null) {
-            stickersWaitingList[0] = stickersWaitingList
-                .getOrNull(0)?.copy(uri = result) ?: UriWithStickerUuidBean()
+            val waitingList = uiState.waitingList
+            if (waitingList.isNotEmpty()) {
+                dispatch(AddIntent.ReplaceWaitingListFirst(waitingList[0].copy(uri = result)))
+            }
         }
     }
     val pickStickersLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetMultipleContents()
     ) { result ->
         if (result.isEmpty()) return@rememberLauncherForActivityResult
-        stickersWaitingList.addAllDistinctly(result.map { UriWithStickerUuidBean(uri = it) })
+        dispatch(AddIntent.AddToWaitingList(result.map { UriWithStickerUuidBean(uri = it) }))
     }
 
     Scaffold(
@@ -227,13 +200,16 @@ fun AddScreen(
                         imageVector = if (isEdit) Icons.Default.Image else Icons.Default.AddPhotoAlternate,
                     )
                     RaysIconButton(
-                        onClick = { resetStickerData() },
+                        onClick = {
+                            resetStickerData()
+                            processNext()
+                        },
                         contentDescription = stringResource(R.string.add_screen_skip_current_sticker),
                         imageVector = Icons.Default.EditOff,
                     )
                     RaysIconButton(
                         onClick = {
-                            if (currentSticker() == null) {
+                            if (uiState.currentSticker == null) {
                                 snackbarHostState.showSnackbar(
                                     scope = scope,
                                     message = context.getString(R.string.add_screen_sticker_is_not_set),
@@ -245,13 +221,20 @@ fun AddScreen(
                                     sticker = StickerBean(
                                         title = titleText,
                                         createTime = stickerCreateTime
-                                    ).apply { uuid = currentSticker()!!.stickerUuid },
-                                    tags = tags.distinct()
+                                    ).apply {
+                                        uuid = uiState.currentSticker?.stickerUuid.orEmpty()
+                                            .ifBlank {
+                                                (uiState.getStickersWithTagsState as?
+                                                        GetStickersWithTagsState.Success)
+                                                    ?.stickerWithTags?.sticker?.uuid.orEmpty()
+                                            }
+                                    },
+                                    tags = uiState.addedTags.distinct().map { TagBean(tag = it) }
                                 )
-                                viewModel.sendUiIntent(
+                                dispatch(
                                     AddIntent.AddNewStickerWithTags(
                                         stickerWithTags,
-                                        currentSticker()!!.uri!!
+                                        uiState.currentSticker!!.uri!!
                                     )
                                 )
                             }
@@ -270,18 +253,18 @@ fun AddScreen(
             item {
                 Column {
                     WaitingRow(
-                        uris = stickersWaitingList,
+                        uris = uiState.waitingList,
                         onSelectStickersClick = { pickStickersLauncher.launch("image/*") },
                         onSelectFirstStickerClick = { pickStickerLauncher.launch("image/*") },
                     )
                     AnimatedVisibility(
-                        visible = stickersWaitingList.isNotEmpty(),
+                        visible = uiState.waitingList.isNotEmpty(),
                         enter = expandVertically(),
                         exit = shrinkVertically(),
                     ) {
                         AddToAllList(
-                            list = tagsToAllWaitingStickers,
-                            onDeleteTag = { tagsToAllWaitingStickers.remove(it) }
+                            list = uiState.addToAllTags,
+                            onDeleteTag = { dispatch(AddIntent.RemoveAddToAllTag(it)) }
                         )
                     }
                 }
@@ -293,92 +276,73 @@ fun AddScreen(
             tagsInputFieldItem(
                 value = currentTagText,
                 onValueChange = { currentTagText = it },
-                onAddClick = {
-                    tags.addIfAny(TagBean(tag = currentTagText)) { it.tag != currentTagText }
-                },
-                onAddToAllClick = {
-                    tagsToAllWaitingStickers.addIfAny(TagBean(tag = currentTagText)) {
-                        it.tag != currentTagText
-                    }
-                }
+                onAddClick = { dispatch(AddIntent.AddTag(currentTagText)) },
+                onAddToAllClick = { dispatch(AddIntent.AddAddToAllTag(currentTagText)) }
             )
             item {
                 AnimatedVisibility(
-                    visible = tags.isNotEmpty(),
+                    visible = uiState.addedTags.isNotEmpty(),
                     enter = expandVertically(),
                     exit = shrinkVertically(),
                 ) {
-                    AddedTags(tags = tags, onClick = { tags.remove(tags[it]) })
+                    AddedTags(tags = uiState.addedTags, onClick = { index ->
+                        dispatch(AddIntent.RemoveTag(uiState.addedTags[index]))
+                    })
                 }
             }
             item {
-                SuggestedTags(suggestedTags = suggestedTags, onClick = { index ->
-                    val text = suggestedTags.removeAt(index)
-                    currentTagText = text
-                    tags.addIfAny(TagBean(tag = text)) { it.tag != text }
+                SuggestedTags(suggestedTags = uiState.suggestTags, onClick = { index ->
+                    currentTagText = uiState.suggestTags[index]
+                    dispatch(AddIntent.AddTag(uiState.suggestTags[index]))
+                    dispatch(AddIntent.RemoveSuggestTag(uiState.suggestTags[index]))
                 })
             }
         }
 
-        uiEvent?.apply {
-            when (getStickersWithTagsUiEvent) {
-                is GetStickersWithTagsUiEvent.Success -> LaunchedEffect(getStickersWithTagsUiEvent) {
-                    val stickerBean = getStickersWithTagsUiEvent.stickerWithTags.sticker
-                    // 使用获取的数据更新当前数据
-                    stickersWaitingList[0] = stickersWaitingList[0].copy(
-                        uri = stickerUuidToUri(stickerBean.uuid),
-                        stickerUuid = stickerBean.uuid
-                    )
-                    titleText = stickerBean.title
-                    stickerCreateTime = stickerBean.createTime
-                    tags.clear()
-                    tags.addAll(getStickersWithTagsUiEvent.stickerWithTags.tags.distinct())
-                }
-
-                GetStickersWithTagsUiEvent.Init,
-                GetStickersWithTagsUiEvent.Failed,
-                null -> Unit
-            }
-
-            when (addStickersResultUiEvent) {
-                is AddStickersResultUiEvent.Duplicate -> LaunchedEffect(addStickersResultUiEvent) {
-                    openDuplicateDialog = true
-                    viewModel.sendUiIntent(AddIntent.GetStickerWithTags(addStickersResultUiEvent.stickerUuid))
-                }
-
-                is AddStickersResultUiEvent.Success -> {
-                    LaunchedEffect(addStickersResultUiEvent) {
-                        refreshStickerData.tryEmit(Unit)
-                        resetStickerData()
-                        openDialog = true
-                    }
-                }
-
-                null -> Unit
-            }
-            when (recognizeTextUiEvent) {
-                is RecognizeTextUiEvent.Success -> {
-                    LaunchedEffect(recognizeTextUiEvent) {
-                        suggestedTags.clear()
-                        suggestedTags += recognizeTextUiEvent.texts
-                    }
-                }
-
-                null -> Unit
+        fun onGetStickersWithTagsStateChanged() {
+            val getStickersWithTagsState = uiState.getStickersWithTagsState
+            if (getStickersWithTagsState is GetStickersWithTagsState.Success) {
+                titleText = getStickersWithTagsState.stickerWithTags.sticker.title
+                stickerCreateTime = getStickersWithTagsState.stickerWithTags.sticker.createTime
             }
         }
 
-        loadUiIntent?.also {
-            when (it) {
-                is LoadUiIntent.Error -> {
-                    snackbarHostState.showSnackbarWithLaunchedEffect(
-                        context.getString(R.string.failed_info, it.msg),
-                        key2 = it,
-                    )
-                }
-
-                is LoadUiIntent.Loading -> Unit
+        when (val event = uiEvent) {
+            is AddEvent.AddStickersResultEvent.Duplicate -> LaunchedEffect(event) {
+                openDuplicateDialog = true
+                onGetStickersWithTagsStateChanged()
             }
+
+            is AddEvent.AddStickersResultEvent.Failed -> {
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    message = context.getString(R.string.failed_info, event.msg),
+                    key1 = event,
+                )
+            }
+
+            is AddEvent.AddStickersResultEvent.Success -> LaunchedEffect(event) {
+                resetStickerData()
+                processNext()
+                openDialog = true
+            }
+
+            AddEvent.CurrentStickerChanged -> LaunchedEffect(uiState.currentSticker) {
+                val currentSticker = uiState.currentSticker
+                resetStickerData()
+                if (currentSticker != null) {
+                    currentSticker.uri?.let { uri ->
+                        dispatch(AddIntent.GetSuggestTags(uri))
+                    }
+                } else {
+                    processNext()
+                }
+            }
+
+            AddEvent.GetStickersWithTagsStateChanged -> LaunchedEffect(uiState.getStickersWithTagsState) {
+                onGetStickersWithTagsStateChanged()
+            }
+
+            null -> Unit
         }
 
         RaysDialog(
@@ -399,14 +363,14 @@ fun AddScreen(
             text = { Text(text = stringResource(R.string.add_screen_success)) },
             onDismissRequest = {
                 openDialog = false
-                if (stickersWaitingList.isEmpty()) {
+                if (uiState.waitingList.isEmpty()) {
                     navController.popBackStackWithLifecycle()
                 }
             },
             confirmButton = {
                 TextButton(onClick = {
                     openDialog = false
-                    if (stickersWaitingList.isEmpty()) {
+                    if (uiState.waitingList.isEmpty()) {
                         navController.popBackStackWithLifecycle()
                     }
                 }) {
@@ -415,6 +379,8 @@ fun AddScreen(
             }
         )
     }
+
+    WaitingDialog(visible = uiState.loadingDialog)
 }
 
 private fun LazyListScope.titleInputFieldItem(
@@ -516,7 +482,7 @@ private fun LazyListScope.tagsInputFieldItem(
 }
 
 @Composable
-private fun AddToAllList(list: List<TagBean>, onDeleteTag: (TagBean) -> Unit) {
+private fun AddToAllList(list: List<String>, onDeleteTag: (String) -> Unit) {
     val scope = rememberCoroutineScope()
 
     AnimatedVisibility(
@@ -576,7 +542,7 @@ private fun AddToAllList(list: List<TagBean>, onDeleteTag: (TagBean) -> Unit) {
                     list.forEach { tag ->
                         InputChip(
                             selected = false,
-                            label = { Text(tag.tag) },
+                            label = { Text(tag) },
                             onClick = { onDeleteTag(tag) },
                             trailingIcon = {
                                 Icon(
@@ -646,7 +612,7 @@ private fun WaitingRow(
 }
 
 @Composable
-private fun AddedTags(tags: List<TagBean>, onClick: (Int) -> Unit) {
+private fun AddedTags(tags: List<String>, onClick: (Int) -> Unit) {
     FlowRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -657,7 +623,7 @@ private fun AddedTags(tags: List<TagBean>, onClick: (Int) -> Unit) {
         repeat(tags.size) { index ->
             InputChip(
                 selected = false,
-                label = { Text(tags[index].tag) },
+                label = { Text(tags[index]) },
                 onClick = { onClick(index) },
                 trailingIcon = {
                     Icon(

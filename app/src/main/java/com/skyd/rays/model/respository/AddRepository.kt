@@ -12,7 +12,6 @@ import com.google.mlkit.vision.text.japanese.JapaneseTextRecognizerOptions
 import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.skyd.rays.appContext
-import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.CLASSIFICATION_MODEL_DIR_FILE
 import com.skyd.rays.config.STICKER_DIR
@@ -28,7 +27,6 @@ import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
 import com.skyd.rays.util.image.ImageFormatChecker
 import com.skyd.rays.util.image.format.ImageFormat
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.json.Json
@@ -48,8 +46,8 @@ class AddRepository @Inject constructor(
     suspend fun requestAddStickerWithTags(
         stickerWithTags: StickerWithTags,
         uri: Uri
-    ): Flow<BaseData<String>> {
-        return flow {
+    ): Flow<Any> {
+        return flowOnIo {
             appContext.contentResolver.openInputStream(uri)?.use {
                 check(ImageFormatChecker.check(it) != ImageFormat.UNDEFINED) {
                     "Unsupported image format"
@@ -59,55 +57,38 @@ class AddRepository @Inject constructor(
             val tempFile = File(STICKER_DIR, "${Random.nextLong()}")
             uri.copyTo(tempFile)
             val stickerMd5 = tempFile.md5() ?: error("can not calc sticker's md5!")
-            val containsByMd5 = stickerDao.containsByMd5(stickerMd5)
-            if (containsByMd5 != null &&
+            val uuidGotByMd5 = stickerDao.containsByMd5(stickerMd5)
+            if (uuidGotByMd5 != null &&
                 stickerDao.containsByUuid(stickerWithTags.sticker.uuid) == 0
             ) {
                 tempFile.deleteRecursively()
-                emitBaseData(BaseData<String>().apply {
-                    code = -2
-                    msg = "Duplicate sticker!"
-                    data = containsByMd5
-                })
+                emit(stickerDao.getStickerWithTags(uuidGotByMd5)!!)
             } else {
                 stickerWithTags.sticker.stickerMd5 = stickerMd5
                 val uuid = stickerDao.addStickerWithTags(stickerWithTags)
                 if (!tempFile.renameTo(File(STICKER_DIR, uuid))) {
                     tempFile.deleteRecursively()
                 }
-                emitBaseData(BaseData<String>().apply {
-                    code = 0
-                    data = uuid
-                })
+                emit(uuid)
             }
         }
     }
 
-    suspend fun requestGetStickerWithTags(stickerUuid: String): Flow<BaseData<StickerWithTags>> {
-        return flow {
+    suspend fun requestGetStickerWithTags(stickerUuid: String): Flow<StickerWithTags?> {
+        return flowOnIo {
             val stickerWithTags = stickerDao.getStickerWithTags(stickerUuid)
-            if (stickerWithTags == null) {
-                emitBaseData(BaseData<StickerWithTags>().apply {
-                    code = -1
-                    msg = "stickerWithTags is null"
-                })
-            } else {
-                emitBaseData(BaseData<StickerWithTags>().apply {
-                    code = 0
-                    data = stickerWithTags
-                })
-            }
+            emit(stickerWithTags)
         }
     }
 
-    suspend fun requestSuggestTags(sticker: Uri): Flow<BaseData<Set<String>>> {
+    suspend fun requestSuggestTags(sticker: Uri): Flow<Set<String>> {
         val image: InputImage
         return try {
             image = InputImage.fromFilePath(appContext, sticker)
             val dataStore = appContext.dataStore
             val textRecognizeThreshold = dataStore.getOrDefault(TextRecognizeThresholdPreference)
 
-            flow {
+            flowOnIo {
                 emit(suspendCancellableCoroutine { cont ->
                     TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
                         .process(image)
@@ -118,7 +99,7 @@ class AddRepository @Inject constructor(
                         }
                         .addOnFailureListener { cont.resumeWithException(it) }
                 })
-            }.zip(flow {
+            }.zip(flowOnIo {
                 emit(suspendCancellableCoroutine { cont ->
                     TextRecognition.getClient(ChineseTextRecognizerOptions.Builder().build())
                         .process(image)
@@ -131,7 +112,7 @@ class AddRepository @Inject constructor(
                 })
             }) { other, chinese ->
                 chinese + other
-            }.zip(flow {
+            }.zip(flowOnIo {
                 emit(suspendCancellableCoroutine { cont ->
                     TextRecognition.getClient(JapaneseTextRecognizerOptions.Builder().build())
                         .process(image)
@@ -144,7 +125,7 @@ class AddRepository @Inject constructor(
                 })
             }) { other, japanese ->
                 other + japanese
-            }.zip(flow {
+            }.zip(flowOnIo {
                 emit(suspendCancellableCoroutine { cont ->
                     TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
                         .process(image)
@@ -157,7 +138,7 @@ class AddRepository @Inject constructor(
                 })
             }) { other, korean ->
                 other + korean
-            }.zip(flow {
+            }.zip(flowOnIo {
                 emit(suspendCancellableCoroutine { cont ->
                     val model = dataStore.getOrDefault(StickerClassificationModelPreference)
                     val classificationThreshold =
@@ -190,19 +171,11 @@ class AddRepository @Inject constructor(
                         }
                 })
             }) { other, classification ->
-                checkBaseData(BaseData<Set<String>>().apply {
-                    code = 0
-                    data = (classification + other).toSet()
-                })
+                (classification + other).toSet()
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            flow {
-                emitBaseData(BaseData<Set<String>>().apply {
-                    code = -1
-                    msg = e.message
-                })
-            }
+            throw e
         }
     }
 

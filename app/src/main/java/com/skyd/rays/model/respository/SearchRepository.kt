@@ -27,12 +27,13 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.takeWhile
 import javax.inject.Inject
 
 class SearchRepository @Inject constructor(
@@ -58,11 +59,23 @@ class SearchRepository @Inject constructor(
                 )
             }
             .distinctUntilChanged()
-            .flatMapConcat {
-                stickerDao.getStickerWithTagsList(genSql(it.first.orEmpty()))
-                    .take(1)
-                    .map { list -> sortSearchResultList(list) }
-                    .flowOn(Dispatchers.IO)
+            .flatMapConcat { triple ->
+                combine(
+                    stickerDao.getStickerWithTagsList(genSql(triple.first.orEmpty())),
+                    appContext.dataStore.data,
+                ) { list, ds ->
+                    list to ds
+                }.takeWhile {
+                    triple == Triple(
+                        it.second[QueryPreference.key] ?: QueryPreference.default,
+                        it.second[SearchResultSortPreference.key]
+                            ?: SearchResultSortPreference.default,
+                        it.second[SearchResultReversePreference.key]
+                            ?: SearchResultReversePreference.default,
+                    )
+                }.map { pair ->
+                    sortSearchResultList(pair.first)
+                }.flowOn(Dispatchers.IO)
             }
             .flowOn(Dispatchers.IO)
     }

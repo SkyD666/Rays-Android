@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -31,7 +30,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -45,11 +43,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -69,14 +66,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.onClick
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -179,7 +174,10 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                 .padding(innerPaddings),
         ) {
             HorizontalDivider()
-            AnimatedVisibility(visible = LocalShowPopularTags.current && popularTags.isNotEmpty()) {
+            AnimatedVisibility(
+                visible = LocalShowPopularTags.current && popularTags.isNotEmpty(),
+                enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
+            ) {
                 PopularTagsBar(
                     onTagClicked = { QueryPreference.put(context, scope, query + it) },
                     tags = popularTags,
@@ -416,59 +414,33 @@ private fun SearchBarInputField(
     onQueryChange: (String) -> Unit,
     onSearch: (String) -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    colors: TextFieldColors = SearchBarDefaults.colors().inputFieldColors,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
-    val focusRequester = remember { FocusRequester() }
-
-    BasicTextField(
+    TextField(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp)
+            .height(72.dp),
         value = query,
         onValueChange = onQueryChange,
-        modifier = modifier
-            .height(72.dp)
-            .fillMaxWidth()
-            .focusRequester(focusRequester)
-            .semantics {
-                onClick {
-                    focusRequester.requestFocus()
-                    true
-                }
-            },
-        enabled = enabled,
-        singleLine = true,
-        textStyle = MaterialTheme.typography.bodyLarge,
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            errorIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+        ),
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+        placeholder = placeholder,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { onSearch(query) }),
         interactionSource = interactionSource,
-        decorationBox = @Composable { innerTextField ->
-            TextFieldDefaults.DecorationBox(
-                value = query,
-                innerTextField = innerTextField,
-                enabled = enabled,
-                singleLine = true,
-                visualTransformation = VisualTransformation.None,
-                interactionSource = interactionSource,
-                placeholder = placeholder,
-                leadingIcon = leadingIcon?.let { leading ->
-                    {
-                        Box(Modifier.offset(x = 4.dp)) { leading() }
-                    }
-                },
-                trailingIcon = trailingIcon?.let { trailing ->
-                    {
-                        Box(Modifier.offset(x = (-4).dp)) { trailing() }
-                    }
-                },
-                shape = SearchBarDefaults.inputFieldShape,
-                colors = colors,
-                contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(),
-                container = {},
-            )
-        }
+        singleLine = true,
+        shape = RectangleShape,
     )
 }

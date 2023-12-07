@@ -223,6 +223,7 @@
     <string name="db_sticker_table">Sticker table</string>
     <string name="db_sticker_table_uuid">UUID</string>
     <string name="db_sticker_table_title">Title</string>
+    <string name="db_sticker_table_md5" translatable="false">MD5</string>
     <string name="db_tag_table">Tag table</string>
     <string name="db_tag_table_tag">Tag</string>
     <string name="image_scale_crop">Crop</string>

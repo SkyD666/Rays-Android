@@ -8,8 +8,7 @@ import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -152,35 +151,22 @@ class MainActivity : AppCompatActivity() {
                 navController = navController,
                 startDestination = MAIN_SCREEN_ROUTE,
                 enterTransition = {
-                    fadeIn(
-                        animationSpec = spring(stiffness = Spring.StiffnessMedium)
-                    ) + scaleIn(
-                        animationSpec = spring(stiffness = Spring.StiffnessMedium),
-                        initialScale = 0.96f
+                    fadeIn(animationSpec = tween(220, delayMillis = 30)) + scaleIn(
+                        animationSpec = tween(220, delayMillis = 30),
+                        initialScale = 0.92f,
                     )
                 },
-                exitTransition = {
-                    fadeOut(
-                        animationSpec = spring(stiffness = Spring.StiffnessMedium)
-                    ) + scaleOut(
-                        animationSpec = spring(stiffness = Spring.StiffnessMedium),
-                        targetScale = 0.96f
-                    )
-                },
+                exitTransition = { fadeOut(animationSpec = tween(90)) },
                 popEnterTransition = {
-                    fadeIn(
-                        animationSpec = spring(stiffness = Spring.StiffnessMedium)
-                    ) + scaleIn(
-                        animationSpec = spring(stiffness = Spring.StiffnessMedium),
-                        initialScale = 0.96f
+                    fadeIn(animationSpec = tween(220)) + scaleIn(
+                        animationSpec = tween(220),
+                        initialScale = 0.92f,
                     )
                 },
                 popExitTransition = {
-                    fadeOut(
-                        animationSpec = spring(stiffness = Spring.StiffnessMedium)
-                    ) + scaleOut(
-                        animationSpec = spring(stiffness = Spring.StiffnessMedium),
-                        targetScale = 0.96f
+                    fadeOut(animationSpec = tween(220)) + scaleOut(
+                        animationSpec = tween(220),
+                        targetScale = 0.92f,
                     )
                 },
             ) {
