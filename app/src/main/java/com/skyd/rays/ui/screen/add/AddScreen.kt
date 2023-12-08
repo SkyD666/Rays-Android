@@ -326,15 +326,18 @@ fun AddScreen(
                 openDialog = true
             }
 
-            AddEvent.CurrentStickerChanged -> LaunchedEffect(uiState.currentSticker) {
-                val currentSticker = uiState.currentSticker
-                resetStickerData()
-                if (currentSticker != null) {
-                    currentSticker.uri?.let { uri ->
-                        dispatch(AddIntent.GetSuggestTags(uri))
+            AddEvent.CurrentStickerChanged -> {
+                LaunchedEffect(uiState.currentSticker) {
+                    val currentSticker = uiState.currentSticker
+                    resetStickerData()
+                    onGetStickersWithTagsStateChanged()
+                    if (currentSticker != null) {
+                        currentSticker.uri?.let { uri ->
+                            dispatch(AddIntent.GetSuggestTags(uri))
+                        }
+                    } else {
+                        processNext()
                     }
-                } else {
-                    processNext()
                 }
             }
 

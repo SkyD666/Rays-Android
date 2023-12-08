@@ -71,7 +71,9 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -92,6 +94,7 @@ import com.skyd.rays.ui.local.LocalQuery
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.detail.openDetailScreen
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val SEARCH_SCREEN_ROUTE = "searchScreen"
@@ -116,7 +119,9 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
     }
     val query = LocalQuery.current
     var fabHeight by remember { mutableStateOf(0.dp) }
-    val focusRequester = remember { FocusRequester() }
+    var searchFieldValueState by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(text = query, selection = TextRange(query.length)))
+    }
 
     val dispatch = viewModel.getDispatcher(startWith = SearchIntent.GetSearchData)
 
@@ -138,34 +143,34 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
             }
         },
         topBar = {
-            Row {
-                SearchBarInputField(
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
-                        .windowInsetsPadding(
-                            WindowInsets.systemBars
-                                .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
-                        ),
-                    onQueryChange = { QueryPreference.put(context, scope, it) },
-                    query = LocalQuery.current,
-                    onSearch = { keyword ->
-                        keyboardController?.hide()
-                        QueryPreference.put(context, scope, keyword)
-                    },
-                    placeholder = { Text(text = stringResource(R.string.home_screen_search_hint)) },
-                    leadingIcon = { BackIcon() },
-                    trailingIcon = {
-                        if (query.isNotEmpty()) {
-                            TrailingIcon(showClearButton = query.isNotEmpty()) {
-                                QueryPreference.put(context, scope, QueryPreference.default)
-                            }
+            LaunchedEffect(searchFieldValueState.text) {
+                delay(70)
+                QueryPreference.put(context, scope, searchFieldValueState.text)
+            }
+            SearchBarInputField(
+                modifier = Modifier.windowInsetsPadding(
+                    WindowInsets.systemBars
+                        .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+                ),
+                onQueryChange = { searchFieldValueState = it },
+                query = searchFieldValueState,
+                onSearch = { state ->
+                    keyboardController?.hide()
+                    searchFieldValueState = state
+                },
+                placeholder = { Text(text = stringResource(R.string.home_screen_search_hint)) },
+                leadingIcon = { BackIcon() },
+                trailingIcon = {
+                    if (query.isNotEmpty()) {
+                        TrailingIcon(showClearButton = query.isNotEmpty()) {
+                            searchFieldValueState = TextFieldValue(
+                                text = QueryPreference.default,
+                                selection = TextRange(QueryPreference.default.length)
+                            )
                         }
                     }
-                )
-                LaunchedEffect(Unit) {
-                    focusRequester.requestFocus()
                 }
-            }
+            )
         }
     ) { innerPaddings ->
         Column(
@@ -179,7 +184,12 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                 enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
             ) {
                 PopularTagsBar(
-                    onTagClicked = { QueryPreference.put(context, scope, query + it) },
+                    onTagClicked = {
+                        searchFieldValueState = TextFieldValue(
+                            text = searchFieldValueState.text + it,
+                            selection = TextRange((searchFieldValueState.text + it).length)
+                        )
+                    },
                     tags = popularTags,
                 )
             }
@@ -410,17 +420,19 @@ fun PopularTagsBar(
 
 @Composable
 private fun SearchBarInputField(
-    query: String,
-    onQueryChange: (String) -> Unit,
-    onSearch: (String) -> Unit,
+    query: TextFieldValue,
+    onQueryChange: (TextFieldValue) -> Unit,
+    onSearch: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
+    val focusRequester = remember { FocusRequester() }
     TextField(
         modifier = modifier
+            .focusRequester(focusRequester)
             .fillMaxWidth()
             .padding(horizontal = 4.dp)
             .height(72.dp),
@@ -443,4 +455,8 @@ private fun SearchBarInputField(
         singleLine = true,
         shape = RectangleShape,
     )
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 }

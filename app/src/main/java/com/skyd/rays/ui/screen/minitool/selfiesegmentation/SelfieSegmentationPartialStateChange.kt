@@ -32,7 +32,9 @@ internal sealed interface SelfieSegmentationPartialStateChange {
 
     sealed interface Export : SelfieSegmentationPartialStateChange {
         data class Success(val bitmap: Bitmap) : Export {
-            override fun reduce(oldState: SelfieSegmentationState) = oldState
+            override fun reduce(oldState: SelfieSegmentationState) = oldState.copy(
+                loadingDialog = false,
+            )
         }
     }
 }

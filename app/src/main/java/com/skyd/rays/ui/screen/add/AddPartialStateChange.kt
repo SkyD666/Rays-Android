@@ -29,6 +29,7 @@ internal sealed interface AddPartialStateChange {
             waitingList = waitingList,
             getStickersWithTagsState = GetStickersWithTagsState.Success(stickerWithTags),
             suggestTags = suggestTags.toList(),
+            addedTags = stickerWithTags.tags.map { it.tag },
             addToAllTags = emptyList(),
             loadingDialog = false,
         )
@@ -92,6 +93,7 @@ internal sealed interface AddPartialStateChange {
             return when (this) {
                 is Success -> oldState.copy(
                     getStickersWithTagsState = GetStickersWithTagsState.Success(stickerWithTags),
+                    addedTags = stickerWithTags.tags.map { it.tag },
                     loadingDialog = false,
                 )
 

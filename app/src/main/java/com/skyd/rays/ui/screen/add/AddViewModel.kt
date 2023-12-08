@@ -104,7 +104,6 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                         suggestTags,
                     )
                 }.startWith(AddPartialStateChange.LoadingDialog.Show)
-                    .endWith(AddPartialStateChange.GetStickersWithTagsStateChanged)
             },
             filterIsInstance<AddIntent.ProcessNext>().map {
                 AddPartialStateChange.ProcessNext

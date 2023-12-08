@@ -28,6 +28,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
@@ -51,6 +52,7 @@ class SearchRepository @Inject constructor(
 
     fun requestStickerWithTagsList(): Flow<List<StickerWithTags>> {
         return appContext.dataStore.data
+            .debounce(100)
             .map {
                 Triple(
                     it[QueryPreference.key],
@@ -62,7 +64,7 @@ class SearchRepository @Inject constructor(
             .flatMapConcat { triple ->
                 combine(
                     stickerDao.getStickerWithTagsList(genSql(triple.first.orEmpty())),
-                    appContext.dataStore.data,
+                    appContext.dataStore.data.debounce(100),
                 ) { list, ds ->
                     list to ds
                 }.takeWhile {
