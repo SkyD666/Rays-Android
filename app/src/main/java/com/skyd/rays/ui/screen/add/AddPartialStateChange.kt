@@ -21,15 +21,17 @@ internal sealed interface AddPartialStateChange {
     }
 
     data class Init(
-        val stickerWithTags: StickerWithTags,
+        val stickerWithTags: StickerWithTags?,
         val waitingList: List<UriWithStickerUuidBean>,
         val suggestTags: Set<String>,
     ) : AddPartialStateChange {
         override fun reduce(oldState: AddState) = oldState.copy(
             waitingList = waitingList,
-            getStickersWithTagsState = GetStickersWithTagsState.Success(stickerWithTags),
+            getStickersWithTagsState = if (stickerWithTags == null) {
+                GetStickersWithTagsState.Init
+            } else GetStickersWithTagsState.Success(stickerWithTags),
             suggestTags = suggestTags.toList(),
-            addedTags = stickerWithTags.tags.map { it.tag },
+            addedTags = stickerWithTags?.tags?.map { it.tag }.orEmpty(),
             addToAllTags = emptyList(),
             loadingDialog = false,
         )

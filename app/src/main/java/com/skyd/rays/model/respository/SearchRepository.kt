@@ -55,9 +55,9 @@ class SearchRepository @Inject constructor(
             .debounce(100)
             .map {
                 Triple(
-                    it[QueryPreference.key],
-                    it[SearchResultSortPreference.key],
-                    it[SearchResultReversePreference.key]
+                    it[QueryPreference.key] ?: QueryPreference.default,
+                    it[SearchResultSortPreference.key] ?: SearchResultSortPreference.default,
+                    it[SearchResultReversePreference.key] ?: SearchResultReversePreference.default,
                 )
             }
             .distinctUntilChanged()

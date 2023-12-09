@@ -1,15 +1,26 @@
 package com.skyd.rays.ui.screen.about.update
 
-import com.skyd.rays.base.BaseViewModel
-import com.skyd.rays.base.IUIChange
-import com.skyd.rays.base.IUiEvent
+import androidx.lifecycle.viewModelScope
+import com.skyd.rays.base.mvi.AbstractMviViewModel
+import com.skyd.rays.base.mvi.MviSingleEvent
 import com.skyd.rays.config.GITHUB_REPO
+import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.UpdateRepository
 import com.skyd.rays.util.CommonUtil.getAppVersionCode
 import com.skyd.rays.util.CommonUtil.openBrowser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import okhttp3.internal.toLongOrDefault
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -18,17 +29,33 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UpdateViewModel @Inject constructor(private var updateRepo: UpdateRepository) :
-    BaseViewModel<UpdateState, IUiEvent, UpdateIntent>() {
-    override fun initUiState(): UpdateState {
-        return UpdateState(UpdateUiState.Init)
+    AbstractMviViewModel<UpdateIntent, UpdateState, MviSingleEvent>() {
+
+    override val viewState: StateFlow<UpdateState>
+
+    init {
+        val initialVS = UpdateState.initial()
+
+        viewState = merge(
+            intentSharedFlow.filterIsInstance<UpdateIntent.CheckUpdate>().take(1),
+            intentSharedFlow.filterNot { it is UpdateIntent.CheckUpdate }
+        )
+            .shareWhileSubscribed()
+            .toUpdatePartialStateChangeFlow()
+            .debugLog("UpdatePartialStateChange")
+            .scan(initialVS) { vs, change -> change.reduce(vs) }
+            .debugLog("ViewState")
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                initialVS
+            )
     }
 
-    override fun IUIChange.checkStateOrEvent() = this as? UpdateState? to this as? IUiEvent
-
-    override fun Flow<UpdateIntent>.handleIntent(): Flow<IUIChange> = merge(
-        doIsInstance<UpdateIntent.CheckUpdate> {
-            updateRepo.checkUpdate()
-                .mapToUIChange { data ->
+    private fun SharedFlow<UpdateIntent>.toUpdatePartialStateChangeFlow(): Flow<UpdatePartialStateChange> {
+        return merge(
+            filterIsInstance<UpdateIntent.CheckUpdate>().flatMapConcat {
+                updateRepo.checkUpdate().map { data ->
                     if (getAppVersionCode() < data.tagName.toLongOrDefault(0L)) {
                         val date = SimpleDateFormat(
                             "yyyy-MM-dd'T'HH:mm:ss'Z'",
@@ -42,27 +69,19 @@ class UpdateViewModel @Inject constructor(private var updateRepo: UpdateReposito
                             data.publishedAt
                         }
 
-                        copy(
-                            updateUiState = UpdateUiState.OpenNewerDialog(
-                                data.copy(
-                                    publishedAt = publishedAt
-                                )
-                            ),
+                        UpdatePartialStateChange.CheckUpdate.HasUpdate(
+                            data.copy(publishedAt = publishedAt)
                         )
                     } else {
-                        copy(updateUiState = UpdateUiState.OpenNoUpdateDialog)
+                        UpdatePartialStateChange.CheckUpdate.NoUpdate
                     }
-                }
-                .defaultFinally()
-        },
+                }.startWith(UpdatePartialStateChange.LoadingDialog)
+            },
 
-        doIsInstance<UpdateIntent.Update> { intent ->
-            emptyFlow()
-                .mapToUIChange {
-                    openBrowser(intent.url ?: GITHUB_REPO)
-                    this
-                }
-                .defaultFinally()
-        },
-    )
+            filterIsInstance<UpdateIntent.Update>().map { intent ->
+                openBrowser(intent.url ?: GITHUB_REPO)
+                UpdatePartialStateChange.RequestUpdate
+            },
+        )
+    }
 }

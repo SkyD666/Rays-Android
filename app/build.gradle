@@ -21,8 +21,8 @@ android {
         applicationId "com.skyd.rays"
         minSdk 24
         targetSdk 34
-        versionCode 52
-        versionName "2.0-alpha06"
+        versionCode 53
+        versionName "2.0-alpha07"
         flavorDimensions = ["versionName"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -170,6 +170,8 @@ dependencies {
     // TF Lite
     implementation 'org.tensorflow:tensorflow-lite:2.14.0'
     implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
+
+    implementation "com.github.penfeizhou.android.animation:apng:2.28.0"
 
     debugImplementation "androidx.compose.ui:ui-tooling:$md3_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$md3_version"

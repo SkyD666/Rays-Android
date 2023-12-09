@@ -99,7 +99,7 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                     )
                 ) { stickerWithTags, suggestTags ->
                     AddPartialStateChange.Init(
-                        stickerWithTags!!,
+                        stickerWithTags,
                         intent.initStickers,
                         suggestTags,
                     )

@@ -13,6 +13,7 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import com.skyd.rays.config.STICKER_DIR
+import com.skyd.rays.util.coil.apng.AnimatedPngDecoder
 import java.io.File
 
 
@@ -25,11 +26,15 @@ fun RaysImage(
     contentScale: ContentScale = ContentScale.FillWidth,
     alpha: Float = DefaultAlpha,
 ) {
+    val context = LocalContext.current
     AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(model)
-            .crossfade(true)
-            .build(),
+        model = remember(model) {
+            ImageRequest.Builder(context)
+                .data(model)
+                .crossfade(true)
+                .decoderFactory(AnimatedPngDecoder.Factory())
+                .build()
+        },
         modifier = modifier,
         contentDescription = contentDescription,
         contentScale = contentScale,

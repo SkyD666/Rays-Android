@@ -39,11 +39,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.LoadUiIntent
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.model.bean.UpdateBean
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalIgnoreUpdateVersion
+import com.skyd.rays.ui.screen.detail.DetailIntent
 import okhttp3.internal.toLongOrDefault
 
 
@@ -53,25 +55,11 @@ fun UpdateDialog(
     onClosed: () -> Unit = {},
     viewModel: UpdateViewModel = hiltViewModel()
 ) {
-    var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.sendUiIntent(UpdateIntent.CheckUpdate)
-    }
+    val dispatch = viewModel.getDispatcher(startWith = UpdateIntent.CheckUpdate)
 
-    WaitingDialog(visible = openWaitingDialog && !silence)
-
-    loadUiIntent?.also {
-        when (it) {
-            is LoadUiIntent.Error -> Unit
-
-            is LoadUiIntent.Loading -> {
-                openWaitingDialog = it.isShow
-            }
-        }
-    }
+    WaitingDialog(visible = uiState.loadingDialog && !silence)
 
     when (val updateUiState = uiState.updateUiState) {
         UpdateUiState.Init -> Unit
@@ -81,10 +69,10 @@ fun UpdateDialog(
                 silence = silence,
                 onDismissRequest = {
                     onClosed()
-                    viewModel.sendUiIntent(UpdateIntent.CloseDialog)
+                    dispatch(UpdateIntent.CloseDialog)
                 },
                 onDownloadClick = { updateBean ->
-                    viewModel.sendUiIntent(
+                    dispatch(
                         UpdateIntent.Update(updateBean?.assets?.firstOrNull()?.browserDownloadUrl)
                     )
                 }
@@ -96,7 +84,7 @@ fun UpdateDialog(
                 visible = !silence,
                 onDismissRequest = {
                     onClosed()
-                    viewModel.sendUiIntent(UpdateIntent.CloseDialog)
+                    dispatch(UpdateIntent.CloseDialog)
                 }
             )
         }

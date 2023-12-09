@@ -38,17 +38,18 @@ sealed class FormatStandard(
         format = ImageFormat.PNG,
         requiredByteArraySize = 8,
     ) {
+        val PNG_FORMAT_DATA = byteArrayOf(
+            0x89.toByte(),
+            0x50.toByte(),
+            0x4E.toByte(),
+            0x47.toByte(),
+            0x0D.toByte(),
+            0x0A.toByte(),
+            0x1A.toByte(),
+            0x0A.toByte(),
+        )
         override fun check(tested: ByteArray): Boolean = baseCheck(
-            standard = byteArrayOf(
-                0x89.toByte(),
-                0x50.toByte(),
-                0x4E.toByte(),
-                0x47.toByte(),
-                0x0D.toByte(),
-                0x0A.toByte(),
-                0x1A.toByte(),
-                0x0A.toByte(),
-            ),
+            standard = PNG_FORMAT_DATA,
             tested = tested,
         )
     }
