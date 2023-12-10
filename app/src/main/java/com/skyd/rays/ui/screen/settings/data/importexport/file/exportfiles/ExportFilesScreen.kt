@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.base.LoadUiIntent
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ImportExportResultInfo
@@ -54,11 +54,12 @@ fun ExportFilesScreen(viewModel: ExportFilesViewModel = hiltViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
-    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
     var openExportDialog by rememberSaveable { mutableStateOf<ImportExportResultInfo?>(null) }
-    var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
     var waitingDialogData by rememberSaveable { mutableStateOf<ImportExportWaitingInfo?>(null) }
+
+    val dispatch = viewModel.getDispatcher(startWith = ExportFilesIntent.Init)
 
     val pickExportedFileLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -88,7 +89,7 @@ fun ExportFilesScreen(viewModel: ExportFilesViewModel = hiltViewModel()) {
             RaysExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.export_files_screen_export)) },
                 icon = { Icon(imageVector = Icons.Default.Done, contentDescription = null) },
-                onClick = { viewModel.sendUiIntent(ExportFilesIntent.Export(exportDir)) },
+                onClick = { dispatch(ExportFilesIntent.Export(exportDir)) },
                 onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
                 contentDescription = stringResource(R.string.export_files_screen_export)
             )
@@ -113,7 +114,7 @@ fun ExportFilesScreen(viewModel: ExportFilesViewModel = hiltViewModel()) {
     }
 
     WaitingDialog(
-        visible = openWaitingDialog,
+        visible = uiState.loadingDialog,
         currentValue = waitingDialogData?.current,
         totalValue = waitingDialogData?.total,
         msg = waitingDialogData?.msg + "\n\n" + stringResource(id = R.string.data_sync_warning),
@@ -156,41 +157,23 @@ fun ExportFilesScreen(viewModel: ExportFilesViewModel = hiltViewModel()) {
         }
     )
 
-    when (val loadUi = loadUiIntent) {
-        is LoadUiIntent.Error -> {
-            snackbarHostState.showSnackbarWithLaunchedEffect(
-                message = context.getString(R.string.failed_info, loadUi.msg),
-                key2 = loadUiIntent,
-            )
-            openWaitingDialog = false
-            waitingDialogData = null
+    when (val event = uiEvent) {
+        is ExportFilesEvent.ExportResultEvent.Success -> LaunchedEffect(event) {
+            openExportDialog = event.info
         }
 
-        is LoadUiIntent.Loading -> {
-            openWaitingDialog = loadUi.isShow
-            if (!openWaitingDialog) {
-                waitingDialogData = null
-            }
+        is ExportFilesEvent.ExportResultEvent.Error -> {
+            snackbarHostState.showSnackbarWithLaunchedEffect(
+                message = context.getString(R.string.failed_info, event.msg),
+                key2 = event,
+            )
         }
 
         null -> Unit
     }
 
-    uiEvent?.apply {
-        when (exportResultUiEvent) {
-            is ExportResultUiEvent.Success -> {
-                when (val result = exportResultUiEvent.info) {
-                    is ImportExportResultInfo -> {
-                        LaunchedEffect(this) { openExportDialog = result }
-                    }
-
-                    is ImportExportWaitingInfo -> {
-                        waitingDialogData = result
-                    }
-                }
-            }
-
-            null -> Unit
-        }
+    waitingDialogData = when (val state = uiState.exportProgressEvent) {
+        ExportProgressState.None -> null
+        is ExportProgressState.Progress -> state.info
     }
 }

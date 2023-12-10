@@ -1,9 +1,8 @@
 package com.skyd.rays.ui.activity
 
-import com.skyd.rays.base.IUiIntent
+import com.skyd.rays.base.mvi.MviIntent
 
-sealed class MainIntent : IUiIntent {
-    override val showLoading: Boolean = false
-
-    data class UpdateThemeColor(val stickerUuid: String) : MainIntent()
+sealed interface MainIntent : MviIntent {
+    data object Init : MainIntent
+    data class UpdateThemeColor(val stickerUuid: String) : MainIntent
 }

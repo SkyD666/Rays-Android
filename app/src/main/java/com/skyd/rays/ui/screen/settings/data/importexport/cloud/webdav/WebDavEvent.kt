@@ -1,17 +1,20 @@
 package com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav
 
-import com.skyd.rays.base.IUiEvent
-import com.skyd.rays.model.bean.WebDavInfo
+import com.skyd.rays.base.mvi.MviSingleEvent
+import com.skyd.rays.model.bean.WebDavResultInfo
 
-class WebDavEvent(
-    val uploadResultUiEvent: UploadResultUiEvent? = null,
-    val downloadResultUiEvent: DownloadResultUiEvent? = null,
-) : IUiEvent
+sealed interface WebDavEvent : MviSingleEvent {
+    sealed interface GetRemoteRecycleBinResultEvent : WebDavEvent {
+        data class Error(val msg: String) : GetRemoteRecycleBinResultEvent
+    }
 
-sealed class UploadResultUiEvent {
-    class Success(val result: WebDavInfo) : UploadResultUiEvent()
-}
+    sealed interface UploadResultEvent : WebDavEvent {
+        data class Success(val result: WebDavResultInfo) : UploadResultEvent
+        data class Error(val msg: String) : UploadResultEvent
+    }
 
-sealed class DownloadResultUiEvent {
-    class Success(val result: WebDavInfo) : DownloadResultUiEvent()
+    sealed interface DownloadResultEvent : WebDavEvent {
+        data class Success(val result: WebDavResultInfo) : DownloadResultEvent
+        data class Error(val msg: String) : DownloadResultEvent
+    }
 }

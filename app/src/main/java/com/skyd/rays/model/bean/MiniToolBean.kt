@@ -1,6 +1,7 @@
 package com.skyd.rays.model.bean
 
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.skyd.rays.base.BaseBean
 
 data class MiniToolBean(
     val title: String,

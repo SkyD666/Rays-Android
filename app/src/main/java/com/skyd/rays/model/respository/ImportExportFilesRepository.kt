@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.skyd.rays.R
 import com.skyd.rays.appContext
-import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.EXPORT_FILES_DIR
 import com.skyd.rays.config.IMPORT_FILES_DIR
@@ -23,7 +22,6 @@ import com.skyd.rays.util.unzip
 import com.skyd.rays.util.zip
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -46,8 +44,8 @@ class ImportExportFilesRepository @Inject constructor(
     suspend fun requestImport(
         backupFileUri: Uri,
         handleImportedStickerProxy: HandleImportedStickerProxy,
-    ): Flow<BaseData<ImportExportInfo>> {
-        return flow {
+    ): Flow<ImportExportInfo> {
+        return flowOnIo {
             val startTime = System.currentTimeMillis()
 
             // 清空导入所需的临时目录
@@ -99,19 +97,18 @@ class ImportExportFilesRepository @Inject constructor(
             )
 
             // 完成操作
-            emitBaseData(BaseData<ImportExportInfo>().apply {
-                code = 0
-                data = ImportExportResultInfo(
+            emit(
+                ImportExportResultInfo(
                     time = System.currentTimeMillis() - startTime,
                     count = updatedCount,
                     backupFile = Uri.EMPTY,
                 )
-            })
+            )
         }
     }
 
-    suspend fun requestExport(dirUri: Uri): Flow<BaseData<ImportExportInfo>> {
-        return flow {
+    suspend fun requestExport(dirUri: Uri): Flow<ImportExportInfo> {
+        return flowOnIo {
             val startTime = System.currentTimeMillis()
             val allStickerWithTagsList = stickerDao.getAllStickerWithTagsList()
             val totalCount = allStickerWithTagsList.size
@@ -157,14 +154,13 @@ class ImportExportFilesRepository @Inject constructor(
                 fos.write(byteArrayOf(0x0D, 0x00, 0x07, 0x21))
             }
 
-            emitBaseData(BaseData<ImportExportInfo>().apply {
-                code = 0
-                data = ImportExportResultInfo(
+            emit(
+                ImportExportResultInfo(
                     time = System.currentTimeMillis() - startTime,
                     count = totalCount,
                     backupFile = zipFileUri,
                 )
-            })
+            )
         }
     }
 
@@ -257,14 +253,11 @@ class ImportExportFilesRepository @Inject constructor(
         return stickerWithTagsAndFileList
     }
 
-    private suspend fun FlowCollector<BaseData<ImportExportInfo>>.emitProgressData(
+    private suspend fun FlowCollector<ImportExportInfo>.emitProgressData(
         current: Int? = null,
         total: Int? = null,
         msg: String
     ) {
-        emitBaseData(BaseData<ImportExportInfo>().apply {
-            code = 0
-            data = ImportExportWaitingInfo(current = current, total = total, msg = msg)
-        })
+        emit(ImportExportWaitingInfo(current = current, total = total, msg = msg))
     }
 }

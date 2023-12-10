@@ -2,6 +2,7 @@ package com.skyd.rays.model.bean
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import com.skyd.rays.base.BaseBean
 import kotlinx.serialization.Serializable
 
 const val SEARCH_DOMAIN_TABLE_NAME = "SearchDomain"

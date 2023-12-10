@@ -1,4 +1,4 @@
-package com.skyd.rays.model.bean
+package com.skyd.rays.base
 
 import androidx.annotation.Keep
 import java.io.Serializable

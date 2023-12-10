@@ -49,13 +49,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.base.LoadUiIntent
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.dateTime
 import com.skyd.rays.ext.editor
 import com.skyd.rays.ext.secretSharedPreferences
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.BackupInfo
-import com.skyd.rays.model.bean.WebDavResultInfo
 import com.skyd.rays.model.bean.WebDavWaitingInfo
 import com.skyd.rays.model.preference.WebDavServerPreference
 import com.skyd.rays.ui.component.BaseSettingsItem
@@ -81,7 +80,6 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var openWarningDialog by rememberSaveable { mutableStateOf(false) }
-    var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
     var waitingDialogData by rememberSaveable { mutableStateOf<WebDavWaitingInfo?>(null) }
     var openDeleteWarningDialog by rememberSaveable { mutableStateOf<String?>(null) }
     var openInputDialog by rememberSaveable { mutableStateOf(false) }
@@ -90,9 +88,10 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
     }
     var inputDialogIsPassword by rememberSaveable { mutableStateOf(false) }
     var openRecycleBinBottomSheet by rememberSaveable { mutableStateOf(false) }
-    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
-    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
-    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
+
+    val dispatch = viewModel.getDispatcher(startWith = WebDavIntent.Init)
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -181,9 +180,13 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             syncItem(
                 onPullItemClick = {
                     if (checkWebDavInfo(server = server, account = account, password = password)) {
-                        viewModel.sendUiIntent(
+                        dispatch(
                             WebDavIntent.StartDownload(
-                                website = server, username = account, password = password
+                                data = WebDavAccountData(
+                                    website = server,
+                                    username = account,
+                                    password = password
+                                ),
                             )
                         )
                     } else {
@@ -192,9 +195,13 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 },
                 onPushItemClick = {
                     if (checkWebDavInfo(server = server, account = account, password = password)) {
-                        viewModel.sendUiIntent(
+                        dispatch(
                             WebDavIntent.StartUpload(
-                                website = server, username = account, password = password
+                                data = WebDavAccountData(
+                                    website = server,
+                                    username = account,
+                                    password = password
+                                ),
                             )
                         )
                     } else {
@@ -203,9 +210,13 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 },
                 onRemoteRecycleBinItemClick = {
                     if (checkWebDavInfo(server = server, account = account, password = password)) {
-                        viewModel.sendUiIntent(
+                        dispatch(
                             WebDavIntent.GetRemoteRecycleBin(
-                                website = server, username = account, password = password
+                                data = WebDavAccountData(
+                                    website = server,
+                                    username = account,
+                                    password = password
+                                ),
                             )
                         )
                         openRecycleBinBottomSheet = true
@@ -216,28 +227,8 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             )
         }
 
-        loadUiIntent?.also { loadUiIntent ->
-            when (loadUiIntent) {
-                is LoadUiIntent.Error -> {
-                    snackbarHostState.showSnackbarWithLaunchedEffect(
-                        message = context.getString(R.string.failed_info, loadUiIntent.msg),
-                        key2 = loadUiIntent,
-                    )
-                    openWaitingDialog = false
-                    waitingDialogData = null
-                }
-
-                is LoadUiIntent.Loading -> {
-                    openWaitingDialog = loadUiIntent.isShow
-                    if (!openWaitingDialog) {
-                        waitingDialogData = null
-                    }
-                }
-            }
-        }
-
         WaitingDialog(
-            visible = openWaitingDialog,
+            visible = uiState.loadingDialog,
             currentValue = waitingDialogData?.current,
             totalValue = waitingDialogData?.total,
             msg = waitingDialogData?.msg.orEmpty() + "\n\n" + stringResource(id = R.string.data_sync_warning),
@@ -248,17 +239,23 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             onDismiss = { openDeleteWarningDialog = null },
             onConfirm = {
                 if (openDeleteWarningDialog.isNullOrBlank()) {
-                    viewModel.sendUiIntent(
+                    dispatch(
                         WebDavIntent.ClearRemoteRecycleBin(
-                            website = server, username = account, password = password,
+                            data = WebDavAccountData(
+                                website = server,
+                                username = account,
+                                password = password
+                            ),
                         )
                     )
                 } else {
-                    viewModel.sendUiIntent(
+                    dispatch(
                         WebDavIntent.DeleteFromRemoteRecycleBin(
-                            website = server,
-                            username = account,
-                            password = password,
+                            data = WebDavAccountData(
+                                website = server,
+                                username = account,
+                                password = password
+                            ),
                             uuid = openDeleteWarningDialog!!
                         )
                     )
@@ -298,9 +295,13 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 uiState = uiState,
                 onDismissRequest = { openRecycleBinBottomSheet = false },
                 onRestore = {
-                    viewModel.sendUiIntent(
+                    dispatch(
                         WebDavIntent.RestoreFromRemoteRecycleBin(
-                            website = server, username = account, password = password, uuid = it
+                            data = WebDavAccountData(
+                                website = server,
+                                username = account,
+                                password = password
+                            ), uuid = it
                         )
                     )
                 },
@@ -309,51 +310,63 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             )
         }
     }
-    uiEvent?.apply {
-        when (uploadResultUiEvent) {
-            is UploadResultUiEvent.Success -> {
-                when (val result = uploadResultUiEvent.result) {
-                    is WebDavResultInfo -> {
-                        snackbarHostState.showSnackbarWithLaunchedEffect(
-                            message = context.resources.getQuantityString(
-                                R.plurals.webdav_screen_upload_success,
-                                result.count,
-                                result.time / 1000.0f, result.count
-                            ),
-                            key2 = result,
-                        )
-                    }
 
-                    is WebDavWaitingInfo -> {
-                        waitingDialogData = result
-                    }
-                }
-            }
-
-            null -> Unit
+    when (val event = uiEvent) {
+        is WebDavEvent.DownloadResultEvent.Error -> {
+            snackbarHostState.showSnackbarWithLaunchedEffect(
+                message = context.getString(R.string.failed_info, event.msg),
+                key2 = event,
+            )
         }
-        when (downloadResultUiEvent) {
-            is DownloadResultUiEvent.Success -> {
-                when (val result = downloadResultUiEvent.result) {
-                    is WebDavResultInfo -> {
-                        snackbarHostState.showSnackbarWithLaunchedEffect(
-                            message = context.resources.getQuantityString(
-                                R.plurals.webdav_screen_download_success,
-                                result.count,
-                                result.time / 1000.0f, result.count
-                            ),
-                            key2 = result,
-                        )
-                    }
 
-                    is WebDavWaitingInfo -> {
-                        waitingDialogData = result
-                    }
-                }
-            }
-
-            null -> Unit
+        is WebDavEvent.DownloadResultEvent.Success -> {
+            snackbarHostState.showSnackbarWithLaunchedEffect(
+                message = context.resources.getQuantityString(
+                    R.plurals.webdav_screen_download_success,
+                    event.result.count,
+                    event.result.time / 1000.0f, event.result.count
+                ),
+                key2 = event,
+            )
         }
+
+        is WebDavEvent.GetRemoteRecycleBinResultEvent.Error -> {
+            snackbarHostState.showSnackbarWithLaunchedEffect(
+                message = context.getString(R.string.failed_info, event.msg),
+                key2 = event,
+            )
+        }
+
+        is WebDavEvent.UploadResultEvent.Error -> {
+            snackbarHostState.showSnackbarWithLaunchedEffect(
+                message = context.getString(R.string.failed_info, event.msg),
+                key2 = event,
+            )
+        }
+
+        is WebDavEvent.UploadResultEvent.Success -> {
+            snackbarHostState.showSnackbarWithLaunchedEffect(
+                message = context.resources.getQuantityString(
+                    R.plurals.webdav_screen_upload_success,
+                    event.result.count,
+                    event.result.time / 1000.0f, event.result.count
+                ),
+                key2 = event,
+            )
+        }
+
+        null -> Unit
+    }
+
+    waitingDialogData = when (val uploadProgressState = uiState.uploadProgressState) {
+        UploadProgressState.None -> {
+            when (val downloadProgressState = uiState.downloadProgressState) {
+                DownloadProgressState.None -> null
+                is DownloadProgressState.Progress -> downloadProgressState.info
+            }
+        }
+
+        is UploadProgressState.Progress -> uploadProgressState.info
     }
 }
 
@@ -384,8 +397,8 @@ private fun RecycleBinBottomSheet(
             }
         }
         LazyColumn(contentPadding = PaddingValues(vertical = 10.dp)) {
-            val getRemoteRecycleBinResultUiState = uiState.getRemoteRecycleBinResultUiState
-            if (getRemoteRecycleBinResultUiState is GetRemoteRecycleBinResultUiState.Success &&
+            val getRemoteRecycleBinResultUiState = uiState.getRemoteRecycleBinResultState
+            if (getRemoteRecycleBinResultUiState is GetRemoteRecycleBinResultState.Success &&
                 getRemoteRecycleBinResultUiState.result.isNotEmpty()
             ) {
                 val list: List<BackupInfo> = getRemoteRecycleBinResultUiState.result

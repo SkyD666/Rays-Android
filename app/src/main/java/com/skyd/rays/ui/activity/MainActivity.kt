@@ -25,6 +25,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,6 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
+import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.DisableScreenshotPreference
 import com.skyd.rays.model.preference.SettingsProvider
@@ -99,12 +101,22 @@ import com.skyd.rays.ui.screen.stickerslist.STICKERS_LIST_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.stickerslist.StickersListScreen
 import com.skyd.rays.ui.theme.RaysTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavHostController
     private val viewModel: MainViewModel by viewModels()
+    private val intentChannel = Channel<MainIntent>(Channel.UNLIMITED)
+    private val dispatch = { intent: MainIntent ->
+        intentChannel.trySend(intent).getOrThrow()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -118,6 +130,14 @@ class MainActivity : AppCompatActivity() {
             window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
 
+        lifecycleScope.launch(Dispatchers.Main.immediate) {
+            intentChannel
+                .consumeAsFlow()
+                .startWith(MainIntent.Init)
+                .onEach(viewModel::processIntent)
+                .collect()
+        }
+
         setContent {
             navController = rememberNavController()
 
@@ -125,7 +145,7 @@ class MainActivity : AppCompatActivity() {
                 // 更新主题色
                 val stickerUuid = LocalCurrentStickerUuid.current
                 LaunchedEffect(stickerUuid) {
-                    viewModel.sendUiIntent(MainIntent.UpdateThemeColor(stickerUuid))
+                    dispatch(MainIntent.UpdateThemeColor(stickerUuid))
                 }
 
                 CompositionLocalProvider(

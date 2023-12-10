@@ -1,5 +1,6 @@
 package com.skyd.rays.model.bean
 
+import com.skyd.rays.base.BaseBean
 import kotlinx.serialization.Serializable
 
 @Serializable

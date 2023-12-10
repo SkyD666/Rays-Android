@@ -159,5 +159,10 @@ private fun getLicenseList(): List<LicenseBean> {
             license = "Apache-2.0",
             url = "https://www.tensorflow.org/lite/"
         ),
+        LicenseBean(
+            name = "APNG4Android",
+            license = "Apache-2.0",
+            url = "https://github.com/penfeizhou/APNG4Android"
+        ),
     ).sortedBy { it.name }
 }

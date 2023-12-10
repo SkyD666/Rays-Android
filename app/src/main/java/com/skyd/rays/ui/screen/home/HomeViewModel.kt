@@ -32,7 +32,7 @@ class HomeViewModel @Inject constructor(
 
         viewState = merge(
             intentSharedFlow.filterIsInstance<HomeIntent.GetHomeList>().take(1),
-            intentSharedFlow.filterNot { it is HomeIntent.RefreshHomeList }
+            intentSharedFlow.filterNot { it is HomeIntent.GetHomeList }
         )
             .shareWhileSubscribed()
             .toPartialStateChangeFlow()

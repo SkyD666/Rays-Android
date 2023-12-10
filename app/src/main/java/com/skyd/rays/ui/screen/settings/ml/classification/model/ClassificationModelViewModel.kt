@@ -2,6 +2,7 @@ package com.skyd.rays.ui.screen.settings.ml.classification.model
 
 import androidx.lifecycle.viewModelScope
 import com.skyd.rays.base.mvi.AbstractMviViewModel
+import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.ClassificationModelRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
@@ -79,8 +79,8 @@ class ClassificationModelViewModel @Inject constructor(
             filterIsInstance<ClassificationModelIntent.ImportModel>().flatMapConcat { intent ->
                 classificationModelRepo.requestImportModel(intent.uri)
                     .map { ClassificationModelPartialStateChange.Import.Success(it) }
-                    .catch { ClassificationModelPartialStateChange.Import.Failed(it.message.toString()) }
                     .startWith(ClassificationModelPartialStateChange.LoadingDialog)
+                    .catchMap { ClassificationModelPartialStateChange.Import.Failed(it.message.toString()) }
             },
 
             filterIsInstance<ClassificationModelIntent.SetModel>().flatMapConcat { intent ->
@@ -92,8 +92,8 @@ class ClassificationModelViewModel @Inject constructor(
             filterIsInstance<ClassificationModelIntent.DeleteModel>().flatMapConcat { intent ->
                 classificationModelRepo.requestDeleteModel(intent.modelBean.uri)
                     .map { ClassificationModelPartialStateChange.Delete.Success(it) }
-                    .catch { ClassificationModelPartialStateChange.Delete.Failed(it.message.toString()) }
                     .startWith(ClassificationModelPartialStateChange.LoadingDialog)
+                    .catchMap { ClassificationModelPartialStateChange.Delete.Failed(it.message.toString()) }
             },
         )
     }

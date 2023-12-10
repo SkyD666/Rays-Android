@@ -2,6 +2,7 @@ package com.skyd.rays.model.bean
 
 import android.net.Uri
 import android.os.Parcelable
+import com.skyd.rays.base.BaseBean
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

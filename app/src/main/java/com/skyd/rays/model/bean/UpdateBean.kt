@@ -1,6 +1,7 @@
 package com.skyd.rays.model.bean
 
 import androidx.annotation.Keep
+import com.skyd.rays.base.BaseBean
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

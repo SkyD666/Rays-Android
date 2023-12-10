@@ -217,8 +217,16 @@ fun AddScreen(
                             } else {
                                 keyboardController?.hide()
                                 focusManager.clearFocus()
+                                val getStickersWithTagsState = uiState.getStickersWithTagsState
+                                val stickerBean =
+                                    if (getStickersWithTagsState is GetStickersWithTagsState.Success) {
+                                        getStickersWithTagsState.stickerWithTags.sticker
+                                    } else StickerBean(
+                                        title = titleText,
+                                        createTime = stickerCreateTime
+                                    )
                                 val stickerWithTags = StickerWithTags(
-                                    sticker = StickerBean(
+                                    sticker = stickerBean.copy(
                                         title = titleText,
                                         createTime = stickerCreateTime
                                     ).apply {

@@ -3,6 +3,7 @@ package com.skyd.rays.model.bean
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.skyd.rays.base.BaseBean
 
 data class MoreBean(
     val title: String,

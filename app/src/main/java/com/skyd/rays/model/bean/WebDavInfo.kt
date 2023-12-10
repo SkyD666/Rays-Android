@@ -2,6 +2,7 @@ package com.skyd.rays.model.bean
 
 import android.os.Parcelable
 import androidx.annotation.Keep
+import com.skyd.rays.base.BaseBean
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 

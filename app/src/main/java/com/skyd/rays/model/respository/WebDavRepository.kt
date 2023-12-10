@@ -2,7 +2,6 @@ package com.skyd.rays.model.respository
 
 import com.skyd.rays.R
 import com.skyd.rays.appContext
-import com.skyd.rays.base.BaseData
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.ext.saveTo
 import com.skyd.rays.model.bean.BackupInfo
@@ -17,7 +16,6 @@ import com.thegrizzlylabs.sardineandroid.Sardine
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -40,15 +38,12 @@ class WebDavRepository @Inject constructor(
         website: String,
         username: String,
         password: String
-    ): Flow<BaseData<List<BackupInfo>>> {
-        return flow {
+    ): Flow<List<BackupInfo>> {
+        return flowOnIo {
             val sardine: Sardine = initWebDav(website, username, password)
             val backupInfoMap: List<BackupInfo> = getMd5UuidKeyBackupInfoMap(sardine, website)
                 .filter { it.value.isDeleted }.values.toList()
-            emitBaseData(BaseData<List<BackupInfo>>().apply {
-                code = 0
-                data = backupInfoMap
-            })
+            emit(backupInfoMap)
         }
     }
 
@@ -57,8 +52,8 @@ class WebDavRepository @Inject constructor(
         username: String,
         password: String,
         uuid: String
-    ): Flow<BaseData<Unit>> {
-        return flow {
+    ): Flow<Unit> {
+        return flowOnIo {
             val sardine: Sardine = initWebDav(website, username, password)
             val backupInfoMap = getMd5UuidKeyBackupInfoMap(sardine, website).values
                 .associateBy { it.uuid }.toMutableMap()
@@ -66,10 +61,7 @@ class WebDavRepository @Inject constructor(
                 backupInfoMap[uuid] = it.copy(isDeleted = false)
             }
             updateBackupInfo(sardine, website, backupInfoMap.values.toList())
-            emitBaseData(BaseData<Unit>().apply {
-                code = 0
-                data = Unit
-            })
+            emit(Unit)
         }
     }
 
@@ -78,8 +70,8 @@ class WebDavRepository @Inject constructor(
         username: String,
         password: String,
         uuid: String
-    ): Flow<BaseData<Unit>> {
-        return flow {
+    ): Flow<Unit> {
+        return flowOnIo {
             val sardine: Sardine = initWebDav(website, username, password)
             val backupInfoMap = getMd5UuidKeyBackupInfoMap(sardine, website).values
                 .associateBy { it.uuid }.toMutableMap()
@@ -87,10 +79,7 @@ class WebDavRepository @Inject constructor(
             updateBackupInfo(sardine, website, backupInfoMap.values.toList())
             sardine.delete(website + APP_DIR + BACKUP_DATA_DIR + uuid)
             sardine.delete(website + APP_DIR + BACKUP_STICKER_DIR + uuid)
-            emitBaseData(BaseData<Unit>().apply {
-                code = 0
-                data = Unit
-            })
+            emit(Unit)
         }
     }
 
@@ -98,8 +87,8 @@ class WebDavRepository @Inject constructor(
         website: String,
         username: String,
         password: String,
-    ): Flow<BaseData<Unit>> {
-        return flow {
+    ): Flow<Unit> {
+        return flowOnIo {
             val sardine: Sardine = initWebDav(website, username, password)
             val (willBeDeletedMap, othersMap) = getMd5UuidKeyBackupInfoMap(sardine, website).run {
                 filter { it.value.isDeleted } to filter { !it.value.isDeleted }
@@ -109,10 +98,7 @@ class WebDavRepository @Inject constructor(
                 sardine.delete(website + APP_DIR + BACKUP_DATA_DIR + u.uuid)
                 sardine.delete(website + APP_DIR + BACKUP_STICKER_DIR + u.uuid)
             }
-            emitBaseData(BaseData<Unit>().apply {
-                code = 0
-                data = Unit
-            })
+            emit(Unit)
         }
     }
 
@@ -120,8 +106,8 @@ class WebDavRepository @Inject constructor(
         website: String,
         username: String,
         password: String
-    ): Flow<BaseData<WebDavInfo>> {
-        return flow {
+    ): Flow<WebDavInfo> {
+        return flowOnIo {
             val startTime = System.currentTimeMillis()
             val allStickerWithTagsList = stickerDao.getAllStickerWithTagsList()
             val sardine: Sardine = initWebDav(website, username, password)
@@ -175,13 +161,12 @@ class WebDavRepository @Inject constructor(
                 )
             }
             stickerDao.importDataFromExternal(waitToAddList)
-            emitBaseData(BaseData<WebDavInfo>().apply {
-                code = 0
-                data = WebDavResultInfo(
+            emit(
+                WebDavResultInfo(
                     time = System.currentTimeMillis() - startTime,
                     count = totalCount
                 )
-            })
+            )
         }
     }
 
@@ -189,8 +174,8 @@ class WebDavRepository @Inject constructor(
         website: String,
         username: String,
         password: String
-    ): Flow<BaseData<WebDavInfo>> {
-        return flow {
+    ): Flow<WebDavInfo> {
+        return flowOnIo {
             val startTime = System.currentTimeMillis()
             val allStickerWithTagsList = stickerDao.getAllStickerWithTagsList()
             val sardine: Sardine = initWebDav(website, username, password)
@@ -280,13 +265,12 @@ class WebDavRepository @Inject constructor(
                 }
             }
             updateBackupInfo(sardine, website, backupInfoMap.values.toList())
-            emitBaseData(BaseData<WebDavInfo>().apply {
-                code = 0
-                data = WebDavResultInfo(
+            emit(
+                WebDavResultInfo(
                     time = System.currentTimeMillis() - startTime,
                     count = totalCount
                 )
-            })
+            )
         }
     }
 
@@ -412,14 +396,11 @@ class WebDavRepository @Inject constructor(
         return sardine
     }
 
-    private suspend fun FlowCollector<BaseData<WebDavInfo>>.emitProgressData(
+    private suspend fun FlowCollector<WebDavInfo>.emitProgressData(
         current: Int,
         total: Int,
         msg: String
     ) {
-        emitBaseData(BaseData<WebDavInfo>().apply {
-            code = 0
-            data = WebDavWaitingInfo(current = current, total = total, msg = msg)
-        })
+        emit(WebDavWaitingInfo(current = current, total = total, msg = msg))
     }
 }

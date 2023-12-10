@@ -3,6 +3,7 @@ package com.skyd.rays.model.bean
 import android.net.Uri
 import android.os.Parcelable
 import androidx.annotation.Keep
+import com.skyd.rays.base.BaseBean
 import kotlinx.parcelize.Parcelize
 
 @Keep

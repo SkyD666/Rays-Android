@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
@@ -33,8 +34,9 @@ class DetailViewModel @Inject constructor(private var detailRepo: DetailReposito
         val initialVS = DetailState.initial()
 
         viewState = merge(
-            intentSharedFlow.filterIsInstance<DetailIntent.GetStickerDetails>().take(1),
-            intentSharedFlow.filterNot { it is DetailIntent.RefreshStickerDetails }
+            intentSharedFlow.filterIsInstance<DetailIntent.GetStickerDetailsAndAddClickCount>()
+                .take(1),
+            intentSharedFlow.filterNot { it is DetailIntent.GetStickerDetailsAndAddClickCount }
         )
             .shareWhileSubscribed()
             .toDetailPartialStateChangeFlow()
@@ -65,15 +67,18 @@ class DetailViewModel @Inject constructor(private var detailRepo: DetailReposito
     private fun SharedFlow<DetailIntent>.toDetailPartialStateChangeFlow(): Flow<DetailPartialStateChange> {
         return merge(
             merge(
-                filterIsInstance<DetailIntent.GetStickerDetails>(),
+                filterIsInstance<DetailIntent.GetStickerDetailsAndAddClickCount>().distinctUntilChanged(),
                 filterIsInstance<DetailIntent.RefreshStickerDetails>(),
             ).flatMapConcat { intent ->
-                val keyword = when (intent) {
-                    is DetailIntent.GetStickerDetails -> intent.stickerUuid
-                    is DetailIntent.RefreshStickerDetails -> intent.stickerUuid
+                val (stickerUuid, addClickCount) = when (intent) {
+                    is DetailIntent.GetStickerDetailsAndAddClickCount -> intent.stickerUuid to 1
+                    is DetailIntent.RefreshStickerDetails -> intent.stickerUuid to 0
                     else -> error("DetailIntent type error")
                 }
-                detailRepo.requestStickerWithTagsDetail(keyword).map {
+                detailRepo.requestStickerWithTagsDetail(
+                    stickerUuid = stickerUuid,
+                    addClickCount = addClickCount
+                ).map {
                     if (it == null) DetailPartialStateChange.DetailInfo.Empty
                     else {
                         CurrentStickerUuidPreference.put(

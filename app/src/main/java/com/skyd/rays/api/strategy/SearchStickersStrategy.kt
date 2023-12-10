@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Parcelable
 import androidx.core.content.FileProvider
 import com.skyd.rays.appContext
-import com.skyd.rays.model.bean.BaseBean
+import com.skyd.rays.base.BaseBean
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean

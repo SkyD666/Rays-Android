@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
-import com.skyd.rays.base.LoadUiIntent
+import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ImportExportResultInfo
@@ -61,15 +61,16 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-    val uiEvent by viewModel.uiEventFlow.collectAsStateWithLifecycle(initialValue = null)
-    val loadUiIntent by viewModel.loadUiIntentFlow.collectAsStateWithLifecycle(initialValue = null)
+    val uiState by viewModel.viewState.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
     var openImportDialog by rememberSaveable { mutableStateOf<ImportExportResultInfo?>(null) }
-    var openWaitingDialog by rememberSaveable { mutableStateOf(false) }
     var waitingDialogData by rememberSaveable { mutableStateOf<ImportExportWaitingInfo?>(null) }
     val importedStickerProxyList = rememberSaveable {
         listOf(HandleImportedStickerProxy.SkipProxy, HandleImportedStickerProxy.ReplaceProxy)
     }
     var selectedImportedStickerProxyIndex by rememberSaveable { mutableIntStateOf(0) }
+
+    val dispatch = viewModel.getDispatcher(startWith = ImportFilesIntent.Init)
 
     var fileUri by rememberSaveable { mutableStateOf(Uri.EMPTY) }
     val pickFileLauncher = rememberLauncherForActivityResult(
@@ -96,7 +97,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
                 text = { Text(text = stringResource(R.string.import_files_screen_import)) },
                 icon = { Icon(imageVector = Icons.Default.Done, contentDescription = null) },
                 onClick = {
-                    viewModel.sendUiIntent(
+                    dispatch(
                         ImportFilesIntent.Import(
                             backupFileUri = fileUri,
                             proxy = importedStickerProxyList[selectedImportedStickerProxyIndex],
@@ -158,7 +159,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
     }
 
     WaitingDialog(
-        visible = openWaitingDialog,
+        visible = uiState.loadingDialog,
         currentValue = waitingDialogData?.current,
         totalValue = waitingDialogData?.total,
         msg = waitingDialogData?.msg + "\n\n" + stringResource(id = R.string.data_sync_warning),
@@ -187,41 +188,23 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
         }
     )
 
-    when (val loadUi = loadUiIntent) {
-        is LoadUiIntent.Error -> {
-            snackbarHostState.showSnackbarWithLaunchedEffect(
-                message = context.getString(R.string.failed_info, loadUi.msg),
-                key2 = loadUiIntent,
-            )
-            openWaitingDialog = false
-            waitingDialogData = null
+    when (val event = uiEvent) {
+        is ImportFilesEvent.ImportResultEvent.Success -> LaunchedEffect(event) {
+            openImportDialog = event.info
         }
 
-        is LoadUiIntent.Loading -> {
-            openWaitingDialog = loadUi.isShow
-            if (!openWaitingDialog) {
-                waitingDialogData = null
-            }
+        is ImportFilesEvent.ImportResultEvent.Error -> {
+            snackbarHostState.showSnackbarWithLaunchedEffect(
+                message = context.getString(R.string.failed_info, event.msg),
+                key2 = event,
+            )
         }
 
         null -> Unit
     }
 
-    uiEvent?.apply {
-        when (importResultUiEvent) {
-            is ImportResultUiEvent.Success -> {
-                when (val result = importResultUiEvent.info) {
-                    is ImportExportResultInfo -> {
-                        LaunchedEffect(this) { openImportDialog = result }
-                    }
-
-                    is ImportExportWaitingInfo -> {
-                        waitingDialogData = result
-                    }
-                }
-            }
-
-            null -> Unit
-        }
+    waitingDialogData = when (val state = uiState.importProgressEvent) {
+        ImportProgressState.None -> null
+        is ImportProgressState.Progress -> state.info
     }
 }

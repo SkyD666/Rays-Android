@@ -1,37 +1,30 @@
 package com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav
 
-import com.skyd.rays.base.IUiIntent
+import com.skyd.rays.base.mvi.MviIntent
 
-sealed class WebDavIntent : IUiIntent {
-    data class StartUpload(val website: String, val username: String, val password: String) :
-        WebDavIntent()
+sealed interface WebDavIntent : MviIntent {
+    data object Init : WebDavIntent
+    data class StartUpload(val data: WebDavAccountData) : WebDavIntent
 
-    data class StartDownload(val website: String, val username: String, val password: String) :
-        WebDavIntent()
+    data class StartDownload(val data: WebDavAccountData) : WebDavIntent
 
-    data class GetRemoteRecycleBin(
-        val website: String,
-        val username: String,
-        val password: String
-    ) : WebDavIntent()
+    data class GetRemoteRecycleBin(val data: WebDavAccountData) : WebDavIntent
 
     data class RestoreFromRemoteRecycleBin(
-        val website: String,
-        val username: String,
-        val password: String,
+        val data: WebDavAccountData,
         val uuid: String
-    ) : WebDavIntent()
+    ) : WebDavIntent
 
     data class DeleteFromRemoteRecycleBin(
-        val website: String,
-        val username: String,
-        val password: String,
+        val data: WebDavAccountData,
         val uuid: String
-    ) : WebDavIntent()
+    ) : WebDavIntent
 
-    data class ClearRemoteRecycleBin(
-        val website: String,
-        val username: String,
-        val password: String,
-    ) : WebDavIntent()
+    data class ClearRemoteRecycleBin(val data: WebDavAccountData) : WebDavIntent
 }
+
+data class WebDavAccountData(
+    val website: String,
+    val username: String,
+    val password: String,
+)

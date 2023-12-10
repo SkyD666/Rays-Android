@@ -3,6 +3,7 @@ package com.skyd.rays.ui.screen.add
 import androidx.lifecycle.viewModelScope
 import com.skyd.rays.appContext
 import com.skyd.rays.base.mvi.AbstractMviViewModel
+import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.endWith
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.StickerWithTags
@@ -13,7 +14,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
@@ -158,13 +158,13 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                     }
                 }.startWith(AddPartialStateChange.LoadingDialog.Show)
                     .endWith(AddPartialStateChange.LoadingDialog.Close)
-                    .catch { emit(AddPartialStateChange.AddStickers.Failed(it.message.orEmpty())) }
+                    .catchMap { AddPartialStateChange.AddStickers.Failed(it.message.orEmpty()) }
             },
 
             filterIsInstance<AddIntent.GetSuggestTags>().flatMapConcat { intent ->
                 addRepository.requestSuggestTags(intent.sticker).map { result ->
                     AddPartialStateChange.GetSuggestTags.Success(result)
-                }.catch {
+                }.catchMap<AddPartialStateChange> {
                     AddPartialStateChange.GetSuggestTags.Failed(it.message.orEmpty())
                 }
             },

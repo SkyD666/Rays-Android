@@ -13,11 +13,16 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class DetailRepository @Inject constructor(private val stickerDao: StickerDao) : BaseRepository() {
-    suspend fun requestStickerWithTagsDetail(stickerUuid: String): Flow<StickerWithTags?> {
+    suspend fun requestStickerWithTagsDetail(
+        stickerUuid: String,
+        addClickCount: Int = 1
+    ): Flow<StickerWithTags?> {
         return flowOnIo {
             val stickerWithTags = if (stickerUuid.isBlank()) null
             else stickerDao.getStickerWithTags(stickerUuid)
-            if (stickerWithTags != null) stickerDao.addClickCount(uuid = stickerUuid, count = 1)
+            if (stickerWithTags != null) {
+                stickerDao.addClickCount(uuid = stickerUuid, count = addClickCount)
+            }
             emit(stickerWithTags)
         }
     }

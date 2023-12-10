@@ -137,7 +137,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
     var fabHeight by remember { mutableStateOf(0.dp) }
 
     val dispatch =
-        viewModel.getDispatcher(startWith = DetailIntent.GetStickerDetails(stickerUuid))
+        viewModel.getDispatcher(startWith = DetailIntent.GetStickerDetailsAndAddClickCount(stickerUuid))
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -209,9 +209,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
     ) { paddingValues ->
         val pullRefreshState = rememberPullRefreshState(
             refreshing = uiState.stickerDetailState.loading,
-            onRefresh = {
-                dispatch(DetailIntent.RefreshStickerDetails(stickerUuid))
-            },
+            onRefresh = { dispatch(DetailIntent.RefreshStickerDetails(stickerUuid)) },
         )
         Box(
             modifier = Modifier

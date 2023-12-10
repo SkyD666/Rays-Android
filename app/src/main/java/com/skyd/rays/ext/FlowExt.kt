@@ -3,7 +3,9 @@ package com.skyd.rays.ext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
@@ -13,6 +15,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
+
+fun <T> Flow<T>.catchMap(transform: FlowCollector<T>.(Throwable) -> T): Flow<T> =
+    catch { emit(transform(it)) }
 
 fun <T> concat(flow1: Flow<T>, flow2: Flow<T>): Flow<T> = flow {
     emitAll(flow1)

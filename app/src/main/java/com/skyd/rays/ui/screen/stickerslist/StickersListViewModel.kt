@@ -32,7 +32,7 @@ class StickersListViewModel @Inject constructor(
 
         viewState = merge(
             intentSharedFlow.filterIsInstance<StickersListIntent.GetStickersList>().take(1),
-            intentSharedFlow.filterNot { it is StickersListIntent.RefreshStickersList }
+            intentSharedFlow.filterNot { it is StickersListIntent.GetStickersList }
         )
             .shareWhileSubscribed()
             .toStickersListPartialStateChangeFlow()
