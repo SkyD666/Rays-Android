@@ -38,6 +38,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -45,6 +47,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -81,6 +84,7 @@ import com.skyd.rays.ui.screen.about.license.LICENSE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.about.update.UpdateDialog
 import com.skyd.rays.util.CommonUtil
 import com.skyd.rays.util.CommonUtil.openBrowser
+import kotlinx.coroutines.launch
 
 const val ABOUT_SCREEN_ROUTE = "aboutScreen"
 
@@ -88,10 +92,14 @@ const val ABOUT_SCREEN_ROUTE = "aboutScreen"
 fun AboutScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val navController = LocalNavController.current
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     var openUpdateDialog by rememberSaveable { mutableStateOf(false) }
     var openSponsorDialog by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             RaysTopBar(
                 style = RaysTopBarStyle.Large,
@@ -170,8 +178,24 @@ fun AboutScreen() {
             }
         }
 
+        var isRetry by rememberSaveable { mutableStateOf(false) }
+
         if (openUpdateDialog) {
-            UpdateDialog(onClosed = { openUpdateDialog = false })
+            UpdateDialog(
+                isRetry = isRetry,
+                onClosed = { openUpdateDialog = false },
+                onSuccess = { isRetry = false },
+                onError = { msg ->
+                    isRetry = true
+                    openUpdateDialog = false
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = context.getString(R.string.update_check_failed, msg),
+                            withDismissAction = true,
+                        )
+                    }
+                }
+            )
         }
     }
 }

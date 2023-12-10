@@ -5,6 +5,10 @@ import com.skyd.rays.model.bean.UpdateBean
 internal sealed interface UpdatePartialStateChange {
     fun reduce(oldState: UpdateState): UpdateState
 
+    data class Error(val msg: String) : UpdatePartialStateChange {
+        override fun reduce(oldState: UpdateState) = oldState.copy(loadingDialog = false)
+    }
+
     data object LoadingDialog : UpdatePartialStateChange {
         override fun reduce(oldState: UpdateState) = oldState.copy(loadingDialog = true)
     }

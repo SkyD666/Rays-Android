@@ -256,6 +256,7 @@
     <string name="data_screen_name">數據</string>
     <string name="dialog_warning">警告</string>
     <string name="update_ignore">忽略此更新</string>
+    <string name="update_check_failed">檢查更新失敗：%s</string>
     <string name="detail_screen_sticker_info_uuid">UUID</string>
     <string name="dialog_close">關閉</string>
     <string name="import_files_screen_progress_checking_backup_format">檢查備份文件格式中…</string>

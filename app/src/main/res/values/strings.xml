@@ -193,6 +193,7 @@
     <string name="update_newer_text">New version: %1$s\nPublished on: %2$s\nDownloads: %3$s\n</string>
     <string name="download_update">Download</string>
     <string name="update_ignore">Ignore this update</string>
+    <string name="update_check_failed">Check for update failed: %s</string>
     <string name="search_result_sort_create_time">Create time</string>
     <string name="search_result_sort_modify_time">Modify time</string>
     <string name="search_result_sort_tag_count">Number of tags</string>

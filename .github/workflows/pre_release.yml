@@ -56,6 +56,12 @@ jobs:
       with:
         name: Pre-Release Apk
         path: app/build/outputs/apk/GitHub/release/*.apk
+    # 上传 mapping
+    - name: Upload Pre-Release Mapping
+      uses: actions/upload-artifact@v3
+      with:
+        name: Pre-Release Mapping
+        path: app/build/outputs/mapping/GitHubRelease/mapping.txt
     # 获取 apk 路径
     - name: Get Pre-Release Apk File Path
       run: |

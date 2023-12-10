@@ -184,6 +184,7 @@
     <string name="update_newer_text">新版本：%1$s\n发布时间：%2$s\n下载数：%3$s\n</string>
     <string name="download_update">下载</string>
     <string name="update_ignore">忽略本次更新</string>
+    <string name="update_check_failed">检查更新失败：%s</string>
     <string name="search_result_sort_create_time">创建时间</string>
     <string name="search_result_sort_modify_time">修改时间</string>
     <string name="search_result_sort_tag_count">标签数量</string>

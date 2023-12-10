@@ -20,6 +20,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -46,12 +47,22 @@ import okhttp3.internal.toLongOrDefault
 @Composable
 fun UpdateDialog(
     silence: Boolean = false,
+    isRetry: Boolean = false,
+    onSuccess: () -> Unit = {},
     onClosed: () -> Unit = {},
+    onError: (String) -> Unit = {},
     viewModel: UpdateViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
+    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
 
-    val dispatch = viewModel.getDispatcher(startWith = UpdateIntent.CheckUpdate)
+    val dispatch = viewModel.getDispatcher(startWith = UpdateIntent.CheckUpdate(isRetry = false))
+
+    LaunchedEffect(Unit) {
+        if (isRetry) {
+            dispatch(UpdateIntent.CheckUpdate(isRetry = true))
+        }
+    }
 
     WaitingDialog(visible = uiState.loadingDialog && !silence)
 
@@ -82,6 +93,15 @@ fun UpdateDialog(
                 }
             )
         }
+    }
+
+    when (val event = uiEvent) {
+        is UpdateEvent.CheckError -> LaunchedEffect(event) {
+            onError(event.msg)
+        }
+
+        is UpdateEvent.CheckSuccess -> onSuccess()
+        null -> Unit
     }
 }
 

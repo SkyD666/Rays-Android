@@ -284,7 +284,11 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (openUpdateDialog) {
-                UpdateDialog(silence = true, onClosed = { openUpdateDialog = false })
+                UpdateDialog(
+                    silence = true,
+                    onClosed = { openUpdateDialog = false },
+                    onError = { openUpdateDialog = false },
+                )
             }
         }
     }
