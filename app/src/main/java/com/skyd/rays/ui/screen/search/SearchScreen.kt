@@ -144,7 +144,7 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
         },
         topBar = {
             LaunchedEffect(searchFieldValueState.text) {
-                delay(70)
+                delay(60)
                 QueryPreference.put(context, scope, searchFieldValueState.text)
             }
             SearchBarInputField(

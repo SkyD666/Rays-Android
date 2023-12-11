@@ -2,8 +2,6 @@ package com.skyd.rays.ui.screen.minitool.styletransfer
 
 import android.graphics.Bitmap
 import com.skyd.rays.base.mvi.MviViewState
-import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SelfieSegmentationResultState
-import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SelfieSegmentationState
 
 data class StyleTransferState(
     val styleTransferResultState: StyleTransferResultState,

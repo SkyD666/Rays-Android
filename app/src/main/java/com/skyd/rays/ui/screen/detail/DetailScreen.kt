@@ -71,6 +71,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -137,7 +138,11 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
     var fabHeight by remember { mutableStateOf(0.dp) }
 
     val dispatch =
-        viewModel.getDispatcher(startWith = DetailIntent.GetStickerDetailsAndAddClickCount(stickerUuid))
+        viewModel.getDispatcher(
+            startWith = DetailIntent.GetStickerDetailsAndAddClickCount(
+                stickerUuid
+            )
+        )
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -161,7 +166,16 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
         topBar = {
             RaysTopBar(
                 scrollBehavior = scrollBehavior,
-                title = { Text(text = stringResource(R.string.detail_screen_name)) },
+                title = {
+                    val stickerDetailState = uiState.stickerDetailState
+                    val title = if (stickerDetailState !is StickerDetailState.Success) ""
+                    else stickerDetailState.stickerWithTags.sticker.title
+                    Text(
+                        modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE),
+                        text = title.ifBlank { stringResource(R.string.detail_screen_name) },
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
                 actions = {
                     RaysIconButton(
                         imageVector = Icons.Default.Share,

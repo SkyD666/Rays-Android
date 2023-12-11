@@ -1,5 +1,6 @@
 package com.skyd.rays.ui.screen.home
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -73,7 +74,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     var fabHeight by remember { mutableStateOf(0.dp) }
 
-    val dispatch = viewModel.getDispatcher(startWith = HomeIntent.GetHomeList)
+    viewModel.getDispatcher(startWith = HomeIntent.GetHomeList)
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -214,12 +215,13 @@ private fun DisplayStickersRow(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(6.dp),
+                    .padding(vertical = 10.dp, horizontal = 16.dp),
                 textAlign = TextAlign.Center,
                 text = stringResource(id = R.string.empty_tip)
             )
         }
         LazyRow(
+            modifier = Modifier.animateContentSize(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
@@ -234,13 +236,15 @@ private fun DisplayStickersRow(
                             contentScale = ContentScale.Crop,
                         )
                     }
-                    Text(
-                        modifier = Modifier.padding(top = 6.dp),
-                        text = itemTitle(index),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
+                    if (itemTitle(index).isNotBlank()) {
+                        Text(
+                            modifier = Modifier.padding(top = 6.dp),
+                            text = itemTitle(index),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                    }
                 }
             }
         }
@@ -267,7 +271,7 @@ private fun DisplayTagsRow(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(6.dp),
+                    .padding(vertical = 10.dp, horizontal = 16.dp),
                 textAlign = TextAlign.Center,
                 text = stringResource(id = R.string.empty_tip)
             )

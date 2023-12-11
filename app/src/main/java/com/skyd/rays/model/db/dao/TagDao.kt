@@ -43,12 +43,14 @@ interface TagDao {
     @Transaction
     @Query(
         """SELECT 
-            $STICKER_UUID_COLUMN, 
-            MIN($TAG_COLUMN) AS $TAG_COLUMN, 
+            MIN($STICKER_UUID_COLUMN) AS $STICKER_UUID_COLUMN, 
+            $TAG_COLUMN, 
             MIN($CREATE_TIME_COLUMN) AS $CREATE_TIME_COLUMN 
-        FROM (SELECT * FROM $TAG_TABLE_NAME GROUP BY $TAG_COLUMN HAVING COUNT(*) > 2)
-        WHERE LENGTH($TAG_COLUMN) < 10
-        GROUP BY $STICKER_UUID_COLUMN
+        FROM (SELECT * FROM $TAG_TABLE_NAME 
+              GROUP BY $TAG_COLUMN
+              HAVING COUNT(*) > 2)
+        WHERE LENGTH($TAG_COLUMN) < 25
+        GROUP BY $TAG_COLUMN
         ORDER BY RANDOM()
         LIMIT :count
         """

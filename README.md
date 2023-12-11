@@ -109,7 +109,7 @@
   </tr>
 </tbody>
 </table>
-Note: **and** logic is represented by **space, tab, line break**, multiple of the above characters together are considered as one, extra spaces before and after the input box text will be ignored. The **"content "** in the form refers to the selected search domain (the results of multiple search domains are combined).
+<p>Note: <b>and</b> logic is represented by <b>space, tab, line break</b>, multiple of the above characters together are considered as one, extra spaces before and after the input box text will be ignored. The <b>"content"</b> in the form refers to the selected search domain (the results of multiple search domains are combined).</p>
 
 ## 🌏 Translation
 
@@ -123,15 +123,17 @@ If you are interested, please help us **translate**, thank you.
 
 - Jetpack **Compose**
 - **MVI** Architecture
+- Kotlin ﻿**Coroutines and Flow**
 - **Material You**
 - **ViewModel**
 - **Hilt**
+- **DataStore**
 - **TensorFlow** Lite
 - **ML Kit** (Machine Learning)
-- **DataStore**
-- Room
+- **Room**
 - Splash Screen
 - Navigation
+- Coil
 - Lottie
 - Profile Installer
 

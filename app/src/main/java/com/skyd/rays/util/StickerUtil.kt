@@ -15,6 +15,7 @@ import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
 import com.skyd.rays.appContext
 import com.skyd.rays.config.STICKER_DIR
+import com.skyd.rays.config.TEMP_STICKER_DIR
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.bean.StickerWithTags
@@ -157,7 +158,7 @@ private fun File.deleteDirs(
     }
 }
 
-fun Bitmap.shareToFile(outputDir: File = File(appContext.cacheDir, "TempSticker")): File {
+fun Bitmap.shareToFile(outputDir: File = TEMP_STICKER_DIR): File {
     if (!outputDir.exists()) {
         outputDir.mkdirs()
     }
@@ -181,7 +182,7 @@ fun Bitmap.shareToFile(outputDir: File = File(appContext.cacheDir, "TempSticker"
  * 把表情包复制到临时目录
  */
 fun File.copyStickerToTempFolder(fileExtension: Boolean = true): File {
-    val outputDir = File(appContext.cacheDir, "TempSticker")
+    val outputDir = TEMP_STICKER_DIR
     check(outputDir.exists() || outputDir.mkdirs())
     val resultFileName = name + "_" + Random.nextInt(0, Int.MAX_VALUE) + if (fileExtension) {
         inputStream().use { ImageFormatChecker.check(it).toString() }

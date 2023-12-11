@@ -5,7 +5,6 @@ import com.skyd.rays.base.mvi.AbstractMviViewModel
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.SelfieSegmentationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
@@ -74,16 +72,16 @@ class SelfieSegmentationViewModel @Inject constructor(private var selfieSegmenta
                     .startWith(SelfieSegmentationPartialStateChange.LoadingDialog)
             },
 
-            filterIsInstance<SelfieSegmentationIntent.Export>().flatMapConcat {
+            filterIsInstance<SelfieSegmentationIntent.Export>().flatMapConcat { intent ->
                 selfieSegmentationRepo.requestExport(
-                    foregroundBitmap = it.foregroundBitmap,
-                    backgroundUri = it.backgroundUri,
-                    backgroundSize = it.backgroundSize,
-                    foregroundScale = it.foregroundScale,
-                    foregroundOffset = it.foregroundOffset,
-                    foregroundRotation = it.foregroundRotation,
-                    foregroundSize = it.foregroundSize,
-                    borderSize = it.borderSize,
+                    foregroundBitmap = intent.foregroundBitmap,
+                    backgroundUri = intent.backgroundUri,
+                    backgroundSize = intent.backgroundSize,
+                    foregroundScale = intent.foregroundScale,
+                    foregroundOffset = intent.foregroundOffset,
+                    foregroundRotation = intent.foregroundRotation,
+                    foregroundSize = intent.foregroundSize,
+                    borderSize = intent.borderSize,
                 )
                     .map { SelfieSegmentationPartialStateChange.Export.Success(it) }
                     .startWith(SelfieSegmentationPartialStateChange.LoadingDialog)

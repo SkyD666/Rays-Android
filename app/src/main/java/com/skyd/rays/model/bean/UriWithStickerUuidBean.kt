@@ -9,8 +9,4 @@ import kotlinx.parcelize.Parcelize
 data class UriWithStickerUuidBean(
     val uri: Uri? = null,
     val stickerUuid: String = "",
-) : BaseBean, Parcelable {
-    fun isEmpty(): Boolean = uri == null
-}
-
-val EmptyUriWithStickerUuidBean = UriWithStickerUuidBean()
+) : BaseBean, Parcelable

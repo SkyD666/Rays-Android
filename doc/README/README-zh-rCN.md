@@ -107,7 +107,7 @@
   </tr>
 </tbody>
 </table>
-注：**且** 逻辑使用 **空格、制表符、换行符** 表示，多个上述字符连接在一起时视为一个，输入框文字前后多余空格将被忽略。表格中的 **“内容”** 指的是选择的搜索域（多个搜索域的结果取并集）。
+<p>注：<b>且</b> 逻辑使用 <b>空格、制表符、换行符</b> 表示，多个上述字符连接在一起时视为一个，输入框文字前后多余空格将被忽略。表格中的 <b>“内容”</b> 指的是选择的搜索域（多个搜索域的结果取并集）。</p>
 
 ## 🌏翻译
 
@@ -121,15 +121,17 @@
 
 - Jetpack **Compose**
 - **MVI** Architecture
+- Kotlin ﻿**Coroutines and Flow**
 - **Material You**
 - **ViewModel**
 - **Hilt**
+- **DataStore**
 - **TensorFlow** Lite
 - **ML Kit** (Machine Learning)
-- **DataStore**
-- Room
+- **Room**
 - Splash Screen
 - Navigation
+- Coil
 - Lottie
 - Profile Installer
 

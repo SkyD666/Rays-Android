@@ -8,7 +8,6 @@ import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.Dataset
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.Scaffold

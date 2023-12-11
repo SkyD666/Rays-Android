@@ -52,7 +52,7 @@ class SearchRepository @Inject constructor(
 
     fun requestStickerWithTagsList(): Flow<List<StickerWithTags>> {
         return appContext.dataStore.data
-            .debounce(100)
+            .debounce(70)
             .map {
                 Triple(
                     it[QueryPreference.key] ?: QueryPreference.default,
@@ -63,8 +63,8 @@ class SearchRepository @Inject constructor(
             .distinctUntilChanged()
             .flatMapConcat { triple ->
                 combine(
-                    stickerDao.getStickerWithTagsList(genSql(triple.first.orEmpty())),
-                    appContext.dataStore.data.debounce(100),
+                    stickerDao.getStickerWithTagsList(genSql(triple.first)),
+                    appContext.dataStore.data.debounce(70),
                 ) { list, ds ->
                     list to ds
                 }.takeWhile {
