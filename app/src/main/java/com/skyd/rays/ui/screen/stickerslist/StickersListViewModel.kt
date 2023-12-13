@@ -56,7 +56,7 @@ class StickersListViewModel @Inject constructor(
                     is StickersListIntent.GetStickersList -> intent.query
                     is StickersListIntent.RefreshStickersList -> intent.query
                 }
-                searchRepo.requestStickerWithTagsList(keyword = keyword).map {
+                searchRepo.requestStickerWithTagsListWithAllSearchDomain(keyword = keyword).map {
                     StickersListPartialStateChange.StickersList.Success(stickerWithTagsList = it)
                 }.startWith(StickersListPartialStateChange.StickersList.Loading)
             },

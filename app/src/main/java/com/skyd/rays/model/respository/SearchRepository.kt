@@ -50,6 +50,16 @@ class SearchRepository @Inject constructor(
             }
     }
 
+    fun requestStickerWithTagsListWithAllSearchDomain(keyword: String): Flow<List<StickerWithTags>> {
+        return flow { emit(genSql(k = keyword, useSearchDomain = { _, _ -> true })) }
+            .flowOn(Dispatchers.IO)
+            .flatMapConcat {
+                stickerDao.getStickerWithTagsList(it)
+                    .flowOn(Dispatchers.IO)
+                    .distinctUntilChanged()
+            }
+    }
+
     fun requestStickerWithTagsList(): Flow<List<StickerWithTags>> {
         return appContext.dataStore.data
             .debounce(70)
@@ -221,10 +231,15 @@ class SearchRepository @Inject constructor(
             val searchDomainDao: SearchDomainDao
         }
 
-        fun genSql(k: String): SimpleSQLiteQuery {
-            val hiltEntryPoint = EntryPointAccessors.fromApplication(
-                appContext, HomeRepositoryEntryPoint::class.java
-            )
+        fun genSql(
+            k: String,
+            useSearchDomain: (tableName: String, columnName: String) -> Boolean =
+                { tableName, columnName ->
+                    EntryPointAccessors.fromApplication(
+                        appContext, HomeRepositoryEntryPoint::class.java
+                    ).searchDomainDao.getSearchDomain(tableName, columnName)
+                },
+        ): SimpleSQLiteQuery {
             // 是否使用多个关键字并集查询
             val intersectSearchBySpace =
                 appContext.dataStore.getOrDefault(IntersectSearchBySpacePreference)
@@ -236,7 +251,7 @@ class SearchRepository @Inject constructor(
                         if (index > 0) append("INTERSECT \n")
                         append(
                             "SELECT * FROM $STICKER_TABLE_NAME WHERE ${
-                                getFilter(s, hiltEntryPoint.searchDomainDao)
+                                getFilter(k = s, useSearchDomain = useSearchDomain)
                             } \n"
                         )
                     }
@@ -245,13 +260,16 @@ class SearchRepository @Inject constructor(
             } else {
                 SimpleSQLiteQuery(
                     "SELECT * FROM $STICKER_TABLE_NAME WHERE ${
-                        getFilter(k, hiltEntryPoint.searchDomainDao)
+                        getFilter(k = k, useSearchDomain = useSearchDomain)
                     }"
                 )
             }
         }
 
-        private fun getFilter(k: String, searchDomainDao: SearchDomainDao): String {
+        private fun getFilter(
+            k: String,
+            useSearchDomain: (tableName: String, columnName: String) -> Boolean,
+        ): String {
             if (k.isBlank()) return "1"
 
             val useRegexSearch =
@@ -274,7 +292,7 @@ class SearchRepository @Inject constructor(
 
                 if (table.first == STICKER_TABLE_NAME) {
                     for (column in columns) {
-                        if (!searchDomainDao.getSearchDomain(table.first, column.first)) {
+                        if (!useSearchDomain(table.first, column.first)) {
                             continue
                         }
                         filter += if (useRegexSearch) {
@@ -288,7 +306,7 @@ class SearchRepository @Inject constructor(
                     var subSelect =
                         "(SELECT DISTINCT ${TagBean.STICKER_UUID_COLUMN} FROM ${table.first} WHERE 0 "
                     for (column in columns) {
-                        if (!searchDomainDao.getSearchDomain(table.first, column.first)) {
+                        if (!useSearchDomain(table.first, column.first)) {
                             continue
                         }
                         subSelect += if (useRegexSearch) {
