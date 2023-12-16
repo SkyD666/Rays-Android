@@ -240,7 +240,9 @@ class MainActivity : AppCompatActivity() {
                     WebDavScreen()
                 }
                 composable(route = EXPORT_FILES_SCREEN_ROUTE) {
-                    ExportFilesScreen()
+                    ExportFilesScreen(
+                        exportStickers = it.arguments?.getStringArrayList("exportStickers")
+                    )
                 }
                 composable(route = IMPORT_FILES_SCREEN_ROUTE) {
                     ImportFilesScreen()

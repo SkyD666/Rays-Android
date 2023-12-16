@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FolderZip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -23,11 +25,13 @@ import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
+import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.search.SearchResultItem
+import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.openExportFilesScreen
 
 const val STICKERS_LIST_SCREEN_ROUTE = "stickersListScreen"
 
@@ -57,6 +61,20 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
             RaysTopBar(
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.stickers_list_screen_name)) },
+                actions = {
+                    RaysIconButton(
+                        enabled = uiState.listState is ListState.Success,
+                        onClick = {
+                            openExportFilesScreen(
+                                navController = navController,
+                                exportStickers = (uiState.listState as? ListState.Success)
+                                    ?.stickerWithTagsList?.map { it.sticker.uuid },
+                            )
+                        },
+                        imageVector = Icons.Default.FolderZip,
+                        contentDescription = stringResource(id = R.string.stickers_list_screen_export_current_stickers),
+                    )
+                }
             )
         }
     ) { paddingValues ->

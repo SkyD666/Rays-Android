@@ -44,6 +44,10 @@ interface StickerDao {
     fun getAllStickerWithTagsList(): List<StickerWithTags>
 
     @Transaction
+    @Query("SELECT * FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN IN (:uuids)")
+    fun getAllStickerWithTagsList(uuids: Collection<String>): List<StickerWithTags>
+
+    @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME")
     fun getStickerList(): List<StickerBean>
 
@@ -182,6 +186,15 @@ interface StickerDao {
             .fromApplication(appContext, StickerDaoEntryPoint::class.java)
         var updatedCount = 0
         stickerWithTagsList.forEach {
+            val currentTimeMillis = System.currentTimeMillis()
+            it.stickerWithTags.sticker.apply {
+                if (createTime == 0L) {
+                    createTime = currentTimeMillis
+                }
+                if (modifyTime == 0L) {
+                    modifyTime = currentTimeMillis
+                }
+            }
             val updated = proxy.handle(
                 stickerDao = this,
                 tagDao = hiltEntryPoint.tagDao,

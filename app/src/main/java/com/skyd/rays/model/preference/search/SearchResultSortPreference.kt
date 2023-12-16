@@ -36,12 +36,12 @@ object SearchResultSortPreference : BasePreference<String> {
     override fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
 
     fun toDisplayName(sort: String): String = when (sort) {
-        "CreateTime" -> appContext.getString(R.string.search_result_sort_create_time)
-        "ModifyTime" -> appContext.getString(R.string.search_result_sort_modify_time)
+        "CreateTime" -> appContext.getString(R.string.sticker_create_time)
+        "ModifyTime" -> appContext.getString(R.string.sticker_modify_time)
         "TagCount" -> appContext.getString(R.string.search_result_sort_tag_count)
         "Title" -> appContext.getString(R.string.search_result_sort_title)
-        "ClickCount" -> appContext.getString(R.string.search_result_sort_click_count)
-        "ShareCount" -> appContext.getString(R.string.search_result_sort_share_count)
-        else -> appContext.getString(R.string.search_result_sort_create_time)
+        "ClickCount" -> appContext.getString(R.string.sticker_click_count)
+        "ShareCount" -> appContext.getString(R.string.sticker_share_count)
+        else -> appContext.getString(R.string.sticker_create_time)
     }
 }

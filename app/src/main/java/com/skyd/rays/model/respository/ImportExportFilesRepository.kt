@@ -107,14 +107,29 @@ class ImportExportFilesRepository @Inject constructor(
         }
     }
 
-    suspend fun requestExport(dirUri: Uri): Flow<ImportExportInfo> {
+    suspend fun requestExport(
+        dirUri: Uri,
+        excludeClickCount: Boolean = false,
+        excludeShareCount: Boolean = false,
+        excludeCreateTime: Boolean = false,
+        excludeModifyTime: Boolean = false,
+        exportStickers: Collection<String>? = null,
+    ): Flow<ImportExportInfo> {
         return flowOnIo {
             val startTime = System.currentTimeMillis()
-            val allStickerWithTagsList = stickerDao.getAllStickerWithTagsList()
+            val allStickerWithTagsList = if (exportStickers == null) {
+                stickerDao.getAllStickerWithTagsList()
+            } else {
+                stickerDao.getAllStickerWithTagsList(exportStickers)
+            }
             val totalCount = allStickerWithTagsList.size
             var currentCount = 0
             EXPORT_FILES_DIR.deleteRecursively()
             allStickerWithTagsList.forEach {
+                if (excludeClickCount) it.sticker.clickCount = 0L
+                if (excludeShareCount) it.sticker.shareCount = 0L
+                if (excludeCreateTime) it.sticker.createTime = 0L
+                if (excludeModifyTime) it.sticker.modifyTime = 0L
                 stickerWithTagsToJsonFile(it)
                 stickerUuidToFile(it.sticker.uuid)
                     .copyTo(File("$EXPORT_FILES_DIR/$BACKUP_STICKER_DIR", it.sticker.uuid))

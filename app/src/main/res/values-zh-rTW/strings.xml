@@ -63,7 +63,6 @@
     <string name="webdav_screen_upload">推送</string>
     <string name="import_export_files_repo_invalid_magic_number">無效格式，魔數不等於 0x0D000721</string>
     <string name="webdav_screen_progress_logical_delete_remote">移動到遠端回收站</string>
-    <string name="detail_screen_sticker_info_create_time">創建時間</string>
     <string name="export_files_screen_progress_zipping">正在壓縮：%s</string>
     <string name="home_style_screen_show_popular_tags_description">在搜尋欄下方顯示分享次數最多的表情包對應的標籤</string>
     <string name="search_result_sort_tag_count">標籤數量</string>
@@ -101,7 +100,6 @@
     <string name="import_export_screen_name">導入與匯出</string>
     <string name="appearance_screen_dark_mode">深色模式</string>
     <string name="search_config_screen_use_regex">正則表達式</string>
-    <string name="detail_screen_sticker_info_click_count">點擊次數</string>
     <string name="classification_screen_threshold_description">只有置信度高于此門檻值的標籤才會被建議，建議設定在 0.5 左右。</string>
     <string name="webdav_screen_server">伺服器</string>
     <string name="about_screen_join_discord">加入 Discord 伺服器</string>
@@ -184,7 +182,6 @@
     <plurals name="export_files_screen_successful_desc">
         <item quantity="other">共匯出 %1$d 張表情包，耗時 %2$.2f 秒</item>
     </plurals>
-    <string name="detail_screen_sticker_info_share_count">分享次數</string>
     <string name="webdav_screen_upload_tip">在將本地數據推送到遠端時，如果存在衝突，本地表情包將覆蓋遠端內容。如果本地不存在但在遠端存在的表情包，將被移動到遠端回收站。</string>
     <string name="webdav_screen_sync_category">同步</string>
     <string name="home_screen_close_search">關閉</string>
@@ -198,7 +195,7 @@
     <string name="about_screen_join_telegram">加入 Telegram 群組</string>
     <string name="api_grant_screen_description">管理外部應用程式的 API 權限</string>
     <string name="setting_screen_privacy_description">停用螢幕截圖</string>
-    <string name="search_result_sort_share_count">分享次數</string>
+    <string name="sticker_share_count">分享次數</string>
     <string name="classification_model_screen_select">選擇外部模型</string>
     <string name="home_screen_select_export_folder">選擇匯出文件夾</string>
     <string name="search_screen_no_search_result_tip">空空如也呢~</string>
@@ -222,10 +219,11 @@
     <string name="handle_imported_sticker_proxy_replace">替換原有</string>
     <string name="mini_tool_screen_name">小工具</string>
     <string name="export_files_screen_select_dir">選擇匯出目錄</string>
+    <string name="export_files_screen_exclude_field">排除</string>
     <string name="search_result_sort">排序</string>
     <string name="webdav_screen_server_description">請輸入 WebDAV 伺服器 URL</string>
     <string name="search_config_screen_common_category">一般</string>
-    <string name="search_result_sort_create_time">創建時間</string>
+    <string name="sticker_create_time">創建時間</string>
     <string name="privacy_screen_name">隱私</string>
     <string name="text_recognize_screen_threshold_description">只有置信度高於此閾值的文字才會被推薦，建議設定在 0.4 左右。</string>
     <string name="text_recognize_screen_name">文本辨識</string>
@@ -268,12 +266,12 @@
     <string name="api_grant_repo_no_package">沒有軟體包可用：%s</string>
     <string name="add_screen_suggest_tag">建議的標籤</string>
     <string name="home_screen_popular_tags_popular_value">熱門值：%.2f</string>
-    <string name="search_result_sort_modify_time">修改時間</string>
+    <string name="sticker_modify_time">修改時間</string>
     <string name="image_scale_inside">內部</string>
     <string name="db_tag_table">標籤表</string>
     <string name="import_files_screen_on_conflict_desc">「衝突」指的是您當前正在導入的表情包的 UUID 與現有表情包的 UUID 相同，與這兩個表情包的內容是否相同無關。</string>
     <string name="theme_no_palettes">沒有調色板</string>
-    <string name="search_result_sort_click_count">點擊次數</string>
+    <string name="sticker_click_count">點擊次數</string>
     <string name="search_style_screen_name">搜尋頁風格</string>
     <string name="add_screen_skip_current_sticker">放棄目前的編輯</string>
     <string name="add_screen_waiting_uris">處理清單</string>
@@ -297,6 +295,8 @@
     <string name="home_screen_random_tags">隨機標籤</string>
     <string name="home_screen_recent_create_stickers">最近創建</string>
     <string name="home_screen_most_shared_stickers">最多分享</string>
+    <string name="home_screen_export_to_backup_zip">匯出為 Zip 備份文件</string>
     <string name="stickers_list_screen_name">表情包列表</string>
+    <string name="stickers_list_screen_export_current_stickers">匯出為 Zip 備份文件</string>
     <string name="delete">刪除</string>
 </resources>

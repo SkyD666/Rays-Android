@@ -94,6 +94,7 @@ import com.skyd.rays.ui.local.LocalQuery
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.detail.openDetailScreen
+import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.openExportFilesScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -245,6 +246,12 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                                         searchResultUiState.stickerWithTagsList.toSet()
                                 },
                                 onExportClick = { openMultiStickersExportPathDialog = true },
+                                onExportAsZipClick = {
+                                    openExportFilesScreen(
+                                        navController = navController,
+                                        exportStickers = selectedStickers.map { it.sticker.uuid },
+                                    )
+                                },
                             )
                             ExportDialog(
                                 visible = openMultiStickersExportPathDialog,

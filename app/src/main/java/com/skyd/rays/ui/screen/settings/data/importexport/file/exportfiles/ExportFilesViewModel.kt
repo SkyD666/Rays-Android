@@ -71,7 +71,14 @@ class ExportFilesViewModel @Inject constructor(
             filterIsInstance<ExportFilesIntent.Init>().map { ExportFilesPartialStateChange.Init },
 
             filterIsInstance<ExportFilesIntent.Export>().flatMapConcat { intent ->
-                importExportFilesRepo.requestExport(intent.dirUri).map {
+                importExportFilesRepo.requestExport(
+                    dirUri = intent.dirUri,
+                    excludeClickCount = intent.excludeClickCount,
+                    excludeShareCount = intent.excludeShareCount,
+                    excludeCreateTime = intent.excludeCreateTime,
+                    excludeModifyTime = intent.excludeModifyTime,
+                    exportStickers = intent.exportStickers,
+                ).map {
                     when (it) {
                         is ImportExportResultInfo -> {
                             ExportFilesPartialStateChange.ExportFilesProgress.Finish(it)

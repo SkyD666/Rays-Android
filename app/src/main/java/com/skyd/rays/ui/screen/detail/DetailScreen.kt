@@ -451,17 +451,17 @@ fun StickerDetailInfo(modifier: Modifier = Modifier, stickerWithTags: StickerWit
         )
         DetailInfoItem(
             icon = Icons.Default.AdsClick,
-            title = stringResource(id = R.string.detail_screen_sticker_info_click_count),
+            title = stringResource(id = R.string.sticker_click_count),
             text = sticker.clickCount.toString(),
         )
         DetailInfoItem(
             icon = Icons.Default.Share,
-            title = stringResource(id = R.string.detail_screen_sticker_info_share_count),
+            title = stringResource(id = R.string.sticker_share_count),
             text = sticker.shareCount.toString()
         )
         DetailInfoItem(
             icon = Icons.Default.AddCircle,
-            title = stringResource(id = R.string.detail_screen_sticker_info_create_time),
+            title = stringResource(id = R.string.sticker_create_time),
             text = dateTime(sticker.createTime)
         )
         DetailInfoItem(

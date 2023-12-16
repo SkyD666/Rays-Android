@@ -21,7 +21,7 @@ import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WEBDAV_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.EXPORT_FILES_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.openExportFilesScreen
 import com.skyd.rays.ui.screen.settings.data.importexport.file.importfiles.IMPORT_FILES_SCREEN_ROUTE
 
 const val IMPORT_EXPORT_SCREEN_ROUTE = "importExportScreen"
@@ -77,7 +77,7 @@ fun ImportExportScreen() {
                     icon = rememberVectorPainter(image = Icons.Default.Upload),
                     text = stringResource(id = R.string.export_files_screen_name),
                     descriptionText = stringResource(id = R.string.export_files_screen_description),
-                    onClick = { navController.navigate(EXPORT_FILES_SCREEN_ROUTE) }
+                    onClick = { openExportFilesScreen(navController = navController) }
                 )
             }
         }

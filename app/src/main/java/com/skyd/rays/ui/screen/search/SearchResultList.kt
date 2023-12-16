@@ -32,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.FolderZip
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -224,6 +225,7 @@ internal fun MultiSelectActionBar(
     selectedStickers: List<StickerWithTags>,
     onDeleteClick: () -> Unit,
     onExportClick: () -> Unit,
+    onExportAsZipClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val windowSizeClass = LocalWindowSizeClass.current
@@ -254,6 +256,14 @@ internal fun MultiSelectActionBar(
                     enabled = selectedStickers.isNotEmpty(),
                     imageVector = Icons.Default.Save,
                     contentDescription = stringResource(id = R.string.home_screen_export)
+                )
+            },
+            @Composable {
+                RaysIconButton(
+                    onClick = onExportAsZipClick,
+                    enabled = selectedStickers.isNotEmpty(),
+                    imageVector = Icons.Default.FolderZip,
+                    contentDescription = stringResource(id = R.string.home_screen_export_to_backup_zip)
                 )
             },
             @Composable {

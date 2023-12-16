@@ -2,6 +2,7 @@ package com.skyd.rays.ui.screen.home
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -63,6 +65,7 @@ import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.search.SEARCH_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.stickerslist.openStickersListScreen
+import com.skyd.rays.util.sendStickerByUuid
 
 
 const val HOME_SCREEN_ROUTE = "homeScreen"
@@ -70,6 +73,7 @@ const val HOME_SCREEN_ROUTE = "homeScreen"
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val navController = LocalNavController.current
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     var fabHeight by remember { mutableStateOf(0.dp) }
@@ -134,6 +138,12 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                 count = mostSharedStickersList.size,
                                 itemImage = { mostSharedStickersList[it].sticker.uuid },
                                 itemTitle = { mostSharedStickersList[it].sticker.title },
+                                onItemLongClick = {
+                                    context.sendStickerByUuid(
+                                        uuid = mostSharedStickersList[it].sticker.uuid,
+                                        onSuccess = { mostSharedStickersList[it].sticker.shareCount++ }
+                                    )
+                                },
                                 onItemClick = {
                                     openDetailScreen(
                                         navController = navController,
@@ -149,6 +159,12 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                 count = recentCreatedStickersList.size,
                                 itemImage = { recentCreatedStickersList[it].sticker.uuid },
                                 itemTitle = { recentCreatedStickersList[it].sticker.title },
+                                onItemLongClick = {
+                                    context.sendStickerByUuid(
+                                        uuid = recentCreatedStickersList[it].sticker.uuid,
+                                        onSuccess = { recentCreatedStickersList[it].sticker.shareCount++ }
+                                    )
+                                },
                                 onItemClick = {
                                     openDetailScreen(
                                         navController = navController,
@@ -203,6 +219,7 @@ private fun DisplayStickersRow(
     count: Int,
     itemImage: (Int) -> String,
     itemTitle: (Int) -> String,
+    onItemLongClick: (Int) -> Unit,
     onItemClick: (Int) -> Unit,
 ) {
     Column {
@@ -227,11 +244,16 @@ private fun DisplayStickersRow(
         ) {
             items(count) { index ->
                 Column(modifier = Modifier.width(IntrinsicSize.Min)) {
-                    ElevatedCard(onClick = { onItemClick(index) }) {
+                    ElevatedCard {
                         RaysImage(
                             modifier = Modifier
                                 .height(150.dp)
-                                .aspectRatio(1f),
+                                .aspectRatio(1f)
+                                .combinedClickable(
+                                    onLongClick = { onItemLongClick(index) },
+                                    onClick = { onItemClick(index) }
+
+                                ),
                             uuid = itemImage(index),
                             contentScale = ContentScale.Crop,
                         )
