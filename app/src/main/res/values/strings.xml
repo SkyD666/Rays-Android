@@ -163,6 +163,7 @@
     <string name="add_screen_select_sticker">Select stickers</string>
     <string name="add_screen_add_stickers">Add stickers</string>
     <string name="add_screen_update_sticker">Select a new sticker</string>
+    <string name="add_screen_save_all">Save all</string>
     <string name="import_export_screen_name">Sync data</string>
     <string name="send_sticker">Send sticker</string>
     <string name="about_screen_other_works_raca_name" translatable="false">Raca (Record All Classic Articles)</string>

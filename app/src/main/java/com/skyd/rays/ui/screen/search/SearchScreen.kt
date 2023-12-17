@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -83,6 +84,7 @@ import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerWithTags
+import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.ui.component.BackIcon
 import com.skyd.rays.ui.component.RaysFloatingActionButton
@@ -93,8 +95,10 @@ import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalQuery
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
+import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.openExportFilesScreen
+import com.skyd.rays.util.stickerUuidToUri
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -120,6 +124,7 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
     }
     val query = LocalQuery.current
     var fabHeight by remember { mutableStateOf(0.dp) }
+    var fabWidht by remember { mutableStateOf(0.dp) }
     var searchFieldValueState by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(text = query, selection = TextRange(query.length)))
     }
@@ -133,7 +138,10 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
             AnimatedVisibility(visible = searchResultListState.firstVisibleItemIndex > 2) {
                 RaysFloatingActionButton(
                     onClick = { scope.launch { searchResultListState.animateScrollToItem(0) } },
-                    onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
+                    onSizeWithSinglePaddingChanged = { width, height ->
+                        fabWidht = width
+                        fabHeight = height
+                    },
                     contentDescription = stringResource(R.string.home_screen_search_result_list_to_top),
                 ) {
                     Icon(
@@ -240,7 +248,25 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                                 mutableStateOf(false)
                             }
                             MultiSelectActionBar(
+                                modifier = Modifier
+                                    .run {
+                                        if (windowSizeClass.isCompact) padding(end = fabWidht)
+                                        else this
+                                    }
+                                    .horizontalScroll(rememberScrollState()),
                                 selectedStickers = selectedStickers,
+                                onEditClick = {
+                                    openAddScreen(
+                                        navController = navController,
+                                        stickers = selectedStickers.map {
+                                            UriWithStickerUuidBean(
+                                                uri = stickerUuidToUri(it.sticker.uuid),
+                                                stickerUuid = it.sticker.uuid,
+                                            )
+                                        },
+                                        isEdit = true
+                                    )
+                                },
                                 onDeleteClick = {
                                     openDeleteMultiStickersDialog =
                                         searchResultUiState.stickerWithTagsList.toSet()

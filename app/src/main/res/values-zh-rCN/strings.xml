@@ -8,8 +8,8 @@
     <string name="add_screen_save_current_sticker">保存当前项</string>
     <string name="add_screen_title">标题（可选）</string>
     <string name="add_screen_add_tags">添加标签（可选）</string>
-    <string name="add_screen_name">添加表情包</string>
-    <string name="add_screen_name_edit">修改表情包</string>
+    <string name="add_screen_name">添加</string>
+    <string name="add_screen_name_edit">编辑</string>
     <string name="back">返回</string>
     <string name="add_screen_success">操作成功</string>
     <string name="failed_info">操作失败：%s</string>
@@ -157,6 +157,7 @@
     <string name="add_screen_select_sticker">选择表情包</string>
     <string name="add_screen_add_stickers">添加表情包</string>
     <string name="add_screen_update_sticker">选择新表情包</string>
+    <string name="add_screen_save_all">保存全部</string>
     <string name="import_export_screen_name">导入与导出</string>
     <string name="send_sticker">发送表情包</string>
     <string name="about_screen_other_works_raca_description">一个在本地记录、查找抽象段落/评论区小作文的工具。🤗 您还在为记不住小作文内容，面临前面、中间、后面都忘了的尴尬处境吗？使用这款工具将帮助您记录您所遇到的小作文，再也不因为忘记而烦恼！😋</string>

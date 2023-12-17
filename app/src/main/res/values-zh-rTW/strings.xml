@@ -249,6 +249,7 @@
     <string name="add_screen_select_sticker">選擇表情包</string>
     <string name="add_screen_add_stickers">添加表情包</string>
     <string name="add_screen_update_sticker">選擇新表情包</string>
+    <string name="add_screen_save_all">保存全部</string>
     <string name="about_screen_other_works_night_screen_description">當您在晚上🌙使用手機時，Night Screen 可以幫助您降低屏幕的亮度，減少對眼睛的損害。</string>
     <string name="webdav_screen_remote_recycle_bin">遠端回收站</string>
     <string name="data_screen_name">數據</string>

@@ -32,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FolderZip
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
@@ -222,7 +223,9 @@ fun SearchResultConfigBar(
 
 @Composable
 internal fun MultiSelectActionBar(
+    modifier: Modifier = Modifier,
     selectedStickers: List<StickerWithTags>,
+    onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onExportClick: () -> Unit,
     onExportAsZipClick: () -> Unit,
@@ -252,6 +255,14 @@ internal fun MultiSelectActionBar(
             },
             @Composable {
                 RaysIconButton(
+                    onClick = onEditClick,
+                    enabled = selectedStickers.isNotEmpty(),
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = stringResource(id = R.string.add_screen_name_edit)
+                )
+            },
+            @Composable {
+                RaysIconButton(
                     onClick = onExportClick,
                     enabled = selectedStickers.isNotEmpty(),
                     imageVector = Icons.Default.Save,
@@ -277,11 +288,11 @@ internal fun MultiSelectActionBar(
         )
     }
     if (windowSizeClass.isCompact) {
-        Row {
+        Row(modifier = modifier) {
             items.forEachIndexed { _, function -> function() }
         }
     } else {
-        Column {
+        Column(modifier = modifier) {
             items.forEachIndexed { _, function -> function() }
         }
     }

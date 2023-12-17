@@ -358,7 +358,7 @@ private fun HomeScreenFloatingActionButton(
         {
             openAddScreen(
                 navController = navController,
-                stickers = mutableListOf(),
+                stickers = listOf(),
                 isEdit = false,
             )
         }

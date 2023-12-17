@@ -47,10 +47,12 @@ internal sealed interface AddPartialStateChange {
         )
     }
 
-    data class ReplaceWaitingListFirst(val sticker: UriWithStickerUuidBean) :
-        AddPartialStateChange {
+    data class ReplaceWaitingListSingleSticker(
+        val sticker: UriWithStickerUuidBean,
+        val index: Int
+    ) : AddPartialStateChange {
         override fun reduce(oldState: AddState) = oldState.copy(
-            waitingList = oldState.waitingList.toMutableList().apply { set(0, sticker) }
+            waitingList = oldState.waitingList.toMutableList().apply { set(index, sticker) }
         )
     }
 

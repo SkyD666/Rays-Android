@@ -151,7 +151,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                 onClick = {
                     openAddScreen(
                         navController = navController,
-                        stickers = mutableListOf(
+                        stickers = listOf(
                             UriWithStickerUuidBean(
                                 uri = stickerUuidToUri(stickerUuid),
                                 stickerUuid = stickerUuid,
@@ -361,7 +361,7 @@ fun MainCard(
                     onDoubleClick = {
                         openAddScreen(
                             navController = navController,
-                            stickers = mutableListOf(
+                            stickers = listOf(
                                 UriWithStickerUuidBean(
                                     uri = stickerUuidToUri(stickerBean.uuid),
                                     stickerUuid = stickerBean.uuid,

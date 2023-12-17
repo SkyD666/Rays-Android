@@ -76,7 +76,7 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
 
                 is AddPartialStateChange.Init,
                 is AddPartialStateChange.ProcessNext,
-                is AddPartialStateChange.ReplaceWaitingListFirst,
+                is AddPartialStateChange.ReplaceWaitingListSingleSticker,
                 is AddPartialStateChange.AddToWaitingList -> AddEvent.CurrentStickerChanged
 
                 else -> return@onEach
@@ -108,8 +108,11 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
             filterIsInstance<AddIntent.ProcessNext>().map {
                 AddPartialStateChange.ProcessNext
             },
-            filterIsInstance<AddIntent.ReplaceWaitingListFirst>().map { intent ->
-                AddPartialStateChange.ReplaceWaitingListFirst(intent.sticker)
+            filterIsInstance<AddIntent.ReplaceWaitingListSingleSticker>().map { intent ->
+                AddPartialStateChange.ReplaceWaitingListSingleSticker(
+                    sticker = intent.sticker,
+                    index = intent.index,
+                )
             },
             filterIsInstance<AddIntent.AddTag>().map { intent ->
                 AddPartialStateChange.AddTag(intent.text)

@@ -14,6 +14,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
@@ -27,6 +28,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
@@ -40,17 +42,20 @@ import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.AddToPhotos
+import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EditOff
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -78,6 +83,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -85,6 +91,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -111,7 +118,7 @@ const val ADD_SCREEN_ROUTE = "addScreen"
 
 fun openAddScreen(
     navController: NavHostController,
-    stickers: MutableList<UriWithStickerUuidBean>,
+    stickers: List<UriWithStickerUuidBean>,
     isEdit: Boolean
 ) {
     navController.navigate(
@@ -138,6 +145,7 @@ fun AddScreen(
     var titleText by rememberSaveable { mutableStateOf("") }
     var currentTagText by rememberSaveable { mutableStateOf("") }
     var stickerCreateTime by rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
+    var openMoreMenu by rememberSaveable { mutableStateOf(false) }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
 
@@ -159,13 +167,19 @@ fun AddScreen(
         dispatch(AddIntent.ProcessNext(uiState.waitingList.getOrNull(1)))
     }
 
+    var currentReplaceIndex = rememberSaveable { 0 }
     val pickStickerLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { result ->
         if (result != null) {
             val waitingList = uiState.waitingList
             if (waitingList.isNotEmpty()) {
-                dispatch(AddIntent.ReplaceWaitingListFirst(waitingList[0].copy(uri = result)))
+                dispatch(
+                    AddIntent.ReplaceWaitingListSingleSticker(
+                        sticker = waitingList[currentReplaceIndex].copy(uri = result),
+                        index = currentReplaceIndex,
+                    )
+                )
             }
         }
     }
@@ -190,15 +204,6 @@ fun AddScreen(
                     )
                 },
                 actions = {
-                    RaysIconButton(
-                        onClick = {
-                            (if (isEdit) pickStickerLauncher else pickStickersLauncher)
-                                .launch("image/*")
-                        },
-                        contentDescription = if (isEdit) stringResource(R.string.add_screen_update_sticker)
-                        else stringResource(R.string.add_screen_add_stickers),
-                        imageVector = if (isEdit) Icons.Default.Image else Icons.Default.AddPhotoAlternate,
-                    )
                     RaysIconButton(
                         onClick = {
                             resetStickerData()
@@ -250,6 +255,16 @@ fun AddScreen(
                         contentDescription = stringResource(R.string.add_screen_save_current_sticker),
                         imageVector = Icons.Default.Save,
                     )
+//                    RaysIconButton(
+//                        onClick = { openMoreMenu = true },
+//                        contentDescription = stringResource(R.string.more),
+//                        imageVector = Icons.Default.MoreVert,
+//                    )
+//                    MoreMenu(
+//                        expanded = openMoreMenu,
+//                        onDismissRequest = { openMoreMenu = false },
+//                        onSaveAllClick = {},
+//                    )
                 }
             )
         },
@@ -262,8 +277,12 @@ fun AddScreen(
                 Column {
                     WaitingRow(
                         uris = uiState.waitingList,
+                        isEdit = isEdit,
                         onSelectStickersClick = { pickStickersLauncher.launch("image/*") },
-                        onSelectFirstStickerClick = { pickStickerLauncher.launch("image/*") },
+                        onReplaceStickerClick = { index ->
+                            currentReplaceIndex = index
+                            pickStickerLauncher.launch("image/*")
+                        },
                     )
                     AnimatedVisibility(
                         visible = uiState.waitingList.isNotEmpty(),
@@ -338,7 +357,11 @@ fun AddScreen(
                 LaunchedEffect(uiState.currentSticker) {
                     val currentSticker = uiState.currentSticker
                     resetStickerData()
-                    onGetStickersWithTagsStateChanged()
+                    if (currentSticker?.stickerUuid.isNullOrBlank()) {
+                        onGetStickersWithTagsStateChanged()
+                    } else {
+                        dispatch(AddIntent.GetStickerWithTags(currentSticker!!.stickerUuid))
+                    }
                     if (currentSticker != null) {
                         currentSticker.uri?.let { uri ->
                             dispatch(AddIntent.GetSuggestTags(uri))
@@ -573,20 +596,33 @@ private fun AddToAllList(list: List<String>, onDeleteTag: (String) -> Unit) {
 @Composable
 private fun WaitingRow(
     uris: List<UriWithStickerUuidBean>,
+    isEdit: Boolean,
     onSelectStickersClick: () -> Unit,
-    onSelectFirstStickerClick: () -> Unit,
+    onReplaceStickerClick: (Int) -> Unit,
 ) {
     Column(
         modifier = Modifier
-            .padding(vertical = 7.dp)
             .fillMaxWidth()
+            .padding(bottom = 3.dp)
     ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = stringResource(R.string.add_screen_waiting_uris),
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Spacer(modifier = Modifier.height(10.dp))
+        Row {
+            Text(
+                modifier = Modifier
+                    .height(40.dp)
+                    .padding(start = 16.dp)
+                    .wrapContentHeight(align = Alignment.CenterVertically),
+                text = stringResource(R.string.add_screen_waiting_uris),
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+            )
+            if (!isEdit) {
+                RaysIconButton(
+                    onClick = onSelectStickersClick,
+                    imageVector = Icons.Default.AddPhotoAlternate,
+                    contentDescription = stringResource(R.string.add_screen_add_stickers),
+                )
+            }
+        }
         if (uris.isEmpty()) {
             TextButton(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -603,17 +639,27 @@ private fun WaitingRow(
             ) {
                 itemsIndexed(uris) { index, uri ->
                     val content: @Composable ColumnScope.() -> Unit = {
-                        RaysImage(
-                            model = uri.uri,
-                            modifier = Modifier
-                                .height(if (index == 0) 150.dp else 100.dp)
-                                .aspectRatio(1f)
-                                .run {
-                                    if (index == 0) clickable(onClick = onSelectFirstStickerClick)
-                                    else this
-                                },
-                            contentScale = ContentScale.Crop,
-                        )
+                        Box(contentAlignment = Alignment.TopEnd) {
+                            RaysImage(
+                                model = uri.uri,
+                                modifier = Modifier
+                                    .height(if (index == 0) 150.dp else 100.dp)
+                                    .aspectRatio(1f)
+                                    .clickable(onClick = { onReplaceStickerClick(index) }),
+                                contentScale = ContentScale.Crop,
+                            )
+                            RaysIconButton(
+                                colors = IconButtonDefaults.filledIconButtonColors(
+                                    containerColor = Color.Black.copy(alpha = 0.3f),
+                                    contentColor = Color.White,
+                                    disabledContainerColor = Color.Black.copy(alpha = 0.2f),
+                                    disabledContentColor = Color.White,
+                                ),
+                                onClick = { onReplaceStickerClick(index) },
+                                imageVector = Icons.Default.Autorenew,
+                                contentDescription = stringResource(R.string.add_screen_update_sticker),
+                            )
+                        }
                     }
                     ElevatedCard(content = content)
                 }
@@ -680,5 +726,21 @@ private fun SuggestedTags(suggestedTags: List<String>, onClick: (Int) -> Unit) {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun MoreMenu(expanded: Boolean, onDismissRequest: () -> Unit, onSaveAllClick: () -> Unit) {
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = onDismissRequest
+    ) {
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.add_screen_save_all)) },
+            onClick = {
+                onDismissRequest()
+                onSaveAllClick()
+            },
+        )
     }
 }
