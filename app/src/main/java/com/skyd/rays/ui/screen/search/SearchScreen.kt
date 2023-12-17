@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -248,12 +247,10 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                                 mutableStateOf(false)
                             }
                             MultiSelectActionBar(
-                                modifier = Modifier
-                                    .run {
-                                        if (windowSizeClass.isCompact) padding(end = fabWidht)
-                                        else this
-                                    }
-                                    .horizontalScroll(rememberScrollState()),
+                                modifier = Modifier.run {
+                                    if (windowSizeClass.isCompact) padding(end = fabWidht)
+                                    else this
+                                },
                                 selectedStickers = selectedStickers,
                                 onEditClick = {
                                     openAddScreen(

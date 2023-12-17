@@ -11,6 +11,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,7 +28,9 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
@@ -288,11 +291,11 @@ internal fun MultiSelectActionBar(
         )
     }
     if (windowSizeClass.isCompact) {
-        Row(modifier = modifier) {
+        Row(modifier = modifier.horizontalScroll(rememberScrollState())) {
             items.forEachIndexed { _, function -> function() }
         }
     } else {
-        Column(modifier = modifier) {
+        Column(modifier = modifier.verticalScroll(rememberScrollState())) {
             items.forEachIndexed { _, function -> function() }
         }
     }
