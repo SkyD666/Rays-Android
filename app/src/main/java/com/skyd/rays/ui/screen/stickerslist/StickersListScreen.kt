@@ -22,13 +22,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.search.SearchResultItem
 import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.openExportFilesScreen
@@ -52,15 +50,14 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val navController = LocalNavController.current
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val windowSizeClass = LocalWindowSizeClass.current
 
-    val dispatch = viewModel.getDispatcher(startWith = StickersListIntent.GetStickersList(query))
+    viewModel.getDispatcher(startWith = StickersListIntent.GetStickersList(query))
 
     Scaffold(
         topBar = {
             RaysTopBar(
                 scrollBehavior = scrollBehavior,
-                title = { Text(text = stringResource(R.string.stickers_list_screen_name)) },
+                title = { Text(text = query.ifBlank { stringResource(R.string.stickers_list_screen_name) }) },
                 actions = {
                     RaysIconButton(
                         enabled = uiState.listState is ListState.Success,
@@ -84,7 +81,7 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
                 LazyVerticalStaggeredGrid(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = paddingValues + PaddingValues(16.dp),
-                    columns = StaggeredGridCells.Fixed(if (windowSizeClass.isCompact) 2 else 4),
+                    columns = StaggeredGridCells.Adaptive(125.dp),
                     verticalItemSpacing = 12.dp,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {

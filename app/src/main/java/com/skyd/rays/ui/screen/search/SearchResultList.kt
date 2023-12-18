@@ -101,14 +101,11 @@ fun SearchResultList(
                 tip = stringResource(id = R.string.search_screen_no_search_result_tip)
             )
         } else {
-            val windowSizeClass = LocalWindowSizeClass.current
             LazyVerticalStaggeredGrid(
                 modifier = Modifier.fillMaxSize(),
                 state = state,
                 contentPadding = contentPadding,
-                columns = StaggeredGridCells.Fixed(
-                    if (windowSizeClass.isCompact) 2 else 4
-                ),
+                columns = StaggeredGridCells.Adaptive(125.dp),
                 verticalItemSpacing = 12.dp,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
