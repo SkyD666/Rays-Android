@@ -9,6 +9,7 @@ import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.DisableScreenshotPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
+import com.skyd.rays.model.preference.PickImageMethodPreference
 import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.model.preference.StickerScalePreference
@@ -82,3 +83,6 @@ val LocalTextRecognizeThreshold = compositionLocalOf { TextRecognizeThresholdPre
 
 // Privacy
 val LocalDisableScreenshot = compositionLocalOf { DisableScreenshotPreference.default }
+
+// Pick image
+val LocalPickImageMethod = compositionLocalOf { PickImageMethodPreference.default }

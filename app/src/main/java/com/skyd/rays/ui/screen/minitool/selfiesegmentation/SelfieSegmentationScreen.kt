@@ -3,8 +3,6 @@ package com.skyd.rays.ui.screen.minitool.selfiesegmentation
 import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateOffsetAsState
@@ -79,6 +77,8 @@ import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.component.shape.CloverShape
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.local.LocalWindowSizeClass
+import com.skyd.rays.util.launchImagePicker
+import com.skyd.rays.util.rememberImagePicker
 import com.skyd.rays.util.sendSticker
 
 const val SELFIE_SEGMENTATION_SCREEN_ROUTE = "selfieSegmentationScreen"
@@ -91,13 +91,13 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
     var selfieUri by rememberSaveable { mutableStateOf<Uri?>(null) }
-    val pickSelfieLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { if (it != null) selfieUri = it }
+    val pickSelfieLauncher = rememberImagePicker(multiple = false) {
+        if (it.firstOrNull() != null) selfieUri = it.first()
+    }
     var backgroundUri by rememberSaveable { mutableStateOf<Uri?>(null) }
-    val pickBackgroundLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { if (it != null) backgroundUri = it }
+    val pickBackgroundLauncher = rememberImagePicker(multiple = false) {
+        if (it.firstOrNull() != null) backgroundUri = it.first()
+    }
     val lazyListState = rememberLazyListState()
     var fabHeight by remember { mutableStateOf(0.dp) }
 
@@ -135,8 +135,8 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
                     modifier = Modifier.fillMaxWidth(if (isCompact) 1f else 0.5f),
                     selfieUri = selfieUri,
                     backgroundUri = backgroundUri,
-                    onSelectSelfieImage = { pickSelfieLauncher.launch("image/*") },
-                    onSelectBackgroundImage = { pickBackgroundLauncher.launch("image/*") },
+                    onSelectSelfieImage = { pickSelfieLauncher.launchImagePicker() },
+                    onSelectBackgroundImage = { pickBackgroundLauncher.launchImagePicker() },
                     onRemoveBackgroundImage = { backgroundUri = null }
                 )
                 val selfieSegmentationResultState = uiState.selfieSegmentationResultState

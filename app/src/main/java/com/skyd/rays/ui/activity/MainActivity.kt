@@ -79,6 +79,8 @@ import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.EXPOR
 import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.ExportFilesScreen
 import com.skyd.rays.ui.screen.settings.data.importexport.file.importfiles.IMPORT_FILES_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.importexport.file.importfiles.ImportFilesScreen
+import com.skyd.rays.ui.screen.settings.imagesource.IMAGE_SOURCE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.imagesource.ImageSourceScreen
 import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.ml.MlScreen
 import com.skyd.rays.ui.screen.settings.ml.classification.CLASSIFICATION_SCREEN_ROUTE
@@ -282,6 +284,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = SEARCH_SCREEN_ROUTE) {
                     SearchScreen()
+                }
+                composable(route = IMAGE_SOURCE_SCREEN_ROUTE) {
+                    ImageSourceScreen()
                 }
             }
 

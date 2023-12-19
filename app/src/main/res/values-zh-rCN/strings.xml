@@ -300,4 +300,7 @@
     <string name="stickers_list_screen_name">表情包列表</string>
     <string name="stickers_list_screen_export_current_stickers">导出为 Zip 备份文件</string>
     <string name="delete">删除</string>
-</resources>
+    <string name="image_source_screen_name">图片来源</string>
+    <string name="setting_screen_image_source_description">设置选择图片的方式等</string>
+    <string name="image_screen_picker">图片选择</string>
+    <string name="image_screen_picker_description">设置选择图片的方式</string></resources>

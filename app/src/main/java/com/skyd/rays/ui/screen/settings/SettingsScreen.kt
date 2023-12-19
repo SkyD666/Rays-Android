@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Dataset
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SmartToy
+import androidx.compose.material.icons.filled.Source
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -26,6 +27,7 @@ import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.settings.api.API_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.DATA_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.imagesource.IMAGE_SOURCE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.privacy.PRIVACY_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
@@ -82,6 +84,14 @@ fun SettingsScreen() {
                     text = stringResource(id = R.string.data_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_data_description),
                     onClick = { navController.navigate(DATA_SCREEN_ROUTE) }
+                )
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(Icons.Default.Source),
+                    text = stringResource(id = R.string.image_source_screen_name),
+                    descriptionText = stringResource(id = R.string.setting_screen_image_source_description),
+                    onClick = { navController.navigate(IMAGE_SOURCE_SCREEN_ROUTE) }
                 )
             }
             item {

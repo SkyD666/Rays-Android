@@ -2,8 +2,6 @@ package com.skyd.rays.ui.screen.minitool.styletransfer
 
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,6 +59,8 @@ import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.component.shape.CloverShape
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.local.LocalWindowSizeClass
+import com.skyd.rays.util.launchImagePicker
+import com.skyd.rays.util.rememberImagePicker
 import com.skyd.rays.util.sendSticker
 
 const val STYLE_TRANSFER_SCREEN_ROUTE = "styleTransferScreen"
@@ -73,12 +73,12 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     var styleUri by rememberSaveable { mutableStateOf<Uri?>(null) }
     var contentUri by rememberSaveable { mutableStateOf<Uri?>(null) }
-    val pickStyleLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { if (it != null) styleUri = it }
-    val pickContentLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { if (it != null) contentUri = it }
+    val pickStyleLauncher = rememberImagePicker(multiple = false) {
+        if (it.firstOrNull() != null) styleUri = it.first()
+    }
+    val pickContentLauncher = rememberImagePicker(multiple = false) {
+        if (it.firstOrNull() != null) contentUri = it.first()
+    }
     val lazyListState = rememberLazyListState()
     var fabHeight by remember { mutableStateOf(0.dp) }
 
@@ -117,8 +117,8 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
                     modifier = Modifier.fillMaxWidth(if (isCompact) 1f else 0.5f),
                     styleUri = styleUri,
                     contentUri = contentUri,
-                    onSelectStyleImage = { pickStyleLauncher.launch("image/*") },
-                    onSelectContentImage = { pickContentLauncher.launch("image/*") },
+                    onSelectStyleImage = { pickStyleLauncher.launchImagePicker() },
+                    onSelectContentImage = { pickContentLauncher.launchImagePicker() },
                 )
                 val styleTransferResultState = uiState.styleTransferResultState
                 if (styleTransferResultState is StyleTransferResultState.Success) {

@@ -7,6 +7,7 @@ import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.preference.DisableScreenshotPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
+import com.skyd.rays.model.preference.PickImageMethodPreference
 import com.skyd.rays.model.preference.Settings
 import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
@@ -74,5 +75,8 @@ fun Preferences.toSettings(): Settings {
 
         // Privacy
         disableScreenshot = DisableScreenshotPreference.fromPreferences(this),
+
+        // Pick image
+        pickImageMethod = PickImageMethodPreference.fromPreferences(this),
     )
 }

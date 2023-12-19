@@ -33,6 +33,7 @@ import com.skyd.rays.ui.local.LocalDisableScreenshot
 import com.skyd.rays.ui.local.LocalExportStickerDir
 import com.skyd.rays.ui.local.LocalIgnoreUpdateVersion
 import com.skyd.rays.ui.local.LocalIntersectSearchBySpace
+import com.skyd.rays.ui.local.LocalPickImageMethod
 import com.skyd.rays.ui.local.LocalQuery
 import com.skyd.rays.ui.local.LocalSearchResultReverse
 import com.skyd.rays.ui.local.LocalSearchResultSort
@@ -85,6 +86,8 @@ data class Settings(
     val textRecognizeThreshold: Float = TextRecognizeThresholdPreference.default,
     // Privacy
     val disableScreenshot: Boolean = DisableScreenshotPreference.default,
+    // Pick image
+    val pickImageMethod: String = PickImageMethodPreference.default,
 )
 
 @Composable
@@ -131,6 +134,8 @@ fun SettingsProvider(
         LocalTextRecognizeThreshold provides settings.textRecognizeThreshold,
         // Privacy
         LocalDisableScreenshot provides settings.disableScreenshot,
+        // Pick image
+        LocalPickImageMethod provides settings.pickImageMethod,
     ) {
         content()
     }

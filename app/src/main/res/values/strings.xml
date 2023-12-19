@@ -312,4 +312,8 @@
     <string name="stickers_list_screen_name">Stickers list</string>
     <string name="stickers_list_screen_export_current_stickers">Export as backup zip</string>
     <string name="delete">Delete</string>
+    <string name="image_source_screen_name">Image source</string>
+    <string name="setting_screen_image_source_description">Method for picking stickers</string>
+    <string name="image_screen_picker">Image Picker</string>
+    <string name="image_screen_picker_description">Configure the method for picking stickers</string>
 </resources>

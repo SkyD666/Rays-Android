@@ -1,8 +1,6 @@
 package com.skyd.rays.ui.screen.add
 
 import android.os.Bundle
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandVertically
@@ -112,6 +110,8 @@ import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
+import com.skyd.rays.util.launchImagePicker
+import com.skyd.rays.util.rememberImagePicker
 import kotlinx.coroutines.launch
 
 const val ADD_SCREEN_ROUTE = "addScreen"
@@ -168,25 +168,21 @@ fun AddScreen(
     }
 
     var currentReplaceIndex = rememberSaveable { 0 }
-    val pickStickerLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { result ->
-        if (result != null) {
+    val pickStickerLauncher = rememberImagePicker(multiple = false) { result ->
+        if (result.firstOrNull() != null) {
             val waitingList = uiState.waitingList
             if (waitingList.isNotEmpty()) {
                 dispatch(
                     AddIntent.ReplaceWaitingListSingleSticker(
-                        sticker = waitingList[currentReplaceIndex].copy(uri = result),
+                        sticker = waitingList[currentReplaceIndex].copy(uri = result.first()),
                         index = currentReplaceIndex,
                     )
                 )
             }
         }
     }
-    val pickStickersLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetMultipleContents()
-    ) { result ->
-        if (result.isEmpty()) return@rememberLauncherForActivityResult
+    val pickStickersLauncher = rememberImagePicker(multiple = true) { result ->
+        if (result.isEmpty()) return@rememberImagePicker
         dispatch(AddIntent.AddToWaitingList(result.map { UriWithStickerUuidBean(uri = it) }))
     }
 
@@ -278,10 +274,10 @@ fun AddScreen(
                     WaitingRow(
                         uris = uiState.waitingList,
                         isEdit = isEdit,
-                        onSelectStickersClick = { pickStickersLauncher.launch("image/*") },
+                        onSelectStickersClick = { pickStickersLauncher.launchImagePicker() },
                         onReplaceStickerClick = { index ->
                             currentReplaceIndex = index
-                            pickStickerLauncher.launch("image/*")
+                            pickStickerLauncher.launchImagePicker()
                         },
                     )
                     AnimatedVisibility(
