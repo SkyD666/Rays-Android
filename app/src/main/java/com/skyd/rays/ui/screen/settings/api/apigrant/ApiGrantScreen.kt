@@ -8,14 +8,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SwipeToDismissValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberSwipeToDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -120,15 +119,16 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
                 itemsIndexed(uriStringShareResultState.data) { _, item ->
                     CompositionLocalProvider(LocalUseColorfulIcon provides true) {
                         RaysSwipeToDismiss(
-                            state = rememberDismissState(
+                            state = rememberSwipeToDismissState(
                                 confirmValueChange = { dismissValue ->
-                                    if (dismissValue == DismissValue.DismissedToStart) {
+                                    if (dismissValue == SwipeToDismissValue.EndToStart) {
                                         openDeleteDialog = item.apiGrantPackageBean.packageName
                                     }
                                     false
                                 }
                             ),
-                            directions = setOf(DismissDirection.EndToStart),
+                            enableDismissFromStartToEnd = false,
+                            enableDismissFromEndToStart = true,
                         ) {
                             SwitchSettingsItem(
                                 modifier = Modifier.background(MaterialTheme.colorScheme.background),

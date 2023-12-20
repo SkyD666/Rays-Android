@@ -7,10 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissState
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +20,7 @@ import com.skyd.rays.R
 
 @Composable
 fun RaysSwipeToDismiss(
-    state: DismissState,
+    state: SwipeToDismissState,
     modifier: Modifier = Modifier,
     background: @Composable RowScope.() -> Unit = {
         Box(
@@ -38,17 +37,16 @@ fun RaysSwipeToDismiss(
             )
         }
     },
-    directions: Set<DismissDirection> = setOf(
-        DismissDirection.EndToStart,
-        DismissDirection.StartToEnd
-    ),
-    dismissContent: @Composable RowScope.() -> Unit,
+    enableDismissFromStartToEnd: Boolean = true,
+    enableDismissFromEndToStart: Boolean = true,
+    content: @Composable RowScope.() -> Unit,
 ) {
-    SwipeToDismiss(
+    SwipeToDismissBox(
         state = state,
-        background = background,
-        dismissContent = dismissContent,
+        backgroundContent = background,
         modifier = modifier,
-        directions = directions,
+        enableDismissFromStartToEnd = enableDismissFromStartToEnd,
+        enableDismissFromEndToStart = enableDismissFromEndToStart,
+        content = content,
     )
 }

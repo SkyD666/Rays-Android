@@ -316,4 +316,9 @@
     <string name="setting_screen_image_source_description">Method for picking stickers</string>
     <string name="image_screen_picker">Image Picker</string>
     <string name="image_screen_picker_description">Configure the method for picking stickers</string>
+    <string name="pick_image_method_pick_visual_media">Photo picker (%s)</string>
+    <string name="pick_image_method_open_document">From document (%s)</string>
+    <string name="pick_image_method_get_content">From content (%s)</string>
+    <string name="pick_image_method_pick_from_gallery">From gallery (%s)</string>
+    <string name="use_the_following_to_open">Use the following to open</string>
 </resources>

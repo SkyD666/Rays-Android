@@ -601,7 +601,7 @@ private fun WaitingRow(
             .fillMaxWidth()
             .padding(bottom = 3.dp)
     ) {
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 modifier = Modifier
                     .height(40.dp)

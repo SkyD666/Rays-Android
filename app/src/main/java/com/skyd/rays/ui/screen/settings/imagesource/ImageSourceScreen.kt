@@ -113,12 +113,12 @@ private fun PickImageMethodSheet(onDismissRequest: () -> Unit) {
                             .selectable(
                                 selected = (it == pickImageMethod),
                                 onClick = {
+                                    onDismissRequest()
                                     PickImageMethodPreference.put(
                                         context = context,
                                         scope = scope,
                                         value = it
                                     )
-                                    onDismissRequest()
                                 },
                                 interactionSource = interactionSource,
                                 indication = LocalIndication.current,
@@ -133,7 +133,7 @@ private fun PickImageMethodSheet(onDismissRequest: () -> Unit) {
                             onClick = null // null recommended for accessibility with screen readers
                         )
                         Text(
-                            text = it,
+                            text = PickImageMethodPreference.toDisplayName(it),
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(start = 16.dp)
                         )

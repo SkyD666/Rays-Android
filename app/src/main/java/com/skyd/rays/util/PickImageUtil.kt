@@ -1,11 +1,18 @@
 package com.skyd.rays.util
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.provider.MediaStore
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import com.skyd.rays.R
+import com.skyd.rays.appContext
 import com.skyd.rays.ui.local.LocalPickImageMethod
 
 @Composable
@@ -20,6 +27,14 @@ fun rememberImagePicker(
             onResult = onResult,
         ) else rememberLauncherForActivityResult(
             ActivityResultContracts.PickVisualMedia(),
+            onResult = { onResult(listOf(it)) },
+        )
+
+        "PickFromGallery" -> if (multiple) rememberLauncherForActivityResult(
+            PickMultipleFromGallery(),
+            onResult = onResult,
+        ) else rememberLauncherForActivityResult(
+            PickFromGallery(),
             onResult = { onResult(listOf(it)) },
         )
 
@@ -54,6 +69,16 @@ fun ManagedActivityResultLauncher<*, *>.launchImagePicker() {
                 .launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
+        is PickMultipleFromGallery -> {
+            (this as ManagedActivityResultLauncher<Unit?, List<Uri>>)
+                .launch(null)
+        }
+
+        is PickFromGallery -> {
+            (this as ManagedActivityResultLauncher<Unit?, Uri?>)
+                .launch(null)
+        }
+
         is ActivityResultContracts.OpenMultipleDocuments -> {
             (this as ManagedActivityResultLauncher<Array<String>, List<@JvmSuppressWildcards Uri>>)
                 .launch(arrayOf("image/*"))
@@ -76,4 +101,54 @@ fun ManagedActivityResultLauncher<*, *>.launchImagePicker() {
 
         else -> error("Unknown contract type!")
     }
+}
+
+class PickFromGallery : ActivityResultContract<Unit?, Uri?>() {
+    override fun createIntent(context: Context, input: Unit?): Intent {
+        return Intent.createChooser(
+            Intent(Intent.ACTION_PICK)
+                .setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*"),
+            appContext.getString(R.string.use_the_following_to_open)
+        )
+    }
+
+    override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
+        return intent.takeIf { resultCode == Activity.RESULT_OK }?.data
+    }
+}
+
+class PickMultipleFromGallery : ActivityResultContract<Unit?, List<Uri>>() {
+    override fun createIntent(context: Context, input: Unit?): Intent {
+        return Intent.createChooser(
+            Intent(Intent.ACTION_PICK)
+                .setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true),
+            appContext.getString(R.string.use_the_following_to_open)
+        )
+    }
+
+    override fun parseResult(resultCode: Int, intent: Intent?): List<Uri> {
+        return intent.takeIf { resultCode == Activity.RESULT_OK }?.getClipDataUris().orEmpty()
+    }
+}
+
+internal fun Intent.getClipDataUris(): List<Uri> {
+    // Use a LinkedHashSet to maintain any ordering that may be
+    // present in the ClipData
+    val resultSet = LinkedHashSet<Uri>()
+    data?.let { data ->
+        resultSet.add(data)
+    }
+    val clipData = clipData
+    if (clipData == null && resultSet.isEmpty()) {
+        return emptyList()
+    } else if (clipData != null) {
+        for (i in 0 until clipData.itemCount) {
+            val uri = clipData.getItemAt(i).uri
+            if (uri != null) {
+                resultSet.add(uri)
+            }
+        }
+    }
+    return ArrayList(resultSet)
 }

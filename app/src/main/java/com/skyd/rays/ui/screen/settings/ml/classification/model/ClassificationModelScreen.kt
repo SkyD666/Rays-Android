@@ -12,15 +12,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CreateNewFolder
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.LightbulbCircle
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SwipeToDismissValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberSwipeToDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -184,15 +183,16 @@ private fun ModelList(
         }
         itemsIndexed(models) { _, item ->
             RaysSwipeToDismiss(
-                state = rememberDismissState(
+                state = rememberSwipeToDismissState(
                     confirmValueChange = { dismissValue ->
-                        if (dismissValue == DismissValue.DismissedToStart) {
+                        if (dismissValue == SwipeToDismissValue.EndToStart) {
                             onDelete(item)
                         }
                         false
                     }
                 ),
-                directions = setOf(DismissDirection.EndToStart),
+                enableDismissFromStartToEnd = false,
+                enableDismissFromEndToStart = true,
             ) {
                 RadioSettingsItem(
                     modifier = Modifier.background(MaterialTheme.colorScheme.background),
