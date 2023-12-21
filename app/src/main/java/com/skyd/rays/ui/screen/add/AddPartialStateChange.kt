@@ -97,7 +97,7 @@ internal sealed interface AddPartialStateChange {
             return when (this) {
                 is Success -> oldState.copy(
                     getStickersWithTagsState = GetStickersWithTagsState.Success(stickerWithTags),
-                    addedTags = stickerWithTags.tags.map { it.tag },
+                    addedTags = (stickerWithTags.tags.map { it.tag } + oldState.addToAllTags).distinct(),
                     loadingDialog = false,
                 )
 
@@ -133,7 +133,7 @@ internal sealed interface AddPartialStateChange {
         data class Duplicate(val stickerWithTags: StickerWithTags) : AddStickers {
             override fun reduce(oldState: AddState): AddState = oldState.copy(
                 getStickersWithTagsState = GetStickersWithTagsState.Success(stickerWithTags),
-                addedTags = stickerWithTags.tags.map { it.tag },
+                addedTags = (stickerWithTags.tags.map { it.tag } + oldState.addToAllTags).distinct(),
                 loadingDialog = false,
             )
         }
