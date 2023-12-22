@@ -10,6 +10,7 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -70,7 +71,6 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -101,6 +101,7 @@ import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.openAddScreen
+import com.skyd.rays.ui.screen.stickerslist.openStickersListScreen
 import com.skyd.rays.util.copyStickerToClipboard
 import com.skyd.rays.util.sendStickerByUuid
 import com.skyd.rays.util.stickerUuidToUri
@@ -336,7 +337,6 @@ fun MainCard(
     bottomPadding: Dp = 0.dp,
 ) {
     val navController = LocalNavController.current
-    val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
 
     val stickerBean = stickerWithTags.sticker
@@ -407,9 +407,16 @@ fun MainCard(
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     repeat(tags.size) { index ->
+                        val interactionSource = remember { MutableInteractionSource() }
                         AssistChip(
-                            onClick = { clipboardManager.setText(AnnotatedString(tags[index].tag)) },
-                            label = { Text(tags[index].tag) }
+                            onClick = {
+                                openStickersListScreen(
+                                    navController = navController,
+                                    query = tags[index].tag,
+                                )
+                            },
+                            label = { Text(tags[index].tag) },
+                            interactionSource = interactionSource,
                         )
                     }
                 }
