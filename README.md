@@ -59,7 +59,7 @@
 ## 🤩 Screenshots
 
 ![ic_home_screen](image/en/ic_home_screen.jpg) ![ic_home_screen_search](image/en/ic_home_screen_search.jpg)
-![ic_add_screen_edit](image/en/ic_add_screen_edit.jpg) ![ic_home_screen_share](image/en/ic_home_screen_share.jpg)
+![ic_add_screen_add](image/en/ic_add_screen_add.jpg) ![ic_share](image/en/ic_share.jpg)
 ![ic_appearance_screen](image/en/ic_appearance_screen.jpg) ![ic_import_export_screen](image/en/ic_import_export_screen.jpg)
 ![ic_mini_tool_screen](image/en/ic_mini_tool_screen.jpg) ![ic_style_transfer_screen](image/en/ic_style_transfer_screen.jpg)
 ![ic_search_config_screen](image/en/ic_search_config_screen.jpg) ![ic_more_screen](image/en/ic_more_screen.jpg)

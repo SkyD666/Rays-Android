@@ -300,7 +300,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initIntent() {
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        initIntent(intent)
+    }
+
+    private fun initIntent(intent: Intent? = getIntent()) {
         val stickers: MutableList<UriWithStickerUuidBean> = when (intent?.action) {
             Intent.ACTION_SEND -> {
                 val data = mutableListOf<UriWithStickerUuidBean>()
