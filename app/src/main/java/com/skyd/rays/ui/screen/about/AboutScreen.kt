@@ -52,6 +52,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -202,16 +203,28 @@ fun AboutScreen() {
 
 @Composable
 private fun IconArea() {
-    Image(
+    Box(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth(0.4f)
-            .aspectRatio(1f),
-        contentScale = ContentScale.Crop,
-        alignment = Alignment.Center,
-        painter = painterResource(id = R.drawable.ic_rays),
-        contentDescription = null
-    )
+    ) {
+        Image(
+            modifier = Modifier.aspectRatio(1f),
+            contentScale = ContentScale.Crop,
+            alignment = Alignment.Center,
+            painter = painterResource(id = R.drawable.ic_rays),
+            contentDescription = null
+        )
+        Image(
+            modifier = Modifier
+                .fillMaxWidth(0.7f)
+                .aspectRatio(1f)
+                .rotate(25f)
+                .align(Alignment.TopEnd),
+            painter = painterResource(R.drawable.ic_santa_hat),
+            contentDescription = null,
+        )
+    }
 }
 
 @Composable

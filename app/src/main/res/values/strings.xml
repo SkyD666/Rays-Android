@@ -191,7 +191,7 @@
     <string name="default_tag">%s (Default)</string>
     <string name="update_check">Check updates</string>
     <string name="update_no_update">Already the latest version!</string>
-    <string name="update_newer">Found new version</string>
+    <string name="update_newer">New version</string>
     <string name="update_newer_text">New version: %1$s\nPublished on: %2$s\nDownloads: %3$s\n</string>
     <string name="download_update">Download</string>
     <string name="update_ignore">Ignore this update</string>

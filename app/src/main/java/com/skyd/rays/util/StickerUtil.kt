@@ -296,7 +296,7 @@ private fun List<Uri>.shareStickerUriString(context: Context, packages: List<Str
 /**
  * 注意：此 uri 需要使用 FileProvider 提供
  */
-fun Context.copyStickerToClipboard(vararg uris: Uri) {
+suspend fun Context.copyStickerToClipboard(vararg uris: Uri) {
     val firstUri = uris.firstOrNull() ?: return
 //    uris.forEachIndexed { index, uri ->
 //        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -305,8 +305,17 @@ fun Context.copyStickerToClipboard(vararg uris: Uri) {
 //        )
 //    }
     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val mimetypes = mutableListOf<String>()
+    val contentResolver = appContext.contentResolver
+    withContext(Dispatchers.IO) {
+        uris.forEach {
+            contentResolver.openInputStream(it)?.use { inputStream ->
+                mimetypes += ImageFormatChecker.check(inputStream).toMimeType()
+            }
+        }
+    }
     clipboard.setPrimaryClip(
-        ClipData("Sticker", arrayOf("image/*"), ClipData.Item(firstUri)).apply {
+        ClipData("Sticker", mimetypes.toTypedArray(), ClipData.Item(firstUri)).apply {
             for (i in 1..<uris.size) {
                 addItem(ClipData.Item(uris[i]))
             }
@@ -314,7 +323,7 @@ fun Context.copyStickerToClipboard(vararg uris: Uri) {
     )
 }
 
-fun Context.copyStickerToClipboard(uuid: String) {
+suspend fun Context.copyStickerToClipboard(uuid: String) {
     copyStickerToClipboard(
         FileProvider.getUriForFile(
             this,

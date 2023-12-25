@@ -60,7 +60,7 @@ fun MoreScreen() {
                         imageVector = Icons.Default.Widgets,
                         onClick = {
                             snackbarHostState.showSnackbar(
-                                message = "\uD83D\uDC31 Nya~",
+                                message = "\uD83C\uDF84 Merry Christmas~",
                                 scope = scope,
                                 withDismissAction = true
                             )

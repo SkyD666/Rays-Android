@@ -8,8 +8,13 @@ import com.skyd.rays.model.bean.ShareSheetAction
 import com.skyd.rays.ui.component.showToast
 import com.skyd.rays.util.copyStickerToClipboard
 import com.skyd.rays.util.exportStickerToPictures
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ShareSheetActionsReceiver : BroadcastReceiver() {
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     override fun onReceive(context: Context, intent: Intent) {
         val actionNum = intent.getIntExtra("action", 0)
         val action = ShareSheetAction.entries[actionNum]
@@ -17,7 +22,9 @@ class ShareSheetActionsReceiver : BroadcastReceiver() {
 
         when (action) {
             ShareSheetAction.Copy -> {
-                context.copyStickerToClipboard(uri)
+                scope.launch {
+                    context.copyStickerToClipboard(uri)
+                }
             }
 
             ShareSheetAction.Save -> {

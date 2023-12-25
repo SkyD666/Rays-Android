@@ -22,4 +22,17 @@ enum class ImageFormat {
             UNDEFINED -> ""
         }
     }
+
+    fun toMimeType(): String {
+        return when (this) {
+            JPG -> "image/jpg"
+            PNG -> "image/png"
+            GIF -> "image/gif"
+            WEBP -> "image/webp"
+            BMP -> "image/bmp"
+            HEIF -> "image/heif"
+            HEIC -> "image/heic"
+            UNDEFINED -> "image/*"
+        }
+    }
 }

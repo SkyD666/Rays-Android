@@ -66,8 +66,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -105,6 +103,8 @@ import com.skyd.rays.ui.screen.stickerslist.openStickersListScreen
 import com.skyd.rays.util.copyStickerToClipboard
 import com.skyd.rays.util.sendStickerByUuid
 import com.skyd.rays.util.stickerUuidToUri
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 const val DETAIL_SCREEN_ROUTE = "detailScreen"
 
@@ -197,7 +197,9 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                         imageVector = Icons.Default.ContentCopy,
                         contentDescription = stringResource(id = R.string.detail_screen_copy),
                         onClick = {
-                            context.copyStickerToClipboard(uuid = stickerUuid)
+                            scope.launch(Dispatchers.IO) {
+                                context.copyStickerToClipboard(uuid = stickerUuid)
+                            }
                             snackbarHostState.showSnackbar(
                                 scope = scope,
                                 message = context.getString(R.string.detail_screen_copied)
