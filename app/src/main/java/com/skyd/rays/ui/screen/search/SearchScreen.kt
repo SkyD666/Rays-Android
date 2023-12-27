@@ -79,19 +79,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
+import com.skyd.rays.ext.dataStore
+import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.search.QueryPreference
+import com.skyd.rays.model.preference.search.ShowLastQueryPreference
 import com.skyd.rays.ui.component.BackIcon
 import com.skyd.rays.ui.component.RaysFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.ExportDialog
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.local.LocalQuery
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.openAddScreen
@@ -121,10 +123,12 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
     var openDeleteMultiStickersDialog by rememberSaveable {
         mutableStateOf<Set<StickerWithTags>?>(null)
     }
-    val query = LocalQuery.current
     var fabHeight by remember { mutableStateOf(0.dp) }
     var fabWidht by remember { mutableStateOf(0.dp) }
     var searchFieldValueState by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        val query = if (context.dataStore.getOrDefault(ShowLastQueryPreference)) {
+            context.dataStore.getOrDefault(QueryPreference)
+        } else ""
         mutableStateOf(TextFieldValue(text = query, selection = TextRange(query.length)))
     }
 
@@ -169,13 +173,11 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                 placeholder = { Text(text = stringResource(R.string.home_screen_search_hint)) },
                 leadingIcon = { BackIcon() },
                 trailingIcon = {
-                    if (query.isNotEmpty()) {
-                        TrailingIcon(showClearButton = query.isNotEmpty()) {
-                            searchFieldValueState = TextFieldValue(
-                                text = QueryPreference.default,
-                                selection = TextRange(QueryPreference.default.length)
-                            )
-                        }
+                    TrailingIcon(showClearButton = searchFieldValueState.text.isNotEmpty()) {
+                        searchFieldValueState = TextFieldValue(
+                            text = QueryPreference.default,
+                            selection = TextRange(QueryPreference.default.length)
+                        )
                     }
                 }
             )

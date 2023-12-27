@@ -16,14 +16,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Reply
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.MoreTime
+import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalButton
@@ -41,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -136,6 +141,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                             DisplayStickersRow(
                                 title = stringResource(id = R.string.home_screen_most_shared_stickers),
                                 count = mostSharedStickersList.size,
+                                emptyIcon = Icons.AutoMirrored.Rounded.Reply,
                                 itemImage = { mostSharedStickersList[it].sticker.uuid },
                                 itemTitle = { mostSharedStickersList[it].sticker.title },
                                 onItemLongClick = {
@@ -157,6 +163,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                             DisplayStickersRow(
                                 title = stringResource(id = R.string.home_screen_recent_create_stickers),
                                 count = recentCreatedStickersList.size,
+                                emptyIcon = Icons.Rounded.MoreTime,
                                 itemImage = { recentCreatedStickersList[it].sticker.uuid },
                                 itemTitle = { recentCreatedStickersList[it].sticker.title },
                                 onItemLongClick = {
@@ -194,6 +201,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                             DisplayTagsRow(
                                 title = stringResource(id = R.string.home_screen_random_tags),
                                 count = randomTagsList.size,
+                                emptyIcon = Icons.Rounded.Shuffle,
                                 itemImage = { randomTagsList[it].stickerUuid },
                                 itemTitle = { randomTagsList[it].tag },
                                 onItemClick = {
@@ -217,6 +225,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 private fun DisplayStickersRow(
     title: String,
     count: Int,
+    emptyIcon: ImageVector,
     itemImage: (Int) -> String,
     itemTitle: (Int) -> String,
     onItemLongClick: (Int) -> Unit,
@@ -229,43 +238,55 @@ private fun DisplayStickersRow(
             style = MaterialTheme.typography.headlineSmall,
         )
         if (count == 0) {
-            Text(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp, horizontal = 16.dp),
-                textAlign = TextAlign.Center,
-                text = stringResource(id = R.string.empty_tip)
-            )
-        }
-        LazyRow(
-            modifier = Modifier.animateContentSize(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp)
-        ) {
-            items(count) { index ->
-                Column(modifier = Modifier.width(IntrinsicSize.Min)) {
-                    ElevatedCard {
-                        RaysImage(
-                            modifier = Modifier
-                                .height(150.dp)
-                                .aspectRatio(1f)
-                                .combinedClickable(
-                                    onLongClick = { onItemLongClick(index) },
-                                    onClick = { onItemClick(index) }
+                    .padding(vertical = 16.dp, horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Icon(
+                    modifier = Modifier.size(40.dp),
+                    imageVector = emptyIcon,
+                    contentDescription = null,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = stringResource(id = R.string.empty_tip),
+                )
+            }
+        } else {
+            LazyRow(
+                modifier = Modifier.animateContentSize(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
+            ) {
+                items(count) { index ->
+                    Column(modifier = Modifier.width(IntrinsicSize.Min)) {
+                        ElevatedCard {
+                            RaysImage(
+                                modifier = Modifier
+                                    .height(150.dp)
+                                    .aspectRatio(1f)
+                                    .combinedClickable(
+                                        onLongClick = { onItemLongClick(index) },
+                                        onClick = { onItemClick(index) }
 
-                                ),
-                            uuid = itemImage(index),
-                            contentScale = ContentScale.Crop,
-                        )
-                    }
-                    if (itemTitle(index).isNotBlank()) {
-                        Text(
-                            modifier = Modifier.padding(top = 6.dp),
-                            text = itemTitle(index),
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.labelLarge,
-                        )
+                                    ),
+                                uuid = itemImage(index),
+                                contentScale = ContentScale.Crop,
+                            )
+                        }
+                        if (itemTitle(index).isNotBlank()) {
+                            Text(
+                                modifier = Modifier.padding(top = 6.dp),
+                                text = itemTitle(index),
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.labelLarge,
+                            )
+                        }
                     }
                 }
             }
@@ -279,6 +300,7 @@ private fun DisplayStickersRow(
 private fun DisplayTagsRow(
     title: String,
     count: Int,
+    emptyIcon: ImageVector,
     itemImage: (Int) -> String,
     itemTitle: (Int) -> String,
     onItemClick: (Int) -> Unit,
@@ -290,50 +312,62 @@ private fun DisplayTagsRow(
             style = MaterialTheme.typography.headlineSmall,
         )
         if (count == 0) {
-            Text(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp, horizontal = 16.dp),
-                textAlign = TextAlign.Center,
-                text = stringResource(id = R.string.empty_tip)
-            )
-        }
-        LazyHorizontalStaggeredGrid(
-            modifier = Modifier.height(160.dp),
-            rows = StaggeredGridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalItemSpacing = 8.dp,
-            contentPadding = PaddingValues(horizontal = 16.dp)
-        ) {
-            items(count) { index ->
-                ElevatedCard(
-                    modifier = Modifier.aspectRatio(2f),
-                    onClick = { onItemClick(index) }
-                ) {
-                    Box {
-                        RaysImage(
-                            modifier = Modifier.fillMaxSize(),
-                            uuid = itemImage(index),
-                            contentScale = ContentScale.Crop,
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.2f))
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(6.dp)
-                                    .align(Alignment.Center),
-                                text = itemTitle(index),
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.labelLarge,
-                                textAlign = TextAlign.Center,
-                                color = Color.White,
+                    .padding(vertical = 16.dp, horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Icon(
+                    modifier = Modifier.size(40.dp),
+                    imageVector = emptyIcon,
+                    contentDescription = null,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = stringResource(id = R.string.empty_tip),
+                )
+            }
+        } else {
+            LazyHorizontalStaggeredGrid(
+                modifier = Modifier.height(160.dp),
+                rows = StaggeredGridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalItemSpacing = 8.dp,
+                contentPadding = PaddingValues(horizontal = 16.dp)
+            ) {
+                items(count) { index ->
+                    ElevatedCard(
+                        modifier = Modifier.aspectRatio(2f),
+                        onClick = { onItemClick(index) }
+                    ) {
+                        Box {
+                            RaysImage(
+                                modifier = Modifier.fillMaxSize(),
+                                uuid = itemImage(index),
+                                contentScale = ContentScale.Crop,
                             )
-                        }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(Color.Black.copy(alpha = 0.2f))
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(6.dp)
+                                        .align(Alignment.Center),
+                                    text = itemTitle(index),
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    textAlign = TextAlign.Center,
+                                    color = Color.White,
+                                )
+                            }
 
+                        }
                     }
                 }
             }

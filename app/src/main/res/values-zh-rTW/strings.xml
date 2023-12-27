@@ -65,6 +65,8 @@
     <string name="webdav_screen_progress_logical_delete_remote">移動到遠端回收站</string>
     <string name="export_files_screen_progress_zipping">正在壓縮：%s</string>
     <string name="home_style_screen_show_popular_tags_description">在搜尋欄下方顯示分享次數最多的表情包對應的標籤</string>
+    <string name="home_style_screen_show_last_query">顯示上次查詢</string>
+    <string name="home_style_screen_show_last_query_description">打開搜尋畫面時在搜尋欄中顯示上次查詢字串</string>
     <string name="search_result_sort_tag_count">標籤數量</string>
     <string name="update_check">檢查更新</string>
     <string name="import_files_screen_successful">導入成功</string>

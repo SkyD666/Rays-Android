@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ManageSearch
 import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,9 +23,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
 import com.skyd.rays.model.preference.ShowPopularTagsPreference
+import com.skyd.rays.model.preference.search.ShowLastQueryPreference
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SwitchSettingsItem
+import com.skyd.rays.ui.local.LocalShowLastQuery
 import com.skyd.rays.ui.local.LocalShowPopularTags
 
 const val SEARCH_STYLE_SCREEN_ROUTE = "searchStyleScreen"
@@ -44,7 +47,6 @@ fun SearchStyleScreen() {
             )
         }
     ) { paddingValues ->
-        val showPopularTags = LocalShowPopularTags.current
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -67,11 +69,26 @@ fun SearchStyleScreen() {
             item {
                 SwitchSettingsItem(
                     icon = Icons.Default.LocalOffer,
-                    checked = showPopularTags,
+                    checked = LocalShowPopularTags.current,
                     text = stringResource(R.string.home_style_screen_show_popular_tags),
                     description = stringResource(R.string.home_style_screen_show_popular_tags_description),
                     onCheckedChange = {
                         ShowPopularTagsPreference.put(
+                            context = context,
+                            scope = scope,
+                            value = it,
+                        )
+                    },
+                )
+            }
+            item {
+                SwitchSettingsItem(
+                    icon = Icons.AutoMirrored.Filled.ManageSearch,
+                    checked = LocalShowLastQuery.current,
+                    text = stringResource(R.string.home_style_screen_show_last_query),
+                    description = stringResource(R.string.home_style_screen_show_last_query_description),
+                    onCheckedChange = {
+                        ShowLastQueryPreference.put(
                             context = context,
                             scope = scope,
                             value = it,

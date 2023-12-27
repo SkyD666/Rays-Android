@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material.icons.filled.Source
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -33,6 +34,7 @@ import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.imagesource.IMAGE_SOURCE_SCREEN_ROUTE
 
 const val DATA_SCREEN_ROUTE = "dataScreen"
 
@@ -76,6 +78,14 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                     text = stringResource(id = R.string.data_screen_delete_all),
                     descriptionText = stringResource(id = R.string.data_screen_delete_all_description),
                     onClick = { openDeleteWarningDialog = true }
+                )
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(Icons.Default.Source),
+                    text = stringResource(id = R.string.image_source_screen_name),
+                    descriptionText = stringResource(id = R.string.setting_screen_image_source_description),
+                    onClick = { navController.navigate(IMAGE_SOURCE_SCREEN_ROUTE) }
                 )
             }
         }

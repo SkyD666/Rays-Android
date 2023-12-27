@@ -20,6 +20,7 @@ import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
+import com.skyd.rays.model.preference.search.ShowLastQueryPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
@@ -57,6 +58,7 @@ val LocalIntersectSearchBySpace = compositionLocalOf { IntersectSearchBySpacePre
 val LocalSearchResultSort = compositionLocalOf { SearchResultSortPreference.default }
 val LocalSearchResultReverse = compositionLocalOf { SearchResultReversePreference.default }
 val LocalShowPopularTags = compositionLocalOf { ShowPopularTagsPreference.default }
+val LocalShowLastQuery = compositionLocalOf { ShowLastQueryPreference.default }
 
 // WebDav
 val LocalWebDavServer = compositionLocalOf { WebDavServerPreference.default }
@@ -71,7 +73,8 @@ val LocalStickerScale = compositionLocalOf { StickerScalePreference.default }
 // Share
 val LocalUriStringShare = compositionLocalOf { UriStringSharePreference.default }
 val LocalStickerExtName = compositionLocalOf { StickerExtNamePreference.default }
-val LocalCopyStickerToClipboardWhenSharing = compositionLocalOf { CopyStickerToClipboardWhenSharingPreference.default }
+val LocalCopyStickerToClipboardWhenSharing =
+    compositionLocalOf { CopyStickerToClipboardWhenSharingPreference.default }
 val LocalAutoShareIgnoreStrategy = compositionLocalOf { AutoShareIgnoreStrategyPreference.default }
 
 // Api

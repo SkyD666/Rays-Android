@@ -14,6 +14,7 @@ import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
+import com.skyd.rays.model.preference.search.ShowLastQueryPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
@@ -37,6 +38,7 @@ import com.skyd.rays.ui.local.LocalPickImageMethod
 import com.skyd.rays.ui.local.LocalQuery
 import com.skyd.rays.ui.local.LocalSearchResultReverse
 import com.skyd.rays.ui.local.LocalSearchResultSort
+import com.skyd.rays.ui.local.LocalShowLastQuery
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalStickerClassificationModel
 import com.skyd.rays.ui.local.LocalStickerColorTheme
@@ -68,6 +70,7 @@ data class Settings(
     val searchResultSort: String = SearchResultSortPreference.default,
     val searchResultReverse: Boolean = SearchResultReversePreference.default,
     val showPopularTags: Boolean = ShowPopularTagsPreference.default,
+    val showLastQuery: Boolean = ShowLastQueryPreference.default,
     // WebDav
     val webDavServer: String = WebDavServerPreference.default,
     // ML
@@ -116,6 +119,7 @@ fun SettingsProvider(
         LocalSearchResultSort provides settings.searchResultSort,
         LocalSearchResultReverse provides settings.searchResultReverse,
         LocalShowPopularTags provides settings.showPopularTags,
+        LocalShowLastQuery provides settings.showLastQuery,
         // WebDav
         LocalWebDavServer provides settings.webDavServer,
         // ML

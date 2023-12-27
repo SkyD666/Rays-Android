@@ -26,6 +26,7 @@ import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalNavController
+import com.skyd.rays.ui.local.LocalShowLastQuery
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.screen.search.PopularTagsBar
 import com.skyd.rays.ui.screen.search.SearchResultList
@@ -49,10 +50,11 @@ private fun RaysSearchBarPreview() {
             .fillMaxWidth()
     ) {
         Box(modifier = Modifier.align(Alignment.TopCenter)) {
+            val query = if (LocalShowLastQuery.current) "LOL" else ""
             SearchBar(
                 windowInsets = WindowInsets(0.dp),
                 onQueryChange = {},
-                query = "LOL",
+                query = query,
                 onSearch = { },
                 active = true,
                 onActiveChange = { if (!it) navController.popBackStackWithLifecycle() },
@@ -64,7 +66,7 @@ private fun RaysSearchBarPreview() {
                         onClick = { }
                     )
                 },
-                trailingIcon = { TrailingIcon(showClearButton = true) {} },
+                trailingIcon = { TrailingIcon(showClearButton = query.isNotBlank()) {} },
             ) {
                 AnimatedVisibility(visible = LocalShowPopularTags.current) {
                     PopularTagsBar(

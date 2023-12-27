@@ -19,6 +19,7 @@ import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
+import com.skyd.rays.model.preference.search.ShowLastQueryPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
@@ -50,6 +51,7 @@ fun Preferences.toSettings(): Settings {
         searchResultSort = SearchResultSortPreference.fromPreferences(this),
         searchResultReverse = SearchResultReversePreference.fromPreferences(this),
         showPopularTags = ShowPopularTagsPreference.fromPreferences(this),
+        showLastQuery = ShowLastQueryPreference.fromPreferences(this),
 
         // WebDav
         webDavServer = WebDavServerPreference.fromPreferences(this),
@@ -63,7 +65,9 @@ fun Preferences.toSettings(): Settings {
         // Share
         uriStringShare = UriStringSharePreference.fromPreferences(this),
         stickerExtName = StickerExtNamePreference.fromPreferences(this),
-        copyStickerToClipboardWhenSharing = CopyStickerToClipboardWhenSharingPreference.fromPreferences(this),
+        copyStickerToClipboardWhenSharing = CopyStickerToClipboardWhenSharingPreference.fromPreferences(
+            this
+        ),
         autoShareIgnoreStrategy = AutoShareIgnoreStrategyPreference.fromPreferences(this),
 
         // Api

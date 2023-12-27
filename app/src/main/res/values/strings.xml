@@ -188,6 +188,8 @@
     <string name="detail_screen_sticker_scale">Sticker scale</string>
     <string name="home_style_screen_show_popular_tags">Show popular tags</string>
     <string name="home_style_screen_show_popular_tags_description">Show the tags corresponding to the most shared stickers below the search bar</string>
+    <string name="home_style_screen_show_last_query">Show last query</string>
+    <string name="home_style_screen_show_last_query_description">Show last query string in the search bar when opening the search screen</string>
     <string name="default_tag">%s (Default)</string>
     <string name="update_check">Check updates</string>
     <string name="update_no_update">Already the latest version!</string>

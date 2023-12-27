@@ -86,6 +86,7 @@ import com.skyd.rays.ui.screen.about.update.UpdateDialog
 import com.skyd.rays.util.CommonUtil
 import com.skyd.rays.util.CommonUtil.openBrowser
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 const val ABOUT_SCREEN_ROUTE = "aboutScreen"
 
@@ -215,15 +216,20 @@ private fun IconArea() {
             painter = painterResource(id = R.drawable.ic_rays),
             contentDescription = null
         )
-        Image(
-            modifier = Modifier
-                .fillMaxWidth(0.7f)
-                .aspectRatio(1f)
-                .rotate(25f)
-                .align(Alignment.TopEnd),
-            painter = painterResource(R.drawable.ic_santa_hat),
-            contentDescription = null,
-        )
+        val c = Calendar.getInstance()
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+        if (month == Calendar.DECEMBER && (day in 22..28)) {     // 圣诞节彩蛋
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .aspectRatio(1f)
+                    .rotate(25f)
+                    .align(Alignment.TopEnd),
+                painter = painterResource(R.drawable.ic_santa_hat),
+                contentDescription = null,
+            )
+        }
     }
 }
 
