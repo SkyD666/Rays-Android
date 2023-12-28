@@ -3,6 +3,7 @@ package com.skyd.rays.ui.screen.settings.privacy
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BlurOn
 import androidx.compose.material.icons.filled.Screenshot
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -15,10 +16,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.skyd.rays.R
 import com.skyd.rays.ext.activity
-import com.skyd.rays.model.preference.DisableScreenshotPreference
+import com.skyd.rays.model.preference.privacy.BlurStickerPreference
+import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SwitchSettingsItem
+import com.skyd.rays.ui.local.LocalBlurSticker
 import com.skyd.rays.ui.local.LocalDisableScreenshot
 
 
@@ -58,6 +61,21 @@ fun PrivacyScreen() {
                             value = it
                         )
                         context.activity.recreate()
+                    }
+                )
+            }
+            item {
+                SwitchSettingsItem(
+                    icon = Icons.Default.BlurOn,
+                    checked = LocalBlurSticker.current,
+                    text = stringResource(R.string.privacy_screen_blur_sticker),
+                    description = stringResource(R.string.privacy_screen_blur_sticker_description),
+                    onCheckedChange = {
+                        BlurStickerPreference.put(
+                            context = context,
+                            scope = scope,
+                            value = it
+                        )
                     }
                 )
             }

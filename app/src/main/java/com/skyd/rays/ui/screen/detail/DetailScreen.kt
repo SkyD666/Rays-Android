@@ -95,6 +95,7 @@ import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.ExportDialog
 import com.skyd.rays.ui.component.dialog.RaysDialog
+import com.skyd.rays.ui.local.LocalBlurSticker
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalWindowSizeClass
@@ -351,6 +352,8 @@ fun MainCard(
             .padding(top = 16.dp, bottom = bottomPadding + 16.dp)
             .fillMaxWidth()
     ) {
+        val blurSticker = LocalBlurSticker.current
+        var blur by rememberSaveable { mutableStateOf(blurSticker) }
         Column(
             modifier = Modifier
                 .combinedClickable(
@@ -372,7 +375,7 @@ fun MainCard(
                             isEdit = true,
                         )
                     },
-                    onClick = {}
+                    onClick = { blur = false }
                 )
         ) {
             Box {
@@ -387,6 +390,7 @@ fun MainCard(
                         .fillMaxWidth(),
                     uuid = stickerBean.uuid,
                     contentScale = StickerScalePreference.toContentScale(LocalStickerScale.current),
+                    blur = blur,
                 )
             }
             if (stickerBean.title.isNotBlank()) {

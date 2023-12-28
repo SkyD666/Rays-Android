@@ -2,6 +2,7 @@ package com.skyd.rays.ui.screen.minitool.selfiesegmentation
 
 import androidx.lifecycle.viewModelScope
 import com.skyd.rays.base.mvi.AbstractMviViewModel
+import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.SelfieSegmentationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,6 +55,10 @@ class SelfieSegmentationViewModel @Inject constructor(private var selfieSegmenta
                     SelfieSegmentationEvent.ExportUiEvent.Success(change.bitmap)
                 }
 
+                is SelfieSegmentationPartialStateChange.SelfieSegmentation.Failed -> {
+                    SelfieSegmentationEvent.SegmentUiEvent.Failed(change.msg)
+                }
+
                 else -> return@onEach
             }
             sendEvent(event)
@@ -70,6 +75,7 @@ class SelfieSegmentationViewModel @Inject constructor(private var selfieSegmenta
                 selfieSegmentationRepo.requestSelfieSegment(foregroundUri = intent.foregroundUri)
                     .map { SelfieSegmentationPartialStateChange.SelfieSegmentation.Success(it) }
                     .startWith(SelfieSegmentationPartialStateChange.LoadingDialog)
+                    .catchMap { SelfieSegmentationPartialStateChange.SelfieSegmentation.Failed(it.message.toString()) }
             },
 
             filterIsInstance<SelfieSegmentationIntent.Export>().flatMapConcat { intent ->

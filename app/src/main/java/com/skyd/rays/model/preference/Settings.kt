@@ -10,6 +10,8 @@ import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.toSettings
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
+import com.skyd.rays.model.preference.privacy.BlurStickerPreference
+import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
@@ -25,6 +27,7 @@ import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
 import com.skyd.rays.ui.local.LocalApiGrant
 import com.skyd.rays.ui.local.LocalAutoShareIgnoreStrategy
+import com.skyd.rays.ui.local.LocalBlurSticker
 import com.skyd.rays.ui.local.LocalClassificationThreshold
 import com.skyd.rays.ui.local.LocalCopyStickerToClipboardWhenSharing
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
@@ -89,6 +92,7 @@ data class Settings(
     val textRecognizeThreshold: Float = TextRecognizeThresholdPreference.default,
     // Privacy
     val disableScreenshot: Boolean = DisableScreenshotPreference.default,
+    val blurSticker: Boolean = BlurStickerPreference.default,
     // Pick image
     val pickImageMethod: String = PickImageMethodPreference.default,
 )
@@ -138,6 +142,7 @@ fun SettingsProvider(
         LocalTextRecognizeThreshold provides settings.textRecognizeThreshold,
         // Privacy
         LocalDisableScreenshot provides settings.disableScreenshot,
+        LocalBlurSticker provides settings.blurSticker,
         // Pick image
         LocalPickImageMethod provides settings.pickImageMethod,
     ) {

@@ -35,7 +35,7 @@ import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
-import com.skyd.rays.model.preference.DisableScreenshotPreference
+import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
 import com.skyd.rays.model.preference.SettingsProvider
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalDarkMode

@@ -1,18 +1,23 @@
 package com.skyd.rays.ui.component
 
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import com.skyd.rays.config.STICKER_DIR
+import com.skyd.rays.ui.local.LocalBlurSticker
+import com.skyd.rays.util.coil.BlurTransformation
 import com.skyd.rays.util.coil.apng.AnimatedPngDecoder
 import java.io.File
 
@@ -25,17 +30,28 @@ fun RaysImage(
     imageLoader: ImageLoader = rememberRaysImageLoader(),
     contentScale: ContentScale = ContentScale.FillWidth,
     alpha: Float = DefaultAlpha,
+    blur: Boolean = LocalBlurSticker.current,
 ) {
     val context = LocalContext.current
     AsyncImage(
-        model = remember(model) {
+        model = remember(model, blur) {
             ImageRequest.Builder(context)
                 .data(model)
                 .crossfade(true)
                 .decoderFactory(AnimatedPngDecoder.Factory())
+                .run {
+                    if (SDK_INT < Build.VERSION_CODES.S && blur) transformations(
+                        BlurTransformation(
+                            context = context,
+                            radius = 25f,
+                            sampling = 3f
+                        )
+                    )
+                    else this
+                }
                 .build()
         },
-        modifier = modifier,
+        modifier = modifier.run { if (blur) blur(radius = 25.dp) else this },
         contentDescription = contentDescription,
         contentScale = contentScale,
         imageLoader = imageLoader,
@@ -50,6 +66,7 @@ fun RaysImage(
     contentDescription: String? = null,
     imageLoader: ImageLoader = rememberRaysImageLoader(),
     contentScale: ContentScale = ContentScale.FillWidth,
+    blur: Boolean = LocalBlurSticker.current,
 ) {
     val file = remember(uuid) { File(STICKER_DIR, uuid) }
     RaysImage(
@@ -58,6 +75,7 @@ fun RaysImage(
         contentDescription = contentDescription,
         contentScale = contentScale,
         imageLoader = imageLoader,
+        blur = blur,
     )
 }
 

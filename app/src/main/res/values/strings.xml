@@ -294,9 +294,11 @@
     <string name="text_recognize_screen_threshold">Text recognize threshold</string>
     <string name="text_recognize_screen_threshold_description">Only texts with confidence higher than this threshold will be recommended, suggested to be set around 0.4.</string>
     <string name="privacy_screen_name">Privacy</string>
-    <string name="setting_screen_privacy_description">Disable screenshot</string>
+    <string name="setting_screen_privacy_description">Disable screenshot, blur stickers</string>
     <string name="privacy_screen_disable_screenshot">Disable screenshot</string>
     <string name="privacy_screen_disable_screenshot_description">Screenshot is prohibited in the app</string>
+    <string name="privacy_screen_blur_sticker">Blur stickers</string>
+    <string name="privacy_screen_blur_sticker_description">Blur all stickers and only un-blur when clicking on the sticker in the detail screen</string>
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
     <string name="share_sheet_action_copy">Copy</string>
@@ -323,4 +325,4 @@
     <string name="pick_image_method_get_content">From content (%s)</string>
     <string name="pick_image_method_pick_from_gallery">From gallery (%s)</string>
     <string name="use_the_following_to_open">Use the following to open</string>
-</resources>
+ </resources>

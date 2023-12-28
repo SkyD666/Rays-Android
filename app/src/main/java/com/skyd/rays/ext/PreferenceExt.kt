@@ -4,7 +4,6 @@ import androidx.datastore.preferences.core.Preferences
 import com.skyd.rays.model.preference.ApiGrantPreference
 import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
-import com.skyd.rays.model.preference.DisableScreenshotPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
 import com.skyd.rays.model.preference.PickImageMethodPreference
@@ -15,6 +14,8 @@ import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
+import com.skyd.rays.model.preference.privacy.BlurStickerPreference
+import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
@@ -79,6 +80,7 @@ fun Preferences.toSettings(): Settings {
 
         // Privacy
         disableScreenshot = DisableScreenshotPreference.fromPreferences(this),
+        blurSticker = BlurStickerPreference.fromPreferences(this),
 
         // Pick image
         pickImageMethod = PickImageMethodPreference.fromPreferences(this),

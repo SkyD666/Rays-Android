@@ -282,9 +282,11 @@
     <string name="text_recognize_screen_threshold">置信度阈值</string>
     <string name="text_recognize_screen_threshold_description">只有置信度高于此阈值的文本才会被推荐，建议设置为 0.4 左右。</string>
     <string name="privacy_screen_name">隐私</string>
-    <string name="setting_screen_privacy_description">禁止截图等</string>
+    <string name="setting_screen_privacy_description">禁止截图、模糊表情包等</string>
     <string name="privacy_screen_disable_screenshot">禁止截图</string>
     <string name="privacy_screen_disable_screenshot_description">禁止在应用内截图</string>
+    <string name="privacy_screen_blur_sticker">模糊表情包</string>
+    <string name="privacy_screen_blur_sticker_description">模糊显示表情包，只有在详情页面点击表情包时才会取消模糊</string>
     <string name="expand">展开</string>
     <string name="collapse">收起</string>
     <string name="share_sheet_action_copy">复制</string>

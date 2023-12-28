@@ -196,7 +196,7 @@
     <string name="webdav_screen_service_category">WebDAV 服務</string>
     <string name="about_screen_join_telegram">加入 Telegram 群組</string>
     <string name="api_grant_screen_description">管理外部應用程式的 API 權限</string>
-    <string name="setting_screen_privacy_description">停用螢幕截圖</string>
+    <string name="setting_screen_privacy_description">停用螢幕截圖、模糊表情包等</string>
     <string name="sticker_share_count">分享次數</string>
     <string name="classification_model_screen_select">選擇外部模型</string>
     <string name="home_screen_select_export_folder">選擇匯出文件夾</string>
@@ -216,6 +216,8 @@
     <string name="appearance_screen_sticker_color_theme_description">當查看表情包詳情時，將主題顏色更新為表情包的主色調</string>
     <string name="enable">啟用</string>
     <string name="privacy_screen_disable_screenshot_description">應用程式內禁止截圖</string>
+    <string name="privacy_screen_blur_sticker">模糊表情包</string>
+    <string name="privacy_screen_blur_sticker_description">將所有顯示的表情包進行模糊處理，僅在詳細頁面點擊表情包時方可對該表情包取消模糊</string>
     <string name="update_newer">發現新版本</string>
     <string name="image_scale_fill_bounds">填滿邊界</string>
     <string name="handle_imported_sticker_proxy_replace">替換原有</string>

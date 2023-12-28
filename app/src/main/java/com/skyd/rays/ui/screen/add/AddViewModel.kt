@@ -96,7 +96,7 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                     ),
                     addRepository.requestSuggestTags(
                         intent.initStickers.first().uri!!
-                    )
+                    ).catchMap { emptySet() }
                 ) { stickerWithTags, suggestTags ->
                     AddPartialStateChange.Init(
                         stickerWithTags,

@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import com.skyd.rays.model.preference.ApiGrantPreference
 import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
-import com.skyd.rays.model.preference.DisableScreenshotPreference
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
 import com.skyd.rays.model.preference.PickImageMethodPreference
@@ -16,6 +15,8 @@ import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
+import com.skyd.rays.model.preference.privacy.BlurStickerPreference
+import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
@@ -86,6 +87,7 @@ val LocalTextRecognizeThreshold = compositionLocalOf { TextRecognizeThresholdPre
 
 // Privacy
 val LocalDisableScreenshot = compositionLocalOf { DisableScreenshotPreference.default }
+val LocalBlurSticker = compositionLocalOf { BlurStickerPreference.default }
 
 // Pick image
 val LocalPickImageMethod = compositionLocalOf { PickImageMethodPreference.default }

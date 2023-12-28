@@ -2,7 +2,6 @@ package com.skyd.rays.ui.screen.minitool.selfiesegmentation
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateOffsetAsState
@@ -68,6 +67,7 @@ import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbar
+import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysIconButtonStyle
@@ -182,10 +182,16 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
                 }
             }
 
+            is SelfieSegmentationEvent.SegmentUiEvent.Failed -> {
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    message = context.getString(R.string.failed_info, event.msg),
+                    key1 = event,
+                )
+            }
+
             null -> Unit
         }
 
-        Log.e("TAG", "SelfieSegmentationScreen: ${uiState.loadingDialog}")
         WaitingDialog(visible = uiState.loadingDialog)
     }
 }

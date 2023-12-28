@@ -18,16 +18,23 @@ internal sealed interface SelfieSegmentationPartialStateChange {
     }
 
     sealed interface SelfieSegmentation : SelfieSegmentationPartialStateChange {
-        override fun reduce(oldState: SelfieSegmentationState): SelfieSegmentationState {
-            return when (this) {
-                is Success -> oldState.copy(
+        data class Success(val image: Bitmap) : SelfieSegmentation {
+            override fun reduce(oldState: SelfieSegmentationState): SelfieSegmentationState {
+                return oldState.copy(
                     selfieSegmentationResultState = SelfieSegmentationResultState.Success(image = image),
                     loadingDialog = false,
                 )
             }
         }
 
-        data class Success(val image: Bitmap) : SelfieSegmentation
+        data class Failed(val msg: String) : SelfieSegmentation {
+            override fun reduce(oldState: SelfieSegmentationState): SelfieSegmentationState {
+                return oldState.copy(
+                    selfieSegmentationResultState = SelfieSegmentationResultState.Init,
+                    loadingDialog = false,
+                )
+            }
+        }
     }
 
     sealed interface Export : SelfieSegmentationPartialStateChange {
