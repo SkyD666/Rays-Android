@@ -90,6 +90,7 @@
         <item quantity="other">Exported %1$d stickers in total, took %2$.2f s</item>
     </plurals>
     <string name="export_files_screen_open_backup_file">Open backup file</string>
+    <string name="export_files_screen_no_stickers_to_export">No stickers to export</string>
     <string name="handle_imported_sticker_proxy_skip">Skip</string>
     <string name="handle_imported_sticker_proxy_replace">Replace</string>
     <string name="import_export_files_repo_invalid_magic_number">Invalid format, Magic number not equals to 0x0D000721</string>
@@ -325,4 +326,4 @@
     <string name="pick_image_method_get_content">From content (%s)</string>
     <string name="pick_image_method_pick_from_gallery">From gallery (%s)</string>
     <string name="use_the_following_to_open">Use the following to open</string>
- </resources>
+</resources>

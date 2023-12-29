@@ -21,6 +21,21 @@ internal sealed interface SearchPartialStateChange {
                     loadingDialog = false,
                 )
 
+                is Failed,
+                ClearResultData -> oldState.copy(
+                    searchDataState = oldState.searchDataState.let { searchDataState ->
+                        when (searchDataState) {
+                            is SearchDataState.Success -> SearchDataState.Success(
+                                stickerWithTagsList = emptyList(),
+                                popularTags = searchDataState.popularTags,
+                            )
+
+                            SearchDataState.Init -> searchDataState
+                        }
+                    },
+                    loadingDialog = false,
+                )
+
                 Loading -> oldState.copy(
                     searchDataState = oldState.searchDataState.apply { loading = true }
                 )
@@ -28,6 +43,8 @@ internal sealed interface SearchPartialStateChange {
         }
 
         data object Loading : SearchDataResult
+        data object ClearResultData : SearchDataResult
+        data class Failed(val msg: String) : SearchDataResult
         data class Success(
             val stickerWithTagsList: List<StickerWithTags>,
             val popularTags: List<Pair<String, Float>>

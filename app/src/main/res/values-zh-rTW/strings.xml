@@ -184,6 +184,7 @@
     <plurals name="export_files_screen_successful_desc">
         <item quantity="other">共匯出 %1$d 張表情包，耗時 %2$.2f 秒</item>
     </plurals>
+    <string name="export_files_screen_no_stickers_to_export">沒有可匯出的貼紙</string>
     <string name="webdav_screen_upload_tip">在將本地數據推送到遠端時，如果存在衝突，本地表情包將覆蓋遠端內容。如果本地不存在但在遠端存在的表情包，將被移動到遠端回收站。</string>
     <string name="webdav_screen_sync_category">同步</string>
     <string name="home_screen_close_search">關閉</string>

@@ -162,7 +162,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
         visible = uiState.loadingDialog,
         currentValue = waitingDialogData?.current,
         totalValue = waitingDialogData?.total,
-        msg = waitingDialogData?.msg + "\n\n" + stringResource(id = R.string.data_sync_warning),
+        msg = waitingDialogData?.msg.orEmpty() + "\n\n" + stringResource(id = R.string.data_sync_warning),
     )
 
     RaysDialog(

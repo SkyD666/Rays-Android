@@ -2,6 +2,7 @@ package com.skyd.rays.ui.screen.search
 
 import androidx.lifecycle.viewModelScope
 import com.skyd.rays.base.mvi.AbstractMviViewModel
+import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,6 +54,9 @@ class SearchViewModel @Inject constructor(
     private fun Flow<SearchPartialStateChange>.sendSingleEvent(): Flow<SearchPartialStateChange> {
         return onEach { change ->
             val event = when (change) {
+                is SearchPartialStateChange.SearchDataResult.Failed ->
+                    SearchEvent.SearchData.Failed(change.msg)
+
                 is SearchPartialStateChange.DeleteStickerWithTags.Success ->
                     SearchEvent.DeleteStickerWithTags.Success(change.stickerUuids)
 
@@ -71,14 +75,23 @@ class SearchViewModel @Inject constructor(
                 combine(
                     searchRepo.requestStickerWithTagsList(),
                     searchRepo.requestSearchBarPopularTags(count = 20),
-                ) { stickerWithTagsList, popularTags ->
-                    SearchPartialStateChange.SearchDataResult.Success(
-                        stickerWithTagsList = stickerWithTagsList,
-                        popularTags = popularTags,
-                    )
+                ) { searchResult, popularTags ->
+                    if (searchResult.stickerWithTagsList == null) {
+                        if (searchResult.isRegexInvalid == null) {
+                            SearchPartialStateChange.SearchDataResult.Failed(searchResult.msg.toString())
+                        } else SearchPartialStateChange.SearchDataResult.ClearResultData
+                    } else {
+                        SearchPartialStateChange.SearchDataResult.Success(
+                            stickerWithTagsList = searchResult.stickerWithTagsList,
+                            popularTags = popularTags,
+                        )
+                    }
                 }
                     .flowOn(Dispatchers.IO)
                     .startWith(SearchPartialStateChange.SearchDataResult.Loading)
+                    .catchMap {
+                        SearchPartialStateChange.SearchDataResult.Failed(it.message.toString())
+                    }
             },
 
             filterIsInstance<SearchIntent.ExportStickers>().flatMapConcat { intent ->

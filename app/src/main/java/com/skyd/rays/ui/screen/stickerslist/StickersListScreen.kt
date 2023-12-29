@@ -73,12 +73,13 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
                 },
                 actions = {
                     RaysIconButton(
-                        enabled = uiState.listState is ListState.Success,
+                        enabled = !(uiState.listState as? ListState.Success)
+                            ?.stickerWithTagsList.isNullOrEmpty(),
                         onClick = {
                             openExportFilesScreen(
                                 navController = navController,
                                 exportStickers = (uiState.listState as? ListState.Success)
-                                    ?.stickerWithTagsList?.map { it.sticker.uuid },
+                                    ?.stickerWithTagsList?.map { it.sticker.uuid }.orEmpty(),
                             )
                         },
                         imageVector = Icons.Default.FolderZip,

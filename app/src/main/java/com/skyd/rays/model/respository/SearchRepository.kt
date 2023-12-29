@@ -6,6 +6,7 @@ import androidx.sqlite.db.SimpleSQLiteQuery
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.allSearchDomain
+import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.bean.STICKER_TABLE_NAME
@@ -32,6 +33,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.takeWhile
@@ -48,6 +50,7 @@ class SearchRepository @Inject constructor(
                     .flowOn(Dispatchers.IO)
                     .distinctUntilChanged()
             }
+            .catchMap { emptyList() }
     }
 
     fun requestStickerWithTagsListWithAllSearchDomain(keyword: String): Flow<List<StickerWithTags>> {
@@ -58,9 +61,16 @@ class SearchRepository @Inject constructor(
                     .flowOn(Dispatchers.IO)
                     .distinctUntilChanged()
             }
+            .catchMap { emptyList() }
     }
 
-    fun requestStickerWithTagsList(): Flow<List<StickerWithTags>> {
+    data class SearchResult(
+        val stickerWithTagsList: List<StickerWithTags>?,
+        val msg: String? = null,
+        val isRegexInvalid: SearchRegexInvalidException? = null,
+    )
+
+    fun requestStickerWithTagsList(): Flow<SearchResult> {
         return appContext.dataStore.data
             .debounce(70)
             .map {
@@ -72,22 +82,39 @@ class SearchRepository @Inject constructor(
             }
             .distinctUntilChanged()
             .flatMapConcat { triple ->
-                combine(
-                    stickerDao.getStickerWithTagsList(genSql(triple.first)),
-                    appContext.dataStore.data.debounce(70),
-                ) { list, ds ->
-                    list to ds
-                }.takeWhile {
-                    triple == Triple(
-                        it.second[QueryPreference.key] ?: QueryPreference.default,
-                        it.second[SearchResultSortPreference.key]
-                            ?: SearchResultSortPreference.default,
-                        it.second[SearchResultReversePreference.key]
-                            ?: SearchResultReversePreference.default,
+                var msg: String? = null
+                var isRegexInvalid: SearchRegexInvalidException? = null
+                val sql = runCatching { genSql(triple.first) }.getOrElse {
+                    if (it is SearchRegexInvalidException) isRegexInvalid = it
+                    msg = it.message.toString()
+                    null
+                }
+                if (sql == null) {
+                    flowOf(
+                        SearchResult(
+                            stickerWithTagsList = null,
+                            msg = msg,
+                            isRegexInvalid = isRegexInvalid
+                        )
                     )
-                }.map { pair ->
-                    sortSearchResultList(pair.first)
-                }.flowOn(Dispatchers.IO)
+                } else {
+                    combine(
+                        stickerDao.getStickerWithTagsList(sql),
+                        appContext.dataStore.data.debounce(70),
+                    ) { list, ds ->
+                        list to ds
+                    }.takeWhile {
+                        triple == Triple(
+                            it.second[QueryPreference.key] ?: QueryPreference.default,
+                            it.second[SearchResultSortPreference.key]
+                                ?: SearchResultSortPreference.default,
+                            it.second[SearchResultReversePreference.key]
+                                ?: SearchResultReversePreference.default,
+                        )
+                    }.map { pair ->
+                        SearchResult(stickerWithTagsList = sortSearchResultList(pair.first))
+                    }.flowOn(Dispatchers.IO)
+                }
             }
             .flowOn(Dispatchers.IO)
     }
@@ -224,6 +251,8 @@ class SearchRepository @Inject constructor(
         }
     }
 
+    class SearchRegexInvalidException(message: String?) : IllegalArgumentException(message)
+
     companion object {
         @EntryPoint
         @InstallIn(SingletonComponent::class)
@@ -240,6 +269,11 @@ class SearchRepository @Inject constructor(
                     ).searchDomainDao.getSearchDomain(tableName, columnName)
                 },
         ): SimpleSQLiteQuery {
+            // Check Regex format
+            runCatching { k.toRegex() }.onFailure {
+                throw SearchRegexInvalidException(it.message)
+            }
+
             // 是否使用多个关键字并集查询
             val intersectSearchBySpace =
                 appContext.dataStore.getOrDefault(IntersectSearchBySpacePreference)
@@ -279,8 +313,10 @@ class SearchRepository @Inject constructor(
 
             // 转义输入，防止SQL注入
             val keyword = if (useRegexSearch) {
-                // 检查正则表达式是否有效
-                runCatching { k.toRegex() }.onFailure { error(it.message.orEmpty()) }
+                // Check Regex format
+                runCatching { k.toRegex() }.onFailure {
+                    throw SearchRegexInvalidException(it.message)
+                }
                 DatabaseUtils.sqlEscapeString(k)
             } else {
                 DatabaseUtils.sqlEscapeString("%$k%")

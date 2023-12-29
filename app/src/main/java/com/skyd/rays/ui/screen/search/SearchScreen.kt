@@ -314,8 +314,14 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
             key2 = uiEvent,
         )
 
+        is SearchEvent.SearchData.Failed -> snackbarHostState.showSnackbarWithLaunchedEffect(
+            message = context.getString(R.string.failed_info, event.msg),
+            key2 = uiEvent,
+        )
+
         is SearchEvent.DeleteStickerWithTags.Success,
         null -> Unit
+
     }
 
     // 删除多选的表情包警告

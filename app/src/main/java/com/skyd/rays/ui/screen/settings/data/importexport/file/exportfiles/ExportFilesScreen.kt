@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -41,6 +42,7 @@ import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
+import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ImportExportResultInfo
 import com.skyd.rays.model.bean.ImportExportWaitingInfo
@@ -62,7 +64,7 @@ fun openExportFilesScreen(
     navController.navigate(
         EXPORT_FILES_SCREEN_ROUTE,
         Bundle().apply {
-            if (!exportStickers.isNullOrEmpty()) {
+            if (exportStickers != null) {
                 putStringArrayList("exportStickers", ArrayList(exportStickers))
             }
         }
@@ -75,6 +77,7 @@ fun ExportFilesScreen(
     viewModel: ExportFilesViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
@@ -122,16 +125,23 @@ fun ExportFilesScreen(
                 text = { Text(text = stringResource(R.string.export_files_screen_export)) },
                 icon = { Icon(imageVector = Icons.Default.Done, contentDescription = null) },
                 onClick = {
-                    dispatch(
-                        ExportFilesIntent.Export(
-                            dirUri = exportDir,
-                            excludeClickCount = 0 in excludeCheckedList,
-                            excludeShareCount = 1 in excludeCheckedList,
-                            excludeCreateTime = 2 in excludeCheckedList,
-                            excludeModifyTime = 3 in excludeCheckedList,
-                            exportStickers = exportStickers,
+                    if (exportStickers != null && exportStickers.isEmpty()) {
+                        snackbarHostState.showSnackbar(
+                            scope = scope,
+                            message = context.getString(R.string.export_files_screen_no_stickers_to_export),
                         )
-                    )
+                    } else {
+                        dispatch(
+                            ExportFilesIntent.Export(
+                                dirUri = exportDir,
+                                excludeClickCount = 0 in excludeCheckedList,
+                                excludeShareCount = 1 in excludeCheckedList,
+                                excludeCreateTime = 2 in excludeCheckedList,
+                                excludeModifyTime = 3 in excludeCheckedList,
+                                exportStickers = exportStickers,
+                            )
+                        )
+                    }
                 },
                 onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
                 contentDescription = stringResource(R.string.export_files_screen_export)
@@ -183,7 +193,7 @@ fun ExportFilesScreen(
         visible = uiState.loadingDialog,
         currentValue = waitingDialogData?.current,
         totalValue = waitingDialogData?.total,
-        msg = waitingDialogData?.msg + "\n\n" + stringResource(id = R.string.data_sync_warning),
+        msg = waitingDialogData?.msg.orEmpty() + "\n\n" + stringResource(id = R.string.data_sync_warning),
     )
 
     RaysDialog(
