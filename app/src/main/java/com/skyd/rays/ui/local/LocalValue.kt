@@ -11,6 +11,7 @@ import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
 import com.skyd.rays.model.preference.PickImageMethodPreference
 import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
+import com.skyd.rays.model.preference.StickerItemWidthPreference
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
@@ -70,6 +71,7 @@ val LocalStickerClassificationModel =
 
 // Style
 val LocalStickerScale = compositionLocalOf { StickerScalePreference.default }
+val LocalStickerItemWidth = compositionLocalOf { StickerItemWidthPreference.default }
 
 // Share
 val LocalUriStringShare = compositionLocalOf { UriStringSharePreference.default }

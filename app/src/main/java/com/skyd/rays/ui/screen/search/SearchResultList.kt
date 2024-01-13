@@ -306,6 +306,7 @@ fun SearchResultItem(
     data: StickerWithTags,
     selectable: Boolean = false,
     selected: Boolean = false,
+    showTitle: Boolean = true,
     onClickListener: ((data: StickerWithTags, selected: Boolean) -> Unit)? = null
 ) {
     val context = LocalContext.current
@@ -345,7 +346,7 @@ fun SearchResultItem(
                 )
             }
         }
-        if (data.sticker.title.isNotBlank()) {
+        if (showTitle && data.sticker.title.isNotBlank()) {
             Text(
                 modifier = Modifier
                     .padding(vertical = 10.dp, horizontal = 10.dp)

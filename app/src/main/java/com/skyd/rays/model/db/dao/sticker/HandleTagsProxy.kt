@@ -12,7 +12,7 @@ import java.util.UUID
 
 
 @Parcelize
-sealed interface HandleImportedStickerProxy : Parcelable {
+sealed interface HandleImportedStickerStrategy : Parcelable {
     fun handle(
         stickerDao: StickerDao,
         tagDao: TagDao,
@@ -35,7 +35,7 @@ sealed interface HandleImportedStickerProxy : Parcelable {
 
     // 冲突则跳过
     @Parcelize
-    data object SkipProxy : HandleImportedStickerProxy {
+    data object SkipStrategy : HandleImportedStickerStrategy {
         override fun handle(
             stickerDao: StickerDao,
             tagDao: TagDao,
@@ -64,7 +64,7 @@ sealed interface HandleImportedStickerProxy : Parcelable {
 
     // 冲突则覆盖
     @Parcelize
-    data object ReplaceProxy : HandleImportedStickerProxy {
+    data object ReplaceStrategy : HandleImportedStickerStrategy {
         override fun handle(
             stickerDao: StickerDao,
             tagDao: TagDao,

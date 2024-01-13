@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.skyd.rays.appContext
 import com.skyd.rays.base.mvi.AbstractMviViewModel
 import com.skyd.rays.ext.catchMap
+import com.skyd.rays.ext.checkUriReadPermission
 import com.skyd.rays.ext.endWith
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.StickerWithTags
@@ -87,13 +88,17 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
 
     private fun SharedFlow<AddIntent>.toAddPartialStateChangeFlow(): Flow<AddPartialStateChange> {
         return merge(
-            filterIsInstance<AddIntent.Init>().filter {
+            filterIsInstance<AddIntent.Init>().map { intent ->
+                intent.copy(initStickers = intent.initStickers.filter {
+                    appContext.checkUriReadPermission(it.uri)
+                })
+            }.filter {
                 it.initStickers.isNotEmpty()
             }.flatMapConcat { intent ->
                 combine(
                     addRepository.requestGetStickerWithTags(
                         intent.initStickers.first().stickerUuid
-                    ),
+                    ).catchMap { null },
                     addRepository.requestSuggestTags(
                         intent.initStickers.first().uri!!
                     ).catchMap { emptySet() }

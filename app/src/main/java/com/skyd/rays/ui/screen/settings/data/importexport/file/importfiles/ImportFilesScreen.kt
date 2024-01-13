@@ -45,7 +45,7 @@ import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ImportExportResultInfo
 import com.skyd.rays.model.bean.ImportExportWaitingInfo
-import com.skyd.rays.model.db.dao.sticker.HandleImportedStickerProxy
+import com.skyd.rays.model.db.dao.sticker.HandleImportedStickerStrategy
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysTopBar
@@ -66,7 +66,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
     var openImportDialog by rememberSaveable { mutableStateOf<ImportExportResultInfo?>(null) }
     var waitingDialogData by rememberSaveable { mutableStateOf<ImportExportWaitingInfo?>(null) }
     val importedStickerProxyList = rememberSaveable {
-        listOf(HandleImportedStickerProxy.SkipProxy, HandleImportedStickerProxy.ReplaceProxy)
+        listOf(HandleImportedStickerStrategy.SkipStrategy, HandleImportedStickerStrategy.ReplaceStrategy)
     }
     var selectedImportedStickerProxyIndex by rememberSaveable { mutableIntStateOf(0) }
 
@@ -100,7 +100,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
                     dispatch(
                         ImportFilesIntent.Import(
                             backupFileUri = fileUri,
-                            proxy = importedStickerProxyList[selectedImportedStickerProxyIndex],
+                            strategy = importedStickerProxyList[selectedImportedStickerProxyIndex],
                         )
                     )
                 },

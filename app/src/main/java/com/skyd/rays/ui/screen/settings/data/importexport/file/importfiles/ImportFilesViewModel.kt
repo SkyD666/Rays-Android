@@ -71,7 +71,7 @@ class ImportFilesViewModel @Inject constructor(
             filterIsInstance<ImportFilesIntent.Init>().map { ImportFilesPartialStateChange.Init },
 
             filterIsInstance<ImportFilesIntent.Import>().flatMapConcat { intent ->
-                importExportFilesRepo.requestImport(intent.backupFileUri, intent.proxy).map {
+                importExportFilesRepo.requestImport(intent.backupFileUri, intent.strategy).map {
                     when (it) {
                         is ImportExportResultInfo -> {
                             ImportFilesPartialStateChange.ImportFilesProgress.Finish(it)

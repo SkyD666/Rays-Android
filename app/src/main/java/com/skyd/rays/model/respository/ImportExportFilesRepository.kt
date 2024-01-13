@@ -13,7 +13,7 @@ import com.skyd.rays.model.bean.ImportExportResultInfo
 import com.skyd.rays.model.bean.ImportExportWaitingInfo
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.StickerWithTagsAndFile
-import com.skyd.rays.model.db.dao.sticker.HandleImportedStickerProxy
+import com.skyd.rays.model.db.dao.sticker.HandleImportedStickerStrategy
 import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.util.image.ImageFormatChecker
 import com.skyd.rays.util.image.format.ImageFormat
@@ -43,7 +43,7 @@ class ImportExportFilesRepository @Inject constructor(
 
     suspend fun requestImport(
         backupFileUri: Uri,
-        handleImportedStickerProxy: HandleImportedStickerProxy,
+        handleImportedStickerStrategy: HandleImportedStickerStrategy,
     ): Flow<ImportExportInfo> {
         return flowOnIo {
             val startTime = System.currentTimeMillis()
@@ -93,7 +93,7 @@ class ImportExportFilesRepository @Inject constructor(
             )
             val updatedCount = stickerDao.importDataFromExternal(
                 stickerWithTagsList = stickerWithTagsAndFileList,
-                proxy = handleImportedStickerProxy,
+                strategy = handleImportedStickerStrategy,
             )
 
             // 完成操作

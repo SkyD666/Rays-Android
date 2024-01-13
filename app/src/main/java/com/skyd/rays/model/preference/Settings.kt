@@ -46,6 +46,7 @@ import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalStickerClassificationModel
 import com.skyd.rays.ui.local.LocalStickerColorTheme
 import com.skyd.rays.ui.local.LocalStickerExtName
+import com.skyd.rays.ui.local.LocalStickerItemWidth
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalTextRecognizeThreshold
 import com.skyd.rays.ui.local.LocalThemeName
@@ -80,6 +81,7 @@ data class Settings(
     val stickerClassificationModel: String = StickerClassificationModelPreference.default,
     // Style
     val stickerScale: String = StickerScalePreference.default,
+    val stickerItemWidth: Float = StickerItemWidthPreference.default,
     // Share
     val uriStringShare: Boolean = UriStringSharePreference.default,
     val stickerExtName: Boolean = StickerExtNamePreference.default,
@@ -130,6 +132,7 @@ fun SettingsProvider(
         LocalStickerClassificationModel provides settings.stickerClassificationModel,
         // Style
         LocalStickerScale provides settings.stickerScale,
+        LocalStickerItemWidth provides settings.stickerItemWidth,
         // Share
         LocalUriStringShare provides settings.uriStringShare,
         LocalStickerExtName provides settings.stickerExtName,

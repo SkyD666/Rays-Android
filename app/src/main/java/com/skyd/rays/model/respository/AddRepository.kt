@@ -15,6 +15,7 @@ import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.CLASSIFICATION_MODEL_DIR_FILE
 import com.skyd.rays.config.STICKER_DIR
+import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.copyTo
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
@@ -172,7 +173,7 @@ class AddRepository @Inject constructor(
                 })
             }) { other, classification ->
                 (classification + other).toSet()
-            }
+            }.catchMap { emptySet() }
         } catch (e: IOException) {
             e.printStackTrace()
             throw e

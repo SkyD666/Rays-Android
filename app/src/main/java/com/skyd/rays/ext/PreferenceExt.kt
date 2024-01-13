@@ -10,6 +10,7 @@ import com.skyd.rays.model.preference.PickImageMethodPreference
 import com.skyd.rays.model.preference.Settings
 import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
+import com.skyd.rays.model.preference.StickerItemWidthPreference
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
@@ -62,6 +63,7 @@ fun Preferences.toSettings(): Settings {
 
         // Style
         stickerScale = StickerScalePreference.fromPreferences(this),
+        stickerItemWidth = StickerItemWidthPreference.fromPreferences(this),
 
         // Share
         uriStringShare = UriStringSharePreference.fromPreferences(this),

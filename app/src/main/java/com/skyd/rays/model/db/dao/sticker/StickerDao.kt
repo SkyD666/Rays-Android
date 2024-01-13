@@ -180,7 +180,7 @@ interface StickerDao {
     @Transaction
     fun importDataFromExternal(
         stickerWithTagsList: List<StickerWithTagsAndFile>,
-        proxy: HandleImportedStickerProxy,
+        strategy: HandleImportedStickerStrategy,
     ): Int {
         val hiltEntryPoint = EntryPointAccessors
             .fromApplication(appContext, StickerDaoEntryPoint::class.java)
@@ -195,7 +195,7 @@ interface StickerDao {
                     modifyTime = currentTimeMillis
                 }
             }
-            val updated = proxy.handle(
+            val updated = strategy.handle(
                 stickerDao = this,
                 tagDao = hiltEntryPoint.tagDao,
                 importedStickerWithTags = it.stickerWithTags,
