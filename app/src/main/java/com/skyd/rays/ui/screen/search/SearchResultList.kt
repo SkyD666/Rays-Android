@@ -42,6 +42,7 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Badge
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -321,7 +322,7 @@ fun SearchResultItem(
                     )
                 },
                 onClick = { onClickListener?.invoke(data, !selected) }
-            )
+            ),
     ) {
         Box {
             RaysImage(
