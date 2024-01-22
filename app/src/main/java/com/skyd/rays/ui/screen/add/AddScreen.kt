@@ -638,6 +638,7 @@ private fun WaitingRow(
                         Box(contentAlignment = Alignment.TopEnd) {
                             RaysImage(
                                 model = uri.uri,
+                                blur = false,
                                 modifier = Modifier
                                     .height(if (index == 0) 150.dp else 100.dp)
                                     .aspectRatio(1f)

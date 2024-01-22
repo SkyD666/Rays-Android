@@ -91,6 +91,8 @@ import com.skyd.rays.ui.screen.settings.ml.textrecognize.TEXT_RECOGNIZE_SCREEN_R
 import com.skyd.rays.ui.screen.settings.ml.textrecognize.TextRecognizeScreen
 import com.skyd.rays.ui.screen.settings.privacy.PRIVACY_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.privacy.PrivacyScreen
+import com.skyd.rays.ui.screen.settings.privacy.blurstickers.BLUR_STICKERS_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.privacy.blurstickers.BlurStickersScreen
 import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.searchconfig.SearchConfigScreen
 import com.skyd.rays.ui.screen.settings.shareconfig.SHARE_CONFIG_SCREEN_ROUTE
@@ -287,6 +289,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = IMAGE_SOURCE_SCREEN_ROUTE) {
                     ImageSourceScreen()
+                }
+                composable(route = BLUR_STICKERS_SCREEN_ROUTE) {
+                    BlurStickersScreen()
                 }
             }
 

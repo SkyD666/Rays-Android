@@ -15,6 +15,7 @@ import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
+import com.skyd.rays.model.preference.privacy.BlurStickerKeywordsPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerPreference
 import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
@@ -83,6 +84,7 @@ fun Preferences.toSettings(): Settings {
         // Privacy
         disableScreenshot = DisableScreenshotPreference.fromPreferences(this),
         blurSticker = BlurStickerPreference.fromPreferences(this),
+        blurStickerKeywords = BlurStickerKeywordsPreference.fromPreferences(this),
 
         // Pick image
         pickImageMethod = PickImageMethodPreference.fromPreferences(this),

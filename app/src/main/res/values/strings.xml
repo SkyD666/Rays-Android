@@ -298,8 +298,8 @@
     <string name="setting_screen_privacy_description">Disable screenshot, blur stickers</string>
     <string name="privacy_screen_disable_screenshot">Disable screenshot</string>
     <string name="privacy_screen_disable_screenshot_description">Screenshot is prohibited in the app</string>
-    <string name="privacy_screen_blur_sticker">Blur stickers</string>
-    <string name="privacy_screen_blur_sticker_description">Blur all stickers and only un-blur when clicking on the sticker in the detail screen</string>
+    <string name="blur_stickers_screen_name">Blur stickers</string>
+    <string name="blur_stickers_screen_description">Blurring the specified stickers only un-blurs when clicking on the sticker in the detail screen</string>
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
     <string name="share_sheet_action_copy">Copy</string>
@@ -326,4 +326,7 @@
     <string name="pick_image_method_get_content">From content (%s)</string>
     <string name="pick_image_method_pick_from_gallery">From gallery (%s)</string>
     <string name="use_the_following_to_open">Use the following to open</string>
+    <string name="blur_stickers_screen_blur_keywords">Blur keywords</string>
+    <string name="blur_stickers_screen_add_blur_keyword">Add blur keyword</string>
+    <string name="blur_stickers_screen_tip">If the title or label string of a sticker contains the blur keywords, then the sticker will be displayed blurred.</string>
 </resources>

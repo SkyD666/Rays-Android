@@ -11,18 +11,20 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.skyd.rays.R
 import com.skyd.rays.ext.activity
-import com.skyd.rays.model.preference.privacy.BlurStickerPreference
 import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
+import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SwitchSettingsItem
-import com.skyd.rays.ui.local.LocalBlurSticker
 import com.skyd.rays.ui.local.LocalDisableScreenshot
+import com.skyd.rays.ui.local.LocalNavController
+import com.skyd.rays.ui.screen.settings.privacy.blurstickers.BLUR_STICKERS_SCREEN_ROUTE
 
 
 const val PRIVACY_SCREEN_ROUTE = "privacyScreen"
@@ -31,6 +33,7 @@ const val PRIVACY_SCREEN_ROUTE = "privacyScreen"
 fun PrivacyScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
+    val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -65,18 +68,11 @@ fun PrivacyScreen() {
                 )
             }
             item {
-                SwitchSettingsItem(
-                    icon = Icons.Default.BlurOn,
-                    checked = LocalBlurSticker.current,
-                    text = stringResource(R.string.privacy_screen_blur_sticker),
-                    description = stringResource(R.string.privacy_screen_blur_sticker_description),
-                    onCheckedChange = {
-                        BlurStickerPreference.put(
-                            context = context,
-                            scope = scope,
-                            value = it
-                        )
-                    }
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(Icons.Default.BlurOn),
+                    text = stringResource(R.string.blur_stickers_screen_name),
+                    descriptionText = stringResource(R.string.blur_stickers_screen_description),
+                    onClick = { navController.navigate(BLUR_STICKERS_SCREEN_ROUTE) },
                 )
             }
         }

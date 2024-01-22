@@ -86,6 +86,7 @@ import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.StickerScalePreference
+import com.skyd.rays.model.preference.privacy.rememberShouldBlur
 import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysFloatingActionButton
@@ -95,7 +96,6 @@ import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.ExportDialog
 import com.skyd.rays.ui.component.dialog.RaysDialog
-import com.skyd.rays.ui.local.LocalBlurSticker
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalWindowSizeClass
@@ -352,8 +352,8 @@ fun MainCard(
             .padding(top = 16.dp, bottom = bottomPadding + 16.dp)
             .fillMaxWidth()
     ) {
-        val blurSticker = LocalBlurSticker.current
-        var blur by rememberSaveable { mutableStateOf(blurSticker) }
+        val shouldBlur = rememberShouldBlur(tags.map { it.tag } + stickerBean.title)
+        var blur by rememberSaveable { mutableStateOf(shouldBlur) }
         Column(
             modifier = Modifier
                 .combinedClickable(

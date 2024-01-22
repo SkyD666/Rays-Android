@@ -59,6 +59,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
+import com.skyd.rays.model.preference.privacy.shouldBlur
 import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysFloatingActionButton
@@ -156,6 +157,13 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                         stickerUuid = mostSharedStickersList[it].sticker.uuid
                                     )
                                 },
+                                itemShouldBlur = { index ->
+                                    shouldBlur(
+                                        context = context,
+                                        c = mostSharedStickersList[index].tags.map { it.tag } +
+                                                mostSharedStickersList[index].sticker.title,
+                                    )
+                                },
                             )
                         }
                         item {
@@ -176,6 +184,13 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                     openDetailScreen(
                                         navController = navController,
                                         stickerUuid = recentCreatedStickersList[it].sticker.uuid
+                                    )
+                                },
+                                itemShouldBlur = { index ->
+                                    shouldBlur(
+                                        context = context,
+                                        c = recentCreatedStickersList[index].tags.map { it.tag } +
+                                                recentCreatedStickersList[index].sticker.title,
                                     )
                                 },
                             )
@@ -210,6 +225,12 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                         query = randomTagsList[it].tag,
                                     )
                                 },
+                                itemShouldBlur = { index ->
+                                    shouldBlur(
+                                        context = context,
+                                        c = listOf(randomTagsList[index].tag)
+                                    )
+                                },
                             )
                         }
                     }
@@ -230,6 +251,7 @@ private fun DisplayStickersRow(
     itemTitle: (Int) -> String,
     onItemLongClick: (Int) -> Unit,
     onItemClick: (Int) -> Unit,
+    itemShouldBlur: (Int) -> Boolean,
 ) {
     Column {
         Text(
@@ -271,10 +293,10 @@ private fun DisplayStickersRow(
                                     .aspectRatio(1f)
                                     .combinedClickable(
                                         onLongClick = { onItemLongClick(index) },
-                                        onClick = { onItemClick(index) }
-
+                                        onClick = { onItemClick(index) },
                                     ),
                                 uuid = itemImage(index),
+                                blur = itemShouldBlur(index),
                                 contentScale = ContentScale.Crop,
                             )
                         }
@@ -304,6 +326,7 @@ private fun DisplayTagsRow(
     itemImage: (Int) -> String,
     itemTitle: (Int) -> String,
     onItemClick: (Int) -> Unit,
+    itemShouldBlur: (Int) -> Boolean,
 ) {
     Column {
         Text(
@@ -347,6 +370,7 @@ private fun DisplayTagsRow(
                             RaysImage(
                                 modifier = Modifier.fillMaxSize(),
                                 uuid = itemImage(index),
+                                blur = itemShouldBlur(index),
                                 contentScale = ContentScale.Crop,
                             )
                             Box(

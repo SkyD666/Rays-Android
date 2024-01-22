@@ -10,6 +10,7 @@ import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.toSettings
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
+import com.skyd.rays.model.preference.privacy.BlurStickerKeywordsPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerPreference
 import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
@@ -25,6 +26,7 @@ import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
+import com.skyd.rays.ui.local.LocalBlurStickerKeywords
 import com.skyd.rays.ui.local.LocalApiGrant
 import com.skyd.rays.ui.local.LocalAutoShareIgnoreStrategy
 import com.skyd.rays.ui.local.LocalBlurSticker
@@ -95,6 +97,7 @@ data class Settings(
     // Privacy
     val disableScreenshot: Boolean = DisableScreenshotPreference.default,
     val blurSticker: Boolean = BlurStickerPreference.default,
+    val blurStickerKeywords: Set<String> = BlurStickerKeywordsPreference.default,
     // Pick image
     val pickImageMethod: String = PickImageMethodPreference.default,
 )
@@ -146,6 +149,7 @@ fun SettingsProvider(
         // Privacy
         LocalDisableScreenshot provides settings.disableScreenshot,
         LocalBlurSticker provides settings.blurSticker,
+        LocalBlurStickerKeywords provides settings.blurStickerKeywords,
         // Pick image
         LocalPickImageMethod provides settings.pickImageMethod,
     ) {

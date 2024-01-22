@@ -155,6 +155,7 @@ private fun ResultArea(bitmap: Bitmap) {
         RaysImage(
             model = bitmap,
             modifier = Modifier.fillMaxWidth(),
+            blur = false,
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
         )
@@ -254,6 +255,7 @@ private fun InputItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = 120.dp),
+                    blur = false,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                 )

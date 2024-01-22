@@ -286,8 +286,8 @@
     <string name="setting_screen_privacy_description">禁止截图、模糊表情包等</string>
     <string name="privacy_screen_disable_screenshot">禁止截图</string>
     <string name="privacy_screen_disable_screenshot_description">禁止在应用内截图</string>
-    <string name="privacy_screen_blur_sticker">模糊表情包</string>
-    <string name="privacy_screen_blur_sticker_description">模糊显示表情包，只有在详情页面点击表情包时才会取消模糊</string>
+    <string name="blur_stickers_screen_name">模糊表情包</string>
+    <string name="blur_stickers_screen_description">模糊显示指定的表情包，只有在详情页面点击表情包时才会取消模糊</string>
     <string name="expand">展开</string>
     <string name="collapse">收起</string>
     <string name="share_sheet_action_copy">复制</string>
@@ -314,4 +314,7 @@
     <string name="pick_image_method_get_content">来自内容（%s）</string>
     <string name="pick_image_method_pick_from_gallery">来自相册（%s）</string>
     <string name="use_the_following_to_open">使用以下方式打开</string>
+    <string name="blur_stickers_screen_blur_keywords">模糊关键词</string>
+    <string name="blur_stickers_screen_add_blur_keyword">添加关键词</string>
+    <string name="blur_stickers_screen_tip">如果表情包的标题或标签字符串包含模糊关键词，那么该表情包将被模糊显示。</string>
 </resources>

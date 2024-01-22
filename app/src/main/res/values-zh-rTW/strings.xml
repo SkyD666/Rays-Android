@@ -184,7 +184,7 @@
     <plurals name="export_files_screen_successful_desc">
         <item quantity="other">共匯出 %1$d 張表情包，耗時 %2$.2f 秒</item>
     </plurals>
-    <string name="export_files_screen_no_stickers_to_export">沒有可匯出的貼紙</string>
+    <string name="export_files_screen_no_stickers_to_export">沒有可匯出的表情包</string>
     <string name="webdav_screen_upload_tip">在將本地數據推送到遠端時，如果存在衝突，本地表情包將覆蓋遠端內容。如果本地不存在但在遠端存在的表情包，將被移動到遠端回收站。</string>
     <string name="webdav_screen_sync_category">同步</string>
     <string name="home_screen_close_search">關閉</string>
@@ -217,8 +217,8 @@
     <string name="appearance_screen_sticker_color_theme_description">當查看表情包詳情時，將主題顏色更新為表情包的主色調</string>
     <string name="enable">啟用</string>
     <string name="privacy_screen_disable_screenshot_description">應用程式內禁止截圖</string>
-    <string name="privacy_screen_blur_sticker">模糊表情包</string>
-    <string name="privacy_screen_blur_sticker_description">將所有顯示的表情包進行模糊處理，僅在詳細頁面點擊表情包時方可對該表情包取消模糊</string>
+    <string name="blur_stickers_screen_name">模糊表情包</string>
+    <string name="blur_stickers_screen_description">模糊顯示指定的表情包，僅在詳細頁面點擊表情包時方可對該表情包取消模糊</string>
     <string name="update_newer">發現新版本</string>
     <string name="image_scale_fill_bounds">填滿邊界</string>
     <string name="handle_imported_sticker_proxy_replace">替換原有</string>
@@ -314,4 +314,7 @@
     <string name="pick_image_method_get_content">來自內容（%s）</string>
     <string name="pick_image_method_pick_from_gallery">來自相簿（%s）</string>
     <string name="use_the_following_to_open">使用以下方式開啟</string>
+    <string name="blur_stickers_screen_blur_keywords">模糊關鍵字</string>
+    <string name="blur_stickers_screen_add_blur_keyword">新增模糊關鍵字</string>
+    <string name="blur_stickers_screen_tip">如果表情包的標題或標籤字串包含模糊關鍵字，則表情包將顯示為模糊。</string>
 </resources>

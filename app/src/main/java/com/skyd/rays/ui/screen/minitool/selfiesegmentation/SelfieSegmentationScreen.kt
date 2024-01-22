@@ -278,6 +278,7 @@ private fun ResultArea(
                     modifier = Modifier
                         .onSizeChanged { backgroundSize = it }
                         .fillMaxWidth(),
+                    blur = false,
                     contentDescription = null,
                     contentScale = ContentScale.FillWidth,
                 )
@@ -323,6 +324,7 @@ private fun ResultArea(
                             }
                         }
                         .onSizeChanged { foregroundSize = it },
+                    blur = false,
                     contentDescription = null,
                     contentScale = ContentScale.Inside,
                 )
@@ -428,6 +430,7 @@ private fun InputItem(
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = 120.dp),
+                        blur = false,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                     )

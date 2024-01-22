@@ -42,7 +42,6 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Badge
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -67,6 +66,7 @@ import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.model.bean.StickerWithTags
+import com.skyd.rays.model.preference.privacy.rememberShouldBlur
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysIconButton
@@ -329,6 +329,7 @@ fun SearchResultItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(0.97f),
+                blur = rememberShouldBlur(c = data.tags.map { it.tag } + data.sticker.title),
                 contentScale = ContentScale.Crop,
                 uuid = data.sticker.uuid
             )

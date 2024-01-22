@@ -16,7 +16,6 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import com.skyd.rays.config.STICKER_DIR
-import com.skyd.rays.ui.local.LocalBlurSticker
 import com.skyd.rays.util.coil.BlurTransformation
 import com.skyd.rays.util.coil.apng.AnimatedPngDecoder
 import java.io.File
@@ -25,12 +24,12 @@ import java.io.File
 @Composable
 fun RaysImage(
     model: Any?,
+    blur: Boolean,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
     imageLoader: ImageLoader = rememberRaysImageLoader(),
     contentScale: ContentScale = ContentScale.FillWidth,
     alpha: Float = DefaultAlpha,
-    blur: Boolean = LocalBlurSticker.current,
 ) {
     val context = LocalContext.current
     AsyncImage(
@@ -62,20 +61,20 @@ fun RaysImage(
 @Composable
 fun RaysImage(
     uuid: String,
+    blur: Boolean,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
     imageLoader: ImageLoader = rememberRaysImageLoader(),
     contentScale: ContentScale = ContentScale.FillWidth,
-    blur: Boolean = LocalBlurSticker.current,
 ) {
     val file = remember(uuid) { File(STICKER_DIR, uuid) }
     RaysImage(
         model = file,
+        blur = blur,
         modifier = modifier,
         contentDescription = contentDescription,
         contentScale = contentScale,
         imageLoader = imageLoader,
-        blur = blur,
     )
 }
 
