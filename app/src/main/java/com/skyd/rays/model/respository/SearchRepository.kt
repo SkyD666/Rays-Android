@@ -269,9 +269,12 @@ class SearchRepository @Inject constructor(
                     ).searchDomainDao.getSearchDomain(tableName, columnName)
                 },
         ): SimpleSQLiteQuery {
-            // Check Regex format
-            runCatching { k.toRegex() }.onFailure {
-                throw SearchRegexInvalidException(it.message)
+            val useRegexSearch = appContext.dataStore.getOrDefault(UseRegexSearchPreference)
+            if (useRegexSearch) {
+                // Check Regex format
+                runCatching { k.toRegex() }.onFailure {
+                    throw SearchRegexInvalidException(it.message)
+                }
             }
 
             // 是否使用多个关键字并集查询
@@ -306,8 +309,7 @@ class SearchRepository @Inject constructor(
         ): String {
             if (k.isBlank()) return "1"
 
-            val useRegexSearch =
-                appContext.dataStore.getOrDefault(UseRegexSearchPreference)
+            val useRegexSearch = appContext.dataStore.getOrDefault(UseRegexSearchPreference)
 
             var filter = "0"
 

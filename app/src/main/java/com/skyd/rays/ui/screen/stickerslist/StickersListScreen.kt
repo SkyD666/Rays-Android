@@ -3,6 +3,7 @@ package com.skyd.rays.ui.screen.stickerslist
 import android.os.Bundle
 import android.util.Log
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,6 +29,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,10 +83,13 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
                 title = {
                     Text(
                         text = query.ifBlank { stringResource(R.string.stickers_list_screen_name) },
-                        modifier = Modifier.run {
-                            if (query.isBlank()) this
-                            else clickable { clipboardManager.setText(AnnotatedString(query)) }
-                        }
+                        modifier = Modifier
+                            .run {
+                                if (query.isBlank()) this
+                                else clickable { clipboardManager.setText(AnnotatedString(query)) }
+                            }
+                            .basicMarquee(iterations = Int.MAX_VALUE),
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 actions = {
@@ -105,7 +110,7 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
             )
         }
     ) { paddingValues ->
-        var stickerItemWidth by rememberSaveable{
+        var stickerItemWidth by rememberSaveable {
             mutableFloatStateOf(context.dataStore.getOrDefault(StickerItemWidthPreference))
         }
 

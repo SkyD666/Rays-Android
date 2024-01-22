@@ -22,7 +22,7 @@ android {
         minSdk 24
         targetSdk 34
         versionCode 59
-        versionName "2.1-alpha05"
+        versionName "2.1-beta01"
         flavorDimensions = ["versionName"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -133,8 +133,8 @@ dependencies {
     implementation "androidx.compose.material:material-icons-extended:1.5.4"
     implementation "androidx.compose.ui:ui-tooling-preview:$md3_version"
     implementation "com.google.android.material:material:1.11.0"
-    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.2"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.7.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"
     implementation "androidx.activity:activity-compose:1.8.2"
     implementation "androidx.palette:palette-ktx:1.0.0"
     implementation "com.google.dagger:hilt-android:2.50"
@@ -154,7 +154,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2"
     implementation "com.github.Kyant0:Monet:0.1.0-alpha03"
     implementation "androidx.datastore:datastore-preferences:1.0.0"
-    implementation "com.airbnb.android:lottie-compose:6.2.0"
+    implementation "com.airbnb.android:lottie-compose:6.3.0"
 
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0"
