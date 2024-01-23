@@ -25,8 +25,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -71,6 +69,7 @@ import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
+import com.skyd.rays.ui.component.ScalableLazyVerticalStaggeredGrid
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalSearchResultReverse
 import com.skyd.rays.ui.local.LocalWindowSizeClass
@@ -102,11 +101,10 @@ fun SearchResultList(
                 tip = stringResource(id = R.string.search_screen_no_search_result_tip)
             )
         } else {
-            LazyVerticalStaggeredGrid(
+            ScalableLazyVerticalStaggeredGrid(
                 modifier = Modifier.fillMaxSize(),
                 state = state,
                 contentPadding = contentPadding,
-                columns = StaggeredGridCells.Adaptive(125.dp),
                 verticalItemSpacing = 12.dp,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {

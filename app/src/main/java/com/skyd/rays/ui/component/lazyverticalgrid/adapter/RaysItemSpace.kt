@@ -139,8 +139,7 @@ object RaysItemSpace {
 
     private fun noHorizontalMargin(clz: Class<*>?): Boolean {
         clz ?: return true
-        if (clz in noHorizontalMarginType) return true
-        return false
+        return clz in noHorizontalMarginType
     }
 
     private val needVerticalMarginType: Set<Class<*>> = setOf(
@@ -148,7 +147,6 @@ object RaysItemSpace {
 
     private fun needVerticalMargin(clz: Class<*>?): Boolean {
         clz ?: return false
-        if (clz in needVerticalMarginType) return true
-        return false
+        return clz in needVerticalMarginType
     }
 }

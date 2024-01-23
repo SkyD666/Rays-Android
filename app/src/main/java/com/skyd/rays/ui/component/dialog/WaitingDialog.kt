@@ -58,8 +58,8 @@ fun WaitingDialog(
                     label = "waitingDialogAnimatedProgress"
                 )
                 LinearProgressIndicator(
+                    progress = { animatedProgress },
                     modifier = Modifier.semantics(mergeDescendants = true) {},
-                    progress = animatedProgress,
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
