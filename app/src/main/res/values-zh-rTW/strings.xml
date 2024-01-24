@@ -317,4 +317,5 @@
     <string name="blur_stickers_screen_blur_keywords">模糊關鍵字</string>
     <string name="blur_stickers_screen_add_blur_keyword">新增模糊關鍵字</string>
     <string name="blur_stickers_screen_tip">如果表情包的標題或標籤字串包含模糊關鍵字，則表情包將顯示為模糊。</string>
+    <string name="blur_stickers_screen_radius">模糊半徑</string>
 </resources>

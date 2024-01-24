@@ -32,7 +32,6 @@ import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.ScalableLazyVerticalStaggeredGrid
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.local.LocalStickerItemWidth
 import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.search.SearchResultItem
 import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.openExportFilesScreen
@@ -108,7 +107,6 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
                             data = it,
                             selectable = false,
                             selected = false,
-                            showTitle = LocalStickerItemWidth.current.dp >= 111.dp,
                             onClickListener = { sticker, _ ->
                                 openDetailScreen(
                                     navController = navController,

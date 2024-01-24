@@ -18,6 +18,7 @@ import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerKeywordsPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerPreference
+import com.skyd.rays.model.preference.privacy.BlurStickerRadiusPreference
 import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
@@ -92,6 +93,7 @@ val LocalTextRecognizeThreshold = compositionLocalOf { TextRecognizeThresholdPre
 val LocalDisableScreenshot = compositionLocalOf { DisableScreenshotPreference.default }
 val LocalBlurSticker = compositionLocalOf { BlurStickerPreference.default }
 val LocalBlurStickerKeywords = compositionLocalOf { BlurStickerKeywordsPreference.default }
+val LocalBlurStickerRadius = compositionLocalOf { BlurStickerRadiusPreference.default }
 
 // Pick image
 val LocalPickImageMethod = compositionLocalOf { PickImageMethodPreference.default }

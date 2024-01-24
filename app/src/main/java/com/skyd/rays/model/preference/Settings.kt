@@ -12,6 +12,7 @@ import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerKeywordsPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerPreference
+import com.skyd.rays.model.preference.privacy.BlurStickerRadiusPreference
 import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.QueryPreference
@@ -26,10 +27,11 @@ import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
-import com.skyd.rays.ui.local.LocalBlurStickerKeywords
 import com.skyd.rays.ui.local.LocalApiGrant
 import com.skyd.rays.ui.local.LocalAutoShareIgnoreStrategy
 import com.skyd.rays.ui.local.LocalBlurSticker
+import com.skyd.rays.ui.local.LocalBlurStickerKeywords
+import com.skyd.rays.ui.local.LocalBlurStickerRadius
 import com.skyd.rays.ui.local.LocalClassificationThreshold
 import com.skyd.rays.ui.local.LocalCopyStickerToClipboardWhenSharing
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
@@ -98,6 +100,7 @@ data class Settings(
     val disableScreenshot: Boolean = DisableScreenshotPreference.default,
     val blurSticker: Boolean = BlurStickerPreference.default,
     val blurStickerKeywords: Set<String> = BlurStickerKeywordsPreference.default,
+    val blurStickerRadius: Float = BlurStickerRadiusPreference.default,
     // Pick image
     val pickImageMethod: String = PickImageMethodPreference.default,
 )
@@ -150,6 +153,7 @@ fun SettingsProvider(
         LocalDisableScreenshot provides settings.disableScreenshot,
         LocalBlurSticker provides settings.blurSticker,
         LocalBlurStickerKeywords provides settings.blurStickerKeywords,
+        LocalBlurStickerRadius provides settings.blurStickerRadius,
         // Pick image
         LocalPickImageMethod provides settings.pickImageMethod,
     ) {

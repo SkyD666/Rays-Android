@@ -16,6 +16,10 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import com.skyd.rays.config.STICKER_DIR
+import com.skyd.rays.ext.dataStore
+import com.skyd.rays.ext.getOrDefault
+import com.skyd.rays.model.preference.privacy.BlurStickerRadiusPreference
+import com.skyd.rays.ui.local.LocalBlurStickerRadius
 import com.skyd.rays.util.coil.BlurTransformation
 import com.skyd.rays.util.coil.apng.AnimatedPngDecoder
 import java.io.File
@@ -42,7 +46,7 @@ fun RaysImage(
                     if (SDK_INT < Build.VERSION_CODES.S && blur) transformations(
                         BlurTransformation(
                             context = context,
-                            radius = 25f,
+                            radius = context.dataStore.getOrDefault(BlurStickerRadiusPreference),
                             sampling = 3f
                         )
                     )
@@ -50,7 +54,9 @@ fun RaysImage(
                 }
                 .build()
         },
-        modifier = modifier.run { if (blur) blur(radius = 25.dp) else this },
+        modifier = modifier.run {
+            if (blur) blur(radius = LocalBlurStickerRadius.current.dp) else this
+        },
         contentDescription = contentDescription,
         contentScale = contentScale,
         imageLoader = imageLoader,

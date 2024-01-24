@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.BlurLinear
 import androidx.compose.material.icons.filled.BlurOn
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Tag
@@ -32,16 +33,19 @@ import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
 import com.skyd.rays.model.preference.privacy.BlurStickerKeywordsPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerPreference
+import com.skyd.rays.model.preference.privacy.BlurStickerRadiusPreference
 import com.skyd.rays.ui.component.BannerItem
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
+import com.skyd.rays.ui.component.SliderSettingsItem
 import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.component.TipSettingsItem
 import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.local.LocalBlurSticker
 import com.skyd.rays.ui.local.LocalBlurStickerKeywords
+import com.skyd.rays.ui.local.LocalBlurStickerRadius
 
 
 const val BLUR_STICKERS_SCREEN_ROUTE = "blurStickersScreen"
@@ -51,9 +55,6 @@ fun BlurStickersScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var openAddDialog by rememberSaveable { mutableStateOf(false) }
-    var addDialogText by rememberSaveable { mutableStateOf("") }
-    val blurStickersKeywords = LocalBlurStickerKeywords.current
 
     Scaffold(
         topBar = {
@@ -86,72 +87,104 @@ fun BlurStickersScreen() {
                     )
                 }
             }
-            item {
-                BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.Tag),
-                    text = stringResource(R.string.blur_stickers_screen_blur_keywords),
-                    enabled = LocalBlurSticker.current,
-                    content = {
-                        RaysIconButton(
-                            enabled = LocalBlurSticker.current,
-                            onClick = { openAddDialog = true },
-                            imageVector = Icons.Default.Add,
-                        )
-                    },
-                    description = {
-                        FlowRow(
-                            modifier = Modifier.animateContentSize(),
-                            horizontalArrangement = Arrangement.spacedBy(5.dp),
-                        ) {
-                            repeat(blurStickersKeywords.size) { index ->
-                                InputChip(
-                                    selected = false,
-                                    enabled = LocalBlurSticker.current,
-                                    label = { Text(blurStickersKeywords.elementAt(index)) },
-                                    onClick = {
-                                        BlurStickerKeywordsPreference.put(
-                                            context = context,
-                                            scope = scope,
-                                            value = blurStickersKeywords -
-                                                    blurStickersKeywords.elementAt(index),
-                                        )
-                                    },
-                                    trailingIcon = {
-                                        Icon(
-                                            modifier = Modifier.size(AssistChipDefaults.IconSize),
-                                            imageVector = Icons.Default.Close,
-                                            contentDescription = null
-                                        )
-                                    }
-                                )
-                            }
-                        }
-                    },
-                )
-            }
+            item { BlurStickerRadiusSettingItem() }
+            item { BlurStickersKeywordsSettingItem() }
             item {
                 TipSettingsItem(
                     text = stringResource(id = R.string.blur_stickers_screen_tip)
                 )
             }
         }
-
-        TextFieldDialog(
-            visible = openAddDialog,
-            title = stringResource(id = R.string.blur_stickers_screen_add_blur_keyword),
-            maxLines = 1,
-            onDismissRequest = { openAddDialog = false },
-            value = addDialogText,
-            onValueChange = { addDialogText = it },
-            onConfirm = {
-                BlurStickerKeywordsPreference.put(
-                    context = context,
-                    scope = scope,
-                    value = blurStickersKeywords + it,
-                )
-                addDialogText = ""
-                openAddDialog = false
-            }
-        )
     }
+}
+
+@Composable
+private fun BlurStickersKeywordsSettingItem() {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    var openAddDialog by rememberSaveable { mutableStateOf(false) }
+    var addDialogText by rememberSaveable { mutableStateOf("") }
+    val blurStickersKeywords = LocalBlurStickerKeywords.current
+
+    BaseSettingsItem(
+        icon = rememberVectorPainter(Icons.Default.Tag),
+        text = stringResource(R.string.blur_stickers_screen_blur_keywords),
+        enabled = LocalBlurSticker.current,
+        content = {
+            RaysIconButton(
+                enabled = LocalBlurSticker.current,
+                onClick = { openAddDialog = true },
+                imageVector = Icons.Default.Add,
+            )
+        },
+        description = {
+            FlowRow(
+                modifier = Modifier.animateContentSize(),
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+            ) {
+                repeat(blurStickersKeywords.size) { index ->
+                    InputChip(
+                        selected = false,
+                        enabled = LocalBlurSticker.current,
+                        label = { Text(blurStickersKeywords.elementAt(index)) },
+                        onClick = {
+                            BlurStickerKeywordsPreference.put(
+                                context = context,
+                                scope = scope,
+                                value = blurStickersKeywords -
+                                        blurStickersKeywords.elementAt(index),
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                modifier = Modifier.size(AssistChipDefaults.IconSize),
+                                imageVector = Icons.Default.Close,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
+            }
+        },
+    )
+
+    TextFieldDialog(
+        visible = openAddDialog,
+        title = stringResource(id = R.string.blur_stickers_screen_add_blur_keyword),
+        maxLines = 1,
+        onDismissRequest = { openAddDialog = false },
+        value = addDialogText,
+        onValueChange = { addDialogText = it },
+        onConfirm = {
+            BlurStickerKeywordsPreference.put(
+                context = context,
+                scope = scope,
+                value = blurStickersKeywords + it,
+            )
+            addDialogText = ""
+            openAddDialog = false
+        }
+    )
+}
+
+@Composable
+private fun BlurStickerRadiusSettingItem() {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    SliderSettingsItem(
+        icon = Icons.Default.BlurLinear,
+        text = stringResource(id = R.string.blur_stickers_screen_radius),
+        enabled = LocalBlurSticker.current,
+        valueRange = 0.01f..25f,
+        value = LocalBlurStickerRadius.current,
+        onValueChange = {
+            BlurStickerRadiusPreference.put(
+                context = context,
+                scope = scope,
+                value = it,
+            )
+        },
+    )
 }

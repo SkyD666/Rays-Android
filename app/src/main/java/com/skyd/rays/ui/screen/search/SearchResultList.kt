@@ -72,6 +72,7 @@ import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.ScalableLazyVerticalStaggeredGrid
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalSearchResultReverse
+import com.skyd.rays.ui.local.LocalStickerItemWidth
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.sendStickerByUuid
 import com.skyd.rays.util.sendStickersByUuids
@@ -305,7 +306,7 @@ fun SearchResultItem(
     data: StickerWithTags,
     selectable: Boolean = false,
     selected: Boolean = false,
-    showTitle: Boolean = true,
+    showTitle: Boolean = LocalStickerItemWidth.current.dp >= 111.dp,
     onClickListener: ((data: StickerWithTags, selected: Boolean) -> Unit)? = null
 ) {
     val context = LocalContext.current

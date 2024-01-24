@@ -1,5 +1,6 @@
 package com.skyd.rays.ui.component
 
+import androidx.annotation.IntRange
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,6 +67,71 @@ fun BannerItem(content: @Composable () -> Unit) {
         }
         Spacer(modifier = Modifier.height(16.dp))
     }
+}
+
+@Composable
+fun SliderSettingsItem(
+    icon: ImageVector,
+    text: String,
+    value: Float,
+    modifier: Modifier = Modifier,
+    valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
+    @IntRange(from = 0)
+    steps: Int = 0,
+    onValueChangeFinished: (() -> Unit)? = null,
+    valueFormat: String = "%.2f",
+    enabled: Boolean = true,
+    onValueChange: (Float) -> Unit,
+) {
+    SliderSettingsItem(
+        icon = rememberVectorPainter(image = icon),
+        text = text,
+        value = value,
+        modifier = modifier,
+        valueRange = valueRange,
+        steps = steps,
+        onValueChangeFinished = onValueChangeFinished,
+        valueFormat = valueFormat,
+        enabled = enabled,
+        onValueChange = onValueChange,
+    )
+}
+
+@Composable
+fun SliderSettingsItem(
+    icon: Painter,
+    text: String,
+    value: Float,
+    modifier: Modifier = Modifier,
+    valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
+    @IntRange(from = 0)
+    steps: Int = 0,
+    onValueChangeFinished: (() -> Unit)? = null,
+    valueFormat: String = "%.2f",
+    enabled: Boolean = true,
+    onValueChange: (Float) -> Unit,
+) {
+    BaseSettingsItem(
+        icon = icon,
+        text = text,
+        modifier = modifier,
+        enabled = enabled,
+        description = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Slider(
+                    modifier = Modifier.weight(1f),
+                    value = value,
+                    enabled = enabled,
+                    valueRange = valueRange,
+                    steps = steps,
+                    onValueChangeFinished = onValueChangeFinished,
+                    onValueChange = onValueChange,
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(text = String.format(valueFormat, value))
+            }
+        }
+    )
 }
 
 @Composable

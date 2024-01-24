@@ -1,12 +1,14 @@
 package com.skyd.rays.model.bean
 
 import android.os.Parcelable
+import androidx.compose.runtime.Immutable
 import androidx.room.Embedded
 import androidx.room.Relation
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import java.io.File
 
+@Immutable
 @Parcelize
 @Serializable
 data class StickerWithTags(

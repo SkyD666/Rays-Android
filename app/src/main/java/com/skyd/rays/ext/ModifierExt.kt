@@ -7,7 +7,7 @@ import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -28,7 +28,7 @@ fun Modifier.onScaleEvent(
     onFingerCountChange: ((Int) -> Unit)? = null,
     onScale: (Float) -> Unit
 ): Modifier = composed {
-    var fingerCount by remember { mutableIntStateOf(0) }
+    var fingerCount by rememberSaveable { mutableIntStateOf(0) }
 
     pointerInput(Unit) {
         awaitEachGesture {
@@ -39,9 +39,12 @@ fun Modifier.onScaleEvent(
                     onFingerCountChange?.invoke(fingerCount)
                 }
                 if (event.changes.size >= 2) {
-                    onScale(event.calculateZoom())
+                    val z = event.calculateZoom()
+                    if (z != 1f) {
+                        onScale(z)
+                        event.changes.forEach { it.consume() }
+                    }
                 }
-
             } while (event.changes.any { it.pressed })
             fingerCount = 0
             onFingerCountChange?.invoke(fingerCount)
