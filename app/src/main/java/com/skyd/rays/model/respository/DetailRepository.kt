@@ -9,22 +9,24 @@ import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.util.exportSticker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class DetailRepository @Inject constructor(private val stickerDao: StickerDao) : BaseRepository() {
     suspend fun requestStickerWithTagsDetail(
         stickerUuid: String,
-        addClickCount: Int = 1
+        addClickCount: Int = 1,
     ): Flow<StickerWithTags?> {
-        return flowOnIo {
-            val stickerWithTags = if (stickerUuid.isBlank()) null
-            else stickerDao.getStickerWithTags(stickerUuid)
-            if (stickerWithTags != null) {
-                stickerDao.addClickCount(uuid = stickerUuid, count = addClickCount)
-            }
-            emit(stickerWithTags)
-        }
+        return flowOf(stickerUuid).filter { it.isNotBlank() }
+            .flatMapConcat { uuid ->
+                stickerDao.addClickCount(uuid = uuid, count = addClickCount)
+                stickerDao.getStickerWithTagsFlow(uuid)
+            }.flowOn(Dispatchers.IO)
     }
 
     suspend fun requestDeleteStickerWithTagsDetail(stickerUuid: String): Flow<Int> {

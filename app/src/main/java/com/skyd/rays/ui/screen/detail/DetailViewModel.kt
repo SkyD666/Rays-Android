@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
@@ -66,18 +65,10 @@ class DetailViewModel @Inject constructor(private var detailRepo: DetailReposito
 
     private fun SharedFlow<DetailIntent>.toDetailPartialStateChangeFlow(): Flow<DetailPartialStateChange> {
         return merge(
-            merge(
-                filterIsInstance<DetailIntent.GetStickerDetailsAndAddClickCount>().distinctUntilChanged(),
-                filterIsInstance<DetailIntent.RefreshStickerDetails>(),
-            ).flatMapConcat { intent ->
-                val (stickerUuid, addClickCount) = when (intent) {
-                    is DetailIntent.GetStickerDetailsAndAddClickCount -> intent.stickerUuid to 1
-                    is DetailIntent.RefreshStickerDetails -> intent.stickerUuid to 0
-                    else -> error("DetailIntent type error")
-                }
+            filterIsInstance<DetailIntent.GetStickerDetailsAndAddClickCount>().flatMapConcat { intent ->
                 detailRepo.requestStickerWithTagsDetail(
-                    stickerUuid = stickerUuid,
-                    addClickCount = addClickCount
+                    stickerUuid = intent.stickerUuid,
+                    addClickCount = 1,
                 ).map {
                     if (it == null) DetailPartialStateChange.DetailInfo.Empty
                     else {

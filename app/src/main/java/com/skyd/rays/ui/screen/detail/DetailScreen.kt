@@ -20,12 +20,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -38,16 +36,11 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -64,11 +57,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -88,6 +79,7 @@ import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.privacy.rememberShouldBlur
 import com.skyd.rays.ui.component.AnimatedPlaceholder
+import com.skyd.rays.ui.component.RadioTextItem
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
@@ -139,12 +131,9 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
     val windowSizeClass = LocalWindowSizeClass.current
     var fabHeight by remember { mutableStateOf(0.dp) }
 
-    val dispatch =
-        viewModel.getDispatcher(
-            startWith = DetailIntent.GetStickerDetailsAndAddClickCount(
-                stickerUuid
-            )
-        )
+    val dispatch = viewModel.getDispatcher(
+        startWith = DetailIntent.GetStickerDetailsAndAddClickCount(stickerUuid)
+    )
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -225,60 +214,49 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
             )
         }
     ) { paddingValues ->
-        val pullRefreshState = rememberPullRefreshState(
-            refreshing = uiState.stickerDetailState.loading,
-            onRefresh = { dispatch(DetailIntent.RefreshStickerDetails(stickerUuid)) },
-        )
-        Box(
+        Row(
             modifier = Modifier
                 .padding(paddingValues)
-                .pullRefresh(pullRefreshState)
+                .fillMaxSize()
         ) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                val stickerDetailUiState = uiState.stickerDetailState
-                val showStickerDetailInfo = !windowSizeClass.isCompact &&
-                        stickerDetailUiState is StickerDetailState.Success
+            val stickerDetailUiState = uiState.stickerDetailState
+            val showStickerDetailInfo = !windowSizeClass.isCompact &&
+                    stickerDetailUiState is StickerDetailState.Success
 
+            Column(modifier = Modifier.weight(1f)) {
+                when (stickerDetailUiState) {
+                    StickerDetailState.Init -> DetailScreenEmptyPlaceholder()
+                    StickerDetailState.Loading -> DetailScreenLoadingPlaceholder()
 
-                Column(modifier = Modifier.weight(1f)) {
-                    when (stickerDetailUiState) {
-                        is StickerDetailState.Init -> DetailScreenEmptyPlaceholder()
-
-                        is StickerDetailState.Success -> {
-                            val stickerWithTags = stickerDetailUiState.stickerWithTags
-                            MainCard(
-                                stickerWithTags = stickerWithTags,
-                                scrollState = mainCardScrollState,
-                                bottomPadding = if (windowSizeClass.isCompact) fabHeight else 0.dp,
-                            )
-                            RaysDialog(
-                                visible = openStickerInfoDialog,
-                                title = { Text(text = stringResource(id = R.string.detail_screen_sticker_info)) },
-                                text = { StickerDetailInfo(stickerWithTags = stickerWithTags) },
-                                confirmButton = {
-                                    TextButton(onClick = { openStickerInfoDialog = false }) {
-                                        Text(text = stringResource(id = R.string.dialog_ok))
-                                    }
-                                },
-                                onDismissRequest = { openStickerInfoDialog = false }
-                            )
-                        }
+                    is StickerDetailState.Success -> {
+                        val stickerWithTags = stickerDetailUiState.stickerWithTags
+                        MainCard(
+                            stickerWithTags = stickerWithTags,
+                            scrollState = mainCardScrollState,
+                            bottomPadding = if (windowSizeClass.isCompact) fabHeight else 0.dp,
+                        )
+                        RaysDialog(
+                            visible = openStickerInfoDialog,
+                            title = { Text(text = stringResource(id = R.string.detail_screen_sticker_info)) },
+                            text = { StickerDetailInfo(stickerWithTags = stickerWithTags) },
+                            confirmButton = {
+                                TextButton(onClick = { openStickerInfoDialog = false }) {
+                                    Text(text = stringResource(id = R.string.dialog_ok))
+                                }
+                            },
+                            onDismissRequest = { openStickerInfoDialog = false }
+                        )
                     }
                 }
-                StickerDetailInfoCard(
-                    visible = showStickerDetailInfo,
-                    modifier = Modifier
-                        .fillMaxWidth(0.4f)
-                        .padding(end = 16.dp, top = 16.dp, bottom = 16.dp + fabHeight),
-                    stickerWithTags = {
-                        (stickerDetailUiState as StickerDetailState.Success).stickerWithTags
-                    },
-                )
             }
-            PullRefreshIndicator(
-                refreshing = uiState.stickerDetailState.loading,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter),
+            StickerDetailInfoCard(
+                visible = showStickerDetailInfo,
+                modifier = Modifier
+                    .fillMaxWidth(0.4f)
+                    .padding(end = 16.dp, top = 16.dp, bottom = 16.dp + fabHeight),
+                stickerWithTags = {
+                    (stickerDetailUiState as StickerDetailState.Success).stickerWithTags
+                },
             )
         }
 
@@ -548,6 +526,14 @@ fun DetailScreenEmptyPlaceholder() {
 }
 
 @Composable
+fun DetailScreenLoadingPlaceholder() {
+    AnimatedPlaceholder(
+        resId = R.raw.lottie_genshin_impact_klee_3,
+        tip = stringResource(id = R.string.loading)
+    )
+}
+
+@Composable
 private fun StickerScaleSheet(onDismissRequest: () -> Unit) {
     val bottomSheetState = rememberModalBottomSheetState()
     val stickerScale = LocalStickerScale.current
@@ -565,34 +551,15 @@ private fun StickerScaleSheet(onDismissRequest: () -> Unit) {
                 .selectableGroup()
         ) {
             StickerScalePreference.scaleList.forEach {
-                Card(colors = CardDefaults.cardColors(containerColor = Color.Transparent)) {
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .selectable(
-                                selected = (it == stickerScale),
-                                onClick = {
-                                    StickerScalePreference.put(
-                                        context = context, scope = scope, value = it
-                                    )
-                                },
-                                role = Role.RadioButton
-                            )
-                            .padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = (it == stickerScale),
-                            onClick = null // null recommended for accessibility with screen readers
+                RadioTextItem(
+                    text = StickerScalePreference.toDisplayName(it),
+                    selected = (it == stickerScale),
+                    onClick = {
+                        StickerScalePreference.put(
+                            context = context, scope = scope, value = it
                         )
-                        Text(
-                            text = StickerScalePreference.toDisplayName(it),
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(start = 16.dp)
-                        )
-                    }
-                }
+                    },
+                )
             }
         }
     }

@@ -14,8 +14,7 @@ data class DetailState(
 }
 
 sealed class StickerDetailState {
-    // 当前页面的loading
-    var loading: Boolean = false
     data object Init : StickerDetailState()
+    data object Loading : StickerDetailState()
     data class Success(val stickerWithTags: StickerWithTags) : StickerDetailState()
 }

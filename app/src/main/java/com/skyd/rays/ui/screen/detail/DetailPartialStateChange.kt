@@ -13,7 +13,7 @@ internal sealed interface DetailPartialStateChange {
                 )
 
                 Loading -> oldState.copy(
-                    stickerDetailState = oldState.stickerDetailState.apply { loading = true }
+                    stickerDetailState = StickerDetailState.Loading
                 )
 
                 Empty -> oldState.copy(stickerDetailState = StickerDetailState.Init)

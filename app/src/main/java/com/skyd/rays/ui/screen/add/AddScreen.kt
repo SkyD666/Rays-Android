@@ -621,6 +621,7 @@ private fun WaitingRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 3.dp)
+            .animateContentSize()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -654,7 +655,7 @@ private fun WaitingRow(
                 verticalAlignment = Alignment.CenterVertically,
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 3.dp),
             ) {
-                itemsIndexed(uris) { index, uri ->
+                itemsIndexed(items = uris) { index, uri ->
                     val content: @Composable ColumnScope.() -> Unit = {
                         Box(contentAlignment = Alignment.TopEnd) {
                             RaysImage(

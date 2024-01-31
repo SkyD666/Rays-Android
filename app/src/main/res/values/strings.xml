@@ -332,4 +332,5 @@
     <string name="blur_stickers_screen_add_blur_keyword">Add blur keyword</string>
     <string name="blur_stickers_screen_tip">If the title or label string of a sticker contains the blur keywords, then the sticker will be displayed blurred.</string>
     <string name="blur_stickers_screen_radius">Blur radius</string>
+    <string name="loading">Loading…</string>
 </resources>

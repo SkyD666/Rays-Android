@@ -143,6 +143,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                 title = stringResource(id = R.string.home_screen_most_shared_stickers),
                                 count = mostSharedStickersList.size,
                                 emptyIcon = Icons.AutoMirrored.Rounded.Reply,
+                                key = { mostSharedStickersList[it].sticker.uuid },
                                 itemImage = { mostSharedStickersList[it].sticker.uuid },
                                 itemTitle = { mostSharedStickersList[it].sticker.title },
                                 onItemLongClick = {
@@ -172,6 +173,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                 title = stringResource(id = R.string.home_screen_recent_create_stickers),
                                 count = recentCreatedStickersList.size,
                                 emptyIcon = Icons.Rounded.MoreTime,
+                                key = { recentCreatedStickersList[it].sticker.uuid },
                                 itemImage = { recentCreatedStickersList[it].sticker.uuid },
                                 itemTitle = { recentCreatedStickersList[it].sticker.title },
                                 onItemLongClick = {
@@ -200,6 +202,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 //                            DisplayTagsRow(
 //                                title = stringResource(id = R.string.home_screen_recommend_tags),
 //                                count = recommendTagsList.size,
+//                                key = {},
 //                                itemImage = { recommendTagsList[it].stickerUuid },
 //                                itemTitle = { recommendTagsList[it].tag },
 //                                onItemClick = {
@@ -216,6 +219,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                             DisplayTagsRow(
                                 title = stringResource(id = R.string.home_screen_random_tags),
                                 count = randomTagsList.size,
+                                key = { randomTagsList[it].tag },
                                 emptyIcon = Icons.Rounded.Shuffle,
                                 itemImage = { randomTagsList[it].stickerUuid },
                                 itemTitle = { randomTagsList[it].tag },
@@ -247,6 +251,7 @@ private fun DisplayStickersRow(
     title: String,
     count: Int,
     emptyIcon: ImageVector,
+    key: ((index: Int) -> Any)? = null,
     itemImage: (Int) -> String,
     itemTitle: (Int) -> String,
     onItemLongClick: (Int) -> Unit,
@@ -284,7 +289,7 @@ private fun DisplayStickersRow(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
-                items(count) { index ->
+                items(count = count, key = key) { index ->
                     Column(modifier = Modifier.width(IntrinsicSize.Min)) {
                         ElevatedCard {
                             RaysImage(
@@ -323,6 +328,7 @@ private fun DisplayTagsRow(
     title: String,
     count: Int,
     emptyIcon: ImageVector,
+    key: ((index: Int) -> Any)? = null,
     itemImage: (Int) -> String,
     itemTitle: (Int) -> String,
     onItemClick: (Int) -> Unit,
@@ -361,7 +367,7 @@ private fun DisplayTagsRow(
                 horizontalItemSpacing = 8.dp,
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
-                items(count) { index ->
+                items(count = count, key = key) { index ->
                     ElevatedCard(
                         modifier = Modifier.aspectRatio(2f),
                         onClick = { onItemClick(index) }

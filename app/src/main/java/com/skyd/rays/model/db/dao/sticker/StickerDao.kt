@@ -56,6 +56,10 @@ interface StickerDao {
     fun getStickerWithTags(stickerUuid: String): StickerWithTags?
 
     @Transaction
+    @Query("SELECT * FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN LIKE :stickerUuid")
+    fun getStickerWithTagsFlow(stickerUuid: String): Flow<StickerWithTags?>
+
+    @Transaction
     @Query(
         """SELECT *
         FROM $STICKER_TABLE_NAME

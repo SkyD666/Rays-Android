@@ -88,7 +88,6 @@ fun SearchResultList(
     onInvertSelectClick: () -> Unit,
     selectedStickers: List<StickerWithTags>,
 ) {
-
     Column {
         SearchResultConfigBar(
             stickersCount = dataList.size,
