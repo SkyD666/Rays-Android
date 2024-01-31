@@ -75,7 +75,15 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                     AddEvent.GetStickersWithTagsStateChanged
                 }
 
-                is AddPartialStateChange.Init,
+                is AddPartialStateChange.Init.Failed -> {
+                    AddEvent.InitFailed(change.msg)
+                }
+
+                is AddPartialStateChange.RemoveWaitingListSingleSticker -> {
+                    if (change.index == 0) AddEvent.CurrentStickerChanged else return@onEach
+                }
+
+                is AddPartialStateChange.Init.Success,
                 is AddPartialStateChange.ProcessNext,
                 is AddPartialStateChange.ReplaceWaitingListSingleSticker,
                 is AddPartialStateChange.AddToWaitingList -> AddEvent.CurrentStickerChanged
@@ -98,17 +106,18 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                 combine(
                     addRepository.requestGetStickerWithTags(
                         intent.initStickers.first().stickerUuid
-                    ).catchMap { null },
+                    ),
                     addRepository.requestSuggestTags(
                         intent.initStickers.first().uri!!
-                    ).catchMap { emptySet() }
+                    )
                 ) { stickerWithTags, suggestTags ->
-                    AddPartialStateChange.Init(
+                    AddPartialStateChange.Init.Success(
                         stickerWithTags,
                         intent.initStickers,
                         suggestTags,
                     )
                 }.startWith(AddPartialStateChange.LoadingDialog.Show)
+                    .catchMap { AddPartialStateChange.Init.Failed(it.message.orEmpty()) }
             },
             filterIsInstance<AddIntent.ProcessNext>().map {
                 AddPartialStateChange.ProcessNext
@@ -118,6 +127,9 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                     sticker = intent.sticker,
                     index = intent.index,
                 )
+            },
+            filterIsInstance<AddIntent.RemoveWaitingListSingleSticker>().map { intent ->
+                AddPartialStateChange.RemoveWaitingListSingleSticker(index = intent.index)
             },
             filterIsInstance<AddIntent.AddTag>().map { intent ->
                 AddPartialStateChange.AddTag(intent.text)

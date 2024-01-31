@@ -19,6 +19,8 @@ sealed interface AddIntent : MviIntent {
         val index: Int,
     ) : AddIntent
 
+    data class RemoveWaitingListSingleSticker(val index: Int) : AddIntent
+
     data class AddTag(val text: String) : AddIntent
     data class RemoveTag(val text: String) : AddIntent
     data class AddToWaitingList(val stickers: List<UriWithStickerUuidBean>) : AddIntent

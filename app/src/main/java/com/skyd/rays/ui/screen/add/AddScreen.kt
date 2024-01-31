@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.MutatePriority
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +25,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -46,6 +46,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EditOff
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.HighlightOff
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
@@ -146,6 +147,7 @@ fun AddScreen(
     var currentTagText by rememberSaveable { mutableStateOf("") }
     var stickerCreateTime by rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     var openMoreMenu by rememberSaveable { mutableStateOf(false) }
+    var openErrorDialog by rememberSaveable { mutableStateOf<String?>(null) }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
 
@@ -279,6 +281,9 @@ fun AddScreen(
                             currentReplaceIndex = index
                             pickStickerLauncher.launchImagePicker()
                         },
+                        onRemoveStickerFromWaitingListClick = { index ->
+                            dispatch(AddIntent.RemoveWaitingListSingleSticker(index))
+                        },
                     )
                     AnimatedVisibility(
                         visible = uiState.waitingList.isNotEmpty(),
@@ -372,8 +377,23 @@ fun AddScreen(
                 onGetStickersWithTagsStateChanged()
             }
 
+            is AddEvent.InitFailed -> openErrorDialog = event.msg
             null -> Unit
         }
+
+        RaysDialog(
+            visible = !openErrorDialog.isNullOrBlank(),
+            title = { Text(text = stringResource(R.string.dialog_warning)) },
+            text = { Text(text = stringResource(R.string.failed_info, openErrorDialog.orEmpty())) },
+            confirmButton = {
+                TextButton(onClick = {
+                    openErrorDialog = null
+                    navController.popBackStackWithLifecycle()
+                }) {
+                    Text(text = stringResource(id = R.string.dialog_exit))
+                }
+            }
+        )
 
         RaysDialog(
             visible = openDuplicateDialog,
@@ -595,6 +615,7 @@ private fun WaitingRow(
     isEdit: Boolean,
     onSelectStickersClick: () -> Unit,
     onReplaceStickerClick: (Int) -> Unit,
+    onRemoveStickerFromWaitingListClick: (Int) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -641,21 +662,33 @@ private fun WaitingRow(
                                 blur = false,
                                 modifier = Modifier
                                     .height(if (index == 0) 150.dp else 100.dp)
-                                    .aspectRatio(1f)
-                                    .clickable(onClick = { onReplaceStickerClick(index) }),
+                                    .aspectRatio(1f),
                                 contentScale = ContentScale.Crop,
                             )
-                            RaysIconButton(
-                                colors = IconButtonDefaults.filledIconButtonColors(
+                            Row(modifier = Modifier.padding(3.dp)) {
+                                val iconButtonModifier = Modifier.size(36.dp)
+                                val iconButtonColors = IconButtonDefaults.filledIconButtonColors(
                                     containerColor = Color.Black.copy(alpha = 0.3f),
                                     contentColor = Color.White,
                                     disabledContainerColor = Color.Black.copy(alpha = 0.2f),
                                     disabledContentColor = Color.White,
-                                ),
-                                onClick = { onReplaceStickerClick(index) },
-                                imageVector = Icons.Default.Autorenew,
-                                contentDescription = stringResource(R.string.add_screen_update_sticker),
-                            )
+                                )
+                                RaysIconButton(
+                                    modifier = iconButtonModifier,
+                                    colors = iconButtonColors,
+                                    onClick = { onRemoveStickerFromWaitingListClick(index) },
+                                    imageVector = Icons.Default.HighlightOff,
+                                    contentDescription = stringResource(R.string.add_screen_remove_sticker_from_waiting_list),
+                                )
+                                Spacer(modifier = Modifier.width(3.dp))
+                                RaysIconButton(
+                                    modifier = iconButtonModifier,
+                                    colors = iconButtonColors,
+                                    onClick = { onReplaceStickerClick(index) },
+                                    imageVector = Icons.Default.Autorenew,
+                                    contentDescription = stringResource(R.string.add_screen_update_sticker),
+                                )
+                            }
                         }
                     }
                     ElevatedCard(content = content)

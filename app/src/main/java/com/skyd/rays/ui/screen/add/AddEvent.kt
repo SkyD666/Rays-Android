@@ -11,6 +11,6 @@ sealed interface AddEvent : MviSingleEvent {
     }
 
     data object CurrentStickerChanged : AddEvent
-
     data object GetStickersWithTagsStateChanged : AddEvent
+    data class InitFailed(val msg: String) : AddEvent
 }

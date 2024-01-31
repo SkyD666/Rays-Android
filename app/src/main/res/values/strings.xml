@@ -39,6 +39,7 @@
     <string name="cancel">Cancel</string>
     <string name="home_screen_delete_warning">Delete? The operation is irreversible!</string>
     <string name="dialog_warning">Warning</string>
+    <string name="dialog_exit">Exit</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
     <string name="setting_screen_search_description">Search preference, search domain</string>
@@ -165,6 +166,7 @@
     <string name="add_screen_add_stickers">Add stickers</string>
     <string name="add_screen_update_sticker">Select a new sticker</string>
     <string name="add_screen_save_all">Save all</string>
+    <string name="add_screen_remove_sticker_from_waiting_list">Cancel edit</string>
     <string name="import_export_screen_name">Sync data</string>
     <string name="send_sticker">Send sticker</string>
     <string name="about_screen_other_works_raca_name" translatable="false">Raca (Record All Classic Articles)</string>

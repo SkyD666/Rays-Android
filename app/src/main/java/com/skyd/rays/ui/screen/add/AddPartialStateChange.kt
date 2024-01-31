@@ -20,21 +20,27 @@ internal sealed interface AddPartialStateChange {
         override fun reduce(oldState: AddState) = oldState
     }
 
-    data class Init(
-        val stickerWithTags: StickerWithTags?,
-        val waitingList: List<UriWithStickerUuidBean>,
-        val suggestTags: Set<String>,
-    ) : AddPartialStateChange {
-        override fun reduce(oldState: AddState) = oldState.copy(
-            waitingList = waitingList,
-            getStickersWithTagsState = if (stickerWithTags == null) {
-                GetStickersWithTagsState.Init
-            } else GetStickersWithTagsState.Success(stickerWithTags),
-            suggestTags = suggestTags.toList(),
-            addedTags = stickerWithTags?.tags?.map { it.tag }.orEmpty(),
-            addToAllTags = emptyList(),
-            loadingDialog = false,
-        )
+    sealed interface Init : AddPartialStateChange {
+        data class Success(
+            val stickerWithTags: StickerWithTags?,
+            val waitingList: List<UriWithStickerUuidBean>,
+            val suggestTags: Set<String>,
+        ) : Init {
+            override fun reduce(oldState: AddState) = oldState.copy(
+                waitingList = waitingList,
+                getStickersWithTagsState = if (stickerWithTags == null) {
+                    GetStickersWithTagsState.Init
+                } else GetStickersWithTagsState.Success(stickerWithTags),
+                suggestTags = suggestTags.toList(),
+                addedTags = stickerWithTags?.tags?.map { it.tag }.orEmpty(),
+                addToAllTags = emptyList(),
+                loadingDialog = false,
+            )
+        }
+
+        data class Failed(val msg: String) : Init {
+            override fun reduce(oldState: AddState): AddState = oldState
+        }
     }
 
     data object ProcessNext : AddPartialStateChange {
@@ -53,6 +59,12 @@ internal sealed interface AddPartialStateChange {
     ) : AddPartialStateChange {
         override fun reduce(oldState: AddState) = oldState.copy(
             waitingList = oldState.waitingList.toMutableList().apply { set(index, sticker) }
+        )
+    }
+
+    data class RemoveWaitingListSingleSticker(val index: Int) : AddPartialStateChange {
+        override fun reduce(oldState: AddState) = oldState.copy(
+            waitingList = oldState.waitingList.toMutableList().apply { removeAt(index) }
         )
     }
 
