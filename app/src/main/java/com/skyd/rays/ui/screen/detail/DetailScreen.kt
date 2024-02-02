@@ -151,6 +151,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                         isEdit = true
                     )
                 },
+                visible = uiState.stickerDetailState is StickerDetailState.Success,
                 onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height }
             )
         },
@@ -171,6 +172,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                     RaysIconButton(
                         imageVector = Icons.Default.Share,
                         contentDescription = stringResource(R.string.send_sticker),
+                        enabled = uiState.stickerDetailState is StickerDetailState.Success,
                         onClick = {
                             context.sendStickerByUuid(
                                 uuid = stickerUuid,
@@ -186,6 +188,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                     RaysIconButton(
                         imageVector = Icons.Default.ContentCopy,
                         contentDescription = stringResource(id = R.string.detail_screen_copy),
+                        enabled = uiState.stickerDetailState is StickerDetailState.Success,
                         onClick = {
                             scope.launch(Dispatchers.IO) {
                                 context.copyStickerToClipboard(uuid = stickerUuid)
@@ -198,6 +201,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                     )
                     RaysIconButton(
                         onClick = { openMenu = true },
+                        enabled = uiState.stickerDetailState is StickerDetailState.Success,
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = stringResource(id = R.string.more)
                     )
@@ -489,6 +493,7 @@ fun StickerDetailInfoCard(
 @Composable
 fun DetailScreenFloatingActionButton(
     onClick: () -> Unit,
+    visible: Boolean = true,
     onSizeWithSinglePaddingChanged: ((width: Dp, height: Dp) -> Unit)
 ) {
     val windowSizeClass = LocalWindowSizeClass.current
@@ -499,21 +504,23 @@ fun DetailScreenFloatingActionButton(
         }
     }
 
-    if (windowSizeClass.isCompact) {
-        RaysFloatingActionButton(
-            content = { content() },
-            onClick = onClick,
-            onSizeWithSinglePaddingChanged = onSizeWithSinglePaddingChanged,
-            contentDescription = stringResource(R.string.detail_screen_edit),
-        )
-    } else {
-        RaysExtendedFloatingActionButton(
-            text = { Text(text = stringResource(R.string.detail_screen_edit)) },
-            icon = content,
-            onClick = onClick,
-            onSizeWithSinglePaddingChanged = onSizeWithSinglePaddingChanged,
-            contentDescription = stringResource(R.string.detail_screen_edit),
-        )
+    if (visible) {
+        if (windowSizeClass.isCompact) {
+            RaysFloatingActionButton(
+                content = { content() },
+                onClick = onClick,
+                onSizeWithSinglePaddingChanged = onSizeWithSinglePaddingChanged,
+                contentDescription = stringResource(R.string.detail_screen_edit),
+            )
+        } else {
+            RaysExtendedFloatingActionButton(
+                text = { Text(text = stringResource(R.string.detail_screen_edit)) },
+                icon = content,
+                onClick = onClick,
+                onSizeWithSinglePaddingChanged = onSizeWithSinglePaddingChanged,
+                contentDescription = stringResource(R.string.detail_screen_edit),
+            )
+        }
     }
 }
 

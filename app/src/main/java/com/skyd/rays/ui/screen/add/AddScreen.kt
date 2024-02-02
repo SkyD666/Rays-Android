@@ -267,7 +267,6 @@ fun AddScreen(
             )
         },
     ) { paddingValues ->
-        var openDialog by remember { mutableStateOf(false) }
         var openDuplicateDialog by remember { mutableStateOf(false) }
 
         LazyColumn(contentPadding = paddingValues) {
@@ -351,7 +350,6 @@ fun AddScreen(
             is AddEvent.AddStickersResultEvent.Success -> LaunchedEffect(event) {
                 resetStickerData()
                 processNext()
-                openDialog = true
             }
 
             AddEvent.CurrentStickerChanged -> {
@@ -402,28 +400,6 @@ fun AddScreen(
             onDismissRequest = { openDuplicateDialog = false },
             confirmButton = {
                 TextButton(onClick = { openDuplicateDialog = false }) {
-                    Text(text = stringResource(id = R.string.dialog_ok))
-                }
-            }
-        )
-
-        RaysDialog(
-            visible = openDialog,
-            title = { Text(text = stringResource(R.string.info)) },
-            text = { Text(text = stringResource(R.string.add_screen_success)) },
-            onDismissRequest = {
-                openDialog = false
-                if (uiState.waitingList.isEmpty()) {
-                    navController.popBackStackWithLifecycle()
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    openDialog = false
-                    if (uiState.waitingList.isEmpty()) {
-                        navController.popBackStackWithLifecycle()
-                    }
-                }) {
                     Text(text = stringResource(id = R.string.dialog_ok))
                 }
             }

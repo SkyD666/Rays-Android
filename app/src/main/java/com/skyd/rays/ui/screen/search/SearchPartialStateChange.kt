@@ -71,5 +71,11 @@ internal sealed interface SearchPartialStateChange {
                 loadingDialog = false,
             )
         }
+
+        data class Failed(val msg: String) : DeleteStickerWithTags {
+            override fun reduce(oldState: SearchState): SearchState = oldState.copy(
+                loadingDialog = false,
+            )
+        }
     }
 }

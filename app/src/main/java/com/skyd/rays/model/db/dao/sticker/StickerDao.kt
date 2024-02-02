@@ -35,7 +35,7 @@ interface StickerDao {
         val tagDao: TagDao
     }
 
-    @Transaction
+//    @Transaction 加上后会导致Flow更新不正常（搜索页面不能及时删除没有tag的表情包）
     @RawQuery
     fun getStickerWithTagsList(sql: SupportSQLiteQuery): Flow<List<StickerWithTags>>
 

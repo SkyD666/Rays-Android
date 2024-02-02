@@ -163,7 +163,6 @@
     <string name="add_screen_sticker_is_not_set">表情包圖片未設定！</string>
     <string name="style_transfer_screen_transfer">轉移</string>
     <string name="selfie_segmentation_screen_image_not_selected">在分割前請選擇一張自拍照片</string>
-    <string name="add_screen_success">操作成功</string>
     <string name="failed_info">操作失敗：%s</string>
     <string name="style_transfer_screen_style">風格</string>
     <string name="image_scale_crop">裁剪</string>

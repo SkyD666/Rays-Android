@@ -13,5 +13,6 @@ sealed interface SearchEvent : MviSingleEvent {
 
     sealed interface DeleteStickerWithTags : SearchEvent {
         data class Success(val stickerUuids: List<String>) : DeleteStickerWithTags
+        data class Failed(val msg: String) : DeleteStickerWithTags
     }
 }

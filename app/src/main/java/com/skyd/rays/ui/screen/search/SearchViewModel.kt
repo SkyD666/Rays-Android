@@ -63,6 +63,9 @@ class SearchViewModel @Inject constructor(
                 is SearchPartialStateChange.ExportStickers.Success ->
                     SearchEvent.ExportStickers.Success(change.successCount)
 
+                is SearchPartialStateChange.DeleteStickerWithTags.Failed ->
+                    SearchEvent.DeleteStickerWithTags.Failed(change.msg)
+
                 else -> return@onEach
             }
             sendEvent(event)
@@ -104,6 +107,9 @@ class SearchViewModel @Inject constructor(
                 searchRepo.requestDeleteStickerWithTagsDetail(stickerUuids = intent.stickerUuids)
                     .map { SearchPartialStateChange.DeleteStickerWithTags.Success(it) }
                     .startWith(SearchPartialStateChange.LoadingDialog)
+                    .catchMap {
+                        SearchPartialStateChange.DeleteStickerWithTags.Failed(it.message.toString())
+                    }
             },
         )
     }

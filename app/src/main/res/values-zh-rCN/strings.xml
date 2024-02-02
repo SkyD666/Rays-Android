@@ -11,7 +11,6 @@
     <string name="add_screen_name">添加</string>
     <string name="add_screen_name_edit">编辑</string>
     <string name="back">返回</string>
-    <string name="add_screen_success">操作成功</string>
     <string name="failed_info">操作失败：%s</string>
     <string name="add_screen_waiting_uris">处理列表</string>
     <string name="add_screen_sticker_is_not_set">表情包图片未设置！</string>

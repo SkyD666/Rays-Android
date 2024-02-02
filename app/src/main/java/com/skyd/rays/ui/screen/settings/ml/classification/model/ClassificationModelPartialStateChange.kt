@@ -15,7 +15,8 @@ internal sealed interface ClassificationModelPartialStateChange {
         override fun reduce(oldState: ClassificationModelState): ClassificationModelState {
             return when (this) {
                 is Success -> oldState.copy(
-                    getModelsState = GetModelsState.Success(models)
+                    getModelsState = GetModelsState.Success(models),
+                    loadingDialog = false,
                 )
             }
         }
@@ -24,26 +25,33 @@ internal sealed interface ClassificationModelPartialStateChange {
     }
 
     sealed interface Import : ClassificationModelPartialStateChange {
-        override fun reduce(oldState: ClassificationModelState) = oldState
-
         data class Success(val newModel: ModelBean) : Import {
             override fun reduce(oldState: ClassificationModelState) =
                 if (oldState.getModelsState is GetModelsState.Success) {
                     oldState.copy(
                         getModelsState = GetModelsState.Success(
                             oldState.getModelsState.models.toMutableList() + newModel
-                        )
+                        ),
+                        loadingDialog = false,
                     )
-                } else oldState
+                } else oldState.copy(
+                    loadingDialog = false,
+                )
         }
 
-        data class Failed(val msg: String) : Import
+        data class Failed(val msg: String) : Import {
+            override fun reduce(oldState: ClassificationModelState) = oldState.copy(
+                loadingDialog = false,
+            )
+        }
     }
 
     sealed interface SetModel : ClassificationModelPartialStateChange {
-        override fun reduce(oldState: ClassificationModelState) = oldState
-
-        data object Success : Import
+        data object Success : SetModel {
+            override fun reduce(oldState: ClassificationModelState) = oldState.copy(
+                loadingDialog = false,
+            )
+        }
     }
 
     sealed interface Delete : ClassificationModelPartialStateChange {
@@ -53,13 +61,18 @@ internal sealed interface ClassificationModelPartialStateChange {
                     oldState.copy(
                         getModelsState = GetModelsState.Success(
                             oldState.getModelsState.models.filter { it.uri != deletedUri }
-                        )
+                        ),
+                        loadingDialog = false,
                     )
-                } else oldState
+                } else oldState.copy(
+                    loadingDialog = false,
+                )
         }
 
         data class Failed(val msg: String) : Delete {
-            override fun reduce(oldState: ClassificationModelState) = oldState
+            override fun reduce(oldState: ClassificationModelState) = oldState.copy(
+                loadingDialog = false,
+            )
         }
     }
 }
