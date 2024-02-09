@@ -16,10 +16,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SwipeToDismissValue
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberSwipeToDismissState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -183,9 +183,9 @@ private fun ModelList(
         }
         itemsIndexed(models) { _, item ->
             RaysSwipeToDismiss(
-                state = rememberSwipeToDismissState(
+                state = rememberSwipeToDismissBoxState(
                     confirmValueChange = { dismissValue ->
-                        if (dismissValue == SwipeToDismissValue.EndToStart) {
+                        if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
                             onDelete(item)
                         }
                         false

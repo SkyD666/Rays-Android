@@ -9,7 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissState
+import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +20,7 @@ import com.skyd.rays.R
 
 @Composable
 fun RaysSwipeToDismiss(
-    state: SwipeToDismissState,
+    state: SwipeToDismissBoxState,
     modifier: Modifier = Modifier,
     background: @Composable RowScope.() -> Unit = {
         Box(

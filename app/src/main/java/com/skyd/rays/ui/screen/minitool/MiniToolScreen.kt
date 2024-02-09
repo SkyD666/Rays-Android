@@ -53,7 +53,7 @@ fun MiniToolScreen() {
                         imageVector = Icons.Default.Extension,
                         onClick = {
                             snackbarHostState.showSnackbar(
-                                message = "\uD83D\uDC31 Meow~",
+                                message = "\ud83c\udfee Happy New Year 2024~",
                                 scope = scope,
                                 withDismissAction = true
                             )

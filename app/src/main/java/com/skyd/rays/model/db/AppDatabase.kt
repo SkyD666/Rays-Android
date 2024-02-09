@@ -12,9 +12,9 @@ import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.bean.UriStringSharePackageBean
 import com.skyd.rays.model.db.dao.ApiGrantPackageDao
 import com.skyd.rays.model.db.dao.SearchDomainDao
-import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.model.db.dao.TagDao
 import com.skyd.rays.model.db.dao.UriStringSharePackageDao
+import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.model.db.migration.Migration1To2
 import com.skyd.rays.model.db.migration.Migration2To3
 import com.skyd.rays.model.db.migration.Migration3To4
@@ -45,6 +45,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun apiGrantPackageDao(): ApiGrantPackageDao
 
     companion object {
+        @Volatile
         private var instance: AppDatabase? = null
 
         private val migrations = arrayOf(
