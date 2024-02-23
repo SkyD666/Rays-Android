@@ -15,6 +15,7 @@ import com.skyd.rays.model.bean.StickerBean.Companion.STICKER_MD5_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.UUID_COLUMN
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.StickerWithTagsAndFile
+import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.db.dao.TagDao
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import dagger.hilt.EntryPoint
@@ -36,7 +37,7 @@ interface StickerDao {
     }
 
     @Transaction
-    @RawQuery
+    @RawQuery(observedEntities = [StickerBean::class, TagBean::class])
     fun getStickerWithTagsList(sql: SupportSQLiteQuery): Flow<List<StickerWithTags>>
 
     @Transaction

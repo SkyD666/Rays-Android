@@ -40,7 +40,7 @@ jobs:
       run: |
         cd secret/Rays-Android
         cp key.jks ../..
-        cp secret.gradle ../..
+        cp secret.gradle.kts ../..
         cp -rf assets ../../app/src/main
     # 清理 secret 文件
     - name: Clean Temp Secret Files
