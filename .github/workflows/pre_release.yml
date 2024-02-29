@@ -74,7 +74,7 @@ jobs:
         BOT_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         PRE_RELEASE: ${{ env.PRE_RELEASE_APK }}
         COMMIT_MESSAGE: |+
-          GitHub New CI\
+          GitHub New CI: Rays\
         
           `${{ github.event.head_commit.message }}`
         

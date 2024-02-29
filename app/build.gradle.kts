@@ -21,7 +21,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 61
-        versionName = "2.2-alpha01"
+        versionName = "2.2-alpha02"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -145,8 +145,8 @@ dependencies {
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.material3:material3:$md3Version")
     implementation("androidx.compose.material3:material3-window-size-class:$md3Version")
-    implementation("androidx.compose.material:material:1.6.1")
-    implementation("androidx.compose.material:material-icons-extended:1.6.1")
+    implementation("androidx.compose.material:material:1.6.2")
+    implementation("androidx.compose.material:material-icons-extended:1.6.2")
     implementation("androidx.compose.ui:ui-tooling-preview:$md3Version")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
@@ -155,7 +155,7 @@ dependencies {
     implementation("androidx.palette:palette-ktx:1.0.0")
     implementation("com.google.dagger:hilt-android:2.50")
     ksp("com.google.dagger:hilt-android-compiler:2.50")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation("com.google.accompanist:accompanist-drawablepainter:$accompanistVersion")
@@ -189,6 +189,6 @@ dependencies {
 
     implementation("com.github.penfeizhou.android.animation:apng:2.28.0")
 
-    debugImplementation("androidx.compose.ui:ui-tooling:$md3Version")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:$md3Version")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.2")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.2")
 }
