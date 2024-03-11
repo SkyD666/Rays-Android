@@ -94,6 +94,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.navigate
@@ -119,14 +120,16 @@ const val ADD_SCREEN_ROUTE = "addScreen"
 fun openAddScreen(
     navController: NavHostController,
     stickers: List<UriWithStickerUuidBean>,
-    isEdit: Boolean
+    isEdit: Boolean,
+    navOptions: NavOptions? = null,
 ) {
     navController.navigate(
         ADD_SCREEN_ROUTE,
         Bundle().apply {
             putBoolean("isEdit", isEdit)
             putParcelableArrayList("stickers", ArrayList(stickers))
-        }
+        },
+        navOptions = navOptions,
     )
 }
 

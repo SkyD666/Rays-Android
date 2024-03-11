@@ -193,10 +193,20 @@ class AddRepository @Inject constructor(
         val lang = Locale.getDefault().language
         if (lang == "zh") return origin
         if (!this::translateClassificationMap.isInitialized) {
-            translateClassificationMap =
-                appContext.assets.open("stickerclassification/lang/$lang.txt").use {
-                    json.decodeFromStream(it)
+            val assets = appContext.assets
+            runCatching {
+                translateClassificationMap = assets
+                    .open("stickerclassification/lang/$lang.txt")
+                    .use { json.decodeFromStream(it) }
+            }.onFailure {
+                runCatching {
+                    translateClassificationMap = assets
+                        .open("stickerclassification/lang/en.txt")
+                        .use { json.decodeFromStream(it) }
+                }.onFailure {
+                    return origin
                 }
+            }
         }
         return translateClassificationMap.getOrDefault(origin, origin)
     }

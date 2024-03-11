@@ -2,7 +2,6 @@ package com.skyd.rays.ui.activity
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
@@ -25,6 +24,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.core.content.IntentCompat
+import androidx.core.os.BundleCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.util.Consumer
 import androidx.lifecycle.lifecycleScope
@@ -209,8 +210,11 @@ class MainActivity : AppCompatActivity() {
                     arguments = listOf(navArgument("isEdit") { defaultValue = false })
                 ) {
                     AddScreen(
-                        initStickers = it.arguments?.getParcelableArrayList("stickers")
-                            ?: mutableListOf(),
+                        initStickers = it.arguments?.let { arguments ->
+                            BundleCompat.getParcelableArrayList(
+                                arguments, "stickers", UriWithStickerUuidBean::class.java,
+                            )
+                        } ?: mutableListOf(),
                         isEdit = it.arguments?.getBoolean("isEdit") ?: false,
                     )
                 }
@@ -312,16 +316,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initIntent(intent: Intent? = getIntent()) {
+    private fun initIntent(
+        intent: Intent? = getIntent(),
+        onOpenAddScreen: (List<UriWithStickerUuidBean>) -> Unit = { stickers ->
+            openAddScreen(
+                navController = navController,
+                stickers = stickers,
+                isEdit = false,
+            )
+        },
+    ) {
         val stickers: MutableList<UriWithStickerUuidBean> = when (intent?.action) {
             Intent.ACTION_SEND -> {
                 val data = mutableListOf<UriWithStickerUuidBean>()
                 if (intent.type?.startsWith("image/") == true) {
-                    val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
-                    } else {
-                        intent.getParcelableExtra(Intent.EXTRA_STREAM)
-                    }
+                    val uri = IntentCompat.getParcelableExtra(
+                        intent, Intent.EXTRA_STREAM, Uri::class.java,
+                    )
                     if (uri != null) {
                         data.add(UriWithStickerUuidBean(uri = uri))
                     }
@@ -332,11 +343,9 @@ class MainActivity : AppCompatActivity() {
             Intent.ACTION_SEND_MULTIPLE -> {
                 val data = mutableListOf<UriWithStickerUuidBean>()
                 if (intent.type?.startsWith("image/") == true) {
-                    val uris = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
-                    } else {
-                        intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM)
-                    }?.map { UriWithStickerUuidBean(uri = it) }
+                    val uris = IntentCompat.getParcelableArrayListExtra(
+                        intent, Intent.EXTRA_STREAM, Uri::class.java,
+                    )?.map { UriWithStickerUuidBean(uri = it) }
                     if (uris != null) {
                         data.addAll(uris)
                     }
@@ -349,10 +358,6 @@ class MainActivity : AppCompatActivity() {
 
         if (stickers.isEmpty()) return
 
-        openAddScreen(
-            navController = navController,
-            stickers = stickers,
-            isEdit = false,
-        )
+        onOpenAddScreen(stickers)
     }
 }

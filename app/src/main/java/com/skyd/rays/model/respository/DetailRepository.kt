@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class DetailRepository @Inject constructor(private val stickerDao: StickerDao) : BaseRepository() {
-    suspend fun requestStickerWithTagsDetail(
+    fun requestStickerWithTagsDetail(
         stickerUuid: String,
         addClickCount: Int = 1,
     ): Flow<StickerWithTags?> {
