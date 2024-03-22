@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
+import androidx.core.content.pm.PackageInfoCompat
 import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.ui.component.showToast
@@ -49,11 +50,7 @@ object CommonUtil {
             val packageInfo = appContext.applicationContext
                 .packageManager
                 .getPackageInfo(appContext.packageName, 0)
-            appVersionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                packageInfo.longVersionCode
-            } else {
-                packageInfo.versionCode.toLong()
-            }
+            appVersionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }

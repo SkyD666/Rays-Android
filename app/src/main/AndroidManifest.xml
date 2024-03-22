@@ -8,7 +8,7 @@
         tools:ignore="QueryAllPackagesPermission" />
 
     <application
-        android:name="com.skyd.rays.App"
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
@@ -44,14 +44,15 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".api.ApiEventReceiver"
+        <service
+            android:name=".api.ApiService"
+            android:enabled="true"
             android:exported="true"
             android:permission="rays.permission.api">
             <intent-filter>
-                <action android:name="rays.api" />
+                <action android:name="com.skyd.rays.api.ApiService" />
             </intent-filter>
-        </receiver>
+        </service>
 
         <service
             android:name=".ui.service.RaysAccessibilityService"
