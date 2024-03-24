@@ -1,6 +1,12 @@
 package com.skyd.rays.model.db.dao.sticker
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.MapColumn
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.room.Transaction
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.skyd.rays.appContext
 import com.skyd.rays.config.STICKER_DIR
@@ -26,7 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import java.io.File
-import java.util.*
+import java.util.UUID
 
 @Dao
 interface StickerDao {
@@ -55,6 +61,17 @@ interface StickerDao {
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN LIKE :stickerUuid")
     fun getStickerWithTags(stickerUuid: String): StickerWithTags?
+
+    @Transaction
+    @Query(
+        """
+        SELECT $UUID_COLUMN, ${StickerBean.TITLE_COLUMN} FROM $STICKER_TABLE_NAME
+        WHERE $UUID_COLUMN IN (:stickerUuids)
+        """
+    )
+    fun getStickerTitles(stickerUuids: List<String>): Map<
+            @MapColumn(columnName = UUID_COLUMN) String,
+            @MapColumn(columnName = StickerBean.TITLE_COLUMN) String>
 
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN LIKE :stickerUuid")

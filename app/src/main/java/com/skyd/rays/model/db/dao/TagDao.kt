@@ -1,6 +1,11 @@
 package com.skyd.rays.model.db.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.MapColumn
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
 import com.skyd.rays.model.bean.TAG_TABLE_NAME
 import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.bean.TagBean.Companion.CREATE_TIME_COLUMN
@@ -13,6 +18,19 @@ interface TagDao {
     @Transaction
     @Query("SELECT * FROM $TAG_TABLE_NAME")
     fun getTagList(): List<TagBean>
+
+    @Transaction
+    @Query(
+        """
+        SELECT $STICKER_UUID_COLUMN, group_concat($TAG_COLUMN, ', ') AS CONCAT_TAG
+        FROM $TAG_TABLE_NAME
+        WHERE $STICKER_UUID_COLUMN IN (:stickerUuids)
+        GROUP BY $STICKER_UUID_COLUMN
+        """
+    )
+    fun getTagStringMap(stickerUuids: List<String>): Map<
+            @MapColumn(columnName = STICKER_UUID_COLUMN) String,
+            @MapColumn(columnName = "CONCAT_TAG") String>
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)

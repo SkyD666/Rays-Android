@@ -77,6 +77,17 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <provider
+            android:name=".model.provider.StickerProvider"
+            android:authorities="${applicationId}.documents"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
+        </provider>
+
         <receiver
             android:name=".model.broadcast.ShareSheetActionsReceiver"
             android:enabled="true" />
