@@ -74,6 +74,8 @@ import com.skyd.rays.ui.screen.settings.appearance.style.SEARCH_STYLE_SCREEN_ROU
 import com.skyd.rays.ui.screen.settings.appearance.style.SearchStyleScreen
 import com.skyd.rays.ui.screen.settings.data.DATA_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.DataScreen
+import com.skyd.rays.ui.screen.settings.data.cache.CACHE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.data.cache.CacheScreen
 import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.importexport.ImportExportScreen
 import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WEBDAV_SCREEN_ROUTE
@@ -303,6 +305,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(route = BLUR_STICKERS_SCREEN_ROUTE) {
                     BlurStickersScreen()
+                }
+                composable(route = CACHE_SCREEN_ROUTE) {
+                    CacheScreen()
                 }
             }
 

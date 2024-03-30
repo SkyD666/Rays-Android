@@ -321,4 +321,12 @@
     <string name="blur_stickers_screen_radius">模糊半徑</string>
     <string name="loading">載入中…</string>
     <string name="stickers">表情包</string>
+    <string name="cache_screen_name">快取</string>
+    <string name="cache_screen_description">刪除快取資料等</string>
+    <string name="cache_screen_delete_provider_thumbnails">刪除縮圖快取</string>
+    <string name="cache_screen_delete_provider_thumbnails_description">刪除貼紙提供者縮圖快取</string>
+    <string name="cache_screen_delete_provider_thumbnails_success">所有縮圖均已清除，已花費 %.2f 秒</string>
+    <string name="data_screen_sync_category">同步</string>
+    <string name="data_screen_delete_category">刪除</string>
+    <string name="data_screen_source_category">來源</string>
 </resources>

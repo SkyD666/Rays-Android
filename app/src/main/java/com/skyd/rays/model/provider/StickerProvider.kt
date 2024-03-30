@@ -175,6 +175,7 @@ class StickerProvider : DocumentsProvider() {
         signal: CancellationSignal?
     ): AssetFileDescriptor {
         val stickerFile = File(documentId)
+        // TODO: delete thumbFile
         val thumbFile = File(PROVIDER_THUMBNAIL_DIR, stickerFile.name)
         if (!thumbFile.exists()) {
             thumbFile.parentFile?.mkdirs()

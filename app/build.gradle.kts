@@ -21,7 +21,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 61
-        versionName = "2.2-alpha05"
+        versionName = "2.2-alpha06"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -146,8 +146,8 @@ dependencies {
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.material3:material3:$md3Version")
     implementation("androidx.compose.material3:material3-window-size-class:$md3Version")
-    implementation("androidx.compose.material:material:1.6.3")
-    implementation("androidx.compose.material:material-icons-extended:1.6.3")
+    implementation("androidx.compose.material:material:1.6.4")
+    implementation("androidx.compose.material:material-icons-extended:1.6.4")
     implementation("androidx.compose.ui:ui-tooling-preview:$md3Version")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
@@ -190,6 +190,6 @@ dependencies {
 
     implementation("com.github.penfeizhou.android.animation:apng:2.28.0")
 
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.3")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.3")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.4")
 }

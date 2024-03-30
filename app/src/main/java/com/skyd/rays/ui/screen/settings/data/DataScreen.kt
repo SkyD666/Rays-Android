@@ -3,6 +3,7 @@ package com.skyd.rays.ui.screen.settings.data
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cached
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.Source
@@ -28,11 +29,13 @@ import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.ui.component.BaseSettingsItem
+import com.skyd.rays.ui.component.CategorySettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
+import com.skyd.rays.ui.screen.settings.data.cache.CACHE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.imagesource.IMAGE_SOURCE_SCREEN_ROUTE
 
@@ -67,12 +70,31 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             contentPadding = paddingValues,
         ) {
             item {
+                CategorySettingsItem(text = stringResource(id = R.string.data_screen_source_category))
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(Icons.Default.Source),
+                    text = stringResource(id = R.string.image_source_screen_name),
+                    descriptionText = stringResource(id = R.string.setting_screen_image_source_description),
+                    onClick = { navController.navigate(IMAGE_SOURCE_SCREEN_ROUTE) }
+                )
+            }
+            item {
+                CategorySettingsItem(text = stringResource(id = R.string.data_screen_sync_category))
+            }
+            item {
                 BaseSettingsItem(
                     icon = rememberVectorPainter(image = Icons.Default.ImportExport),
                     text = stringResource(id = R.string.import_export_screen_name),
                     descriptionText = stringResource(id = R.string.data_screen_import_export_description),
                     onClick = { navController.navigate(IMPORT_EXPORT_SCREEN_ROUTE) }
                 )
+            }
+            item {
+                CategorySettingsItem(text = stringResource(id = R.string.data_screen_delete_category))
+            }
+            item {
                 BaseSettingsItem(
                     icon = rememberVectorPainter(image = Icons.Default.Delete),
                     text = stringResource(id = R.string.data_screen_delete_all),
@@ -82,10 +104,10 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.Source),
-                    text = stringResource(id = R.string.image_source_screen_name),
-                    descriptionText = stringResource(id = R.string.setting_screen_image_source_description),
-                    onClick = { navController.navigate(IMAGE_SOURCE_SCREEN_ROUTE) }
+                    icon = rememberVectorPainter(image = Icons.Default.Cached),
+                    text = stringResource(id = R.string.cache_screen_name),
+                    descriptionText = stringResource(id = R.string.cache_screen_description),
+                    onClick = { navController.navigate(CACHE_SCREEN_ROUTE) }
                 )
             }
         }
