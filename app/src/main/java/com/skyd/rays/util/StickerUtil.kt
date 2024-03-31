@@ -185,7 +185,7 @@ fun File.copyStickerToTempFolder(fileExtension: Boolean = true): File {
     val outputDir = TEMP_STICKER_DIR
     check(outputDir.exists() || outputDir.mkdirs())
     val resultFileName = name + "_" + Random.nextInt(0, Int.MAX_VALUE) + if (fileExtension) {
-        inputStream().use { ImageFormatChecker.check(it).toString() }
+        inputStream().use { ImageFormatChecker.check(it, name).toString() }
     } else ""
     val resultFile = copyTo(
         target = File(outputDir, resultFileName),
@@ -222,7 +222,7 @@ fun stickerUuidToUri(uuid: String): Uri = Uri.fromFile(stickerUuidToFile(uuid))
 fun exportSticker(uuid: String, outputDir: Uri) {
     val originFile = stickerUuidToFile(uuid)
     val extensionName = originFile.inputStream().use { inputStream ->
-        ImageFormatChecker.check(inputStream).toString()
+        ImageFormatChecker.check(inputStream, uuid).toString()
     }
     val resultFileName = uuid + "_" + Random.nextInt(0, Int.MAX_VALUE) + extensionName
 
@@ -244,7 +244,7 @@ fun exportStickerToPictures(uri: Uri) {
     val contentResolver = appContext.contentResolver
 
     val extensionName = contentResolver.openInputStream(uri)?.use { inputStream ->
-        ImageFormatChecker.check(inputStream).toString()
+        ImageFormatChecker.check(inputStream, uri.lastPathSegment).toString()
     } ?: throw IOException("Can not open sticker file")
     val filename = uri.lastPathSegment + "_" + Random.nextInt(0, Int.MAX_VALUE) + extensionName
 
@@ -308,9 +308,9 @@ suspend fun Context.copyStickerToClipboard(vararg uris: Uri) {
     val mimetypes = mutableListOf<String>()
     val contentResolver = appContext.contentResolver
     withContext(Dispatchers.IO) {
-        uris.forEach {
-            contentResolver.openInputStream(it)?.use { inputStream ->
-                mimetypes += ImageFormatChecker.check(inputStream).toMimeType()
+        uris.forEach { uri ->
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                mimetypes += ImageFormatChecker.check(inputStream, uri.lastPathSegment).toMimeType()
             }
         }
     }

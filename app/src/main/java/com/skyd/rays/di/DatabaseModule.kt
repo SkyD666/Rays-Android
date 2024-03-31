@@ -4,9 +4,10 @@ import android.content.Context
 import com.skyd.rays.model.db.AppDatabase
 import com.skyd.rays.model.db.dao.ApiGrantPackageDao
 import com.skyd.rays.model.db.dao.SearchDomainDao
-import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.model.db.dao.TagDao
 import com.skyd.rays.model.db.dao.UriStringSharePackageDao
+import com.skyd.rays.model.db.dao.sticker.MimeTypeDao
+import com.skyd.rays.model.db.dao.sticker.StickerDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,4 +45,9 @@ object DatabaseModule {
     @Singleton
     fun provideApiGrantPackageDao(database: AppDatabase): ApiGrantPackageDao =
         database.apiGrantPackageDao()
+
+    @Provides
+    @Singleton
+    fun provideMimeTypeDao(database: AppDatabase): MimeTypeDao =
+        database.mimeTypeDao()
 }

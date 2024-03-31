@@ -28,13 +28,16 @@ class ShareSheetActionsReceiver : BroadcastReceiver() {
             }
 
             ShareSheetAction.Save -> {
-                runCatching {
-                    exportStickerToPictures(uri)
-                }.onSuccess {
-                    context.getString(R.string.share_sheet_action_save_toast_success).showToast()
-                }.onFailure {
-                    it.printStackTrace()
-                    context.getString(R.string.share_sheet_action_save_toast_failed).showToast()
+                scope.launch {
+                    runCatching {
+                        exportStickerToPictures(uri)
+                    }.onSuccess {
+                        context.getString(R.string.share_sheet_action_save_toast_success)
+                            .showToast()
+                    }.onFailure {
+                        it.printStackTrace()
+                        context.getString(R.string.share_sheet_action_save_toast_failed).showToast()
+                    }
                 }
             }
         }

@@ -252,7 +252,7 @@ class ImportExportFilesRepository @Inject constructor(
 
             // 检查表情包的图片格式
             stickersListFiles[index].inputStream().use { inputStream ->
-                check(ImageFormatChecker.check(inputStream) != ImageFormat.UNDEFINED) {
+                check(ImageFormatChecker.check(inputStream, stickerUuid) != ImageFormat.UNDEFINED) {
                     appContext.getString(
                         R.string.import_export_files_repo_invalid_format,
                         "Unsupported sticker format, sticker file name: '${stickersListFiles[index].name}'"

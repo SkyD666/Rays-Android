@@ -35,4 +35,19 @@ enum class ImageFormat {
             UNDEFINED -> "image/*"
         }
     }
+
+    companion object {
+        fun fromMimeType(mimeType: String): ImageFormat {
+            return when (mimeType) {
+                "image/jpg" -> JPG
+                "image/png" -> PNG
+                "image/gif" -> GIF
+                "image/webp" -> WEBP
+                "image/bmp" -> BMP
+                "image/heif" -> HEIF
+                "image/heic" -> HEIC
+                else -> UNDEFINED
+            }
+        }
+    }
 }

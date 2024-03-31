@@ -48,8 +48,10 @@ class AddRepository @Inject constructor(
         uri: Uri
     ): Flow<Any> {
         return flowOnIo {
-            appContext.contentResolver.openInputStream(uri)?.use {
-                check(ImageFormatChecker.check(it) != ImageFormat.UNDEFINED) {
+            var imageFormat: ImageFormat
+            appContext.contentResolver.openInputStream(uri)!!.use {
+                imageFormat = ImageFormatChecker.check(it)
+                check(imageFormat != ImageFormat.UNDEFINED) {
                     "Unsupported image format"
                 }
             }
@@ -69,6 +71,7 @@ class AddRepository @Inject constructor(
                 if (!tempFile.renameTo(File(STICKER_DIR, uuid))) {
                     tempFile.deleteRecursively()
                 }
+                ImageFormatChecker.saveMimeType(format = imageFormat, stickerUuid = uuid)
                 emit(uuid)
             }
         }

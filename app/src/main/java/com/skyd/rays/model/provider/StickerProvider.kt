@@ -17,16 +17,22 @@ import android.util.Log
 import com.skyd.rays.R
 import com.skyd.rays.config.PROVIDER_THUMBNAIL_DIR
 import com.skyd.rays.config.STICKER_DIR
+import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.db.dao.TagDao
+import com.skyd.rays.model.db.dao.sticker.MimeTypeDao
 import com.skyd.rays.model.db.dao.sticker.StickerDao
+import com.skyd.rays.util.image.ImageFormatChecker
+import com.skyd.rays.util.image.format.ImageFormat
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
 
 
 class StickerProvider : DocumentsProvider() {
@@ -80,7 +86,13 @@ class StickerProvider : DocumentsProvider() {
     override fun queryDocument(documentId: String, projection: Array<out String>?): Cursor {
         // Create a cursor with the requested projection, or the default projection.
         return MatrixCursor(projection ?: DEFAULT_DOCUMENT_COLUMNS).apply {
-            includeFile(this, documentId, getDisplayMap(arrayOf(File(documentId))))
+            val files = arrayOf(File(documentId))
+            includeFile(
+                this,
+                documentId,
+                getDisplayMap(files),
+                getMimeTypeMap(files),
+            )
         }
     }
 
@@ -93,9 +105,10 @@ class StickerProvider : DocumentsProvider() {
             val parent = File(parentDocumentId ?: STICKER_DIR)
             val listFiles = parent.listFiles().orEmpty()
             val displayMap = getDisplayMap(listFiles)
+            val mimeTypeMap = getMimeTypeMap(listFiles)
 
             listFiles.forEach { file ->
-                includeFile(this, file.path, displayMap)
+                includeFile(this, file.path, displayMap, mimeTypeMap)
             }
         }
     }
@@ -113,19 +126,37 @@ class StickerProvider : DocumentsProvider() {
         return titles
     }
 
+    private fun getMimeTypeMap(listFiles: Array<out File>): MutableMap<String, String> {
+        return entryPoint.mimeTypeDao().getStickerMimeTypes(listFiles.map { it.name })
+            .toMutableMap()
+    }
+
     private fun includeFile(
         cursor: MatrixCursor,
         path: String?,
-        displayMap: MutableMap<String, String>
+        displayMap: Map<String, String>,
+        mimeTypeMap: MutableMap<String, String>,
     ) {
         path ?: return
         val file = File(path)
         val row = cursor.newRow()
         row.add(Document.COLUMN_DOCUMENT_ID, path)
         if (file.isFile) {
-            row.add(Document.COLUMN_MIME_TYPE, "image/*")
+            val mimeType = mimeTypeMap.getOrElse(file.name) {
+                ImageFormatChecker.check(FileInputStream(file), file.name).toMimeType().apply {
+                    mimeTypeMap[file.name] = this
+                }
+            }
+            row.add(Document.COLUMN_MIME_TYPE, mimeType)
             row.add(Document.COLUMN_FLAGS, Document.FLAG_SUPPORTS_THUMBNAIL)
-            row.add(Document.COLUMN_DISPLAY_NAME, displayMap[file.name] ?: file.name)
+            row.add(
+                Document.COLUMN_DISPLAY_NAME,
+                (displayMap[file.name].orEmpty().ifBlank { file.name }) + " - " +
+                        file.lastModified().toDateTimeString(
+                            dateStyle = SimpleDateFormat.SHORT,
+                            timeStyle = SimpleDateFormat.SHORT,
+                        ) + ImageFormat.fromMimeType(mimeType)
+            )
         } else if (file.isDirectory) {
             row.add(Document.COLUMN_MIME_TYPE, MIME_TYPE_DIR)
             row.add(Document.COLUMN_DISPLAY_NAME, file.name)
@@ -216,6 +247,7 @@ class StickerProvider : DocumentsProvider() {
     interface StickerProviderEntryPoint {
         fun stickerDao(): StickerDao
         fun tagDao(): TagDao
+        fun mimeTypeDao(): MimeTypeDao
     }
 
     companion object {
