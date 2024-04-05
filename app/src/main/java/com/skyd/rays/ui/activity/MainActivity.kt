@@ -29,11 +29,13 @@ import androidx.core.os.BundleCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.util.Consumer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.ext.startWith
@@ -51,7 +53,6 @@ import com.skyd.rays.ui.screen.about.license.LicenseScreen
 import com.skyd.rays.ui.screen.about.update.UpdateDialog
 import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.add.AddScreen
-import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.detail.DETAIL_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.detail.DetailScreen
 import com.skyd.rays.ui.screen.main.MAIN_SCREEN_ROUTE
@@ -163,10 +164,11 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     AppContent()
                     LaunchedEffect(Unit) {
-                        initIntent()
+                        navController.handleDeepLink(intent)
                     }
                     DisposableEffect(navController) {
-                        val listener = Consumer<Intent> { newIntent -> initIntent(newIntent) }
+                        val listener =
+                            Consumer<Intent> { newIntent -> navController.handleDeepLink(newIntent)/*initIntent(newIntent)*/ }
                         addOnNewIntentListener(listener)
                         onDispose { removeOnNewIntentListener(listener) }
                     }
@@ -209,16 +211,47 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(
                     route = "$ADD_SCREEN_ROUTE?isEdit={isEdit}",
-                    arguments = listOf(navArgument("isEdit") { defaultValue = false })
-                ) {
-                    AddScreen(
-                        initStickers = it.arguments?.let { arguments ->
-                            BundleCompat.getParcelableArrayList(
-                                arguments, "stickers", UriWithStickerUuidBean::class.java,
-                            )
-                        } ?: mutableListOf(),
-                        isEdit = it.arguments?.getBoolean("isEdit") ?: false,
+                    arguments = listOf(navArgument("isEdit") { defaultValue = false }),
+                    deepLinks = listOf(
+                        navDeepLink {
+                            action = Intent.ACTION_SEND
+                            mimeType = "image/*"
+                        },
+                        navDeepLink {
+                            action = Intent.ACTION_SEND_MULTIPLE
+                            mimeType = "image/*"
+                        },
                     )
+                ) {
+                    val arguments = it.arguments
+                    val externalUris: MutableList<UriWithStickerUuidBean> = if (arguments != null) {
+                        // stickers from external
+                        initIntent(
+                            BundleCompat.getParcelable(
+                                arguments,
+                                NavController.KEY_DEEP_LINK_INTENT,
+                                Intent::class.java,
+                            )
+                        )
+                    } else mutableListOf()
+
+                    if (externalUris.isNotEmpty()) {
+                        // stickers from external
+                        AddScreen(
+                            initStickers = externalUris,
+                            isEdit = false,
+                        )
+                    } else {
+                        // stickers from self
+                        AddScreen(
+                            initStickers = arguments?.let { bundle ->
+                                BundleCompat.getParcelableArrayList(
+                                    bundle, "stickers", UriWithStickerUuidBean::class.java,
+                                )
+                            } ?: mutableListOf(),
+                            isEdit = it.arguments?.getBoolean("isEdit") ?: false,
+                        )
+                    }
                 }
                 composable(route = SETTINGS_SCREEN_ROUTE) {
                     SettingsScreen()
@@ -321,16 +354,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initIntent(
-        intent: Intent? = getIntent(),
-        onOpenAddScreen: (List<UriWithStickerUuidBean>) -> Unit = { stickers ->
-            openAddScreen(
-                navController = navController,
-                stickers = stickers,
-                isEdit = false,
-            )
-        },
-    ) {
+    private fun initIntent(intent: Intent?): MutableList<UriWithStickerUuidBean> {
         val stickers: MutableList<UriWithStickerUuidBean> = when (intent?.action) {
             Intent.ACTION_SEND -> {
                 val data = mutableListOf<UriWithStickerUuidBean>()
@@ -361,8 +385,6 @@ class MainActivity : AppCompatActivity() {
             else -> mutableListOf()
         }
 
-        if (stickers.isEmpty()) return
-
-        onOpenAddScreen(stickers)
+        return stickers
     }
 }

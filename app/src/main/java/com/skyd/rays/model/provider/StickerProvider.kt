@@ -32,6 +32,7 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 
 
@@ -200,6 +201,8 @@ class StickerProvider : DocumentsProvider() {
         }
     }
 
+    private var reuseBitmap: WeakReference<Bitmap>? = null
+
     override fun openDocumentThumbnail(
         documentId: String,
         sizeHint: Point,
@@ -226,8 +229,25 @@ class StickerProvider : DocumentsProvider() {
                         inSampleSize = inSampleSize shl 1
                     }
                     inJustDecodeBounds = false
+                    if (reuseBitmap?.get() != null) {
+                        inBitmap = reuseBitmap?.get()
+                    }
                     val bitmap = BitmapFactory.decodeFile(stickerFile.path, this)
                     bitmap.compress(Bitmap.CompressFormat.PNG, 90, fos)
+
+                    reuseBitmap.let { reuseBitmap ->
+                        if (reuseBitmap == null) {
+                            this@StickerProvider.reuseBitmap = WeakReference(bitmap)
+                        } else {
+                            if (reuseBitmap.get() == null ||
+                                reuseBitmap.get()!!.width < bitmap.width ||
+                                reuseBitmap.get()!!.height < bitmap.height
+                            ) {
+                                reuseBitmap.clear()
+                                this@StickerProvider.reuseBitmap = WeakReference(bitmap)
+                            }
+                        }
+                    }
                 }
             }
         }
