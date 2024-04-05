@@ -150,6 +150,7 @@ fun AddScreen(
     var stickerCreateTime by rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     var openMoreMenu by rememberSaveable { mutableStateOf(false) }
     var openErrorDialog by rememberSaveable { mutableStateOf<String?>(null) }
+    var saveButtonEnable by rememberSaveable { mutableStateOf(true) }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
 
@@ -220,6 +221,7 @@ fun AddScreen(
                                     message = context.getString(R.string.add_screen_sticker_is_not_set),
                                 )
                             } else {
+                                saveButtonEnable = false
                                 keyboardController?.hide()
                                 focusManager.clearFocus()
                                 val getStickersWithTagsState = uiState.getStickersWithTagsState
@@ -252,6 +254,7 @@ fun AddScreen(
                                 )
                             }
                         },
+                        enabled = saveButtonEnable && !uiState.loadingDialog,
                         contentDescription = stringResource(R.string.add_screen_save_current_sticker),
                         imageVector = Icons.Default.Save,
                     )
@@ -338,11 +341,13 @@ fun AddScreen(
 
         when (val event = uiEvent) {
             is AddEvent.AddStickersResultEvent.Duplicate -> LaunchedEffect(event) {
+                saveButtonEnable = true
                 openDuplicateDialog = true
                 onGetStickersWithTagsStateChanged()
             }
 
             is AddEvent.AddStickersResultEvent.Failed -> {
+                saveButtonEnable = true
                 snackbarHostState.showSnackbarWithLaunchedEffect(
                     message = context.getString(R.string.failed_info, event.msg),
                     key1 = event,
@@ -350,6 +355,7 @@ fun AddScreen(
             }
 
             is AddEvent.AddStickersResultEvent.Success -> LaunchedEffect(event) {
+                saveButtonEnable = true
                 resetStickerData()
                 processNext()
             }
