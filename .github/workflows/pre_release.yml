@@ -73,7 +73,9 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Pre-Release Apk (x86)
-        path: app/build/outputs/apk/GitHub/release/*x86*.apk
+        path: |
+          app/build/outputs/apk/GitHub/release/*x86*.apk
+          !app/build/outputs/apk/GitHub/release/*x86_64*.apk
     # Upload apk (universal)
     - name: Upload Pre-Release Apk (universal)
       uses: actions/upload-artifact@v3
