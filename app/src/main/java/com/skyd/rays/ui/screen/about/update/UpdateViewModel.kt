@@ -5,6 +5,7 @@ import com.skyd.rays.base.mvi.AbstractMviViewModel
 import com.skyd.rays.config.GITHUB_REPO
 import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.startWith
+import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.respository.UpdateRepository
 import com.skyd.rays.util.CommonUtil.getAppVersionCode
 import com.skyd.rays.util.CommonUtil.openBrowser
@@ -80,11 +81,7 @@ class UpdateViewModel @Inject constructor(private var updateRepo: UpdateReposito
                         ).apply {
                             timeZone = TimeZone.getTimeZone("UTC")
                         }.parse(data.publishedAt)
-                        val publishedAt: String = if (date != null) {
-                            SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(date)
-                        } else {
-                            data.publishedAt
-                        }
+                        val publishedAt: String = date?.toDateTimeString() ?: data.publishedAt
 
                         UpdatePartialStateChange.CheckUpdate.HasUpdate(
                             data.copy(publishedAt = publishedAt)

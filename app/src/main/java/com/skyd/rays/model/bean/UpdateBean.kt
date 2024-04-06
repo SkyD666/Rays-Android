@@ -12,6 +12,8 @@ data class UpdateBean(
     var tagName: String,
     @SerialName("name")
     var name: String,
+    @SerialName("html_url")
+    var htmlUrl: String,
     @SerialName("published_at")
     var publishedAt: String,
     @SerialName("assets")

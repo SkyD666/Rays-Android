@@ -78,7 +78,7 @@ fun UpdateDialog(
                 },
                 onDownloadClick = { updateBean ->
                     dispatch(
-                        UpdateIntent.Update(updateBean?.assets?.firstOrNull()?.browserDownloadUrl)
+                        UpdateIntent.Update(updateBean?.htmlUrl)
                     )
                 }
             )

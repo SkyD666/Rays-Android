@@ -1,3 +1,4 @@
+import com.android.build.api.variant.FilterConfiguration
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -21,7 +22,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 62
-        versionName = "2.2-alpha08"
+        versionName = "2.2-alpha09"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -52,11 +53,27 @@ android {
         }
     }
 
+    splits {
+        abi {
+            // Enables building multiple APKs per ABI.
+            isEnable = true
+            // By default all ABIs are included, so use reset() and include().
+            // Resets the list of ABIs for Gradle to create APKs for to none.
+            reset()
+            // A list of ABIs for Gradle to create APKs for.
+            include("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+            // We want to also generate a universal APK that includes all ABIs.
+            isUniversalApk = true
+        }
+    }
+
     applicationVariants.all {
         outputs
             .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
-            .forEach {
-                it.outputFileName = "Rays_${versionName}_${buildType.name}_${flavorName}.apk"
+            .forEach { output ->
+                val abi = output.getFilter(FilterConfiguration.FilterType.ABI.name) ?: "universal"
+                output.outputFileName =
+                    "Rays_${versionName}_${abi}_${buildType.name}_${flavorName}.apk"
             }
     }
 
@@ -69,9 +86,6 @@ android {
                 "proguard-rules.pro"
             )
             applicationIdSuffix = ".debug"
-            ndk {
-                abiFilters += mutableSetOf("armeabi", "x86", "x86_64", "arm64-v8a")
-            }
         }
         release {
             signingConfig = signingConfigs.getByName("release")    // signing
@@ -81,10 +95,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            ndk {
-                //noinspection ChromeOsAbiSupport
-                abiFilters += "arm64-v8a"
-            }
         }
     }
     compileOptions {
