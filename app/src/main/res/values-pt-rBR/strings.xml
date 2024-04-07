@@ -97,4 +97,46 @@
     <string name="export_files_screen_progress_zipping">Compactando: %s</string>
     <string name="export_files_screen_select_dir">Selecione a pasta de exportação</string>
     <string name="export_files_screen_export">Exportar</string>
+    <string name="auto_share_screen_name">Compartilhação automática</string>
+    <string name="auto_share_screen_description">Compartilhar o sticker para a página anterior automaticamente</string>
+    <string name="auto_share_screen_ignore_description">Ignorar a existência das páginas correspondentes</string>
+    <plurals name="export_files_screen_successful_desc">
+        <item quantity="one">Foi exportado %1$d sticker no total, demorou %2$.2f s</item>
+        <item quantity="many">Foi exportado %1$d stickers no total, demorou %2$.2f s</item>
+        <item quantity="other"></item>
+    </plurals>
+    <string name="webdav_screen_upload_description">Enviar os dados locais para remoto</string>
+    <string name="webdav_screen_clear_remote_recycle_bin">Limpar</string>
+    <string name="appearance_screen_wallpaper_colors">Cores do papel de parede</string>
+    <string name="primary_color">Cor primária</string>
+    <string name="webdav_screen_remote_recycle_bin_is_empty">Vazio~</string>
+    <string name="webdav_screen_info_incomplete">As informações do WebDAV estão incompletas!</string>
+    <string name="add_screen_update_sticker">Selecione um novo sticker</string>
+    <string name="api_screen_name">API (Experimental)</string>
+    <plurals name="import_files_screen_successful_desc">
+        <item quantity="one">Foi atualizado %1$d sticker no total, demorou %2$.2f s</item>
+        <item quantity="many">Foi atualizado %1$d stickers no total, demorou %2$.2f s</item>
+        <item quantity="other"></item>
+    </plurals>
+    <string name="webdav_screen_last_modified_time">Última modificação em: %s</string>
+    <string name="data_screen_name">Dados</string>
+    <string name="data_screen_import_export_description">Sincronizar dados do sticker</string>
+    <string name="api_grant_screen_enable">Ativar API</string>
+    <string name="appearance_screen_basic_colors">Cores básicas</string>
+    <string name="clear_input_text">Limpar</string>
+    <string name="paste">Colar</string>
+    <string name="webdav_screen_input_password">Senha</string>
+    <string name="webdav_screen_input_server">URL do servidor</string>
+    <string name="webdav_screen_waiting">Por favor, aguarde…</string>
+    <string name="dark_mode_invalid">Valor inválido</string>
+    <string name="password_visibility_off">Esconder</string>
+    <string name="webdav_screen_input_account">Conta</string>
+    <string name="webdav_screen_delete">Excluir</string>
+    <string name="theme_no_palettes">Sem paletas</string>
+    <string name="data_screen_delete_all">Excluir todos os stickers locais</string>
+    <string name="data_screen_delete_all_success">Todos os dados de stickers limpos, demorou %.2fs</string>
+    <string name="dialog_exit">Sair</string>
+    <string name="password_visibility_on">Mostrar</string>
+    <string name="only_android_8_1_plus">8.1 +</string>
+    <string name="data_screen_delete_all_description">Excluir todos os dados locais gerenciados pelo Rays, incluindo imagens, títulos e rótulos. Esta operação é irreversível</string>
 </resources>
