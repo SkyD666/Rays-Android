@@ -5,18 +5,13 @@ import android.os.Build
 import android.view.View
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.kyant.monet.LocalTonalPalettes
-import com.kyant.monet.PaletteStyle
-import com.kyant.monet.TonalPalettes
-import com.kyant.monet.TonalPalettes.Companion.toTonalPalettes
-import com.kyant.monet.dynamicColorScheme
+import com.materialkolor.rememberDynamicColorScheme
 import com.skyd.rays.ext.activity
 import com.skyd.rays.ext.toColorOrNull
 import com.skyd.rays.model.preference.theme.DarkModePreference
@@ -38,7 +33,7 @@ fun RaysTheme(
 @Composable
 fun RaysTheme(
     darkTheme: Boolean,
-    wallpaperPalettes: Map<String, TonalPalettes> = extractAllTonalPalettes(),
+    wallpaperColors: Map<String, Color> = extractAllColors(),
     content: @Composable () -> Unit
 ) {
     val view = LocalView.current
@@ -48,19 +43,16 @@ fun RaysTheme(
         }
     }
 
-    val tonalPalettes = wallpaperPalettes.getOrElse(LocalThemeName.current) {
-        ThemeNamePreference.values[0].keyColor.toTonalPalettes(style = PaletteStyle.Content)
-    }
-
-    CompositionLocalProvider(
-        LocalTonalPalettes provides tonalPalettes,
-    ) {
-        MaterialTheme(
-            colorScheme = dynamicColorScheme(isLight = !darkTheme),
-            typography = Typography,
-            content = content
-        )
-    }
+    MaterialTheme(
+        colorScheme = rememberDynamicColorScheme(
+            seedColor = wallpaperColors.getOrElse(LocalThemeName.current) {
+                ThemeNamePreference.values[0].keyColor
+            },
+            isDark = darkTheme,
+        ),
+        typography = Typography,
+        content = content
+    )
 }
 
 private fun setSystemBarsColor(view: View, darkMode: Boolean) {
@@ -81,24 +73,24 @@ private fun setSystemBarsColor(view: View, darkMode: Boolean) {
 }
 
 @Composable
-fun extractAllTonalPalettes(): Map<String, TonalPalettes> {
-    return extractTonalPalettes() + extractTonalPalettesFromWallpaper()
+fun extractAllColors(): Map<String, Color> {
+    return extractColors() + extractColorsFromWallpaper()
 }
 
 @Composable
-fun extractTonalPalettes(): Map<String, TonalPalettes> {
-    return ThemeNamePreference.values.associate { it.name to it.keyColor.toTonalPalettes() }
+fun extractColors(): Map<String, Color> {
+    return ThemeNamePreference.values.associate { it.name to it.keyColor }
         .toMutableMap().also { map ->
             val customPrimaryColor =
                 LocalCustomPrimaryColor.current.toColorOrNull() ?: Color.Transparent
-            map[ThemeNamePreference.CUSTOM_THEME_NAME] = customPrimaryColor.toTonalPalettes()
+            map[ThemeNamePreference.CUSTOM_THEME_NAME] = customPrimaryColor
         }
 }
 
 @Composable
-fun extractTonalPalettesFromWallpaper(): Map<String, TonalPalettes> {
+fun extractColorsFromWallpaper(): Map<String, Color> {
     val context = LocalContext.current
-    val preset = mutableMapOf<String, TonalPalettes>()
+    val preset = mutableMapOf<String, Color>()
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 && !LocalView.current.isInEditMode) {
         val colors = WallpaperManager.getInstance(context)
@@ -108,13 +100,13 @@ fun extractTonalPalettesFromWallpaper(): Map<String, TonalPalettes> {
         val tertiary = colors?.tertiaryColor?.toArgb()
         if (primary != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                preset["WallpaperPrimary"] = context.getSystemTonalPalettes()
+                preset["WallpaperPrimary"] = primarySystem(context = context)
             } else {
-                preset["WallpaperPrimary"] = (Color(primary).toTonalPalettes())
+                preset["WallpaperPrimary"] = (Color(primary))
             }
         }
-        if (secondary != null) preset["WallpaperSecondary"] = Color(secondary).toTonalPalettes()
-        if (tertiary != null) preset["WallpaperTertiary"] = Color(tertiary).toTonalPalettes()
+        if (secondary != null) preset["WallpaperSecondary"] = Color(secondary)
+        if (tertiary != null) preset["WallpaperTertiary"] = Color(tertiary)
     }
     return preset
 }

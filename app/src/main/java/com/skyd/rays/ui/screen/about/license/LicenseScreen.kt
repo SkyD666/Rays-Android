@@ -130,9 +130,9 @@ private fun getLicenseList(): List<LicenseBean> {
             url = "https://github.com/Kotlin/kotlinx.serialization"
         ),
         LicenseBean(
-            name = "Monet",
-            license = "Apache-2.0",
-            url = "https://github.com/Kyant0/Monet"
+            name = "MaterialKolor",
+            license = "MIT",
+            url = "https://github.com/jordond/MaterialKolor"
         ),
         LicenseBean(
             name = "Read You",

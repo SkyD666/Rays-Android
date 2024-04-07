@@ -22,7 +22,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 62
-        versionName = "2.2-alpha09"
+        versionName = "2.2-alpha10"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -156,8 +156,8 @@ dependencies {
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.material3:material3:$md3Version")
     implementation("androidx.compose.material3:material3-window-size-class:$md3Version")
-    implementation("androidx.compose.material:material:1.6.4")
-    implementation("androidx.compose.material:material-icons-extended:1.6.4")
+    implementation("androidx.compose.material:material:1.6.5")
+    implementation("androidx.compose.material:material-icons-extended:1.6.5")
     implementation("androidx.compose.ui:ui-tooling-preview:$md3Version")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
@@ -179,7 +179,7 @@ dependencies {
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("com.github.thegrizzlylabs:sardine-android:0.8")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-    implementation("com.github.Kyant0:Monet:0.1.0-alpha03")
+    implementation("com.materialkolor:material-kolor:1.4.4")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("com.airbnb.android:lottie-compose:6.3.0")
 

@@ -51,14 +51,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.edit
-import com.kyant.monet.TonalPalettes
-import com.kyant.monet.TonalPalettes.Companion.toTonalPalettes
+import com.materialkolor.palettes.CorePalette
 import com.skyd.rays.R
 import com.skyd.rays.ext.checkColorHex
 import com.skyd.rays.ext.dataStore
@@ -83,8 +83,8 @@ import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerColorTheme
 import com.skyd.rays.ui.local.LocalThemeName
 import com.skyd.rays.ui.screen.settings.appearance.style.SEARCH_STYLE_SCREEN_ROUTE
-import com.skyd.rays.ui.theme.extractTonalPalettes
-import com.skyd.rays.ui.theme.extractTonalPalettesFromWallpaper
+import com.skyd.rays.ui.theme.extractColors
+import com.skyd.rays.ui.theme.extractColorsFromWallpaper
 import kotlinx.coroutines.launch
 
 const val APPEARANCE_SCREEN_ROUTE = "appearanceScreen"
@@ -97,8 +97,8 @@ fun AppearanceScreen() {
     val scope = rememberCoroutineScope()
     val themeName = LocalThemeName.current
 
-    val tonalPalettes = extractTonalPalettes()
-    val tonalPalettesFromWallpaper = extractTonalPalettesFromWallpaper()
+    val tonalPalettes = extractColors()
+    val tonalPalettesFromWallpaper = extractColorsFromWallpaper()
     var wallpaperOrBasicThemeSelected by rememberSaveable {
         mutableIntStateOf(if (tonalPalettesFromWallpaper.containsKey(themeName)) 0 else 1)
     }
@@ -129,13 +129,13 @@ fun AppearanceScreen() {
                             text = stringResource(R.string.appearance_screen_wallpaper_colors),
                             onClick = {},
                         ) {
-                            Palettes(palettes = tonalPalettesFromWallpaper)
+                            Palettes(colors = tonalPalettesFromWallpaper)
                         },
                         BlockRadioGroupButtonItem(
                             text = stringResource(R.string.appearance_screen_basic_colors),
                             onClick = {},
                         ) {
-                            Palettes(palettes = tonalPalettes)
+                            Palettes(colors = tonalPalettes)
                         },
                     ),
                 )
@@ -219,17 +219,16 @@ private fun DarkModeSheet(onDismissRequest: () -> Unit) {
 
 @Composable
 fun Palettes(
-    palettes: Map<String, TonalPalettes>,
+    colors: Map<String, Color>,
     themeName: String = LocalThemeName.current,
 ) {
     val customPrimaryColor = LocalCustomPrimaryColor.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val tonalPalettes = (customPrimaryColor.toColorOrNull() ?: Color.Transparent).toTonalPalettes()
     var addDialogVisible by rememberSaveable { mutableStateOf(false) }
     var customColorValue by rememberSaveable { mutableStateOf(customPrimaryColor) }
 
-    if (palettes.isEmpty()) {
+    if (colors.isEmpty()) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
@@ -255,7 +254,7 @@ fun Palettes(
                 .padding(horizontal = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            palettes.forEach { (t, u) ->
+            colors.forEach { (t, u) ->
                 val isCustom = t == ThemeNamePreference.CUSTOM_THEME_NAME
                 SelectableMiniPalette(
                     selected = t == themeName,
@@ -268,7 +267,11 @@ fun Palettes(
                             ThemeNamePreference.put(context, scope, t)
                         }
                     },
-                    palette = if (isCustom) tonalPalettes else u
+                    palette = CorePalette.of(
+                        if (isCustom) {
+                            (customPrimaryColor.toColorOrNull() ?: Color.Transparent).toArgb()
+                        } else u.toArgb()
+                    )
                 )
             }
         }
@@ -305,7 +308,7 @@ fun SelectableMiniPalette(
     selected: Boolean,
     isCustom: Boolean = false,
     onClick: () -> Unit,
-    palette: TonalPalettes,
+    palette: CorePalette,
 ) {
     Surface(
         modifier = modifier,
@@ -323,20 +326,20 @@ fun SelectableMiniPalette(
                 .padding(12.dp)
                 .size(50.dp),
             shape = CircleShape,
-            color = palette accent1 90.0,
+            color = Color(palette.a1.tone(90)),
         ) {
             Box {
                 Surface(
                     modifier = Modifier
                         .size(50.dp)
                         .offset((-25).dp, 25.dp),
-                    color = palette accent3 90.0,
+                    color = Color(palette.a3.tone(90)),
                 ) {}
                 Surface(
                     modifier = Modifier
                         .size(50.dp)
                         .offset(25.dp, 25.dp),
-                    color = palette accent2 60.0,
+                    color = Color(palette.a2.tone(60)),
                 ) {}
                 val animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium)
                 AnimatedVisibility(
