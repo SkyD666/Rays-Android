@@ -37,6 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
+import com.skyd.rays.ext.safeLaunch
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ModelBean
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
@@ -178,7 +179,7 @@ private fun ModelList(
                 descriptionText = stringResource(
                     R.string.classification_model_screen_select_description,
                 ),
-                onClick = { pickModelLauncher.launch("application/octet-stream") }
+                onClick = { pickModelLauncher.safeLaunch("application/octet-stream") }
             )
         }
         itemsIndexed(models) { _, item ->

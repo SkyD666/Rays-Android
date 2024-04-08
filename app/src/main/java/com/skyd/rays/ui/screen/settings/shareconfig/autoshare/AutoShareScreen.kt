@@ -27,6 +27,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.skyd.rays.R
+import com.skyd.rays.ext.safeLaunch
 import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
 import com.skyd.rays.ui.component.BannerItem
 import com.skyd.rays.ui.component.BaseSettingsItem
@@ -90,7 +91,7 @@ fun AutoShareScreen() {
                         text = stringResource(id = R.string.enable),
                         checked = autoShareEnabled,
                         onCheckedChange = {
-                            accessibleLauncher.launch(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                            accessibleLauncher.safeLaunch(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
                         }
                     )
                 }

@@ -42,6 +42,7 @@ import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
+import com.skyd.rays.ext.safeLaunch
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ImportExportResultInfo
@@ -160,7 +161,7 @@ fun ExportFilesScreen(
                     icon = rememberVectorPainter(image = Icons.Default.Folder),
                     text = stringResource(id = R.string.export_files_screen_select_dir),
                     descriptionText = exportDir.toString().ifBlank { null },
-                    onClick = { pickExportDirLauncher.launch(exportDir) }
+                    onClick = { pickExportDirLauncher.safeLaunch(exportDir) }
                 )
             }
             item {
@@ -221,7 +222,7 @@ fun ExportFilesScreen(
                     },
                     context.getString(R.string.export_files_screen_open_backup_file)
                 )
-                pickExportedFileLauncher.launch(intent)
+                pickExportedFileLauncher.safeLaunch(intent)
             }) {
                 Text(text = stringResource(id = R.string.export_files_screen_progress_open_backup_file))
             }

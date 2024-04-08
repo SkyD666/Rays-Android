@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import com.skyd.rays.R
 import com.skyd.rays.appContext
+import com.skyd.rays.ext.safeLaunch
 import com.skyd.rays.ui.local.LocalPickImageMethod
 
 @Composable
@@ -61,42 +62,42 @@ fun ManagedActivityResultLauncher<*, *>.launchImagePicker() {
     when (contract) {
         is ActivityResultContracts.PickMultipleVisualMedia -> {
             (this as ManagedActivityResultLauncher<PickVisualMediaRequest, List<@JvmSuppressWildcards Uri>>)
-                .launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                .safeLaunch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         is ActivityResultContracts.PickVisualMedia -> {
             (this as ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>)
-                .launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                .safeLaunch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         is PickMultipleFromGallery -> {
             (this as ManagedActivityResultLauncher<Unit?, List<Uri>>)
-                .launch(null)
+                .safeLaunch(null)
         }
 
         is PickFromGallery -> {
             (this as ManagedActivityResultLauncher<Unit?, Uri?>)
-                .launch(null)
+                .safeLaunch(null)
         }
 
         is ActivityResultContracts.OpenMultipleDocuments -> {
             (this as ManagedActivityResultLauncher<Array<String>, List<@JvmSuppressWildcards Uri>>)
-                .launch(arrayOf("image/*"))
+                .safeLaunch(arrayOf("image/*"))
         }
 
         is ActivityResultContracts.OpenDocument -> {
             (this as ManagedActivityResultLauncher<Array<String>, Uri?>)
-                .launch(arrayOf("image/*"))
+                .safeLaunch(arrayOf("image/*"))
         }
 
         is ActivityResultContracts.GetMultipleContents -> {
             (this as ManagedActivityResultLauncher<String, List<@JvmSuppressWildcards Uri>>)
-                .launch("image/*")
+                .safeLaunch("image/*")
         }
 
         is ActivityResultContracts.GetContent -> {
             (this as ManagedActivityResultLauncher<String, Uri?>)
-                .launch("image/*")
+                .safeLaunch("image/*")
         }
 
         else -> error("Unknown contract type!")

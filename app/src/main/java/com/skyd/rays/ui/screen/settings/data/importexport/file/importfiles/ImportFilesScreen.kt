@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.plus
+import com.skyd.rays.ext.safeLaunch
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ImportExportResultInfo
 import com.skyd.rays.model.bean.ImportExportWaitingInfo
@@ -121,7 +122,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
                     icon = rememberVectorPainter(image = Icons.Default.FolderZip),
                     text = stringResource(id = R.string.import_files_screen_select_file),
                     descriptionText = fileUri.toString().ifBlank { null },
-                    onClick = { pickFileLauncher.launch("application/zip") }
+                    onClick = { pickFileLauncher.safeLaunch("application/zip") }
                 )
             }
             item {

@@ -51,8 +51,12 @@ object ThemeNamePreference : BasePreference<String> {
 
     override fun fromPreferences(preferences: Preferences) = preferences[key] ?: default
 
-    fun isCustom(context: Context): Boolean =
-        context.dataStore.getOrDefault(this) == CUSTOM_THEME_NAME
+    fun isCustom(v: String): Boolean = v == CUSTOM_THEME_NAME
+
+    fun isCustom(
+        context: Context,
+        v: String = context.dataStore.getOrDefault(this)
+    ): Boolean = v == CUSTOM_THEME_NAME
 
     data class ThemeItem(val name: String, val keyColor: Color)
 }

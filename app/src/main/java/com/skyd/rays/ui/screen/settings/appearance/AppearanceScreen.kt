@@ -258,7 +258,7 @@ fun Palettes(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             colors.forEach { (t, u) ->
-                val isCustom = t == ThemeNamePreference.CUSTOM_THEME_NAME
+                val isCustom = ThemeNamePreference.isCustom(t)
                 SelectableMiniPalette(
                     selected = t == themeName,
                     isCustom = isCustom,
