@@ -54,18 +54,18 @@ fun SettingsScreen() {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.AutoMirrored.Default.ManageSearch),
-                    text = stringResource(id = R.string.search_config_screen_name),
-                    descriptionText = stringResource(id = R.string.setting_screen_search_description),
-                    onClick = { navController.navigate(SEARCH_CONFIG_SCREEN_ROUTE) }
-                )
-            }
-            item {
-                BaseSettingsItem(
                     icon = rememberVectorPainter(Icons.Default.Palette),
                     text = stringResource(id = R.string.appearance_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_appearance_description),
                     onClick = { navController.navigate(APPEARANCE_SCREEN_ROUTE) }
+                )
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(Icons.AutoMirrored.Default.ManageSearch),
+                    text = stringResource(id = R.string.search_config_screen_name),
+                    descriptionText = stringResource(id = R.string.setting_screen_search_description),
+                    onClick = { navController.navigate(SEARCH_CONFIG_SCREEN_ROUTE) }
                 )
             }
             item {

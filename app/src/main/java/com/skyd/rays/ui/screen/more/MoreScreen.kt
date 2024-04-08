@@ -1,5 +1,6 @@
 package com.skyd.rays.ui.screen.more
 
+import android.content.Context
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -7,6 +8,7 @@ import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Widgets
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -18,9 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.skyd.rays.R
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbar
@@ -47,6 +52,8 @@ fun MoreScreen() {
     val navController = LocalNavController.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val density = LocalDensity.current
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -70,36 +77,6 @@ fun MoreScreen() {
             )
         },
     ) {
-        val moreList = listOf(
-            More1Bean(
-                title = stringResource(R.string.import_export_screen_name),
-                icon = Icons.Default.ImportExport,
-                iconTint = MaterialTheme.colorScheme.onPrimary,
-                shape = SquircleShape,
-                shapeColor = MaterialTheme.colorScheme.primary,
-                action = { navController.navigate(IMPORT_EXPORT_SCREEN_ROUTE) }
-            ),
-            More1Bean(
-                title = stringResource(R.string.settings),
-                icon = Icons.Default.Settings,
-                iconTint = MaterialTheme.colorScheme.onSecondary,
-                shape = CloverShape,
-                shapeColor = MaterialTheme.colorScheme.secondary,
-                action = { navController.navigate(SETTINGS_SCREEN_ROUTE) }
-            ),
-            More1Bean(
-                title = stringResource(R.string.about),
-                icon = Icons.Default.Info,
-                iconTint = MaterialTheme.colorScheme.onTertiary,
-                shape = CurlyCornerShape(
-                    amp = with(LocalDensity.current) { 2.dp.toPx() },
-                    count = 10
-                ),
-                shapeColor = MaterialTheme.colorScheme.tertiary,
-                action = { navController.navigate(ABOUT_SCREEN_ROUTE) }
-            )
-        )
-
         val adapter = remember {
             LazyGridAdapter(
                 mutableListOf(
@@ -109,13 +86,50 @@ fun MoreScreen() {
                 )
             )
         }
+        val colorScheme: ColorScheme = MaterialTheme.colorScheme
         RaysLazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
-            dataList = moreList,
+            dataList = remember(context, colorScheme, density, navController) {
+                getMoreList(context, colorScheme, density, navController)
+            },
             adapter = adapter,
             contentPadding = it + PaddingValues(vertical = 10.dp),
         )
     }
+}
+
+private fun getMoreList(
+    context: Context,
+    colorScheme: ColorScheme,
+    density: Density,
+    navController: NavController,
+): List<More1Bean> {
+    return listOf(
+        More1Bean(
+            title = context.getString(R.string.import_export_screen_name),
+            icon = Icons.Default.ImportExport,
+            iconTint = colorScheme.onPrimary,
+            shape = SquircleShape,
+            shapeColor = colorScheme.primary,
+            action = { navController.navigate(IMPORT_EXPORT_SCREEN_ROUTE) }
+        ),
+        More1Bean(
+            title = context.getString(R.string.settings),
+            icon = Icons.Default.Settings,
+            iconTint = colorScheme.onSecondary,
+            shape = CloverShape,
+            shapeColor = colorScheme.secondary,
+            action = { navController.navigate(SETTINGS_SCREEN_ROUTE) }
+        ),
+        More1Bean(
+            title = context.getString(R.string.about),
+            icon = Icons.Default.Info,
+            iconTint = colorScheme.onTertiary,
+            shape = CurlyCornerShape(amp = with(density) { 2.dp.toPx() }, count = 10),
+            shapeColor = colorScheme.tertiary,
+            action = { navController.navigate(ABOUT_SCREEN_ROUTE) }
+        )
+    )
 }

@@ -65,7 +65,8 @@ class MainViewModel @Inject constructor() :
 
             filterIsInstance<MainIntent.UpdateThemeColor>().map { intent ->
                 if (intent.stickerUuid.isNotBlank() &&
-                    appContext.dataStore.getOrDefault(StickerColorThemePreference)
+                    appContext.dataStore.getOrDefault(StickerColorThemePreference) &&
+                    ThemeNamePreference.isCustom(appContext)
                 ) {
                     setPrimaryColor(uuid = intent.stickerUuid)
                 }

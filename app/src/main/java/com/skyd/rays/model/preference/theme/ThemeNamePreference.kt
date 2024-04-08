@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.skyd.rays.ext.dataStore
+import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.ext.put
 import com.skyd.rays.model.preference.BasePreference
 import kotlinx.coroutines.CoroutineScope
@@ -49,6 +50,9 @@ object ThemeNamePreference : BasePreference<String> {
     }
 
     override fun fromPreferences(preferences: Preferences) = preferences[key] ?: default
+
+    fun isCustom(context: Context): Boolean =
+        context.dataStore.getOrDefault(this) == CUSTOM_THEME_NAME
 
     data class ThemeItem(val name: String, val keyColor: Color)
 }

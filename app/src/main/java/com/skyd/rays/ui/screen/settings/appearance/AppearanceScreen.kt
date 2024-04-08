@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -58,7 +59,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.edit
+import com.materialkolor.ktx.from
 import com.materialkolor.palettes.CorePalette
+import com.materialkolor.palettes.TonalPalette
 import com.skyd.rays.R
 import com.skyd.rays.ext.checkColorHex
 import com.skyd.rays.ext.dataStore
@@ -97,8 +100,8 @@ fun AppearanceScreen() {
     val scope = rememberCoroutineScope()
     val themeName = LocalThemeName.current
 
-    val tonalPalettes = extractColors()
-    val tonalPalettesFromWallpaper = extractColorsFromWallpaper()
+    val tonalPalettes = extractColors(darkTheme = false)
+    val tonalPalettesFromWallpaper = extractColorsFromWallpaper(darkTheme = false)
     var wallpaperOrBasicThemeSelected by rememberSaveable {
         mutableIntStateOf(if (tonalPalettesFromWallpaper.containsKey(themeName)) 0 else 1)
     }
@@ -219,7 +222,7 @@ private fun DarkModeSheet(onDismissRequest: () -> Unit) {
 
 @Composable
 fun Palettes(
-    colors: Map<String, Color>,
+    colors: Map<String, ColorScheme>,
     themeName: String = LocalThemeName.current,
 ) {
     val customPrimaryColor = LocalCustomPrimaryColor.current
@@ -267,10 +270,15 @@ fun Palettes(
                             ThemeNamePreference.put(context, scope, t)
                         }
                     },
-                    palette = CorePalette.of(
-                        if (isCustom) {
+                    accents = if (isCustom) {
+                        val corePalette = CorePalette.of(
                             (customPrimaryColor.toColorOrNull() ?: Color.Transparent).toArgb()
-                        } else u.toArgb()
+                        )
+                        listOf(corePalette.a1, corePalette.a2, corePalette.a3)
+                    } else listOf(
+                        TonalPalette.from(u.primary),
+                        TonalPalette.from(u.secondary),
+                        TonalPalette.from(u.tertiary)
                     )
                 )
             }
@@ -308,7 +316,7 @@ fun SelectableMiniPalette(
     selected: Boolean,
     isCustom: Boolean = false,
     onClick: () -> Unit,
-    palette: CorePalette,
+    accents: List<TonalPalette>,
 ) {
     Surface(
         modifier = modifier,
@@ -326,20 +334,20 @@ fun SelectableMiniPalette(
                 .padding(12.dp)
                 .size(50.dp),
             shape = CircleShape,
-            color = Color(palette.a1.tone(90)),
+            color = Color(accents[0].tone(60)),
         ) {
             Box {
                 Surface(
                     modifier = Modifier
                         .size(50.dp)
                         .offset((-25).dp, 25.dp),
-                    color = Color(palette.a3.tone(90)),
+                    color = Color(accents[1].tone(85)),
                 ) {}
                 Surface(
                     modifier = Modifier
                         .size(50.dp)
                         .offset(25.dp, 25.dp),
-                    color = Color(palette.a2.tone(60)),
+                    color = Color(accents[2].tone(75)),
                 ) {}
                 val animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium)
                 AnimatedVisibility(
