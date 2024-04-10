@@ -248,25 +248,23 @@ class StickerProvider : DocumentsProvider() {
                         inSampleSize = inSampleSize shl 1
                     }
                     inJustDecodeBounds = false
-                    if (reuseBitmap?.get() != null) {
-                        inBitmap = reuseBitmap?.get()
-                    }
                     // Only mutable bitmap can be reused.
                     inMutable = true
-                    val bitmap = BitmapFactory.decodeFile(stickerFile.path, this)
+                    val oldBitmap = reuseBitmap?.get()
+                    if (oldBitmap != null) {
+                        if (oldBitmap.width >= outWidth / inSampleSize &&
+                            oldBitmap.height >= outHeight / inSampleSize
+                        ) {
+                            inBitmap = reuseBitmap?.get()
+                        }
+                    }
+                    val bitmap = BitmapFactory.decodeFile(stickerFile.path, this) ?: inBitmap
                     bitmap.compress(Bitmap.CompressFormat.PNG, 90, fos)
 
                     reuseBitmap.let { reuseBitmap ->
-                        if (reuseBitmap == null) {
+                        if (reuseBitmap?.get() != bitmap) {
+                            reuseBitmap?.clear()
                             this@StickerProvider.reuseBitmap = WeakReference(bitmap)
-                        } else {
-                            if (reuseBitmap.get() == null ||
-                                reuseBitmap.get()!!.width < bitmap.width ||
-                                reuseBitmap.get()!!.height < bitmap.height
-                            ) {
-                                reuseBitmap.clear()
-                                this@StickerProvider.reuseBitmap = WeakReference(bitmap)
-                            }
                         }
                     }
                 }

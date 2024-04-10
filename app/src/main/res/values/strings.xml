@@ -338,7 +338,5 @@
     <string name="cache_screen_delete_provider_thumbnails">Delete thumbnails</string>
     <string name="cache_screen_delete_provider_thumbnails_description">Delete sticker provider thumbnail caches</string>
     <string name="cache_screen_delete_provider_thumbnails_success">All thumbnails cleared, spent %.2fs</string>
-    <string name="data_screen_sync_category">Sync</string>
-    <string name="data_screen_delete_category">Delete</string>
-    <string name="data_screen_source_category">Source</string>
+    <string name="data_screen_danger_category">Danger area</string>
 </resources>

@@ -326,7 +326,5 @@
     <string name="cache_screen_delete_provider_thumbnails">删除缩略图缓存</string>
     <string name="cache_screen_delete_provider_thumbnails_description">删除表情包提供者缩略图缓存</string>
     <string name="cache_screen_delete_provider_thumbnails_success">已删除缩略图缓存, 花费 %.2f 秒</string>
-    <string name="data_screen_sync_category">同步</string>
-    <string name="data_screen_delete_category">删除</string>
-    <string name="data_screen_source_category">来源</string>
+    <string name="data_screen_danger_category">危险区域</string>
 </resources>

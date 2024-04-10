@@ -326,7 +326,5 @@
     <string name="cache_screen_delete_provider_thumbnails">刪除縮圖快取</string>
     <string name="cache_screen_delete_provider_thumbnails_description">刪除貼紙提供者縮圖快取</string>
     <string name="cache_screen_delete_provider_thumbnails_success">所有縮圖均已清除，已花費 %.2f 秒</string>
-    <string name="data_screen_sync_category">同步</string>
-    <string name="data_screen_delete_category">刪除</string>
-    <string name="data_screen_source_category">來源</string>
+    <string name="data_screen_danger_category">危險區域</string>
 </resources>

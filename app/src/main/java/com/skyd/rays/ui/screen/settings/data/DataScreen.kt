@@ -70,18 +70,12 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             contentPadding = paddingValues,
         ) {
             item {
-                CategorySettingsItem(text = stringResource(id = R.string.data_screen_source_category))
-            }
-            item {
                 BaseSettingsItem(
                     icon = rememberVectorPainter(Icons.Default.Source),
                     text = stringResource(id = R.string.image_source_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_image_source_description),
                     onClick = { navController.navigate(IMAGE_SOURCE_SCREEN_ROUTE) }
                 )
-            }
-            item {
-                CategorySettingsItem(text = stringResource(id = R.string.data_screen_sync_category))
             }
             item {
                 BaseSettingsItem(
@@ -92,7 +86,15 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                 )
             }
             item {
-                CategorySettingsItem(text = stringResource(id = R.string.data_screen_delete_category))
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(image = Icons.Default.Cached),
+                    text = stringResource(id = R.string.cache_screen_name),
+                    descriptionText = stringResource(id = R.string.cache_screen_description),
+                    onClick = { navController.navigate(CACHE_SCREEN_ROUTE) }
+                )
+            }
+            item {
+                CategorySettingsItem(text = stringResource(id = R.string.data_screen_danger_category))
             }
             item {
                 BaseSettingsItem(
@@ -100,14 +102,6 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                     text = stringResource(id = R.string.data_screen_delete_all),
                     descriptionText = stringResource(id = R.string.data_screen_delete_all_description),
                     onClick = { openDeleteWarningDialog = true }
-                )
-            }
-            item {
-                BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Cached),
-                    text = stringResource(id = R.string.cache_screen_name),
-                    descriptionText = stringResource(id = R.string.cache_screen_description),
-                    onClick = { navController.navigate(CACHE_SCREEN_ROUTE) }
                 )
             }
         }
