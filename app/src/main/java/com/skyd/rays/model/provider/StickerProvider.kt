@@ -21,6 +21,7 @@ import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.db.dao.TagDao
 import com.skyd.rays.model.db.dao.sticker.MimeTypeDao
 import com.skyd.rays.model.db.dao.sticker.StickerDao
+import com.skyd.rays.model.respository.SearchRepository
 import com.skyd.rays.util.image.ImageFormatChecker
 import com.skyd.rays.util.image.format.ImageFormat
 import dagger.hilt.EntryPoint
@@ -61,7 +62,11 @@ class StickerProvider : DocumentsProvider() {
             // recently used documents will show up in the "Recents" category.
             // FLAG_SUPPORTS_SEARCH allows users to search all documents the application
             // shares.
-            add(Root.COLUMN_FLAGS, Root.FLAG_LOCAL_ONLY or Root.FLAG_SUPPORTS_IS_CHILD)
+            add(
+                Root.COLUMN_FLAGS,
+                Root.FLAG_LOCAL_ONLY or Root.FLAG_SUPPORTS_IS_CHILD or
+                        Root.FLAG_SUPPORTS_RECENTS or Root.FLAG_SUPPORTS_SEARCH
+            )
 
             add(Root.COLUMN_TITLE, context!!.getString(R.string.app_name))
 
@@ -70,7 +75,7 @@ class StickerProvider : DocumentsProvider() {
 
             // The child MIME types are used to filter the roots and only present to the
             // user those roots that contain the desired type somewhere in their file hierarchy.
-            add(Root.COLUMN_MIME_TYPES, MIME_TYPE_DIR)
+            add(Root.COLUMN_MIME_TYPES, "image/*")
             add(Root.COLUMN_ICON, R.mipmap.ic_launcher)
         }
 
@@ -87,12 +92,14 @@ class StickerProvider : DocumentsProvider() {
     override fun queryDocument(documentId: String, projection: Array<out String>?): Cursor {
         // Create a cursor with the requested projection, or the default projection.
         return MatrixCursor(projection ?: DEFAULT_DOCUMENT_COLUMNS).apply {
-            val files = arrayOf(File(documentId))
+            val uuids = listOf(File(documentId).name)
+            val modifiedMap = getModifiedMap(uuids)
             includeFile(
                 this,
-                documentId,
-                getDisplayMap(files),
-                getMimeTypeMap(files),
+                path = documentId,
+                lastModified = modifiedMap[uuids.first()],
+                displayMap = getDisplayMap(uuids),
+                mimeTypeMap = getMimeTypeMap(uuids),
             )
         }
     }
@@ -105,17 +112,29 @@ class StickerProvider : DocumentsProvider() {
         return MatrixCursor(projection ?: DEFAULT_DOCUMENT_COLUMNS).apply {
             val parent = File(parentDocumentId ?: STICKER_DIR)
             val listFiles = parent.listFiles().orEmpty()
-            val displayMap = getDisplayMap(listFiles)
-            val mimeTypeMap = getMimeTypeMap(listFiles)
+            val stickerUuids = listFiles.map { it.name }
+            val modifiedMap = getModifiedMap(stickerUuids)
+            val displayMap = getDisplayMap(stickerUuids)
+            val mimeTypeMap = getMimeTypeMap(stickerUuids)
 
             listFiles.forEach { file ->
-                includeFile(this, file.path, displayMap, mimeTypeMap)
+                includeFile(
+                    cursor = this,
+                    path = file.path,
+                    lastModified = modifiedMap[file.name],
+                    displayMap = displayMap,
+                    mimeTypeMap = mimeTypeMap,
+                )
             }
         }
     }
 
-    private fun getDisplayMap(listFiles: Array<out File>): MutableMap<String, String> {
-        val titles = entryPoint.stickerDao().getStickerTitles(listFiles.map { it.name })
+    private fun getModifiedMap(stickerUuids: List<String>): MutableMap<String, Long> {
+        return entryPoint.stickerDao().getStickerModified(stickerUuids).toMutableMap()
+    }
+
+    private fun getDisplayMap(stickerUuids: List<String>): MutableMap<String, String> {
+        val titles = entryPoint.stickerDao().getStickerTitles(stickerUuids)
             .toMutableMap()
 
         entryPoint.tagDao().getTagStringMap(
@@ -127,14 +146,14 @@ class StickerProvider : DocumentsProvider() {
         return titles
     }
 
-    private fun getMimeTypeMap(listFiles: Array<out File>): MutableMap<String, String> {
-        return entryPoint.mimeTypeDao().getStickerMimeTypes(listFiles.map { it.name })
-            .toMutableMap()
+    private fun getMimeTypeMap(stickerUuids: List<String>): MutableMap<String, String> {
+        return entryPoint.mimeTypeDao().getStickerMimeTypes(stickerUuids).toMutableMap()
     }
 
     private fun includeFile(
         cursor: MatrixCursor,
         path: String?,
+        lastModified: Long? = null,
         displayMap: Map<String, String>,
         mimeTypeMap: MutableMap<String, String>,
     ) {
@@ -163,7 +182,7 @@ class StickerProvider : DocumentsProvider() {
             row.add(Document.COLUMN_DISPLAY_NAME, file.name)
         }
         row.add(Document.COLUMN_SIZE, file.length())
-        row.add(Document.COLUMN_LAST_MODIFIED, file.lastModified())
+        row.add(Document.COLUMN_LAST_MODIFIED, lastModified ?: file.lastModified())
     }
 
     override fun openDocument(
@@ -232,6 +251,8 @@ class StickerProvider : DocumentsProvider() {
                     if (reuseBitmap?.get() != null) {
                         inBitmap = reuseBitmap?.get()
                     }
+                    // Only mutable bitmap can be reused.
+                    inMutable = true
                     val bitmap = BitmapFactory.decodeFile(stickerFile.path, this)
                     bitmap.compress(Bitmap.CompressFormat.PNG, 90, fos)
 
@@ -262,9 +283,62 @@ class StickerProvider : DocumentsProvider() {
         )
     }
 
+    override fun queryRecentDocuments(rootId: String?, projection: Array<out String>?): Cursor {
+        return MatrixCursor(projection ?: DEFAULT_DOCUMENT_COLUMNS).apply {
+            val stickers = entryPoint.stickerDao().getRecentModifiedStickers()
+                .associateBy { it.sticker.uuid }
+            val listFiles = stickers.values
+                .map { File(STICKER_DIR, it.sticker.uuid) }
+                .filter { it.exists() }
+                .toTypedArray()
+            val stickerUuids = listFiles.map { it.name }
+            val displayMap = getDisplayMap(stickerUuids)
+            val mimeTypeMap = getMimeTypeMap(stickerUuids)
+
+            listFiles.forEach { file ->
+                includeFile(
+                    cursor = this,
+                    path = file.path,
+                    lastModified = stickers[file.name]?.sticker?.modifyTime,
+                    displayMap = displayMap,
+                    mimeTypeMap = mimeTypeMap,
+                )
+            }
+        }
+    }
+
+    override fun querySearchDocuments(
+        rootId: String?,
+        query: String?,
+        projection: Array<out String>?
+    ): Cursor {
+        return MatrixCursor(projection ?: DEFAULT_DOCUMENT_COLUMNS).apply {
+            val stickers = entryPoint.searchRepo().requestStickerWithTagsList(query.orEmpty())
+                .associateBy { it.sticker.uuid }
+            val listFiles = stickers.values
+                .map { File(STICKER_DIR, it.sticker.uuid) }
+                .filter { it.exists() }
+                .toTypedArray()
+            val stickerUuids = listFiles.map { it.name }
+            val displayMap = getDisplayMap(stickerUuids)
+            val mimeTypeMap = getMimeTypeMap(stickerUuids)
+
+            listFiles.forEach { file ->
+                includeFile(
+                    cursor = this,
+                    path = file.path,
+                    lastModified = stickers[file.name]?.sticker?.modifyTime,
+                    displayMap = displayMap,
+                    mimeTypeMap = mimeTypeMap,
+                )
+            }
+        }
+    }
+
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     interface StickerProviderEntryPoint {
+        fun searchRepo(): SearchRepository
         fun stickerDao(): StickerDao
         fun tagDao(): TagDao
         fun mimeTypeDao(): MimeTypeDao

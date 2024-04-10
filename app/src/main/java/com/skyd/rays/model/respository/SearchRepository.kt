@@ -31,18 +31,24 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class SearchRepository @Inject constructor(
     private val stickerDao: StickerDao,
 ) : BaseRepository() {
-    fun requestStickerWithTagsList(keyword: String): Flow<List<StickerWithTags>> {
+    fun requestStickerWithTagsList(keyword: String): List<StickerWithTags> = runBlocking {
+        stickerDao.getStickerWithTagsList(genSql(k = keyword)).first()
+    }
+
+    fun requestStickerWithTagsListFlow(keyword: String): Flow<List<StickerWithTags>> {
         return flow { emit(genSql(keyword)) }
             .flowOn(Dispatchers.IO)
             .flatMapConcat {
@@ -268,6 +274,9 @@ class SearchRepository @Inject constructor(
                         appContext, HomeRepositoryEntryPoint::class.java
                     ).searchDomainDao.getSearchDomain(tableName, columnName)
                 },
+            intersectSearchBySpace: Boolean = appContext.dataStore.getOrDefault(
+                IntersectSearchBySpacePreference
+            ),
         ): SimpleSQLiteQuery {
             val useRegexSearch = appContext.dataStore.getOrDefault(UseRegexSearchPreference)
             if (useRegexSearch) {
@@ -277,9 +286,6 @@ class SearchRepository @Inject constructor(
                 }
             }
 
-            // 是否使用多个关键字并集查询
-            val intersectSearchBySpace =
-                appContext.dataStore.getOrDefault(IntersectSearchBySpacePreference)
             return if (intersectSearchBySpace) {
                 // 以多个连续的空格/制表符/换行符分割
                 val keywords = k.trim().split("\\s+".toRegex()).toSet()

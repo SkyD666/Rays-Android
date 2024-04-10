@@ -16,6 +16,7 @@ import com.skyd.rays.model.bean.STICKER_TABLE_NAME
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerBean.Companion.CLICK_COUNT_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.CREATE_TIME_COLUMN
+import com.skyd.rays.model.bean.StickerBean.Companion.MODIFY_TIME_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.SHARE_COUNT_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.STICKER_MD5_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.UUID_COLUMN
@@ -61,6 +62,21 @@ interface StickerDao {
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN LIKE :stickerUuid")
     fun getStickerWithTags(stickerUuid: String): StickerWithTags?
+
+    @Transaction
+    @Query("SELECT * FROM $STICKER_TABLE_NAME ORDER BY $MODIFY_TIME_COLUMN DESC LIMIT :count")
+    fun getRecentModifiedStickers(count: Int = 15): List<StickerWithTags>
+
+    @Transaction
+    @Query(
+        """
+        SELECT $UUID_COLUMN, $MODIFY_TIME_COLUMN FROM $STICKER_TABLE_NAME
+        WHERE $UUID_COLUMN IN (:stickerUuids)
+        """
+    )
+    fun getStickerModified(stickerUuids: List<String>): Map<
+            @MapColumn(columnName = UUID_COLUMN) String,
+            @MapColumn(columnName = MODIFY_TIME_COLUMN) Long>
 
     @Transaction
     @Query(

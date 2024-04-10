@@ -1,7 +1,7 @@
 buildscript {
     extra.apply {
-        set("composeVersion", "1.6.0")
-        set("md3Version", "1.2.0")
+        set("composeVersion", "1.6.5")
+        set("md3Version", "1.2.1")
         set("accompanistVersion", "0.34.0")
         set("mlkitRecognitionVersion", "16.0.0")
         set("roomVersion", "2.6.1")

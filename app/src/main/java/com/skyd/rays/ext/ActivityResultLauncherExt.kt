@@ -11,7 +11,7 @@ fun <I> ActivityResultLauncher<I>.safeLaunch(
     runCatching {
         launch(input)
     }.onFailure {
-        // May: No Activity found to handle Intent
+        // e.g. No Activity found to handle Intent
         it.printStackTrace()
         onError.invoke(it)
     }
@@ -25,7 +25,7 @@ fun <I> ActivityResultLauncher<I>.safeLaunch(
     runCatching {
         launch(input, options)
     }.onFailure {
-        // May: No Activity found to handle Intent
+        // e.g. No Activity found to handle Intent
         it.printStackTrace()
         onError.invoke(it)
     }

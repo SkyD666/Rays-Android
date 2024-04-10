@@ -22,7 +22,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 62
-        versionName = "2.2-alpha12"
+        versionName = "2.2-beta01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -35,8 +35,6 @@ android {
 
     signingConfigs {
         create("release") {
-            // You need to specify either an absolute path or include the
-            // keystore file in the same directory as the build.gradle file.
             @Suppress("UNCHECKED_CAST")
             val sign = ((extra["secret"] as Map<*, *>)["sign"] as Map<String, String>)
             storeFile = file("../key.jks")
@@ -200,6 +198,6 @@ dependencies {
 
     implementation("com.github.penfeizhou.android.animation:apng:2.28.0")
 
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.4")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.4")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.5")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.5")
 }
