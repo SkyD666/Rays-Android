@@ -53,6 +53,9 @@ class DataViewModel @Inject constructor(private var dataRepo: DataRepository) :
                 is DataPartialStateChange.DeleteAllData.Success ->
                     DataEvent.DeleteAllResultEvent.Success(change.time)
 
+                is DataPartialStateChange.DeleteStickerShareTime.Success ->
+                    DataEvent.DeleteStickerShareTimeResultEvent.Success(change.time)
+
                 else -> return@onEach
             }
             sendEvent(event)
@@ -66,6 +69,11 @@ class DataViewModel @Inject constructor(private var dataRepo: DataRepository) :
             filterIsInstance<DataIntent.DeleteAllData>().flatMapConcat {
                 dataRepo.requestDeleteAllData()
                     .map { DataPartialStateChange.DeleteAllData.Success(it) }
+                    .startWith(DataPartialStateChange.LoadingDialog)
+            },
+            filterIsInstance<DataIntent.DeleteStickerShareTime>().flatMapConcat {
+                dataRepo.requestDeleteStickerShareTime()
+                    .map { DataPartialStateChange.DeleteStickerShareTime.Success(it) }
                     .startWith(DataPartialStateChange.LoadingDialog)
             },
         )

@@ -23,11 +23,12 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.Reply
+import androidx.compose.material.icons.automirrored.outlined.Reply
+import androidx.compose.material.icons.automirrored.outlined.ScheduleSend
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.rounded.MoreTime
-import androidx.compose.material.icons.rounded.Shuffle
+import androidx.compose.material.icons.outlined.MoreTime
+import androidx.compose.material.icons.outlined.Shuffle
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalButton
@@ -142,7 +143,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                             DisplayStickersRow(
                                 title = stringResource(id = R.string.home_screen_most_shared_stickers),
                                 count = mostSharedStickersList.size,
-                                emptyIcon = Icons.AutoMirrored.Rounded.Reply,
+                                emptyIcon = Icons.AutoMirrored.Outlined.Reply,
                                 key = { mostSharedStickersList[it].sticker.uuid },
                                 itemImage = { mostSharedStickersList[it].sticker.uuid },
                                 itemTitle = { mostSharedStickersList[it].sticker.title },
@@ -168,11 +169,41 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                             )
                         }
                         item {
+                            val recentSharedStickersList = homeUiState.recentSharedStickersList
+                            DisplayStickersRow(
+                                title = stringResource(id = R.string.home_screen_recent_shared_stickers),
+                                count = recentSharedStickersList.size,
+                                emptyIcon = Icons.AutoMirrored.Outlined.ScheduleSend,
+                                key = { recentSharedStickersList[it].sticker.uuid },
+                                itemImage = { recentSharedStickersList[it].sticker.uuid },
+                                itemTitle = { recentSharedStickersList[it].sticker.title },
+                                onItemLongClick = {
+                                    context.sendStickerByUuid(
+                                        uuid = recentSharedStickersList[it].sticker.uuid,
+                                        onSuccess = { recentSharedStickersList[it].sticker.shareCount++ }
+                                    )
+                                },
+                                onItemClick = {
+                                    openDetailScreen(
+                                        navController = navController,
+                                        stickerUuid = recentSharedStickersList[it].sticker.uuid
+                                    )
+                                },
+                                itemShouldBlur = { index ->
+                                    shouldBlur(
+                                        context = context,
+                                        c = recentSharedStickersList[index].tags.map { it.tag } +
+                                                recentSharedStickersList[index].sticker.title,
+                                    )
+                                },
+                            )
+                        }
+                        item {
                             val recentCreatedStickersList = homeUiState.recentCreatedStickersList
                             DisplayStickersRow(
                                 title = stringResource(id = R.string.home_screen_recent_create_stickers),
                                 count = recentCreatedStickersList.size,
-                                emptyIcon = Icons.Rounded.MoreTime,
+                                emptyIcon = Icons.Outlined.MoreTime,
                                 key = { recentCreatedStickersList[it].sticker.uuid },
                                 itemImage = { recentCreatedStickersList[it].sticker.uuid },
                                 itemTitle = { recentCreatedStickersList[it].sticker.title },
@@ -220,7 +251,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                 title = stringResource(id = R.string.home_screen_random_tags),
                                 count = randomTagsList.size,
                                 key = { randomTagsList[it].tag },
-                                emptyIcon = Icons.Rounded.Shuffle,
+                                emptyIcon = Icons.Outlined.Shuffle,
                                 itemImage = { randomTagsList[it].stickerUuid },
                                 itemTitle = { randomTagsList[it].tag },
                                 onItemClick = {
@@ -449,7 +480,7 @@ private fun HomeScreenFloatingActionButton(
 @Composable
 fun HomeEmptyPlaceholder() {
     AnimatedPlaceholder(
-        resId = R.raw.lottie_genshin_impact_keqing_1,
-        tip = stringResource(id = R.string.home_screen_empty_tip)
+        resId = R.raw.lottie_genshin_impact_klee_3,
+        tip = stringResource(id = R.string.loading)
     )
 }

@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 object CustomPrimaryColorPreference : BasePreference<String> {
     private const val CUSTOM_PRIMARY_COLOR = "customPrimaryColor"
-    override val default = ""
+    override val default = "62539F"
 
     val key = stringPreferencesKey(CUSTOM_PRIMARY_COLOR)
 

@@ -12,6 +12,7 @@ import com.skyd.rays.appContext
 import com.skyd.rays.config.STICKER_DIR
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
+import com.skyd.rays.model.bean.STICKER_SHARE_TIME_TABLE_NAME
 import com.skyd.rays.model.bean.STICKER_TABLE_NAME
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerBean.Companion.CLICK_COUNT_COLUMN
@@ -20,10 +21,12 @@ import com.skyd.rays.model.bean.StickerBean.Companion.MODIFY_TIME_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.SHARE_COUNT_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.STICKER_MD5_COLUMN
 import com.skyd.rays.model.bean.StickerBean.Companion.UUID_COLUMN
+import com.skyd.rays.model.bean.StickerShareTimeBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.StickerWithTagsAndFile
 import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.db.dao.TagDao
+import com.skyd.rays.model.db.dao.cache.StickerShareTimeDao
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -41,6 +44,7 @@ interface StickerDao {
     @InstallIn(SingletonComponent::class)
     interface StickerDaoEntryPoint {
         val tagDao: TagDao
+        val stickerShareTimeDao: StickerShareTimeDao
     }
 
     @Transaction
@@ -105,13 +109,30 @@ interface StickerDao {
 
     @Transaction
     @Query(
-        """SELECT *
+        """
+        SELECT *
         FROM $STICKER_TABLE_NAME
         ORDER BY $SHARE_COUNT_COLUMN DESC
         LIMIT :count
         """
     )
     fun getMostSharedStickersList(count: Int): Flow<List<StickerWithTags>>
+
+    @Transaction
+    @Query(
+        """
+        SELECT * FROM $STICKER_TABLE_NAME LEFT JOIN (
+            SELECT *, MAX(${StickerShareTimeBean.SHARE_TIME_COLUMN})
+            FROM $STICKER_SHARE_TIME_TABLE_NAME
+            GROUP BY ${StickerShareTimeBean.STICKER_UUID_COLUMN}
+            ORDER BY ${StickerShareTimeBean.SHARE_TIME_COLUMN} DESC
+            LIMIT :count
+        ) AS shareTime
+        WHERE $UUID_COLUMN = shareTime.${StickerShareTimeBean.STICKER_UUID_COLUMN}
+        ORDER BY ${StickerShareTimeBean.SHARE_TIME_COLUMN} DESC
+        """
+    )
+    fun getRecentSharedStickers(count: Int): Flow<List<StickerWithTags>>
 
     @Transaction
     @Query("SELECT $UUID_COLUMN FROM $STICKER_TABLE_NAME WHERE $STICKER_MD5_COLUMN LIKE :stickerMd5")
@@ -138,6 +159,17 @@ interface StickerDao {
     fun addShareCount(uuids: List<String>, count: Int = 1): Int
 
     @Transaction
+    fun shareStickers(uuids: List<String>, count: Int = 1) {
+        val hiltEntryPoint = EntryPointAccessors
+            .fromApplication(appContext, StickerDaoEntryPoint::class.java)
+        val currentTimeMillis = System.currentTimeMillis()
+        addShareCount(uuids, count)
+        hiltEntryPoint.stickerShareTimeDao.updateShareTime(uuids.map { stickerUuid ->
+            StickerShareTimeBean(stickerUuid, currentTimeMillis)
+        })
+    }
+
+    @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME ORDER BY $SHARE_COUNT_COLUMN DESC LIMIT :count")
     fun getPopularStickersList(count: Int = 15): Flow<List<StickerWithTags>>
 
@@ -150,8 +182,8 @@ interface StickerDao {
         if (updateModifyTime) {
             stickerWithTags.sticker.modifyTime = System.currentTimeMillis()
         }
-        val hiltEntryPoint =
-            EntryPointAccessors.fromApplication(appContext, StickerDaoEntryPoint::class.java)
+        val hiltEntryPoint = EntryPointAccessors
+            .fromApplication(appContext, StickerDaoEntryPoint::class.java)
         var stickerUuid = stickerWithTags.sticker.uuid
         runCatching {
             UUID.fromString(stickerUuid)

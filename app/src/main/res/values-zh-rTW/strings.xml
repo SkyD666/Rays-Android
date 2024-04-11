@@ -128,6 +128,7 @@
     <string name="webdav_screen_progress_download_data_sticker">更新本地數據 + 表情包</string>
     <string name="webdav_screen_last_modified_time">上次修改時間：%s</string>
     <string name="data_screen_delete_all_success">所有表情包數據已清除，花費 %.2f 秒</string>
+    <string name="data_screen_delete_sticker_share_time_success">所有表情包分享資料已清空，花費 %.2f 秒</string>
     <string name="text_recognize_screen_threshold">文字識別閾值</string>
     <string name="share_config_screen_copy_sticker_to_clipboard">分享時複製</string>
     <string name="selfie_segmentation_screen_background">背景</string>
@@ -208,7 +209,6 @@
     <string name="send_sticker">發送表情包</string>
     <string name="setting_screen_search_description">搜尋方案、搜尋領域等</string>
     <string name="accessibility_service_description">建議允許 Rays 自啟動、關聯啟動和背景運行。\n\nRays 的以下功能需要使用無障礙：\n\n自動分享</string>
-    <string name="home_screen_empty_tip">創建新的表情包吧～</string>
     <string name="empty_tip">空~</string>
     <string name="db_sticker_table_uuid">UUID</string>
     <string name="webdav_screen_remote_recycle_bin_is_empty">遠端回收站為空</string>
@@ -301,6 +301,7 @@
     <string name="home_screen_recommend_tags">推薦標籤</string>
     <string name="home_screen_random_tags">隨機標籤</string>
     <string name="home_screen_recent_create_stickers">最近創建</string>
+    <string name="home_screen_recent_shared_stickers">最近分享</string>
     <string name="home_screen_most_shared_stickers">最多分享</string>
     <string name="home_screen_export_to_backup_zip">匯出為 Zip 備份文件</string>
     <string name="stickers_list_screen_name">表情包列表</string>
@@ -327,4 +328,6 @@
     <string name="cache_screen_delete_provider_thumbnails_description">刪除貼紙提供者縮圖快取</string>
     <string name="cache_screen_delete_provider_thumbnails_success">所有縮圖均已清除，已花費 %.2f 秒</string>
     <string name="data_screen_danger_category">危險區域</string>
+    <string name="data_screen_delete_all_sticker_share_time_data">刪除分享數據</string>
+    <string name="data_screen_delete_all_sticker_share_time_data_description">刪除表情包分享統計訊息，例如每次分享的時間</string>
 </resources>

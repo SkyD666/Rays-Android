@@ -56,7 +56,7 @@ fun Context.sendStickerByUuid(
             stickerFiles = listOf(stickerFile),
             topActivityFullName = topActivityFullName,
             onSuccess = {
-                AppDatabase.getInstance(context).stickerDao().addShareCount(uuids = listOf(uuid))
+                AppDatabase.getInstance(context).stickerDao().shareStickers(uuids = listOf(uuid))
                 onSuccess?.invoke()
             }
         )
@@ -75,7 +75,7 @@ fun Context.sendStickersByUuids(
             stickerFiles = stickerFiles,
             topActivityFullName = topActivityFullName,
             onSuccess = {
-                AppDatabase.getInstance(context).stickerDao().addShareCount(uuids = uuids)
+                AppDatabase.getInstance(context).stickerDao().shareStickers(uuids = uuids)
                 onSuccess?.invoke()
             }
         )

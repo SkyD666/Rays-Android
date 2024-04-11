@@ -3,8 +3,8 @@ package com.skyd.rays.model.preference.theme
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.put
 import com.skyd.rays.model.preference.BasePreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,10 @@ object StickerColorThemePreference : BasePreference<Boolean> {
 
     fun put(context: Context, scope: CoroutineScope, value: Boolean) {
         scope.launch(Dispatchers.IO) {
-            context.dataStore.put(key, value)
+            context.dataStore.edit { pref ->
+                pref[key] = value
+                if (value) pref[ThemeNamePreference.key] = ThemeNamePreference.CUSTOM_THEME_NAME
+            }
         }
     }
 

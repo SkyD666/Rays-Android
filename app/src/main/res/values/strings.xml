@@ -148,6 +148,7 @@
     <string name="data_screen_delete_all_description">Delete all local data managed by Rays, including images, titles and labels. This operation is irreversible</string>
     <string name="setting_screen_data_description">Backup, synchronize, delete sticker data</string>
     <string name="data_screen_delete_all_success">All sticker data cleared, spent %.2fs</string>
+    <string name="data_screen_delete_sticker_share_time_success">All sticker share statistics cleared, spent %.2fs</string>
     <string name="search_config_screen_intersect_search_by_space">Intersection search</string>
     <string name="search_config_screen_intersect_search_by_space_description">Use spaces to split multiple keywords to achieve the \"and\" condition</string>
     <string name="delete_sticker_failed">Delete failed</string>
@@ -158,7 +159,6 @@
         <item quantity="other">Export %d stickers</item>
     </plurals>
     <string name="webdav_screen_restore">Restore</string>
-    <string name="home_screen_empty_tip">Please create a new sticker~</string>
     <string name="empty_tip">Empty~</string>
     <string name="search_screen_no_search_result_tip">It\'s empty~</string>
     <string name="add_screen_select_sticker">Select stickers</string>
@@ -312,8 +312,9 @@
     <string name="more">More</string>
     <string name="home_screen_recommend_tags">Recommend tags</string>
     <string name="home_screen_random_tags">Random tags</string>
-    <string name="home_screen_recent_create_stickers">Recently created</string>
-    <string name="home_screen_most_shared_stickers">Most shared</string>
+    <string name="home_screen_recent_create_stickers">Recent creates</string>
+    <string name="home_screen_recent_shared_stickers">Recent shares</string>
+    <string name="home_screen_most_shared_stickers">Most shares</string>
     <string name="home_screen_export_to_backup_zip">Export as backup zip</string>
     <string name="stickers_list_screen_name">Stickers list</string>
     <string name="stickers_list_screen_export_current_stickers">Export as backup zip</string>
@@ -339,4 +340,6 @@
     <string name="cache_screen_delete_provider_thumbnails_description">Delete sticker provider thumbnail caches</string>
     <string name="cache_screen_delete_provider_thumbnails_success">All thumbnails cleared, spent %.2fs</string>
     <string name="data_screen_danger_category">Danger area</string>
+    <string name="data_screen_delete_all_sticker_share_time_data">Delete share data</string>
+    <string name="data_screen_delete_all_sticker_share_time_data_description">Delete sticker share statistics, e.g. time of each share</string>
 </resources>

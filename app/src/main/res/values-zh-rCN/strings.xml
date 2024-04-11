@@ -143,6 +143,7 @@
     <string name="data_screen_delete_all_description">删除 Rays 管理的所有本地表情包数据，包括表情包图像、标题和标签等，此操作不可逆</string>
     <string name="setting_screen_data_description">备份、同步、删除表情包数据等</string>
     <string name="data_screen_delete_all_success">所有表情包数据已清空，耗时 %.2f 秒</string>
+    <string name="data_screen_delete_sticker_share_time_success">所有表情包分享数据已清空，耗时 %.2f 秒</string>
     <string name="search_config_screen_intersect_search_by_space">交集搜索</string>
     <string name="search_config_screen_intersect_search_by_space_description">使用空格分割多个搜索关键字以实现“并且”条件，即对这些关键字的结果进行交集操作</string>
     <string name="delete_sticker_failed">删除失败</string>
@@ -152,7 +153,6 @@
         <item quantity="other">导出了 %d 个表情包</item>
     </plurals>
     <string name="webdav_screen_restore">还原</string>
-    <string name="home_screen_empty_tip">开始新建表情包吧~</string>
     <string name="empty_tip">空空如也呢~</string>
     <string name="search_screen_no_search_result_tip">空空如也呢~</string>
     <string name="add_screen_select_sticker">选择表情包</string>
@@ -301,6 +301,7 @@
     <string name="home_screen_recommend_tags">推荐标签</string>
     <string name="home_screen_random_tags">随机标签</string>
     <string name="home_screen_recent_create_stickers">最近创建</string>
+    <string name="home_screen_recent_shared_stickers">最近分享</string>
     <string name="home_screen_most_shared_stickers">最多分享</string>
     <string name="home_screen_export_to_backup_zip">导出为 Zip 备份文件</string>
     <string name="stickers_list_screen_name">表情包列表</string>
@@ -327,4 +328,6 @@
     <string name="cache_screen_delete_provider_thumbnails_description">删除表情包提供者缩略图缓存</string>
     <string name="cache_screen_delete_provider_thumbnails_success">已删除缩略图缓存, 花费 %.2f 秒</string>
     <string name="data_screen_danger_category">危险区域</string>
+    <string name="data_screen_delete_all_sticker_share_time_data">删除分享数据</string>
+    <string name="data_screen_delete_all_sticker_share_time_data_description">删除分享表情包操作的统计数据，例如每次分享的时间</string>
 </resources>

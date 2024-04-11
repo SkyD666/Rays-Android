@@ -25,5 +25,6 @@ sealed class HomeListState {
         val randomTagsList: List<TagBean>,
         val recentCreatedStickersList: List<StickerWithTags>,
         val mostSharedStickersList: List<StickerWithTags>,
+        val recentSharedStickersList: List<StickerWithTags>,
     ) : HomeListState()
 }

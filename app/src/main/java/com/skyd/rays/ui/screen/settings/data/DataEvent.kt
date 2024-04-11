@@ -6,4 +6,8 @@ sealed interface DataEvent : MviSingleEvent {
     sealed interface DeleteAllResultEvent : DataEvent {
         data class Success(val time: Long) : DeleteAllResultEvent
     }
+
+    sealed interface DeleteStickerShareTimeResultEvent : DataEvent {
+        data class Success(val time: Long) : DeleteStickerShareTimeResultEvent
+    }
 }

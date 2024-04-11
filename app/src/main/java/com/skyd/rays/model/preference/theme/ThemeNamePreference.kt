@@ -3,10 +3,10 @@ package com.skyd.rays.model.preference.theme
 import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
-import com.skyd.rays.ext.put
 import com.skyd.rays.model.preference.BasePreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +19,7 @@ object ThemeNamePreference : BasePreference<String> {
     val values: List<ThemeItem> = mutableListOf(
         ThemeItem(
             name = "Purple",
-            keyColor = Color(0xFF62539f)
+            keyColor = Color(0xFF62539F)
         ),
         ThemeItem(
             name = "Blue",
@@ -45,7 +45,10 @@ object ThemeNamePreference : BasePreference<String> {
 
     fun put(context: Context, scope: CoroutineScope, value: String) {
         scope.launch(Dispatchers.IO) {
-            context.dataStore.put(key, value)
+            context.dataStore.edit { pref ->
+                pref[key] = value
+                pref[StickerColorThemePreference.key] = false
+            }
         }
     }
 

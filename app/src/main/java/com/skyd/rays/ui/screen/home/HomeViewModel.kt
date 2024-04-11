@@ -57,12 +57,18 @@ class HomeViewModel @Inject constructor(
                     homeRepo.requestRandomTags(),
                     homeRepo.requestRecentCreateStickers(),
                     homeRepo.requestMostSharedStickers(),
-                ) { recommendTagsList, randomTagsList, recentCreatedStickersList, mostSharedStickersList ->
+                    homeRepo.requestRecentSharedStickers(),
+                ) { recommendTagsList,
+                    randomTagsList,
+                    recentCreatedStickersList,
+                    mostSharedStickersList,
+                    recentSharedStickersList ->
                     HomePartialStateChange.HomeList.Success(
                         recommendTagsList = recommendTagsList,
                         randomTagsList = randomTagsList,
                         recentCreatedStickersList = recentCreatedStickersList,
                         mostSharedStickersList = mostSharedStickersList,
+                        recentSharedStickersList = recentSharedStickersList,
                     )
                 }.startWith(HomePartialStateChange.HomeList.Loading)
             },

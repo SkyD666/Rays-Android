@@ -17,4 +17,11 @@ internal sealed interface DataPartialStateChange {
                 oldState.copy(loadingDialog = false)
         }
     }
+
+    sealed interface DeleteStickerShareTime : DataPartialStateChange {
+        data class Success(val time: Long) : DeleteStickerShareTime {
+            override fun reduce(oldState: DataState): DataState =
+                oldState.copy(loadingDialog = false)
+        }
+    }
 }

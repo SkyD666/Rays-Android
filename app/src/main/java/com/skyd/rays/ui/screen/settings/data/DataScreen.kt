@@ -47,7 +47,8 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
     val navController = LocalNavController.current
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-    var openDeleteWarningDialog by rememberSaveable { mutableStateOf(false) }
+    var openDeleteAllStickersDialog by rememberSaveable { mutableStateOf(false) }
+    var openDeleteStickerShareTimeDialog by rememberSaveable { mutableStateOf(false) }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
 
@@ -101,7 +102,15 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                     icon = rememberVectorPainter(image = Icons.Default.Delete),
                     text = stringResource(id = R.string.data_screen_delete_all),
                     descriptionText = stringResource(id = R.string.data_screen_delete_all_description),
-                    onClick = { openDeleteWarningDialog = true }
+                    onClick = { openDeleteAllStickersDialog = true }
+                )
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(image = Icons.Default.Delete),
+                    text = stringResource(id = R.string.data_screen_delete_all_sticker_share_time_data),
+                    descriptionText = stringResource(id = R.string.data_screen_delete_all_sticker_share_time_data_description),
+                    onClick = { openDeleteStickerShareTimeDialog = true }
                 )
             }
         }
@@ -117,17 +126,36 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                 )
             }
 
+            is DataEvent.DeleteStickerShareTimeResultEvent.Success -> {
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    message = context.getString(
+                        R.string.data_screen_delete_sticker_share_time_success,
+                        event.time / 1000.0f
+                    ),
+                    key2 = event,
+                )
+            }
+
             null -> Unit
         }
 
         WaitingDialog(visible = uiState.loadingDialog)
         DeleteWarningDialog(
-            visible = openDeleteWarningDialog,
-            onDismissRequest = { openDeleteWarningDialog = false },
-            onDismiss = { openDeleteWarningDialog = false },
+            visible = openDeleteAllStickersDialog,
+            onDismissRequest = { openDeleteAllStickersDialog = false },
+            onDismiss = { openDeleteAllStickersDialog = false },
             onConfirm = {
                 dispatch(DataIntent.DeleteAllData)
-                openDeleteWarningDialog = false
+                openDeleteAllStickersDialog = false
+            }
+        )
+        DeleteWarningDialog(
+            visible = openDeleteStickerShareTimeDialog,
+            onDismissRequest = { openDeleteStickerShareTimeDialog = false },
+            onDismiss = { openDeleteStickerShareTimeDialog = false },
+            onConfirm = {
+                dispatch(DataIntent.DeleteStickerShareTime)
+                openDeleteStickerShareTimeDialog = false
             }
         )
     }

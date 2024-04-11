@@ -34,4 +34,10 @@ class HomeRepository @Inject constructor(
             .distinctUntilChanged()
             .flowOn(Dispatchers.IO)
     }
+
+    fun requestRecentSharedStickers(): Flow<List<StickerWithTags>> {
+        return stickerDao.getRecentSharedStickers(count = 10)
+            .distinctUntilChanged()
+            .flowOn(Dispatchers.IO)
+    }
 }

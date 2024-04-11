@@ -23,6 +23,7 @@ internal sealed interface HomePartialStateChange {
                         randomTagsList = randomTagsList,
                         recentCreatedStickersList = recentCreatedStickersList,
                         mostSharedStickersList = mostSharedStickersList,
+                        recentSharedStickersList = recentSharedStickersList,
                     ).apply { loading = true }
                 )
             }
@@ -34,6 +35,7 @@ internal sealed interface HomePartialStateChange {
             val randomTagsList: List<TagBean>,
             val recentCreatedStickersList: List<StickerWithTags>,
             val mostSharedStickersList: List<StickerWithTags>,
+            val recentSharedStickersList: List<StickerWithTags>,
         ) : HomeList
     }
 }

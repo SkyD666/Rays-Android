@@ -6,6 +6,7 @@ import com.skyd.rays.model.db.dao.ApiGrantPackageDao
 import com.skyd.rays.model.db.dao.SearchDomainDao
 import com.skyd.rays.model.db.dao.TagDao
 import com.skyd.rays.model.db.dao.UriStringSharePackageDao
+import com.skyd.rays.model.db.dao.cache.StickerShareTimeDao
 import com.skyd.rays.model.db.dao.sticker.MimeTypeDao
 import com.skyd.rays.model.db.dao.sticker.StickerDao
 import dagger.Module
@@ -48,6 +49,10 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideMimeTypeDao(database: AppDatabase): MimeTypeDao =
-        database.mimeTypeDao()
+    fun provideMimeTypeDao(database: AppDatabase): MimeTypeDao = database.mimeTypeDao()
+
+    @Provides
+    @Singleton
+    fun provideStickerShareTimeDao(database: AppDatabase): StickerShareTimeDao =
+        database.stickerShareTimeDao()
 }
