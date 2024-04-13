@@ -103,7 +103,7 @@
     <plurals name="export_files_screen_successful_desc">
         <item quantity="one">Foi exportado %1$d sticker no total, demorou %2$.2f s</item>
         <item quantity="many">Foi exportado %1$d stickers no total, demorou %2$.2f s</item>
-        <item quantity="other"/>
+        <item quantity="other"></item>
     </plurals>
     <string name="webdav_screen_upload_description">Enviar os dados locais para o remoto</string>
     <string name="webdav_screen_clear_remote_recycle_bin">Limpar</string>
@@ -116,7 +116,7 @@
     <plurals name="import_files_screen_successful_desc">
         <item quantity="one">Foi atualizado %1$d sticker no total, demorou %2$.2f s</item>
         <item quantity="many">Foi atualizado %1$d stickers no total, demorou %2$.2f s</item>
-        <item quantity="other"/>
+        <item quantity="other"></item>
     </plurals>
     <string name="webdav_screen_last_modified_time">Última modificação em: %s</string>
     <string name="data_screen_name">Dados</string>
@@ -200,7 +200,7 @@
     <plurals name="export_stickers_result">
         <item quantity="one">Exportar %d sticker</item>
         <item quantity="many">Exportar %d stickers</item>
-        <item quantity="other"/>
+        <item quantity="other"></item>
     </plurals>
     <string name="db_tag_table">Tabela de tags</string>
     <string name="db_tag_table_tag">Tag</string>
@@ -222,10 +222,7 @@
     <string name="add_screen_sticker_duplicate">O sticker já foi adicionado e apresenta as informações existentes!</string>
     <string name="add_screen_suggest_tag">Tags sugeridas</string>
     <string name="classification_model_screen_default">Padrão</string>
-    <string name="update_newer_text">Nova versão: %1$s
-\nPublicada em: %2$s
-\nDownloads: %3$s
-\n</string>
+    <string name="update_newer_text">Nova versão: %1$s\nPublicada em: %2$s\nDownloads: %3$s\n</string>
     <string name="search_result_multi_select">Selecionar</string>
     <string name="search_result_invert_selection">Inverter</string>
     <string name="home_screen_search_result_list_to_top">Para o topo</string>
@@ -248,7 +245,7 @@
     <plurals name="webdav_screen_upload_success">
         <item quantity="one">O envio foi bem-sucedido, demorou %1$.2fs, atualizou %2$d sticker</item>
         <item quantity="many">O envio foi bem-sucedido, demorou %1$.2fs, atualizou %2$d stickers</item>
-        <item quantity="other"/>
+        <item quantity="other"></item>
     </plurals>
     <string name="about_screen_other_works_night_screen_name" translatable="false"></string>
     <string name="blur_stickers_screen_name"></string>
