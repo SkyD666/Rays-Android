@@ -21,8 +21,8 @@ android {
         applicationId = "com.skyd.rays"
         minSdk = 24
         targetSdk = 34
-        versionCode = 63
-        versionName = "2.2-beta04"
+        versionCode = 64
+        versionName = "2.2-rc01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

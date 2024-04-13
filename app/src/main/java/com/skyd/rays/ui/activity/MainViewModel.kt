@@ -15,7 +15,6 @@ import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
 import com.skyd.rays.util.stickerUuidToFile
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -91,7 +90,6 @@ class MainViewModel @Inject constructor() :
         if (swatch == null) {
             return
         }
-        delay(500)
         appContext.dataStore.edit { pref ->
             pref[ThemeNamePreference.key] = ThemeNamePreference.CUSTOM_THEME_NAME
             pref[CustomPrimaryColorPreference.key] = Integer.toHexString(swatch.rgb)

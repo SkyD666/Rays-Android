@@ -49,7 +49,7 @@ fun RaysTheme(
     val themeName = LocalThemeName.current
 
     MaterialTheme(
-        colorScheme = remember(themeName) {
+        colorScheme = remember(themeName, LocalCustomPrimaryColor.current) {
             wallpaperColors.getOrElse(themeName) {
                 dynamicColorScheme(
                     seedColor = ThemeNamePreference.values[0].keyColor,
