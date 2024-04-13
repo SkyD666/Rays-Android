@@ -26,7 +26,7 @@ sealed interface HandleImportedStickerStrategy : Parcelable {
     }
 
     fun moveFile(stickerFile: File) {
-        val destStickerFile = File(STICKER_DIR, stickerFile.name)
+        val destStickerFile = File(appContext.STICKER_DIR, stickerFile.name)
         stickerFile.copyTo(target = destStickerFile, overwrite = true)
         stickerFile.deleteRecursively()
     }

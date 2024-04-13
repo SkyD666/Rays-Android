@@ -73,7 +73,8 @@ fun RaysImage(
     imageLoader: ImageLoader = rememberRaysImageLoader(),
     contentScale: ContentScale = ContentScale.FillWidth,
 ) {
-    val file = remember(uuid) { File(STICKER_DIR, uuid) }
+    val context = LocalContext.current
+    val file = remember(uuid) { File(context.STICKER_DIR, uuid) }
     RaysImage(
         model = file,
         blur = blur,

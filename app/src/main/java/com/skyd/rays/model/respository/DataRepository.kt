@@ -1,5 +1,6 @@
 package com.skyd.rays.model.respository
 
+import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.PROVIDER_THUMBNAIL_DIR
 import com.skyd.rays.model.db.dao.cache.StickerShareTimeDao
@@ -26,7 +27,7 @@ class DataRepository @Inject constructor(
 
     suspend fun requestDeleteDocumentsProviderThumbnails(): Flow<Long> {
         return flowOnIo {
-            emit(measureTimeMillis { PROVIDER_THUMBNAIL_DIR.deleteRecursively() })
+            emit(measureTimeMillis { appContext.PROVIDER_THUMBNAIL_DIR.deleteRecursively() })
         }
     }
 }

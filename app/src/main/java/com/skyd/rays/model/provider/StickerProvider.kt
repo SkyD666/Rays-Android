@@ -71,7 +71,7 @@ class StickerProvider : DocumentsProvider() {
             add(Root.COLUMN_TITLE, context!!.getString(R.string.app_name))
 
             // This document id cannot change after it's shared.
-            add(Root.COLUMN_DOCUMENT_ID, STICKER_DIR)
+            add(Root.COLUMN_DOCUMENT_ID, context!!.STICKER_DIR)
 
             // The child MIME types are used to filter the roots and only present to the
             // user those roots that contain the desired type somewhere in their file hierarchy.
@@ -92,15 +92,24 @@ class StickerProvider : DocumentsProvider() {
     override fun queryDocument(documentId: String, projection: Array<out String>?): Cursor {
         // Create a cursor with the requested projection, or the default projection.
         return MatrixCursor(projection ?: DEFAULT_DOCUMENT_COLUMNS).apply {
-            val uuids = listOf(File(documentId).name)
-            val modifiedMap = getModifiedMap(uuids)
-            includeFile(
-                this,
-                path = documentId,
-                lastModified = modifiedMap[uuids.first()],
-                displayMap = getDisplayMap(uuids),
-                mimeTypeMap = getMimeTypeMap(uuids),
-            )
+            if (documentId == context!!.STICKER_DIR) {
+                includeFile(
+                    this,
+                    path = documentId,
+                    displayMap = mapOf(),
+                    mimeTypeMap = mutableMapOf(),
+                )
+            } else {
+                val uuids = listOf(File(documentId).name)
+                val modifiedMap = getModifiedMap(uuids)
+                includeFile(
+                    this,
+                    path = documentId,
+                    lastModified = modifiedMap[uuids.first()],
+                    displayMap = getDisplayMap(uuids),
+                    mimeTypeMap = getMimeTypeMap(uuids),
+                )
+            }
         }
     }
 
@@ -110,7 +119,7 @@ class StickerProvider : DocumentsProvider() {
         sortOrder: String?
     ): Cursor {
         return MatrixCursor(projection ?: DEFAULT_DOCUMENT_COLUMNS).apply {
-            val parent = File(parentDocumentId ?: STICKER_DIR)
+            val parent = File(parentDocumentId ?: context!!.STICKER_DIR)
             val listFiles = parent.listFiles().orEmpty()
             val stickerUuids = listFiles.map { it.name }
             val modifiedMap = getModifiedMap(stickerUuids)
@@ -229,7 +238,7 @@ class StickerProvider : DocumentsProvider() {
     ): AssetFileDescriptor {
         val stickerFile = File(documentId)
         // TODO: delete thumbFile
-        val thumbFile = File(PROVIDER_THUMBNAIL_DIR, stickerFile.name)
+        val thumbFile = File(context!!.PROVIDER_THUMBNAIL_DIR, stickerFile.name)
         if (!thumbFile.exists()) {
             thumbFile.parentFile?.mkdirs()
             thumbFile.createNewFile()
@@ -286,7 +295,7 @@ class StickerProvider : DocumentsProvider() {
             val stickers = entryPoint.stickerDao().getRecentModifiedStickers()
                 .associateBy { it.sticker.uuid }
             val listFiles = stickers.values
-                .map { File(STICKER_DIR, it.sticker.uuid) }
+                .map { File(context!!.STICKER_DIR, it.sticker.uuid) }
                 .filter { it.exists() }
                 .toTypedArray()
             val stickerUuids = listFiles.map { it.name }
@@ -314,7 +323,7 @@ class StickerProvider : DocumentsProvider() {
             val stickers = entryPoint.searchRepo().requestStickerWithTagsList(query.orEmpty())
                 .associateBy { it.sticker.uuid }
             val listFiles = stickers.values
-                .map { File(STICKER_DIR, it.sticker.uuid) }
+                .map { File(context!!.STICKER_DIR, it.sticker.uuid) }
                 .filter { it.exists() }
                 .toTypedArray()
             val stickerUuids = listFiles.map { it.name }

@@ -216,7 +216,7 @@ interface StickerDao {
                     appContext, scope, CurrentStickerUuidPreference.default
                 )
             }
-            File(STICKER_DIR, stickerUuid).deleteRecursively()
+            File(appContext.STICKER_DIR, stickerUuid).deleteRecursively()
         }
         // 设置了外键，ForeignKey.CASCADE，因此会自动deleteTags
         return innerDeleteStickers(stickerUuids)
@@ -226,7 +226,7 @@ interface StickerDao {
     fun deleteAllStickerWithTags() {
         val scope = CoroutineScope(Dispatchers.IO)
         CurrentStickerUuidPreference.put(appContext, scope, CurrentStickerUuidPreference.default)
-        File(STICKER_DIR).deleteRecursively()
+        File(appContext.STICKER_DIR).deleteRecursively()
         // 设置了外键，ForeignKey.CASCADE，因此会自动deleteTags
         innerDeleteAllStickers()
     }

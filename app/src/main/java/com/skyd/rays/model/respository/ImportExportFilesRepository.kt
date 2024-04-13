@@ -49,7 +49,7 @@ class ImportExportFilesRepository @Inject constructor(
             val startTime = System.currentTimeMillis()
 
             // 清空导入所需的临时目录
-            IMPORT_FILES_DIR.deleteRecursively()
+            appContext.IMPORT_FILES_DIR.deleteRecursively()
 
             // 检查文件最后四个字节是不是 0x0D000721
             appContext.contentResolver.openFileDescriptor(backupFileUri, "r").use { descriptor ->
@@ -70,7 +70,7 @@ class ImportExportFilesRepository @Inject constructor(
             unzip(
                 context = appContext,
                 zipFile = backupFileUri,
-                location = IMPORT_FILES_DIR,
+                location = appContext.IMPORT_FILES_DIR,
                 onEach = { index, file ->
                     emitProgressData(
                         current = index,
@@ -85,7 +85,7 @@ class ImportExportFilesRepository @Inject constructor(
             emitProgressData(
                 msg = appContext.getString(R.string.import_files_screen_progress_checking_backup_format),
             )
-            val stickerWithTagsAndFileList = checkBackupUnzipFiles(IMPORT_FILES_DIR)
+            val stickerWithTagsAndFileList = checkBackupUnzipFiles(appContext.IMPORT_FILES_DIR)
 
             // 移动表情包文件并保存信息到数据库
             emitProgressData(
@@ -124,7 +124,7 @@ class ImportExportFilesRepository @Inject constructor(
             }
             val totalCount = allStickerWithTagsList.size
             var currentCount = 0
-            EXPORT_FILES_DIR.deleteRecursively()
+            appContext.EXPORT_FILES_DIR.deleteRecursively()
             allStickerWithTagsList.forEach {
                 if (excludeClickCount) it.sticker.clickCount = 0L
                 if (excludeShareCount) it.sticker.shareCount = 0L
@@ -132,7 +132,7 @@ class ImportExportFilesRepository @Inject constructor(
                 if (excludeModifyTime) it.sticker.modifyTime = 0L
                 stickerWithTagsToJsonFile(it)
                 stickerUuidToFile(it.sticker.uuid)
-                    .copyTo(File("$EXPORT_FILES_DIR/$BACKUP_STICKER_DIR", it.sticker.uuid))
+                    .copyTo(File("${appContext.EXPORT_FILES_DIR}/$BACKUP_STICKER_DIR", it.sticker.uuid))
                 emitProgressData(
                     current = ++currentCount,
                     total = totalCount,
@@ -149,7 +149,7 @@ class ImportExportFilesRepository @Inject constructor(
             zip(
                 context = appContext,
                 zipFile = zipFileUri,
-                files = EXPORT_FILES_DIR.listFiles().orEmpty().toList(),
+                files = appContext.EXPORT_FILES_DIR.listFiles().orEmpty().toList(),
                 onEach = { index, file ->
                     emitProgressData(
                         current = index,
@@ -180,7 +180,7 @@ class ImportExportFilesRepository @Inject constructor(
     }
 
     private fun stickerWithTagsToJsonFile(stickerWithTags: StickerWithTags): File {
-        val file = File("$EXPORT_FILES_DIR/$BACKUP_DATA_DIR", stickerWithTags.sticker.uuid)
+        val file = File("${appContext.EXPORT_FILES_DIR}/$BACKUP_DATA_DIR", stickerWithTags.sticker.uuid)
         if (!file.exists()) {
             if (file.parentFile?.exists() == false) {
                 file.parentFile?.mkdirs()

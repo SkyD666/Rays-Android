@@ -158,7 +158,7 @@ private fun File.deleteDirs(
     }
 }
 
-fun Bitmap.shareToFile(outputDir: File = TEMP_STICKER_DIR): File {
+fun Bitmap.shareToFile(outputDir: File = appContext.TEMP_STICKER_DIR): File {
     if (!outputDir.exists()) {
         outputDir.mkdirs()
     }
@@ -182,7 +182,7 @@ fun Bitmap.shareToFile(outputDir: File = TEMP_STICKER_DIR): File {
  * 把表情包复制到临时目录
  */
 fun File.copyStickerToTempFolder(fileExtension: Boolean = true): File {
-    val outputDir = TEMP_STICKER_DIR
+    val outputDir = appContext.TEMP_STICKER_DIR
     check(outputDir.exists() || outputDir.mkdirs())
     val resultFileName = name + "_" + Random.nextInt(0, Int.MAX_VALUE) + if (fileExtension) {
         inputStream().use { ImageFormatChecker.check(it, name).toString() }
@@ -212,7 +212,7 @@ fun externalShareStickerUuidToFile(uuid: String): File = stickerUuidToFile(uuid)
 /**
  * 针对内部操作，针对原图片本身
  */
-fun stickerUuidToFile(uuid: String): File = File(STICKER_DIR, uuid)
+fun stickerUuidToFile(uuid: String): File = File(appContext.STICKER_DIR, uuid)
 
 fun externalShareStickerUuidToUri(uuid: String): Uri =
     Uri.fromFile(externalShareStickerUuidToFile(uuid))

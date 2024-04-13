@@ -56,7 +56,7 @@ class AddRepository @Inject constructor(
                 }
             }
 
-            val tempFile = File(STICKER_DIR, "${Random.nextLong()}")
+            val tempFile = File(appContext.STICKER_DIR, "${Random.nextLong()}")
             uri.copyTo(tempFile)
             val stickerMd5 = tempFile.md5() ?: error("can not calc sticker's md5!")
             val uuidGotByMd5 = stickerDao.containsByMd5(stickerMd5)
@@ -68,7 +68,7 @@ class AddRepository @Inject constructor(
             } else {
                 stickerWithTags.sticker.stickerMd5 = stickerMd5
                 val uuid = stickerDao.addStickerWithTags(stickerWithTags)
-                if (!tempFile.renameTo(File(STICKER_DIR, uuid))) {
+                if (!tempFile.renameTo(File(appContext.STICKER_DIR, uuid))) {
                     tempFile.deleteRecursively()
                 }
                 ImageFormatChecker.saveMimeType(format = imageFormat, stickerUuid = uuid)
