@@ -17,4 +17,11 @@ internal sealed interface CachePartialStateChange {
                 oldState.copy(loadingDialog = false)
         }
     }
+
+    sealed interface DeleteAllMimetypes : CachePartialStateChange {
+        data class Success(val time: Long) : DeleteAllMimetypes {
+            override fun reduce(oldState: CacheState): CacheState =
+                oldState.copy(loadingDialog = false)
+        }
+    }
 }

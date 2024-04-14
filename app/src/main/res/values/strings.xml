@@ -284,7 +284,7 @@
     <string name="auto_share_screen_accessibility_granted">Accessibility permission granted now</string>
     <string name="auto_share_screen_accessibility_not_granted">No accessibility permission granted now</string>
     <string name="auto_share_screen_supported_app">Auto share allows you to share a sticker directly to the application corresponding to the previous page.\n\nThis feature requires accessibility permission. After killing the Rays process, upgrading or reinstalling Rays, Auto share may be disabled and needs to be enabled by manually granting accessibility permission. \n\nIt is recommended that Rays should be allowed to launch on startup, launch by other apps and keep running in background.\n\nSupported apps:\nTelegram\nDiscord\nWeChat\nInstagram\nQQ\nWhatsApp\nWeibo</string>
-    <string name="help_translate">Help translate</string>
+    <string name="help_translate">Translate</string>
     <string name="sponsor">Sponsor</string>
     <string name="sponsor_description">If you like the app, you can buy me a cup of coffee, thanks!</string>
     <string name="sponsor_afadian">Afadian</string>
@@ -342,4 +342,9 @@
     <string name="data_screen_danger_category">Danger area</string>
     <string name="data_screen_delete_all_sticker_share_time_data">Delete share data</string>
     <string name="data_screen_delete_all_sticker_share_time_data_description">Delete sticker share statistics, e.g. time of each share</string>
+    <string name="about_screen_other_works_anivu_name" translatable="false">AniVu</string>
+    <string name="about_screen_other_works_anivu_description">An all-in-one tool for RSS anime subscription and updates, bit torrent downloads, and video playback.</string>
+    <string name="cache_screen_delete_all_mimetypes">Delete mimetypes</string>
+    <string name="cache_screen_delete_all_mimetypes_description">Delete cached Mimetype data</string>
+    <string name="cache_screen_delete_all_mimetypes_success">All Mimetype deleted, spent %.2fs</string>
 </resources>

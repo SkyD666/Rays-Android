@@ -65,6 +65,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.skyd.rays.R
+import com.skyd.rays.config.ANIVU_URL
 import com.skyd.rays.config.GITHUB_REPO
 import com.skyd.rays.config.NIGHT_SCREEN_URL
 import com.skyd.rays.config.RACA_ANDROID_URL
@@ -424,6 +425,12 @@ private fun rememberOtherWorksList(): List<OtherWorksBean> {
     val context = LocalContext.current
     return remember {
         listOf(
+            OtherWorksBean(
+                name = context.getString(R.string.about_screen_other_works_anivu_name),
+                icon = R.drawable.ic_anivu,
+                description = context.getString(R.string.about_screen_other_works_anivu_description),
+                url = ANIVU_URL,
+            ),
             OtherWorksBean(
                 name = context.getString(R.string.about_screen_other_works_raca_name),
                 icon = R.drawable.ic_raca,

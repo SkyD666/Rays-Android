@@ -326,8 +326,12 @@
     <string name="cache_screen_description">刪除快取資料等</string>
     <string name="cache_screen_delete_provider_thumbnails">刪除縮圖快取</string>
     <string name="cache_screen_delete_provider_thumbnails_description">刪除貼紙提供者縮圖快取</string>
-    <string name="cache_screen_delete_provider_thumbnails_success">所有縮圖均已清除，已花費 %.2f 秒</string>
+    <string name="cache_screen_delete_provider_thumbnails_success">所有縮圖均已清除，花費了 %.2f 秒</string>
     <string name="data_screen_danger_category">危險區域</string>
     <string name="data_screen_delete_all_sticker_share_time_data">刪除分享數據</string>
     <string name="data_screen_delete_all_sticker_share_time_data_description">刪除表情包分享統計訊息，例如每次分享的時間</string>
+    <string name="about_screen_other_works_anivu_description">一款用於 RSS 動漫訂閱和更新、Bit Torrent 下載和影片播放的一體化工具。</string>
+    <string name="cache_screen_delete_all_mimetypes">刪除 Mimetype</string>
+    <string name="cache_screen_delete_all_mimetypes_description">刪除快取的 Mimetype 數據</string>
+    <string name="cache_screen_delete_all_mimetypes_success">所有 Mimetype 已刪除，花費了 %.2f 秒</string>
 </resources>

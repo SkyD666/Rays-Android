@@ -3,7 +3,8 @@ package com.skyd.rays.ui.screen.settings.data.cache
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.Gif
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -57,10 +58,18 @@ fun CacheScreen(viewModel: CacheViewModel = hiltViewModel()) {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.DeleteOutline),
+                    icon = rememberVectorPainter(image = Icons.Default.Image),
                     text = stringResource(id = R.string.cache_screen_delete_provider_thumbnails),
                     descriptionText = stringResource(id = R.string.cache_screen_delete_provider_thumbnails_description),
                     onClick = { dispatch(CacheIntent.DeleteDocumentsProviderThumbnails) }
+                )
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(image = Icons.Default.Gif),
+                    text = stringResource(id = R.string.cache_screen_delete_all_mimetypes),
+                    descriptionText = stringResource(id = R.string.cache_screen_delete_all_mimetypes_description),
+                    onClick = { dispatch(CacheIntent.DeleteAllMimetypes) }
                 )
             }
         }
@@ -70,6 +79,16 @@ fun CacheScreen(viewModel: CacheViewModel = hiltViewModel()) {
                 snackbarHostState.showSnackbarWithLaunchedEffect(
                     message = context.getString(
                         R.string.cache_screen_delete_provider_thumbnails_success,
+                        event.time / 1000.0f
+                    ),
+                    key2 = event,
+                )
+            }
+
+            is CacheEvent.DeleteAllMimetypesResultEvent.Success -> {
+                snackbarHostState.showSnackbarWithLaunchedEffect(
+                    message = context.getString(
+                        R.string.cache_screen_delete_all_mimetypes_success,
                         event.time / 1000.0f
                     ),
                     key2 = event,

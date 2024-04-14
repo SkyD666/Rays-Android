@@ -6,4 +6,8 @@ sealed interface CacheEvent : MviSingleEvent {
     sealed interface DeleteDocumentsProviderThumbnailsResultEvent : CacheEvent {
         data class Success(val time: Long) : DeleteDocumentsProviderThumbnailsResultEvent
     }
+
+    sealed interface DeleteAllMimetypesResultEvent : CacheEvent {
+        data class Success(val time: Long) : DeleteAllMimetypesResultEvent
+    }
 }

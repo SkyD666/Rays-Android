@@ -10,7 +10,16 @@ sealed class FormatStandard(
 ) {
     companion object {
         val formatStandards by lazy {
-            arrayOf(PngFormat, JpgFormat, GifFormat, BmpFormat, WebpFormat, HeifFormat, HeicFormat)
+            arrayOf(
+                ApngFormat,     // Should be before PngFormat
+                PngFormat,
+                JpgFormat,
+                GifFormat,
+                BmpFormat,
+                WebpFormat,
+                HeifFormat,
+                HeicFormat
+            )
         }
     }
 
@@ -34,6 +43,37 @@ sealed class FormatStandard(
         return check(buffer) to buffer
     }
 
+    data object ApngFormat : FormatStandard(
+        format = ImageFormat.APNG,
+        requiredByteArraySize = 41,
+    ) {
+        override fun check(tested: ByteArray): Boolean {
+            // Return false if the image is not png
+            if (tested.size < 12 || !PngFormat.check(tested)) {
+                return false
+            }
+            // Get IHDR length, in fact it should be decimal 13
+            var ihdrLength = 0
+            for (i in 8..11) {
+                ihdrLength = ihdrLength shl 8 or tested[i].toInt()
+            }
+
+            /**
+             * 8: PNG format
+             * 4: 4 bytes to store the length of the next part (IHDR)
+             * 4: Chunk Type (IHDR)
+             * 13: IHDR length (ihdrLength)
+             * 4: CRC32
+             * 4: 4 bytes to store the length of the next part (acTL)
+             */
+            val startIndex = 8 + 4 + 4 + /*13*/ ihdrLength + 4 + 4
+            return baseCheck(
+                byteArrayOf(0x61, 0x63, 0x54, 0x4C),
+                tested.copyOfRange(startIndex, startIndex + 4)
+            )
+        }
+    }
+
     data object PngFormat : FormatStandard(
         format = ImageFormat.PNG,
         requiredByteArraySize = 8,
@@ -48,6 +88,7 @@ sealed class FormatStandard(
             0x1A.toByte(),
             0x0A.toByte(),
         )
+
         override fun check(tested: ByteArray): Boolean = baseCheck(
             standard = PNG_FORMAT_DATA,
             tested = tested,

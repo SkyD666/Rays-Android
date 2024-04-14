@@ -4,6 +4,8 @@ const val GITHUB_REPO = "https://github.com/SkyD666/Rays-Android"
 
 const val WEBLATE_URL = "https://hosted.weblate.org/engage/rays/"
 
+const val ANIVU_URL = "https://github.com/SkyD666/AniVu"
+
 const val RACA_ANDROID_URL = "https://github.com/SkyD666/Raca-Android"
 
 const val NIGHT_SCREEN_URL = "https://github.com/SkyD666/NightScreen"

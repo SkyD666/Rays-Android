@@ -52,6 +52,10 @@ interface MimeTypeDao {
     fun delete(stickerUuid: String)
 
     @Transaction
+    @Query("DELETE FROM $MIME_TYPE_TABLE_NAME")
+    fun deleteAll()
+
+    @Transaction
     fun getMimeTypeOrNull(
         stickerUuid: String,
         deleteInvalid: Boolean = true,

@@ -3,6 +3,7 @@ package com.skyd.rays.util.image.format
 enum class ImageFormat {
     JPG,
     PNG,
+    APNG,
     GIF,
     WEBP,
     BMP,
@@ -14,6 +15,7 @@ enum class ImageFormat {
         return when (this) {
             JPG -> ".jpg"
             PNG -> ".png"
+            APNG -> ".apng"
             GIF -> ".gif"
             WEBP -> ".webp"
             BMP -> ".bmp"
@@ -27,6 +29,7 @@ enum class ImageFormat {
         return when (this) {
             JPG -> "image/jpg"
             PNG -> "image/png"
+            APNG -> "image/apng"
             GIF -> "image/gif"
             WEBP -> "image/webp"
             BMP -> "image/bmp"
@@ -40,6 +43,7 @@ enum class ImageFormat {
         fun fromMimeType(mimeType: String): ImageFormat {
             return when (mimeType) {
                 "image/jpg" -> JPG
+                "image/apng" -> APNG
                 "image/png" -> PNG
                 "image/gif" -> GIF
                 "image/webp" -> WEBP

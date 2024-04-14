@@ -15,7 +15,6 @@
 	"丁真": "Tenzing Tsondu",
 	"东雪莲": "Doraemon",
 	"干物妹小埋": "Umaru Doma",
-	"孤独摇滚": "Bocchi the Rock!",
 	"古明地觉": "Satori Komeiji",
 	"乖宝宝": "Good baby",
 	"和泉纱雾": "Sagiri Izumi",
@@ -50,5 +49,13 @@
 	"熊猫人": "Chinese Panda Meme",
 	"永雏塔菲": "Ace Taffy",
 	"原神": "Genshin",
-	"中二病也要谈恋爱": "Love, Chunibyo & Other Delusions"
+	"中二病也要谈恋爱": "Love, Chunibyo & Other Delusions",
+	"什么猫": "Shenmemao",
+	"咖波": "Capoo",
+	"铸币大头": "Pig head",
+	"惠惠": "Megumin",
+	"山田凉": "Yamada Ryō",
+	"波奇酱": "Bocchi",
+	"伊地知虹夏": "Ijichi Nijika",
+	"喜多": "Kita Ikuyo"
 }

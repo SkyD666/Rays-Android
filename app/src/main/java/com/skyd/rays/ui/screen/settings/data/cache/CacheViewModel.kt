@@ -53,6 +53,9 @@ class CacheViewModel @Inject constructor(private var dataRepo: DataRepository) :
                 is CachePartialStateChange.DeleteDocumentsProviderThumbnails.Success ->
                     CacheEvent.DeleteDocumentsProviderThumbnailsResultEvent.Success(change.time)
 
+                is CachePartialStateChange.DeleteAllMimetypes.Success ->
+                    CacheEvent.DeleteAllMimetypesResultEvent.Success(change.time)
+
                 else -> return@onEach
             }
             sendEvent(event)
@@ -66,6 +69,12 @@ class CacheViewModel @Inject constructor(private var dataRepo: DataRepository) :
             filterIsInstance<CacheIntent.DeleteDocumentsProviderThumbnails>().flatMapConcat {
                 dataRepo.requestDeleteDocumentsProviderThumbnails()
                     .map { CachePartialStateChange.DeleteDocumentsProviderThumbnails.Success(it) }
+                    .startWith(CachePartialStateChange.LoadingDialog)
+            },
+
+            filterIsInstance<CacheIntent.DeleteAllMimetypes>().flatMapConcat {
+                dataRepo.requestDeleteAllMimetypes()
+                    .map { CachePartialStateChange.DeleteAllMimetypes.Success(it) }
                     .startWith(CachePartialStateChange.LoadingDialog)
             },
         )
