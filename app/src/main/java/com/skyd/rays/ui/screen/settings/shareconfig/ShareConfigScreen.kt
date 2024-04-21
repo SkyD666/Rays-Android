@@ -58,7 +58,7 @@ fun ShareConfigScreen() {
         ) {
             item {
                 SwitchSettingsItem(
-                    icon = Icons.Default.Description,
+                    imageVector = Icons.Default.Description,
                     checked = LocalStickerExtName.current,
                     text = stringResource(R.string.share_config_screen_file_extension),
                     description = stringResource(R.string.share_config_screen_file_extension_description),
@@ -73,7 +73,7 @@ fun ShareConfigScreen() {
             }
             item {
                 SwitchSettingsItem(
-                    icon = Icons.Default.FileCopy,
+                    imageVector = Icons.Default.FileCopy,
                     checked = LocalCopyStickerToClipboardWhenSharing.current,
                     text = stringResource(R.string.share_config_screen_copy_sticker_to_clipboard),
                     description = stringResource(R.string.share_config_screen_copy_sticker_to_clipboard_description),
@@ -90,7 +90,7 @@ fun ShareConfigScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Link),
+                    painter = rememberVectorPainter(image = Icons.Default.Link),
                     text = stringResource(id = R.string.uri_string_share_screen_name),
                     descriptionText = stringResource(id = R.string.uri_string_share_screen_description),
                     onClick = { navController.navigate(URI_STRING_SHARE_SCREEN_ROUTE) }
@@ -98,7 +98,7 @@ fun ShareConfigScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.MoveDown),
+                    painter = rememberVectorPainter(image = Icons.Default.MoveDown),
                     text = stringResource(id = R.string.auto_share_screen_name),
                     descriptionText = stringResource(id = R.string.auto_share_screen_description),
                     onClick = { navController.navigate(AUTO_SHARE_SCREEN_ROUTE) }

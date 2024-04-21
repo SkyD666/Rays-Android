@@ -74,7 +74,7 @@ fun BlurStickersScreen() {
             item {
                 BannerItem {
                     SwitchSettingsItem(
-                        icon = Icons.Default.BlurOn,
+                        imageVector = Icons.Default.BlurOn,
                         checked = LocalBlurSticker.current,
                         text = stringResource(R.string.enable),
                         onCheckedChange = {
@@ -108,7 +108,7 @@ private fun BlurStickersKeywordsSettingItem() {
     val blurStickersKeywords = LocalBlurStickerKeywords.current
 
     BaseSettingsItem(
-        icon = rememberVectorPainter(Icons.Default.Tag),
+        painter = rememberVectorPainter(Icons.Default.Tag),
         text = stringResource(R.string.blur_stickers_screen_blur_keywords),
         enabled = LocalBlurSticker.current,
         content = {
@@ -174,7 +174,7 @@ private fun BlurStickerRadiusSettingItem() {
     val scope = rememberCoroutineScope()
 
     SliderSettingsItem(
-        icon = Icons.Default.BlurLinear,
+        imageVector = Icons.Default.BlurLinear,
         text = stringResource(id = R.string.blur_stickers_screen_radius),
         enabled = LocalBlurSticker.current,
         valueRange = 0.01f..25f,

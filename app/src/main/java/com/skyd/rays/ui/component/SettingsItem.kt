@@ -71,7 +71,7 @@ fun BannerItem(content: @Composable () -> Unit) {
 
 @Composable
 fun SliderSettingsItem(
-    icon: ImageVector,
+    imageVector: ImageVector?,
     text: String,
     value: Float,
     modifier: Modifier = Modifier,
@@ -84,7 +84,7 @@ fun SliderSettingsItem(
     onValueChange: (Float) -> Unit,
 ) {
     SliderSettingsItem(
-        icon = rememberVectorPainter(image = icon),
+        painter = imageVector?.let { rememberVectorPainter(image = it) },
         text = text,
         value = value,
         modifier = modifier,
@@ -99,7 +99,7 @@ fun SliderSettingsItem(
 
 @Composable
 fun SliderSettingsItem(
-    icon: Painter,
+    painter: Painter?,
     text: String,
     value: Float,
     modifier: Modifier = Modifier,
@@ -112,7 +112,7 @@ fun SliderSettingsItem(
     onValueChange: (Float) -> Unit,
 ) {
     BaseSettingsItem(
-        icon = icon,
+        painter = painter,
         text = text,
         modifier = modifier,
         enabled = enabled,
@@ -136,7 +136,7 @@ fun SliderSettingsItem(
 
 @Composable
 fun SwitchSettingsItem(
-    icon: ImageVector,
+    imageVector: ImageVector?,
     text: String,
     modifier: Modifier = Modifier,
     description: String? = null,
@@ -145,7 +145,7 @@ fun SwitchSettingsItem(
     onCheckedChange: ((Boolean) -> Unit)?,
 ) {
     SwitchSettingsItem(
-        icon = rememberVectorPainter(image = icon),
+        painter = imageVector?.let { rememberVectorPainter(image = it) },
         text = text,
         modifier = modifier,
         description = description,
@@ -157,7 +157,7 @@ fun SwitchSettingsItem(
 
 @Composable
 fun SwitchSettingsItem(
-    icon: Painter,
+    painter: Painter?,
     text: String,
     modifier: Modifier = Modifier,
     description: String? = null,
@@ -175,7 +175,7 @@ fun SwitchSettingsItem(
             role = Role.Switch,
             onValueChange = { onCheckedChange?.invoke(it) },
         ),
-        icon = icon,
+        painter = painter,
         text = text,
         descriptionText = description,
         enabled = enabled,
@@ -191,7 +191,7 @@ fun SwitchSettingsItem(
 
 @Composable
 fun RadioSettingsItem(
-    icon: ImageVector,
+    imageVector: ImageVector?,
     text: String,
     modifier: Modifier = Modifier,
     description: String? = null,
@@ -200,7 +200,7 @@ fun RadioSettingsItem(
     onClick: (() -> Unit)? = null,
 ) {
     RadioSettingsItem(
-        icon = rememberVectorPainter(image = icon),
+        painter = imageVector?.let { rememberVectorPainter(image = it) },
         text = text,
         modifier = modifier,
         description = description,
@@ -212,7 +212,7 @@ fun RadioSettingsItem(
 
 @Composable
 fun RadioSettingsItem(
-    icon: Painter,
+    painter: Painter?,
     text: String,
     modifier: Modifier = Modifier,
     description: String? = null,
@@ -231,7 +231,7 @@ fun RadioSettingsItem(
                 role = Role.RadioButton,
                 onClick = { onClick?.invoke() },
             ),
-        icon = icon,
+        painter = painter,
         text = text,
         descriptionText = description,
         enabled = enabled,
@@ -247,7 +247,7 @@ fun RadioSettingsItem(
 
 @Composable
 fun ColorSettingsItem(
-    icon: ImageVector,
+    imageVector: ImageVector?,
     text: String,
     modifier: Modifier = Modifier,
     description: String? = null,
@@ -255,7 +255,7 @@ fun ColorSettingsItem(
     initColor: Color,
 ) {
     ColorSettingsItem(
-        icon = rememberVectorPainter(image = icon),
+        painter = imageVector?.let { rememberVectorPainter(image = it) },
         text = text,
         modifier = modifier,
         description = description,
@@ -266,7 +266,7 @@ fun ColorSettingsItem(
 
 @Composable
 fun ColorSettingsItem(
-    icon: Painter,
+    painter: Painter?,
     text: String,
     modifier: Modifier = Modifier,
     description: String? = null,
@@ -274,7 +274,7 @@ fun ColorSettingsItem(
     initColor: Color,
 ) {
     BaseSettingsItem(
-        icon = icon,
+        painter = painter,
         text = text,
         modifier = modifier,
         descriptionText = description,
@@ -296,22 +296,22 @@ fun ColorSettingsItem(
 @Composable
 fun BaseSettingsItem(
     modifier: Modifier = Modifier,
-    icon: Painter,
+    painter: Painter?,
     text: String,
     descriptionText: String? = null,
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
+    dropdownMenu: (@Composable () -> Unit)? = null,
     content: (@Composable () -> Unit)? = null
 ) {
     BaseSettingsItem(
         modifier = modifier,
-        icon = icon,
+        painter = painter,
         text = text,
         description = if (descriptionText != null) {
             {
                 Text(
-                    modifier = Modifier.padding(top = 5.dp),
                     text = descriptionText,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 3,
@@ -322,6 +322,7 @@ fun BaseSettingsItem(
         enabled = enabled,
         onClick = if (enabled) onClick else null,
         onLongClick = if (enabled) onLongClick else null,
+        dropdownMenu = dropdownMenu,
         content = content,
     )
 }
@@ -329,12 +330,13 @@ fun BaseSettingsItem(
 @Composable
 fun BaseSettingsItem(
     modifier: Modifier = Modifier,
-    icon: Painter,
+    painter: Painter?,
     text: String,
     description: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
+    dropdownMenu: (@Composable () -> Unit)? = null,
     content: (@Composable () -> Unit)? = null
 ) {
     CompositionLocalProvider(
@@ -355,22 +357,24 @@ fun BaseSettingsItem(
                 .padding(LocalVerticalPadding.current),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (LocalUseColorfulIcon.current) {
-                Image(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .size(24.dp),
-                    painter = icon,
-                    contentDescription = null
-                )
-            } else {
-                Icon(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .size(24.dp),
-                    painter = icon,
-                    contentDescription = null,
-                )
+            if (painter != null) {
+                if (LocalUseColorfulIcon.current) {
+                    Image(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(24.dp),
+                        painter = painter,
+                        contentDescription = null
+                    )
+                } else {
+                    Icon(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(24.dp),
+                        painter = painter,
+                        contentDescription = null,
+                    )
+                }
             }
             Column(
                 modifier = Modifier
@@ -383,6 +387,7 @@ fun BaseSettingsItem(
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
                 )
+                dropdownMenu?.invoke()
                 if (description != null) {
                     Box(modifier = Modifier.padding(top = 5.dp)) {
                         description.invoke()
@@ -400,7 +405,7 @@ fun BaseSettingsItem(
 fun CategorySettingsItem(text: String) {
     Text(
         modifier = Modifier.padding(
-            start = 16.dp + 10.dp + 24.dp + 10.dp + 10.dp,
+            start = 16.dp + 10.dp,
             end = 20.dp,
             top = 10.dp,
             bottom = 5.dp

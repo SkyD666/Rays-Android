@@ -102,7 +102,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
             item {
                 BannerItem {
                     SwitchSettingsItem(
-                        icon = Icons.Default.Link,
+                        imageVector = Icons.Default.Link,
                         text = stringResource(id = R.string.enable),
                         checked = uriStringShare,
                         onCheckedChange = {
@@ -134,7 +134,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
                         ) {
                             SwitchSettingsItem(
                                 modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                                icon = rememberDrawablePainter(drawable = item.appIcon),
+                                painter = rememberDrawablePainter(drawable = item.appIcon),
                                 checked = item.uriStringSharePackageBean.enabled,
                                 enabled = uriStringShare,
                                 text = item.appName,

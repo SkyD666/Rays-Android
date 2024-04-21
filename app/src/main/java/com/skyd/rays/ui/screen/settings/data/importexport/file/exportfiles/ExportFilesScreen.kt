@@ -158,7 +158,7 @@ fun ExportFilesScreen(
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Folder),
+                    painter = rememberVectorPainter(image = Icons.Default.Folder),
                     text = stringResource(id = R.string.export_files_screen_select_dir),
                     descriptionText = exportDir.toString().ifBlank { null },
                     onClick = { pickExportDirLauncher.safeLaunch(exportDir) }
@@ -166,7 +166,7 @@ fun ExportFilesScreen(
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.LayersClear),
+                    painter = rememberVectorPainter(image = Icons.Default.LayersClear),
                     text = stringResource(R.string.export_files_screen_exclude_field),
                     descriptionText = excludeOptions.filterIndexed { index, _ ->
                         index in excludeCheckedList

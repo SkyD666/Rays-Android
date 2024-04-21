@@ -53,7 +53,7 @@ fun PrivacyScreen() {
         ) {
             item {
                 SwitchSettingsItem(
-                    icon = Icons.Default.Screenshot,
+                    imageVector = Icons.Default.Screenshot,
                     checked = LocalDisableScreenshot.current,
                     text = stringResource(R.string.privacy_screen_disable_screenshot),
                     description = stringResource(R.string.privacy_screen_disable_screenshot_description),
@@ -69,7 +69,7 @@ fun PrivacyScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.BlurOn),
+                    painter = rememberVectorPainter(Icons.Default.BlurOn),
                     text = stringResource(R.string.blur_stickers_screen_name),
                     descriptionText = stringResource(R.string.blur_stickers_screen_description),
                     onClick = { navController.navigate(BLUR_STICKERS_SCREEN_ROUTE) },

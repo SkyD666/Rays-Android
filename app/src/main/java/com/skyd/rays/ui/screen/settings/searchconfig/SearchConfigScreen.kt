@@ -85,7 +85,7 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
             }
             item {
                 SwitchSettingsItem(
-                    icon = Icons.Default.Code,
+                    imageVector = Icons.Default.Code,
                     text = stringResource(id = R.string.search_config_screen_use_regex),
                     description = stringResource(id = R.string.search_config_screen_use_regex_description),
                     checked = useRegexSearch,
@@ -100,7 +100,7 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
             }
             item {
                 SwitchSettingsItem(
-                    icon = Icons.Default.JoinInner,
+                    imageVector = Icons.Default.JoinInner,
                     text = stringResource(id = R.string.search_config_screen_intersect_search_by_space),
                     description = stringResource(id = R.string.search_config_screen_intersect_search_by_space_description),
                     checked = intersectSearchBySpace,
@@ -146,7 +146,7 @@ fun SearchDomainItem(
 ) {
     val (tableName, tableDisplayName) = table
     BaseSettingsItem(
-        icon = icon,
+        painter = icon,
         text = stringResource(id = tableDisplayName),
         onClick = {},
         description = {

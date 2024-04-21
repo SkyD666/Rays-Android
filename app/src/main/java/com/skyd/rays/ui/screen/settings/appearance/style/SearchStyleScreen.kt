@@ -68,7 +68,7 @@ fun SearchStyleScreen() {
             }
             item {
                 SwitchSettingsItem(
-                    icon = Icons.Default.LocalOffer,
+                    imageVector = Icons.Default.LocalOffer,
                     checked = LocalShowPopularTags.current,
                     text = stringResource(R.string.home_style_screen_show_popular_tags),
                     description = stringResource(R.string.home_style_screen_show_popular_tags_description),
@@ -83,7 +83,7 @@ fun SearchStyleScreen() {
             }
             item {
                 SwitchSettingsItem(
-                    icon = Icons.AutoMirrored.Filled.ManageSearch,
+                    imageVector = Icons.AutoMirrored.Filled.ManageSearch,
                     checked = LocalShowLastQuery.current,
                     text = stringResource(R.string.home_style_screen_show_last_query),
                     description = stringResource(R.string.home_style_screen_show_last_query_description),

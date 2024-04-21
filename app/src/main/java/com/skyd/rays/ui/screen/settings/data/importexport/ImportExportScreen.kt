@@ -53,7 +53,7 @@ fun ImportExportScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.CloudSync),
+                    painter = rememberVectorPainter(image = Icons.Default.CloudSync),
                     text = stringResource(id = R.string.webdav_screen_name),
                     descriptionText = stringResource(id = R.string.import_export_screen_webdav_description),
                     onClick = { navController.navigate(WEBDAV_SCREEN_ROUTE) }
@@ -66,7 +66,7 @@ fun ImportExportScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Download),
+                    painter = rememberVectorPainter(image = Icons.Default.Download),
                     text = stringResource(id = R.string.import_files_screen_name),
                     descriptionText = stringResource(id = R.string.import_files_screen_description),
                     onClick = { navController.navigate(IMPORT_FILES_SCREEN_ROUTE) }
@@ -74,7 +74,7 @@ fun ImportExportScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Upload),
+                    painter = rememberVectorPainter(image = Icons.Default.Upload),
                     text = stringResource(id = R.string.export_files_screen_name),
                     descriptionText = stringResource(id = R.string.export_files_screen_description),
                     onClick = { openExportFilesScreen(navController = navController) }

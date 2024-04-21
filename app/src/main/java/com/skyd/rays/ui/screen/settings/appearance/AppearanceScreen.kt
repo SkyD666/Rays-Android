@@ -146,7 +146,7 @@ fun AppearanceScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.DarkMode),
+                    painter = rememberVectorPainter(image = Icons.Default.DarkMode),
                     text = stringResource(id = R.string.appearance_screen_dark_mode),
                     descriptionText = stringResource(id = R.string.appearance_screen_dark_mode_description),
                     onClick = { openDarkBottomSheet = true }
@@ -154,7 +154,7 @@ fun AppearanceScreen() {
             }
             item {
                 SwitchSettingsItem(
-                    icon = Icons.Default.Palette,
+                    imageVector = Icons.Default.Palette,
                     text = stringResource(R.string.appearance_screen_sticker_color_theme),
                     description = stringResource(R.string.appearance_screen_sticker_color_theme_description),
                     checked = LocalStickerColorTheme.current,
@@ -172,7 +172,7 @@ fun AppearanceScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Search),
+                    painter = rememberVectorPainter(image = Icons.Default.Search),
                     text = stringResource(id = R.string.search_style_screen_name),
                     descriptionText = null,
                     onClick = { navController.navigate(SEARCH_STYLE_SCREEN_ROUTE) }

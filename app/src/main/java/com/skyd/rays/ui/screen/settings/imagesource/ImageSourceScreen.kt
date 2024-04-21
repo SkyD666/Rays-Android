@@ -57,7 +57,7 @@ fun ImageSourceScreen() {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.ImageSearch),
+                    painter = rememberVectorPainter(image = Icons.Default.ImageSearch),
                     text = stringResource(R.string.image_screen_picker),
                     descriptionText = stringResource(R.string.image_screen_picker_description),
                     onClick = { openPickImageMethodBottomSheet = true }

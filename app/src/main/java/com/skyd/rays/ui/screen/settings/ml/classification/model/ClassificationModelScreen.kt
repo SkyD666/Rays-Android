@@ -158,7 +158,7 @@ private fun ModelList(
         item {
             RadioSettingsItem(
                 selected = classificationModel.isBlank(),
-                icon = Icons.Default.LightbulbCircle,
+                imageVector = Icons.Default.LightbulbCircle,
                 text = stringResource(id = R.string.classification_model_screen_default),
                 description = stringResource(id = R.string.classification_model_screen_default_name),
                 onClick = {
@@ -174,7 +174,7 @@ private fun ModelList(
         }
         item {
             BaseSettingsItem(
-                icon = rememberVectorPainter(image = Icons.Default.CreateNewFolder),
+                painter = rememberVectorPainter(image = Icons.Default.CreateNewFolder),
                 text = stringResource(id = R.string.classification_model_screen_select),
                 descriptionText = stringResource(
                     R.string.classification_model_screen_select_description,
@@ -198,7 +198,7 @@ private fun ModelList(
                 RadioSettingsItem(
                     modifier = Modifier.background(MaterialTheme.colorScheme.background),
                     selected = item.name == classificationModelName,
-                    icon = rememberVectorPainter(image = Icons.Default.Lightbulb),
+                    painter = rememberVectorPainter(image = Icons.Default.Lightbulb),
                     text = item.name,
                     description = item.path,
                     onClick = {

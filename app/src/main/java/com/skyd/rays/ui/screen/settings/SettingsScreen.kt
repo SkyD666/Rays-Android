@@ -54,7 +54,7 @@ fun SettingsScreen() {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.Palette),
+                    painter = rememberVectorPainter(Icons.Default.Palette),
                     text = stringResource(id = R.string.appearance_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_appearance_description),
                     onClick = { navController.navigate(APPEARANCE_SCREEN_ROUTE) }
@@ -62,7 +62,7 @@ fun SettingsScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.AutoMirrored.Default.ManageSearch),
+                    painter = rememberVectorPainter(Icons.AutoMirrored.Default.ManageSearch),
                     text = stringResource(id = R.string.search_config_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_search_description),
                     onClick = { navController.navigate(SEARCH_CONFIG_SCREEN_ROUTE) }
@@ -70,7 +70,7 @@ fun SettingsScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.Share),
+                    painter = rememberVectorPainter(Icons.Default.Share),
                     text = stringResource(id = R.string.share_config_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_share_config_description),
                     onClick = { navController.navigate(SHARE_CONFIG_SCREEN_ROUTE) }
@@ -78,7 +78,7 @@ fun SettingsScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.Dataset),
+                    painter = rememberVectorPainter(Icons.Default.Dataset),
                     text = stringResource(id = R.string.data_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_data_description),
                     onClick = { navController.navigate(DATA_SCREEN_ROUTE) }
@@ -86,7 +86,7 @@ fun SettingsScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.SmartToy),
+                    painter = rememberVectorPainter(Icons.Default.SmartToy),
                     text = stringResource(id = R.string.ml_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_ml_description),
                     onClick = { navController.navigate(ML_SCREEN_ROUTE) }
@@ -94,7 +94,7 @@ fun SettingsScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.AdminPanelSettings),
+                    painter = rememberVectorPainter(Icons.Default.AdminPanelSettings),
                     text = stringResource(id = R.string.privacy_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_privacy_description),
                     onClick = { navController.navigate(PRIVACY_SCREEN_ROUTE) }
@@ -102,7 +102,7 @@ fun SettingsScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.Api),
+                    painter = rememberVectorPainter(Icons.Default.Api),
                     text = stringResource(id = R.string.api_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_api_description),
                     onClick = { navController.navigate(API_SCREEN_ROUTE) }

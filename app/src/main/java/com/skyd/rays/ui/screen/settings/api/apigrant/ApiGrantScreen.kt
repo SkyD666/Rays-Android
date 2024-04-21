@@ -101,7 +101,7 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
             item {
                 BannerItem {
                     SwitchSettingsItem(
-                        icon = if (apiGrant) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        imageVector = if (apiGrant) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         text = stringResource(id = R.string.api_grant_screen_enable),
                         checked = apiGrant,
                         onCheckedChange = {
@@ -132,7 +132,7 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
                         ) {
                             SwitchSettingsItem(
                                 modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                                icon = rememberDrawablePainter(drawable = item.appIcon),
+                                painter = rememberDrawablePainter(drawable = item.appIcon),
                                 checked = item.apiGrantPackageBean.enabled,
                                 enabled = apiGrant,
                                 text = item.appName,

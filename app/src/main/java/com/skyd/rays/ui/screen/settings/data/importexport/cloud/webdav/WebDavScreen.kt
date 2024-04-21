@@ -468,7 +468,7 @@ private fun LazyListScope.webDavItem(
     }
     item {
         BaseSettingsItem(
-            icon = rememberVectorPainter(image = Icons.Default.Dns),
+            painter = rememberVectorPainter(image = Icons.Default.Dns),
             text = stringResource(id = R.string.webdav_screen_server),
             descriptionText = server.ifBlank {
                 stringResource(id = R.string.webdav_screen_server_description)
@@ -476,7 +476,7 @@ private fun LazyListScope.webDavItem(
             onClick = onServerItemClick
         )
         BaseSettingsItem(
-            icon = rememberVectorPainter(image = Icons.Default.AccountCircle),
+            painter = rememberVectorPainter(image = Icons.Default.AccountCircle),
             text = stringResource(id = R.string.webdav_screen_account),
             descriptionText = account.ifBlank {
                 stringResource(id = R.string.webdav_screen_account_description)
@@ -484,7 +484,7 @@ private fun LazyListScope.webDavItem(
             onClick = onAccountItemClick
         )
         BaseSettingsItem(
-            icon = rememberVectorPainter(image = Icons.Default.Key),
+            painter = rememberVectorPainter(image = Icons.Default.Key),
             text = stringResource(id = R.string.webdav_screen_password),
             descriptionText = stringResource(
                 id = if (password.isBlank()) R.string.webdav_screen_password_description
@@ -505,19 +505,19 @@ private fun LazyListScope.syncItem(
     }
     item {
         BaseSettingsItem(
-            icon = rememberVectorPainter(image = Icons.Default.CloudDownload),
+            painter = rememberVectorPainter(image = Icons.Default.CloudDownload),
             text = stringResource(id = R.string.webdav_screen_download),
             descriptionText = stringResource(id = R.string.webdav_screen_download_description),
             onClick = onPullItemClick
         )
         BaseSettingsItem(
-            icon = rememberVectorPainter(image = Icons.Default.CloudUpload),
+            painter = rememberVectorPainter(image = Icons.Default.CloudUpload),
             text = stringResource(id = R.string.webdav_screen_upload),
             descriptionText = stringResource(id = R.string.webdav_screen_upload_description),
             onClick = onPushItemClick
         )
         BaseSettingsItem(
-            icon = rememberVectorPainter(image = Icons.Default.Recycling),
+            painter = rememberVectorPainter(image = Icons.Default.Recycling),
             text = stringResource(id = R.string.webdav_screen_remote_recycle_bin),
             descriptionText = stringResource(id = R.string.webdav_screen_remote_recycle_bin_description),
             onClick = onRemoteRecycleBinItemClick

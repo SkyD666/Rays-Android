@@ -87,7 +87,7 @@ fun AutoShareScreen() {
             item {
                 BannerItem {
                     SwitchSettingsItem(
-                        icon = Icons.Default.MoveDown,
+                        imageVector = Icons.Default.MoveDown,
                         text = stringResource(id = R.string.enable),
                         checked = autoShareEnabled,
                         onCheckedChange = {
@@ -98,7 +98,7 @@ fun AutoShareScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Block),
+                    painter = rememberVectorPainter(image = Icons.Default.Block),
                     text = stringResource(id = R.string.auto_share_screen_ignore),
                     descriptionText = stringResource(id = R.string.auto_share_screen_ignore_description),
                     enabled = autoShareEnabled,

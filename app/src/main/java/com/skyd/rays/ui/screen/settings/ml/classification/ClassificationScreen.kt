@@ -50,7 +50,7 @@ fun ClassificationScreen() {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.ModelTraining),
+                    painter = rememberVectorPainter(image = Icons.Default.ModelTraining),
                     text = stringResource(id = R.string.classification_model_screen_name),
                     descriptionText = stringResource(
                         R.string.classification_model_screen_description,
@@ -70,7 +70,7 @@ private fun ClassificationThresholdSettingItem() {
     val scope = rememberCoroutineScope()
 
     SliderSettingsItem(
-        icon = Icons.Default.DataThresholding,
+        imageVector = Icons.Default.DataThresholding,
         text = stringResource(id = R.string.classification_screen_threshold),
         value = LocalClassificationThreshold.current,
         onValueChange = {

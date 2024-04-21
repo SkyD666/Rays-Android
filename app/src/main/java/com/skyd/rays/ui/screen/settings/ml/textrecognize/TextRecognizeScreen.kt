@@ -54,7 +54,7 @@ private fun TextRecognizeThresholdSettingItem() {
     val scope = rememberCoroutineScope()
 
     SliderSettingsItem(
-        icon = Icons.Default.DataThresholding,
+        imageVector = Icons.Default.DataThresholding,
         text = stringResource(id = R.string.text_recognize_screen_threshold),
         value = LocalTextRecognizeThreshold.current,
         onValueChange = {

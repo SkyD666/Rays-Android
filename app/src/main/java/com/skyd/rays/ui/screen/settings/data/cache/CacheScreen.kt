@@ -58,7 +58,7 @@ fun CacheScreen(viewModel: CacheViewModel = hiltViewModel()) {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Image),
+                    painter = rememberVectorPainter(image = Icons.Default.Image),
                     text = stringResource(id = R.string.cache_screen_delete_provider_thumbnails),
                     descriptionText = stringResource(id = R.string.cache_screen_delete_provider_thumbnails_description),
                     onClick = { dispatch(CacheIntent.DeleteDocumentsProviderThumbnails) }
@@ -66,7 +66,7 @@ fun CacheScreen(viewModel: CacheViewModel = hiltViewModel()) {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Gif),
+                    painter = rememberVectorPainter(image = Icons.Default.Gif),
                     text = stringResource(id = R.string.cache_screen_delete_all_mimetypes),
                     descriptionText = stringResource(id = R.string.cache_screen_delete_all_mimetypes_description),
                     onClick = { dispatch(CacheIntent.DeleteAllMimetypes) }

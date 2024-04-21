@@ -46,7 +46,7 @@ fun MlScreen() {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Sell),
+                    painter = rememberVectorPainter(image = Icons.Default.Sell),
                     text = stringResource(id = R.string.classification_screen_name),
                     descriptionText = stringResource(R.string.classification_screen_description),
                     onClick = { navController.navigate(CLASSIFICATION_SCREEN_ROUTE) }
@@ -54,7 +54,7 @@ fun MlScreen() {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.TextFields),
+                    painter = rememberVectorPainter(image = Icons.Default.TextFields),
                     text = stringResource(id = R.string.text_recognize_screen_name),
                     descriptionText = stringResource(R.string.text_recognize_screen_description),
                     onClick = { navController.navigate(TEXT_RECOGNIZE_SCREEN_ROUTE) }

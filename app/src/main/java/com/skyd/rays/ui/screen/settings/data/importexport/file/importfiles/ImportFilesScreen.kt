@@ -119,7 +119,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.FolderZip),
+                    painter = rememberVectorPainter(image = Icons.Default.FolderZip),
                     text = stringResource(id = R.string.import_files_screen_select_file),
                     descriptionText = fileUri.toString().ifBlank { null },
                     onClick = { pickFileLauncher.safeLaunch("application/zip") }
@@ -127,7 +127,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.AutoMirrored.Filled.Help),
+                    painter = rememberVectorPainter(image = Icons.AutoMirrored.Filled.Help),
                     text = stringResource(R.string.import_files_screen_on_conflict),
                     description = {
                         SingleChoiceSegmentedButtonRow(

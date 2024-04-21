@@ -42,7 +42,7 @@ fun ApiScreen() {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.Visibility),
+                    painter = rememberVectorPainter(Icons.Default.Visibility),
                     text = stringResource(id = R.string.api_grant_screen_name),
                     descriptionText = stringResource(id = R.string.api_grant_screen_description),
                     onClick = { navController.navigate(API_GRANT_SCREEN_ROUTE) }

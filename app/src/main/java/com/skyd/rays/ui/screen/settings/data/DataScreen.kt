@@ -72,7 +72,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
         ) {
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(Icons.Default.Source),
+                    painter = rememberVectorPainter(Icons.Default.Source),
                     text = stringResource(id = R.string.image_source_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_image_source_description),
                     onClick = { navController.navigate(IMAGE_SOURCE_SCREEN_ROUTE) }
@@ -80,7 +80,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.ImportExport),
+                    painter = rememberVectorPainter(image = Icons.Default.ImportExport),
                     text = stringResource(id = R.string.import_export_screen_name),
                     descriptionText = stringResource(id = R.string.data_screen_import_export_description),
                     onClick = { navController.navigate(IMPORT_EXPORT_SCREEN_ROUTE) }
@@ -88,7 +88,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Cached),
+                    painter = rememberVectorPainter(image = Icons.Default.Cached),
                     text = stringResource(id = R.string.cache_screen_name),
                     descriptionText = stringResource(id = R.string.cache_screen_description),
                     onClick = { navController.navigate(CACHE_SCREEN_ROUTE) }
@@ -99,7 +99,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Delete),
+                    painter = rememberVectorPainter(image = Icons.Default.Delete),
                     text = stringResource(id = R.string.data_screen_delete_all),
                     descriptionText = stringResource(id = R.string.data_screen_delete_all_description),
                     onClick = { openDeleteAllStickersDialog = true }
@@ -107,7 +107,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             }
             item {
                 BaseSettingsItem(
-                    icon = rememberVectorPainter(image = Icons.Default.Delete),
+                    painter = rememberVectorPainter(image = Icons.Default.Delete),
                     text = stringResource(id = R.string.data_screen_delete_all_sticker_share_time_data),
                     descriptionText = stringResource(id = R.string.data_screen_delete_all_sticker_share_time_data_description),
                     onClick = { openDeleteStickerShareTimeDialog = true }
