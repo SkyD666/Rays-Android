@@ -2,8 +2,6 @@ package com.skyd.rays.ui.component
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActionScope
@@ -30,12 +28,11 @@ fun ClipboardTextField(
     isPassword: Boolean = false,
     errorText: String = "",
     imeAction: ImeAction = ImeAction.Done,
-    keyboardAction: ((focusManager: FocusManager?, value: String) -> (KeyboardActionScope.() -> Unit))? = null,
+    keyboardAction: (KeyboardActionScope.(focusManager: FocusManager?, value: String) -> Unit)? = null,
     focusManager: FocusManager? = null,
     onConfirm: (String) -> Unit = {},
 ) {
     Column(modifier = modifier) {
-        Spacer(modifier = Modifier.height(10.dp))
         RaysTextField(
             readOnly = readOnly,
             value = value,
@@ -48,27 +45,39 @@ fun ClipboardTextField(
             keyboardActions = KeyboardActions(
                 onDone = if (imeAction == ImeAction.Done) {
                     if (keyboardAction == null) action(focusManager, onConfirm, value)
-                    else keyboardAction(focusManager, value)
+                    else {
+                        { keyboardAction(focusManager, value) }
+                    }
                 } else null,
                 onGo = if (imeAction == ImeAction.Go) {
                     if (keyboardAction == null) action(focusManager, onConfirm, value)
-                    else keyboardAction(focusManager, value)
+                    else {
+                        { keyboardAction(focusManager, value) }
+                    }
                 } else null,
                 onNext = if (imeAction == ImeAction.Next) {
                     if (keyboardAction == null) action(focusManager, onConfirm, value)
-                    else keyboardAction(focusManager, value)
+                    else {
+                        { keyboardAction(focusManager, value) }
+                    }
                 } else null,
                 onPrevious = if (imeAction == ImeAction.Previous) {
                     if (keyboardAction == null) action(focusManager, onConfirm, value)
-                    else keyboardAction(focusManager, value)
+                    else {
+                        { keyboardAction(focusManager, value) }
+                    }
                 } else null,
                 onSearch = if (imeAction == ImeAction.Search) {
                     if (keyboardAction == null) action(focusManager, onConfirm, value)
-                    else keyboardAction(focusManager, value)
+                    else {
+                        { keyboardAction(focusManager, value) }
+                    }
                 } else null,
                 onSend = if (imeAction == ImeAction.Send) {
                     if (keyboardAction == null) action(focusManager, onConfirm, value)
-                    else keyboardAction(focusManager, value)
+                    else {
+                        { keyboardAction(focusManager, value) }
+                    }
                 } else null,
             ),
             keyboardOptions = KeyboardOptions(
@@ -88,7 +97,6 @@ fun ClipboardTextField(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(10.dp))
     }
 }
 

@@ -443,8 +443,8 @@ private fun LazyListScope.titleInputFieldItem(
                     )
                 }
             },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = {
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Next)
             })
         )

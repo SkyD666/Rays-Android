@@ -108,7 +108,7 @@ android {
         aidl = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
+        kotlinCompilerExtensionVersion = "1.5.12"
     }
     packaging {
         resources.excludes += mutableSetOf(
@@ -150,17 +150,17 @@ dependencies {
     val accompanistVersion: String by rootProject.extra
     val mlkitRecognitionVersion: String by rootProject.extra
     val roomVersion: String by rootProject.extra
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.material3:material3:$md3Version")
     implementation("androidx.compose.material3:material3-window-size-class:$md3Version")
-    implementation("androidx.compose.material:material:1.6.5")
-    implementation("androidx.compose.material:material-icons-extended:1.6.5")
+    implementation("androidx.compose.material:material:1.6.6")
+    implementation("androidx.compose.material:material-icons-extended:1.6.6")
     implementation("androidx.compose.ui:ui-tooling-preview:$md3Version")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.palette:palette-ktx:1.0.0")
     implementation("com.google.dagger:hilt-android:2.51")
     ksp("com.google.dagger:hilt-android-compiler:2.51")
@@ -178,7 +178,7 @@ dependencies {
     implementation("com.github.thegrizzlylabs:sardine-android:0.8")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("com.materialkolor:material-kolor:1.4.4")
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.0")
     implementation("com.airbnb.android:lottie-compose:6.3.0")
 
     implementation("com.squareup.retrofit2:retrofit:2.10.0")
@@ -198,6 +198,6 @@ dependencies {
 
     implementation("com.github.penfeizhou.android.animation:apng:2.28.0")
 
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.5")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.5")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.6")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.6")
 }

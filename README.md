@@ -131,6 +131,7 @@ If you are interested, please help us **translate**, thank you.
 - **TensorFlow** Lite
 - **ML Kit** (Machine Learning)
 - **Room**
+- **AIDL**
 - Splash Screen
 - Navigation
 - Coil
@@ -153,6 +154,11 @@ If you are interested, please help us **translate**, thank you.
 </thead>
 <tbody>
   <tr>
+    <td><img src="image/AniVu.svg" style="height: 100px"/></td>
+    <td><b>AniVu</b>, an <b>all-in-one tool</b> for <b>RSS anime subscription and updates</b>, <b>bit torrent downloads</b>, and <b>video playback</b>.</td>
+    <td><a href="https://github.com/SkyD666/AniVu">https://github.com/SkyD666/AniVu</a></td>
+  </tr>
+  <tr>
     <td><img src="image/Raca.svg" style="height: 100px"/></td>
     <td><b>Raca (Record All Classic Articles)</b>, a tool to <b>record and search abstract passages and mini-essays</b> in the comments section locally. 🤗 Are you still having trouble remembering the content of your mini-essay and facing the embarrassing situation of forgetting the front, middle and back? Using this tool will help you <b>record the mini-essays</b> you come across and never worry about forgetting them again! 😋</td>
     <td><a href="https://github.com/SkyD666/Raca-Android">https://github.com/SkyD666/Raca-Android</a></td>
@@ -164,6 +170,7 @@ If you are interested, please help us **translate**, thank you.
   </tr>
 </tbody>
 </table>
+
 
 ## 📃 License
 

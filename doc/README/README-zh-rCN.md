@@ -129,6 +129,7 @@
 - **TensorFlow** Lite
 - **ML Kit** (Machine Learning)
 - **Room**
+- **AIDL**
 - Splash Screen
 - Navigation
 - Coil
@@ -151,6 +152,11 @@
 </thead>
 <tbody>
   <tr>
+    <td><img src="../../image/AniVu.svg" style="height: 100px"/></td>
+    <td><b>AniVu</b>，一个集<b> RSS 番剧订阅与更新、比特洪流下载、视频播放</b>为一体的工具。</td>
+    <td><a href="https://github.com/SkyD666/AniVu">https://github.com/SkyD666/AniVu</a></td>
+  </tr>
+  <tr>
     <td><img src="../../image/Raca.svg" style="height: 100px"/></td>
     <td><b>Raca (Record All Classic Articles)</b>，一个在本地<b>记录、查找抽象段落/评论区小作文</b>的工具。<br/>🤗 您还在为记不住小作文内容，面临<b>前面、中间、后面都忘了</b>的尴尬处境吗？使用这款工具将<b>帮助您记录您所遇到的小作文</b>，再也不因为忘记而烦恼！😋</td>
     <td><a href="https://github.com/SkyD666/Raca-Android">https://github.com/SkyD666/Raca-Android</a></td>
@@ -162,6 +168,7 @@
   </tr>
 </tbody>
 </table>
+
 
 ## 📃许可证
 
