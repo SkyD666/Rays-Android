@@ -75,7 +75,20 @@
     <string name="about_screen_description_2">您還在為手機中的表情包太多，找不到想要的表情包而苦惱嗎？使用這款工具將幫助您管理您儲存的表情包，再也不因為找不到表情包而煩惱！ 😋</string>
     <string name="info">資訊</string>
     <string name="dark_mode_follow_system">跟隨系統</string>
-    <string name="auto_share_screen_supported_app">自動分享功能可將表情包直接分享到上一個頁面對應的應用程式。\n\n此功能需要無障礙許可權。在結束 Rays 程序、升級或重新安裝 Rays 後，自動分享可能會被禁用，需要手動開啟無障礙許可權才能再次啟用。\n\n建議允許 Rays 在啟動時啟動、由其他應用啟動、在背景中持續執行。\n\n支援的應用程式：\nQQ\n微信\n微博\nTelegram\nInstagram\nDiscord\nWhatsApp</string>
+    <string name="auto_share_screen_supported_app">自動分享功能可將表情包直接分享到上一個頁面對應的應用程式。
+\n
+\n此功能需要無障礙許可權。在結束 Rays 程序、升級或重新安裝 Rays 後，自動分享可能會被禁用，需要手動開啟無障礙許可權才能再次啟用。
+\n
+\n建議允許 Rays 在啟動時啟動、由其他應用啟動、在背景中持續執行。
+\n
+\n支援的應用程式：
+\nQQ
+\n微信
+\n微博
+\nTelegram
+\nInstagram
+\nDiscord
+\nWhatsApp</string>
     <string name="auto_share_screen_name">自動分享</string>
     <string name="detail_screen_sticker_info_md5">表情包 MD5</string>
     <string name="webdav_screen_name">WebDAV</string>
@@ -139,7 +152,10 @@
     <string name="ml_screen_name">AI</string>
     <string name="style_transfer_screen_content">內容</string>
     <string name="selfie_segmentation_screen_reset_selfie_transformations">重置自拍照</string>
-    <string name="update_newer_text">新版本：%1$s\n發布日期：%2$s\n下載次數：%3$s\n</string>
+    <string name="update_newer_text">新版本：%1$s
+\n發布日期：%2$s
+\n下載次數：%3$s
+\n</string>
     <string name="classification_model_screen_description">選擇用於分類表情包的機器學習模型</string>
     <string name="data_sync_warning">請勿在推送和拉取時強制結束應用程式或斷開網路，否則可能會損壞資料！</string>
     <string name="search_config_screen_intersect_search_by_space">交集搜尋</string>
@@ -208,7 +224,11 @@
     <string name="add_screen_add_tag_to_all">為處理清單中的所有表情包加入此標籤</string>
     <string name="send_sticker">傳送表情包</string>
     <string name="setting_screen_search_description">搜尋方案、搜尋領域等</string>
-    <string name="accessibility_service_description">建議允許 Rays 自啟動、關聯啟動和背景執行。\n\nRays 的以下功能需要使用無障礙：\n\n自動分享</string>
+    <string name="accessibility_service_description">建議允許 Rays 自啟動、關聯啟動和背景執行。
+\n
+\nRays 的以下功能需要使用無障礙：
+\n
+\n自動分享</string>
     <string name="empty_tip">空~</string>
     <string name="db_sticker_table_uuid">UUID</string>
     <string name="webdav_screen_remote_recycle_bin_is_empty">遠端回收站為空</string>
@@ -334,7 +354,7 @@
     <string name="cache_screen_delete_all_mimetypes">刪除 Mimetype</string>
     <string name="cache_screen_delete_all_mimetypes_description">刪除快取的 Mimetype 資料</string>
     <string name="cache_screen_delete_all_mimetypes_success">所有 Mimetype 已刪除，花費了 %.2f 秒</string>
-    <string name="crashed"><![CDATA[崩潰了 (＃＞＜)]]></string>
+    <string name="crashed">崩潰了 (＃＞＜)</string>
     <string name="submit_an_issue_on_github">在 GitHub 上報告</string>
     <string name="copied">已複製</string>
     <string name="crash_screen_crash_log">日誌</string>

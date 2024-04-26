@@ -200,7 +200,7 @@
     <plurals name="export_stickers_result">
         <item quantity="one">Exportar %d sticker</item>
         <item quantity="many">Exportar %d stickers</item>
-        <item quantity="other"></item>
+        <item quantity="other"/>
     </plurals>
     <string name="db_tag_table">Tabela de tags</string>
     <string name="db_tag_table_tag">Tag</string>
@@ -249,6 +249,6 @@
     <plurals name="webdav_screen_upload_success">
         <item quantity="one">O envio foi bem-sucedido, demorou %1$.2fs, atualizou %2$d sticker</item>
         <item quantity="many">O envio foi bem-sucedido, demorou %1$.2fs, atualizou %2$d stickers</item>
-        <item quantity="other"></item>
+        <item quantity="other"/>
     </plurals>
 </resources>

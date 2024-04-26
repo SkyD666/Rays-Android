@@ -43,7 +43,7 @@
     <string name="about">关于</string>
     <string name="setting_screen_search_description">搜索方案、搜索域等</string>
     <string name="about_screen_description_1">一个在本地记录、查找、管理表情包的工具。</string>
-    <string name="about_screen_description_2">您还在为手机中的表情包太多，找不到想要的表情包而苦恼吗？使用这款工具将帮助您管理您存储的表情包，再也不因为找不到表情包而烦恼！\uD83D\uDE0B</string>
+    <string name="about_screen_description_2">您还在为手机中的表情包太多，找不到想要的表情包而苦恼吗？使用这款工具将帮助您管理您存储的表情包，再也不因为找不到表情包而烦恼！😋</string>
     <string name="about_screen_description_3">Rays 使用 MVI 架构，完全采用 Material You 设计风格。所有页面均使用 Jetpack Compose 开发。</string>
     <string name="about_screen_goto_github_repo">访问 GitHub 仓库</string>
     <string name="about_screen_join_discord">加入 Discord 服务器</string>
@@ -187,7 +187,10 @@
     <string name="update_check">检查更新</string>
     <string name="update_no_update">当前已是最新版！</string>
     <string name="update_newer">发现新版本</string>
-    <string name="update_newer_text">新版本：%1$s\n发布时间：%2$s\n下载数：%3$s\n</string>
+    <string name="update_newer_text">新版本：%1$s
+\n发布时间：%2$s
+\n下载数：%3$s
+\n</string>
     <string name="download_update">下载</string>
     <string name="update_ignore">忽略本次更新</string>
     <string name="update_check_failed">检查更新失败：%s</string>
@@ -263,7 +266,11 @@
     <string name="api_grant_repo_no_package">包名不可用：%s</string>
     <string name="api_grant_screen_description">管理外部应用使用 API 的权限</string>
     <string name="api_grant_screen_enable">启用 API</string>
-    <string name="accessibility_service_description">建议允许 Rays 自启动、关联启动和后台运行。\n\nRays 的以下功能需要使用无障碍：\n\n自动分享</string>
+    <string name="accessibility_service_description">建议允许 Rays 自启动、关联启动和后台运行。
+\n
+\nRays 的以下功能需要使用无障碍：
+\n
+\n自动分享</string>
     <string name="auto_share_screen_name">自动分享</string>
     <string name="auto_share_screen_description">自动分享表情包到上一个页面</string>
     <string name="auto_share_screen_ignore">忽略策略</string>
@@ -272,7 +279,20 @@
     <string name="auto_share_screen_ignore_regex_format_error">正则表达式格式非法</string>
     <string name="auto_share_screen_accessibility_granted">当前已授予无障碍权限</string>
     <string name="auto_share_screen_accessibility_not_granted">当前未授予无障碍权限</string>
-    <string name="auto_share_screen_supported_app">自动分享可以直接将表情包分享到上一个页面对应的应用。\n\n该功能需要无障碍权限。在杀死 Rays 后台、升级或重安装 Rays 后，自动分享可能会被禁用，需手动打开无障碍权限才可再次启用。\n\n建议允许 Rays 自启动、关联启动和后台运行。\n\n目前支持的应用：\nQQ\n微信\n微博\nTelegram\nInstagram\nDiscord\nWhatsApp</string>
+    <string name="auto_share_screen_supported_app">自动分享可以直接将表情包分享到上一个页面对应的应用。
+\n
+\n该功能需要无障碍权限。在杀死 Rays 后台、升级或重安装 Rays 后，自动分享可能会被禁用，需手动打开无障碍权限才可再次启用。
+\n
+\n建议允许 Rays 自启动、关联启动和后台运行。
+\n
+\n目前支持的应用：
+\nQQ
+\n微信
+\n微博
+\nTelegram
+\nInstagram
+\nDiscord
+\nWhatsApp</string>
     <string name="help_translate">帮助翻译</string>
     <string name="sponsor">赞助</string>
     <string name="sponsor_description">如果您喜欢我开发的软件，您可以请我喝一杯咖啡，谢谢！</string>
@@ -334,7 +354,7 @@
     <string name="cache_screen_delete_all_mimetypes">删除 Mimetype</string>
     <string name="cache_screen_delete_all_mimetypes_description">删除所有已缓存的表情包 Mimetype 数据</string>
     <string name="cache_screen_delete_all_mimetypes_success">已删除 Mimetype 数据，花费 %.2f 秒</string>
-    <string name="crashed"><![CDATA[崩溃了 (＃＞＜)]]></string>
+    <string name="crashed">崩溃了 (＃＞＜)</string>
     <string name="submit_an_issue_on_github">在 GitHub 上报告</string>
     <string name="copied">已复制</string>
     <string name="crash_screen_crash_log">日志</string>
