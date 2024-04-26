@@ -213,7 +213,7 @@
     <string name="db_sticker_table_uuid">UUID</string>
     <string name="webdav_screen_remote_recycle_bin_is_empty">遠端回收站為空</string>
     <string name="webdav_screen_remote_recycle_bin_description">檢視遠端回收站（邏輯上已刪除的專案）</string>
-    <string name="appearance_screen_sticker_color_theme_description">當檢視錶情包詳情時，將主題顏色更新為表情包的主色調</string>
+    <string name="appearance_screen_sticker_color_theme_description">當檢視表情包詳情時，將主題顏色更新為表情包的主色調</string>
     <string name="enable">啟用</string>
     <string name="privacy_screen_disable_screenshot_description">應用程式內禁止截圖</string>
     <string name="blur_stickers_screen_name">模糊表情包</string>
