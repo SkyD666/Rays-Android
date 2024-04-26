@@ -189,7 +189,7 @@
     <string name="webdav_screen_sync_category">同步</string>
     <string name="home_screen_close_search">關閉</string>
     <string name="sponsor_afadian">愛發電</string>
-    <string name="auto_share_screen_ignore_input_dialog_title">忽略策略正規表示式</string>
+    <string name="auto_share_screen_ignore_input_dialog_title">忽略策略正則表示式</string>
     <string name="image_scale_fit">適應</string>
     <string name="import_files_screen_progress_unzipping">解壓縮中：%s</string>
     <string name="cancel">取消</string>
