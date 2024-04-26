@@ -101,7 +101,7 @@
     <string name="export_files_screen_description">匯出表情包、標籤等至本地檔案</string>
     <string name="import_export_screen_name">匯入與匯出</string>
     <string name="appearance_screen_dark_mode">深色模式</string>
-    <string name="search_config_screen_use_regex">正規表示式</string>
+    <string name="search_config_screen_use_regex">正則表示式</string>
     <string name="classification_screen_threshold_description">只有置信度高於此門檻值的標籤才會被建議，建議設定在 0.5 左右。</string>
     <string name="webdav_screen_server">伺服器</string>
     <string name="about_screen_join_discord">加入 Discord 伺服器</string>
