@@ -334,4 +334,9 @@
     <string name="cache_screen_delete_all_mimetypes">删除 Mimetype</string>
     <string name="cache_screen_delete_all_mimetypes_description">删除所有已缓存的表情包 Mimetype 数据</string>
     <string name="cache_screen_delete_all_mimetypes_success">已删除 Mimetype 数据，花费 %.2f 秒</string>
+    <string name="crashed"><![CDATA[崩溃了 (＃＞＜)]]></string>
+    <string name="submit_an_issue_on_github">在 GitHub 上报告</string>
+    <string name="copied">已复制</string>
+    <string name="crash_screen_crash_log">日志</string>
+    <string name="crash_screen_copy_crash_log">复制日志</string>
 </resources>

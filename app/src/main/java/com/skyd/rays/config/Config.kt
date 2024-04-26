@@ -1,6 +1,7 @@
 package com.skyd.rays.config
 
 const val GITHUB_REPO = "https://github.com/SkyD666/Rays-Android"
+const val GITHUB_NEW_ISSUE_URL = "https://github.com/SkyD666/Rays-Android/issues/new"
 
 const val WEBLATE_URL = "https://hosted.weblate.org/engage/rays/"
 

@@ -334,4 +334,9 @@
     <string name="cache_screen_delete_all_mimetypes">刪除 Mimetype</string>
     <string name="cache_screen_delete_all_mimetypes_description">刪除快取的 Mimetype 資料</string>
     <string name="cache_screen_delete_all_mimetypes_success">所有 Mimetype 已刪除，花費了 %.2f 秒</string>
+    <string name="crashed"><![CDATA[崩潰了 (＃＞＜)]]></string>
+    <string name="submit_an_issue_on_github">在 GitHub 上報告</string>
+    <string name="copied">已複製</string>
+    <string name="crash_screen_crash_log">日誌</string>
+    <string name="crash_screen_copy_crash_log">複製日誌</string>
 </resources>

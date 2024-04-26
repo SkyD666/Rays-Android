@@ -44,6 +44,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.activity.CrashActivity" />
+
         <service
             android:name=".api.ApiService"
             android:enabled="true"

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.preference.theme.DarkModePreference
+import com.skyd.rays.util.CrashHandler
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -16,6 +17,8 @@ class App : Application() {
         appContext = this
 
         AppCompatDelegate.setDefaultNightMode(dataStore.getOrDefault(DarkModePreference))
+
+        CrashHandler.init(this)
     }
 }
 

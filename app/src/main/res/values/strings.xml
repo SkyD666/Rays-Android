@@ -347,4 +347,9 @@
     <string name="cache_screen_delete_all_mimetypes">Delete mimetypes</string>
     <string name="cache_screen_delete_all_mimetypes_description">Delete cached Mimetype data</string>
     <string name="cache_screen_delete_all_mimetypes_success">All Mimetype deleted, spent %.2fs</string>
+    <string name="crashed"><![CDATA[Crashed (＃＞＜)]]></string>
+    <string name="submit_an_issue_on_github">Report on GitHub</string>
+    <string name="copied">Copied</string>
+    <string name="crash_screen_crash_log">Log</string>
+    <string name="crash_screen_copy_crash_log">Copy log</string>
 </resources>
