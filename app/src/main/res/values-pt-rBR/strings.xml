@@ -103,7 +103,7 @@
     <plurals name="export_files_screen_successful_desc">
         <item quantity="one">Foi exportado %1$d sticker no total, demorou %2$.2f s</item>
         <item quantity="many">Foi exportado %1$d stickers no total, demorou %2$.2f s</item>
-        <item quantity="other"></item>
+        <item quantity="other"/>
     </plurals>
     <string name="webdav_screen_upload_description">Enviar os dados locais para o remoto</string>
     <string name="webdav_screen_clear_remote_recycle_bin">Limpar</string>
@@ -116,7 +116,7 @@
     <plurals name="import_files_screen_successful_desc">
         <item quantity="one">Foi atualizado %1$d sticker no total, demorou %2$.2f s</item>
         <item quantity="many">Foi atualizado %1$d stickers no total, demorou %2$.2f s</item>
-        <item quantity="other"></item>
+        <item quantity="other"/>
     </plurals>
     <string name="webdav_screen_last_modified_time">Última modificação em: %s</string>
     <string name="data_screen_name">Dados</string>
@@ -200,7 +200,7 @@
     <plurals name="export_stickers_result">
         <item quantity="one">Exportar %d sticker</item>
         <item quantity="many">Exportar %d stickers</item>
-        <item quantity="other"></item>
+        <item quantity="other"/>
     </plurals>
     <string name="db_tag_table">Tabela de tags</string>
     <string name="db_tag_table_tag">Tag</string>
@@ -249,115 +249,6 @@
     <plurals name="webdav_screen_upload_success">
         <item quantity="one">O envio foi bem-sucedido, demorou %1$.2fs, atualizou %2$d sticker</item>
         <item quantity="many">O envio foi bem-sucedido, demorou %1$.2fs, atualizou %2$d stickers</item>
-        <item quantity="other"></item>
+        <item quantity="other"/>
     </plurals>
-    <string name="share_sheet_action_save"></string>
-    <string name="share_sheet_action_save_toast_success"></string>
-    <string name="pick_image_method_pick_visual_media"></string>
-    <string name="auto_share_screen_ignore"></string>
-    <string name="auto_share_screen_accessibility_granted"></string>
-    <string name="about_screen_other_works_night_screen_name" translatable="false"></string>
-    <string name="blur_stickers_screen_name"></string>
-    <string name="blur_stickers_screen_description"></string>
-    <plurals name="webdav_screen_download_success">
-        <item quantity="one"></item>
-        <item quantity="many"></item>
-        <item quantity="other"></item>
-    </plurals>
-    <string name="classification_model_screen_default_name" translatable="false"></string>
-    <string name="style_transfer_screen_style"></string>
-    <string name="selfie_segmentation_screen_name"></string>
-    <string name="selfie_segmentation_screen_image_not_selected"></string>
-    <string name="share_sheet_action_save_toast_failed"></string>
-    <string name="detail_screen_empty_tip"></string>
-    <string name="detail_screen_name"></string>
-    <string name="more"></string>
-    <string name="home_screen_recommend_tags"></string>
-    <string name="stickers_list_screen_export_current_stickers"></string>
-    <string name="home_screen_export_to_backup_zip"></string>
-    <string name="share_sheet_action_copy"></string>
-    <string name="pick_image_method_get_content"></string>
-    <string name="home_screen_recent_shared_stickers"></string>
-    <string name="blur_stickers_screen_add_blur_keyword"></string>
-    <string name="blur_stickers_screen_tip"></string>
-    <string name="cache_screen_delete_provider_thumbnails_success"></string>
-    <string name="webdav_screen_download_description"></string>
-    <string name="auto_share_screen_ignore_input_dialog_title"></string>
-    <string name="auto_share_screen_ignore_regex_format_error"></string>
-    <string name="text_recognize_screen_description"></string>
-    <string name="expand"></string>
-    <string name="blur_stickers_screen_radius"></string>
-    <string name="db_sticker_table_md5" translatable="false"></string>
-    <string name="text_recognize_screen_name"></string>
-    <string name="cache_screen_delete_all_mimetypes"></string>
-    <string name="crash_screen_crash_log"></string>
-    <string name="uri_string_share_screen_description"></string>
-    <string name="cache_screen_delete_all_mimetypes_description"></string>
-    <string name="copied"></string>
-    <string name="image_source_screen_name"></string>
-    <string name="style_transfer_screen_select_content_image"></string>
-    <string name="classification_screen_threshold_description"></string>
-    <string name="delete"></string>
-    <string name="about_screen_other_works_night_screen_description"></string>
-    <string name="crash_screen_copy_crash_log"></string>
-    <string name="text_recognize_screen_threshold_description"></string>
-    <string name="image_screen_picker_description"></string>
-    <string name="accessibility_service_label" translatable="false"></string>
-    <string name="selfie_segmentation_screen_selfie"></string>
-    <string name="about_screen_other_works_anivu_description"></string>
-    <string name="submit_an_issue_on_github"></string>
-    <string name="crashed"></string>
-    <string name="data_screen_delete_all_sticker_share_time_data_description"></string>
-    <string name="help_translate"></string>
-    <string name="classification_screen_threshold"></string>
-    <string name="about_screen_other_works_raca_name" translatable="false"></string>
-    <string name="data_screen_delete_all_sticker_share_time_data"></string>
-    <string name="data_screen_danger_category"></string>
-    <string name="search_config_screen_intersect_search_by_space"></string>
-    <string name="about_screen_app_full_name" translatable="false"></string>
-    <string name="home_screen_recent_create_stickers"></string>
-    <string name="api_grant_repo_no_package"></string>
-    <string name="auto_share_screen_accessibility_not_granted"></string>
-    <string name="sponsor"></string>
-    <string name="image_screen_picker"></string>
-    <string name="style_transfer_screen_image_not_selected"></string>
-    <string name="cache_screen_delete_provider_thumbnails"></string>
-    <string name="cache_screen_delete_provider_thumbnails_description"></string>
-    <string name="about_screen_other_works_anivu_name" translatable="false"></string>
-    <string name="privacy_screen_disable_screenshot_description"></string>
-    <string name="uri_string_share_screen_name"></string>
-    <string name="loading"></string>
-    <string name="selfie_segmentation_screen_segment"></string>
-    <string name="privacy_screen_disable_screenshot"></string>
-    <string name="selfie_segmentation_screen_select_selfie_image"></string>
-    <string name="use_the_following_to_open"></string>
-    <string name="cache_screen_delete_all_mimetypes_success"></string>
-    <string name="webdav_screen_download"></string>
-    <string name="setting_screen_image_source_description"></string>
-    <string name="style_transfer_screen_select_style_image"></string>
-    <string name="pick_image_method_pick_from_gallery"></string>
-    <string name="webdav_screen_download_tip"></string>
-    <string name="setting_screen_share_config_description"></string>
-    <string name="about_screen_other_works_raca_description"></string>
-    <string name="sponsor_afadian"></string>
-    <string name="selfie_segmentation_screen_background"></string>
-    <string name="collapse"></string>
-    <string name="setting_screen_api_description"></string>
-    <string name="setting_screen_privacy_description"></string>
-    <string name="api_grant_screen_name"></string>
-    <string name="pick_image_method_open_document"></string>
-    <string name="accessibility_service_description"></string>
-    <string name="text_recognize_screen_threshold"></string>
-    <string name="privacy_screen_name"></string>
-    <string name="blur_stickers_screen_blur_keywords"></string>
-    <string name="stickers_list_screen_name"></string>
-    <string name="home_screen_most_shared_stickers"></string>
-    <string name="sponsor_description"></string>
-    <string name="auto_share_screen_supported_app"></string>
-    <string name="home_screen_random_tags"></string>
-    <string name="style_transfer_screen_content"></string>
-    <string name="sponsor_buy_me_a_coffee" translatable="false"></string>
-    <string name="cache_screen_description"></string>
-    <string name="cache_screen_name"></string>
-    <string name="stickers"></string>
 </resources>

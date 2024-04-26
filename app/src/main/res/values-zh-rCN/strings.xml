@@ -359,12 +359,4 @@
     <string name="copied">已复制</string>
     <string name="crash_screen_crash_log">日志</string>
     <string name="crash_screen_copy_crash_log">复制日志</string>
-    <string name="about_screen_other_works_night_screen_name" translatable="false"></string>
-    <string name="classification_model_screen_default_name" translatable="false"></string>
-    <string name="sponsor_buy_me_a_coffee" translatable="false"></string>
-    <string name="db_sticker_table_md5" translatable="false"></string>
-    <string name="about_screen_app_full_name" translatable="false"></string>
-    <string name="about_screen_other_works_anivu_name" translatable="false"></string>
-    <string name="about_screen_other_works_raca_name" translatable="false"></string>
-    <string name="accessibility_service_label" translatable="false"></string>
 </resources>
