@@ -42,7 +42,7 @@
     <plurals name="import_files_screen_successful_desc">
         <item quantity="other">共更新 %1$d 張表情包，耗時 %2$.2f 秒</item>
     </plurals>
-    <string name="auto_share_screen_ignore_regex_format_error">正規表示式格式無效</string>
+    <string name="auto_share_screen_ignore_regex_format_error">正則表達式格式無效</string>
     <string name="appearance_screen_sticker_color_theme">表情包顏色主題</string>
     <string name="webdav_screen_password">密碼</string>
     <string name="data_screen_delete_all_description">刪除 Rays 管理的所有本地資料，包括圖片、標題、標籤等。此操作無法撤銷</string>
