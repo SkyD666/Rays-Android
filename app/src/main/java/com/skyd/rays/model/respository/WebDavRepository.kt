@@ -42,7 +42,7 @@ class WebDavRepository @Inject constructor(
         return flowOnIo {
             val sardine: Sardine = initWebDav(website, username, password)
             val backupInfoMap: List<BackupInfo> = getMd5UuidKeyBackupInfoMap(sardine, website)
-                .filter { it.value.isDeleted }.values.toList()
+                .filterValues { it.isDeleted }.values.toList()
             emit(backupInfoMap)
         }
     }
@@ -91,7 +91,7 @@ class WebDavRepository @Inject constructor(
         return flowOnIo {
             val sardine: Sardine = initWebDav(website, username, password)
             val (willBeDeletedMap, othersMap) = getMd5UuidKeyBackupInfoMap(sardine, website).run {
-                filter { it.value.isDeleted } to filter { !it.value.isDeleted }
+                filterValues { it.isDeleted } to filterValues { !it.isDeleted }
             }
             updateBackupInfo(sardine, website, othersMap.values.toList())
             willBeDeletedMap.forEach { (_, u) ->

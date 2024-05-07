@@ -17,3 +17,10 @@ fun Date.toDateTimeString(
 ): String = SimpleDateFormat
     .getDateTimeInstance(dateStyle, timeStyle, locale)
     .format(this)
+
+fun Long.toDateTimeString(pattern: String): String = Date(this).toDateTimeString(pattern)
+
+fun Date.toDateTimeString(pattern: String): String = runCatching {
+    SimpleDateFormat(pattern, Locale.getDefault())
+        .format(this)
+}.getOrDefault("")

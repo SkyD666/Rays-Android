@@ -68,12 +68,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.dateTime
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
+import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.StickerScalePreference
@@ -457,12 +457,12 @@ fun StickerDetailInfo(modifier: Modifier = Modifier, stickerWithTags: StickerWit
         DetailInfoItem(
             icon = Icons.Default.AddCircle,
             title = stringResource(id = R.string.sticker_create_time),
-            text = dateTime(sticker.createTime)
+            text = sticker.createTime.toDateTimeString()
         )
         DetailInfoItem(
             icon = Icons.Default.Edit,
             title = stringResource(id = R.string.detail_screen_sticker_info_last_modified_time),
-            text = sticker.modifyTime?.let { dateTime(it) } ?: dateTime(sticker.createTime)
+            text = (sticker.modifyTime ?: sticker.createTime).toDateTimeString()
         )
     }
 }

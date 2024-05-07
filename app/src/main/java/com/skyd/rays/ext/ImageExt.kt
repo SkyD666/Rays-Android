@@ -36,10 +36,10 @@ fun Bitmap.cropTransparency(): Bitmap? {
             val alpha = getPixel(x, y) shr 24 and 255
             // pixel is not 100% transparent
             if (alpha > 0) {
-                if (x < minX) minX = x
-                if (x > maxX) maxX = x
-                if (y < minY) minY = y
-                if (y > maxY) maxY = y
+                minX = minOf(minX, x)
+                maxX = maxOf(maxX, x)
+                minY = minOf(minY, y)
+                maxY = maxOf(maxY, y)
             }
         }
     }

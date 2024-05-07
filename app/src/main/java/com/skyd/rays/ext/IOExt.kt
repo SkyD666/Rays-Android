@@ -17,10 +17,7 @@ fun Uri.copyTo(target: File): File {
 }
 
 fun InputStream.saveTo(target: File): File {
-    val parentFile = target.parentFile
-    if (parentFile?.exists() == false) {
-        parentFile.mkdirs()
-    }
+    target.parentFile?.takeIf { !it.exists() }?.mkdirs()
     if (!target.exists()) {
         target.createNewFile()
     }

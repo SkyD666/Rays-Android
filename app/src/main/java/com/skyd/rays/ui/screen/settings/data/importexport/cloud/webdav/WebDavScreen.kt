@@ -50,10 +50,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.dateTime
 import com.skyd.rays.ext.editor
 import com.skyd.rays.ext.secretSharedPreferences
 import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
+import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.bean.BackupInfo
 import com.skyd.rays.model.bean.WebDavWaitingInfo
 import com.skyd.rays.model.preference.WebDavServerPreference
@@ -409,7 +409,7 @@ private fun RecycleBinBottomSheet(
                             Text(
                                 text = stringResource(
                                     R.string.webdav_screen_last_modified_time,
-                                    dateTime(list[it].modifiedTime)
+                                    list[it].modifiedTime.toDateTimeString()
                                 )
                             )
                         },

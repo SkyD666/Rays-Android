@@ -143,11 +143,10 @@ class StickerProvider : DocumentsProvider() {
     }
 
     private fun getDisplayMap(stickerUuids: List<String>): MutableMap<String, String> {
-        val titles = entryPoint.stickerDao().getStickerTitles(stickerUuids)
-            .toMutableMap()
+        val titles = entryPoint.stickerDao().getStickerTitles(stickerUuids).toMutableMap()
 
         entryPoint.tagDao().getTagStringMap(
-            titles.filter { it.value.isBlank() }.map { it.key }
+            titles.filterValues { it.isBlank() }.map { it.key }
         ).forEach { (t, u) ->
             titles[t] = u.ifBlank { t }
         }

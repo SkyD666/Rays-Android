@@ -7,7 +7,7 @@ import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.EXPORT_FILES_DIR
 import com.skyd.rays.config.IMPORT_FILES_DIR
-import com.skyd.rays.ext.dateTime
+import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.bean.ImportExportInfo
 import com.skyd.rays.model.bean.ImportExportResultInfo
 import com.skyd.rays.model.bean.ImportExportWaitingInfo
@@ -132,7 +132,12 @@ class ImportExportFilesRepository @Inject constructor(
                 if (excludeModifyTime) it.sticker.modifyTime = 0L
                 stickerWithTagsToJsonFile(it)
                 stickerUuidToFile(it.sticker.uuid)
-                    .copyTo(File("${appContext.EXPORT_FILES_DIR}/$BACKUP_STICKER_DIR", it.sticker.uuid))
+                    .copyTo(
+                        File(
+                            "${appContext.EXPORT_FILES_DIR}/$BACKUP_STICKER_DIR",
+                            it.sticker.uuid
+                        )
+                    )
                 emitProgressData(
                     current = ++currentCount,
                     total = totalCount,
@@ -141,7 +146,7 @@ class ImportExportFilesRepository @Inject constructor(
             }
             val documentFile = DocumentFile.fromTreeUri(appContext, dirUri)!!
             val currentDate =
-                dateTime(timestamp = System.currentTimeMillis(), pattern = "yyyyMMdd-HHmmss")
+                System.currentTimeMillis().toDateTimeString(pattern = "yyyyMMdd-HHmmss")
             val zipFileUri: Uri = documentFile.createFile(
                 "application/zip",
                 "Rays_Backup_${currentDate}_${Random.nextInt(0, Int.MAX_VALUE)}"
@@ -180,7 +185,8 @@ class ImportExportFilesRepository @Inject constructor(
     }
 
     private fun stickerWithTagsToJsonFile(stickerWithTags: StickerWithTags): File {
-        val file = File("${appContext.EXPORT_FILES_DIR}/$BACKUP_DATA_DIR", stickerWithTags.sticker.uuid)
+        val file =
+            File("${appContext.EXPORT_FILES_DIR}/$BACKUP_DATA_DIR", stickerWithTags.sticker.uuid)
         if (!file.exists()) {
             if (file.parentFile?.exists() == false) {
                 file.parentFile?.mkdirs()
