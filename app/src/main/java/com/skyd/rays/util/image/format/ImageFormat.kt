@@ -9,6 +9,7 @@ enum class ImageFormat {
     BMP,
     HEIF,
     HEIC,
+    SVG,
     UNDEFINED;
 
     override fun toString(): String {
@@ -21,6 +22,7 @@ enum class ImageFormat {
             BMP -> ".bmp"
             HEIF -> ".heif"
             HEIC -> ".heic"
+            SVG -> ".svg"
             UNDEFINED -> ""
         }
     }
@@ -35,6 +37,7 @@ enum class ImageFormat {
             BMP -> "image/bmp"
             HEIF -> "image/heif"
             HEIC -> "image/heic"
+            SVG -> "image/svg+xml"
             UNDEFINED -> "image/*"
         }
     }
@@ -50,6 +53,7 @@ enum class ImageFormat {
                 "image/bmp" -> BMP
                 "image/heif" -> HEIF
                 "image/heic" -> HEIC
+                "image/svg+xml" -> SVG
                 else -> UNDEFINED
             }
         }

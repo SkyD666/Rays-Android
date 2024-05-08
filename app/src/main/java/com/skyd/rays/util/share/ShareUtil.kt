@@ -42,32 +42,39 @@ object ShareUtil {
         return packageInfo != null
     }
 
-    fun share(context: Context, uris: List<Uri>, topActivityFullName: String) {
+    fun share(
+        context: Context,
+        uris: List<Uri>,
+        mimetype: String? = null,
+        topActivityFullName: String
+    ) {
         if (topActivityFullName.isBlank()) {
-            startShare(context, uris)
+            startShare(context, uris, mimetype)
             return
         }
         apps.forEach {
-            if (share(context, topActivityFullName, uris, it)) {
+            if (share(context, topActivityFullName, uris, mimetype, it)) {
                 return
             }
         }
-        startShare(context, uris)
+        startShare(context, uris, mimetype)
     }
 
     fun share(
         context: Context,
         topActivityFullName: String,
         uris: List<Uri>,
+        mimetype: String? = null,
         appInfo: IAppInfo
     ): Boolean {
         if (!isInstalled(appInfo.packageName)) return false
-        return appInfo.share(context, topActivityFullName, uris)
+        return appInfo.share(context, topActivityFullName, uris, mimetype)
     }
 
     fun startShare(
         context: Context,
         uris: List<Uri>,
+        mimetype: String?,
         packageName: String? = null,
         className: String? = null,
     ) {
@@ -75,7 +82,7 @@ object ShareUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             val shareIntent = ShareCompat.IntentBuilder(context)
                 .apply { uris.forEach { addStream(it) } }
-                .setType("image/*")
+                .setType(mimetype.orEmpty().ifBlank { "image/*" })
                 .setChooserTitle(R.string.send_sticker)
                 .createChooserIntent()
 
@@ -101,7 +108,7 @@ object ShareUtil {
                 }
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
-                type = "image/*"
+                type = mimetype.orEmpty().ifBlank { "image/*" }
                 if (!packageName.isNullOrBlank() && !className.isNullOrBlank()) {
                     setClassName(packageName, className)
                 } else if (!packageName.isNullOrBlank()) {

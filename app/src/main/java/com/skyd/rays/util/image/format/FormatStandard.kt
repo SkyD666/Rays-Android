@@ -1,5 +1,6 @@
 package com.skyd.rays.util.image.format
 
+import com.skyd.rays.ext.indexOf
 import com.skyd.rays.util.image.format.FormatStandardUtil.baseCheck
 import java.io.InputStream
 
@@ -18,7 +19,8 @@ sealed class FormatStandard(
                 BmpFormat,
                 WebpFormat,
                 HeifFormat,
-                HeicFormat
+                HeicFormat,
+                SvgFormat,
             )
         }
     }
@@ -274,6 +276,19 @@ sealed class FormatStandard(
                 if (baseCheck(it, tested.copyOfRange(10, 12))) {
                     return true
                 }
+            }
+            return false
+        }
+    }
+
+    data object SvgFormat : FormatStandard(
+        format = ImageFormat.SVG,
+        requiredByteArraySize = 1024,
+    ) {
+        override fun check(tested: ByteArray): Boolean {
+            if (tested[0] != '<'.code.toByte()) return false
+            if (tested.toTypedArray().indexOf("<svg".toByteArray().toTypedArray()) != -1) {
+                return true
             }
             return false
         }

@@ -21,8 +21,8 @@ android {
         applicationId = "com.skyd.rays"
         minSdk = 24
         targetSdk = 34
-        versionCode = 65
-        versionName = "2.2-rc05"
+        versionCode = 66
+        versionName = "2.2-rc06"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -169,7 +169,8 @@ dependencies {
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation("com.google.accompanist:accompanist-drawablepainter:$accompanistVersion")
     implementation("io.coil-kt:coil-compose:2.6.0")
-    implementation("io.coil-kt:coil-gif:2.5.0")
+    implementation("io.coil-kt:coil-gif:2.6.0")
+    implementation("io.coil-kt:coil-svg:2.6.0")
     implementation("androidx.profileinstaller:profileinstaller:1.3.1")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.room:room-runtime:$roomVersion")

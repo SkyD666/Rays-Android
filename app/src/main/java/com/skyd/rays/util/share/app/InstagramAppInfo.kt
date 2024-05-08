@@ -8,11 +8,17 @@ class InstagramAppInfo : IAppInfo {
     override val packageName: String
         get() = "com.instagram.android"
 
-    override fun share(context: Context, topActivityFullName: String, uris: List<Uri>): Boolean {
+    override fun share(
+        context: Context,
+        topActivityFullName: String,
+        uris: List<Uri>,
+        mimetype: String?,
+    ): Boolean {
         if (!topActivityFullName.startsWith("com.instagram")) return false
         ShareUtil.startShare(
             context = context,
             uris = uris,
+            mimetype = mimetype,
             packageName = packageName,
             className = ""
         )

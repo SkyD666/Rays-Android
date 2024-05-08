@@ -290,11 +290,11 @@
     <string name="sponsor_afadian">Afadian</string>
     <string name="sponsor_buy_me_a_coffee" translatable="false">Buy me a coffee</string>
     <string name="classification_screen_threshold">Classification threshold</string>
-    <string name="classification_screen_threshold_description">Only tags with confidence higher than this threshold will be recommended, suggested to be set around 0.5.</string>
+    <string name="classification_screen_threshold_description">Only tags with confidence higher than this threshold will be recommended, suggested to be set around 0.5.\n\nSVG format is not supported.</string>
     <string name="text_recognize_screen_name">Text recognize</string>
     <string name="text_recognize_screen_description">Recognize texts in a sticker</string>
     <string name="text_recognize_screen_threshold">Text recognize threshold</string>
-    <string name="text_recognize_screen_threshold_description">Only texts with confidence higher than this threshold will be recommended, suggested to be set around 0.4.</string>
+    <string name="text_recognize_screen_threshold_description">Only texts with confidence higher than this threshold will be recommended, suggested to be set around 0.4.\n\nSVG format is not supported.</string>
     <string name="privacy_screen_name">Privacy</string>
     <string name="setting_screen_privacy_description">Disable screenshot, blur stickers</string>
     <string name="privacy_screen_disable_screenshot">Disable screenshot</string>

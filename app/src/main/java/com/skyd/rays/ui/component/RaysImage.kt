@@ -14,6 +14,7 @@ import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.skyd.rays.config.STICKER_DIR
 import com.skyd.rays.ext.dataStore
@@ -96,6 +97,7 @@ private fun rememberRaysImageLoader(): ImageLoader {
                 } else {
                     add(GifDecoder.Factory())
                 }
+                add(SvgDecoder.Factory())
             }
             .build()
     }

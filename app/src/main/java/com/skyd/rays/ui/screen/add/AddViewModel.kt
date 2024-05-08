@@ -109,7 +109,7 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                     ),
                     addRepository.requestSuggestTags(
                         intent.initStickers.first().uri!!
-                    )
+                    ).catchMap { emptySet() }
                 ) { stickerWithTags, suggestTags ->
                     AddPartialStateChange.Init.Success(
                         stickerWithTags,
@@ -182,11 +182,12 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
             },
 
             filterIsInstance<AddIntent.GetSuggestTags>().flatMapConcat { intent ->
-                addRepository.requestSuggestTags(intent.sticker).map { result ->
-                    AddPartialStateChange.GetSuggestTags.Success(result)
-                }.catchMap<AddPartialStateChange> {
-                    AddPartialStateChange.GetSuggestTags.Failed(it.message.orEmpty())
-                }
+                addRepository.requestSuggestTags(intent.sticker)
+                    .catchMap { emptySet() }.map { result ->
+                        AddPartialStateChange.GetSuggestTags.Success(result)
+                    }.catchMap<AddPartialStateChange> {
+                        AddPartialStateChange.GetSuggestTags.Failed(it.message.orEmpty())
+                    }
             },
         )
     }

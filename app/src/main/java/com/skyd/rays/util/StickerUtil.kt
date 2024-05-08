@@ -124,10 +124,20 @@ fun Context.sendStickersByFiles(
             }
         }
 
+        var mimetype: String? = null    // null considered as image/*
+        // Set mimetype only when there is only one sticker
+        if (contentUris.size == 1) {
+            val firstUri = contentUris.first()
+            contentResolver.openInputStream(firstUri)?.use { inputStream ->
+                mimetype =
+                    ImageFormatChecker.check(inputStream, firstUri.lastPathSegment).toMimeType()
+            }
+        }
         withContext(Dispatchers.Main) {
             ShareUtil.share(
                 context = this@sendStickersByFiles,
                 uris = contentUris,
+                mimetype = mimetype,
                 topActivityFullName = topActivityFullName,
             )
         }

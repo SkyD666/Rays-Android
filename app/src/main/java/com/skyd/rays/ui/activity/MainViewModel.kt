@@ -72,7 +72,7 @@ class MainViewModel @Inject constructor() :
         )
     }
 
-    private suspend fun setPrimaryColor(uuid: String) {
+    private suspend fun setPrimaryColor(uuid: String) = runCatching {
         val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         val stickerFilePath = stickerUuidToFile(uuid).path
         val l = max(options.outHeight, options.outWidth)
@@ -88,7 +88,7 @@ class MainViewModel @Inject constructor() :
         }
         bitmap.recycle()
         if (swatch == null) {
-            return
+            return@runCatching
         }
         appContext.dataStore.edit { pref ->
             pref[ThemeNamePreference.key] = ThemeNamePreference.CUSTOM_THEME_NAME

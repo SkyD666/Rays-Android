@@ -8,11 +8,17 @@ class TelegramAppInfo : IAppInfo {
     override val packageName: String
         get() = "org.telegram.messenger"
 
-    override fun share(context: Context, topActivityFullName: String, uris: List<Uri>): Boolean {
+    override fun share(
+        context: Context,
+        topActivityFullName: String,
+        uris: List<Uri>,
+        mimetype: String?,
+    ): Boolean {
         if (!topActivityFullName.startsWith("org.telegram")) return false
         ShareUtil.startShare(
             context = context,
             uris = uris,
+            mimetype = mimetype,
             packageName = packageName,
             className = "org.telegram.ui.LaunchActivity"
         )
