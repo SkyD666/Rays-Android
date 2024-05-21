@@ -81,14 +81,7 @@ sealed class FormatStandard(
         requiredByteArraySize = 8,
     ) {
         val PNG_FORMAT_DATA = byteArrayOf(
-            0x89.toByte(),
-            0x50.toByte(),
-            0x4E.toByte(),
-            0x47.toByte(),
-            0x0D.toByte(),
-            0x0A.toByte(),
-            0x1A.toByte(),
-            0x0A.toByte(),
+            0x89.toByte(), 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
         )
 
         override fun check(tested: ByteArray): Boolean = baseCheck(
@@ -117,26 +110,12 @@ sealed class FormatStandard(
         requiredByteArraySize = 6,
     ) {
         override fun check(tested: ByteArray): Boolean = baseCheck(
-            standard = byteArrayOf(
-                // GIF87a
-                0x47.toByte(),
-                0x49.toByte(),
-                0x46.toByte(),
-                0x38.toByte(),
-                0x37.toByte(),
-                0x61.toByte(),
-            ),
+            // GIF87a
+            standard = byteArrayOf(0x47, 0x49, 0x46, 0x38, 0x37, 0x61),
             tested = tested,
         ) or baseCheck(
             // GIF89a
-            standard = byteArrayOf(
-                0x47.toByte(),
-                0x49.toByte(),
-                0x46.toByte(),
-                0x38.toByte(),
-                0x39.toByte(),
-                0x61.toByte(),
-            ),
+            standard = byteArrayOf(0x47, 0x49, 0x46, 0x38, 0x39, 0x61),
             tested = tested,
         )
     }
@@ -157,12 +136,12 @@ sealed class FormatStandard(
          * PT – OS/2 Pointer
          */
         private val firstFieldArray = arrayOf(
-            byteArrayOf(0x42.toByte(), 0x4D.toByte()),
-            byteArrayOf(0x42.toByte(), 0x41.toByte()),
-            byteArrayOf(0x43.toByte(), 0x49.toByte()),
-            byteArrayOf(0x43.toByte(), 0x50.toByte()),
-            byteArrayOf(0x49.toByte(), 0x43.toByte()),
-            byteArrayOf(0x50.toByte(), 0x54.toByte()),
+            byteArrayOf(0x42, 0x4D),
+            byteArrayOf(0x42, 0x41),
+            byteArrayOf(0x43, 0x49),
+            byteArrayOf(0x43, 0x50),
+            byteArrayOf(0x49, 0x43),
+            byteArrayOf(0x50, 0x54),
         )
 
         override fun check(tested: ByteArray): Boolean {
@@ -193,18 +172,7 @@ sealed class FormatStandard(
         requiredByteArraySize = 12,
     ) {
         private val standard = byteArrayOf(
-            0x52.toByte(),
-            0x49.toByte(),
-            0x46.toByte(),
-            0x46.toByte(),
-            0x00.toByte(),
-            0x00.toByte(),
-            0x00.toByte(),
-            0x00.toByte(),
-            0x57.toByte(),
-            0x45.toByte(),
-            0x42.toByte(),
-            0x50.toByte(),
+            0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50,
         )
 
         override fun check(tested: ByteArray): Boolean {
@@ -232,9 +200,9 @@ sealed class FormatStandard(
         format = ImageFormat.HEIF,
         requiredByteArraySize = 12,
     ) {
-        private val ftyp = byteArrayOf(0x66.toByte(), 0x74.toByte(), 0x79.toByte(), 0x70.toByte())
-        private val mif1 = byteArrayOf(0x6d.toByte(), 0x69.toByte(), 0x66.toByte(), 0x31.toByte())
-        private val msf1 = byteArrayOf(0x6d.toByte(), 0x73.toByte(), 0x66.toByte(), 0x31.toByte())
+        private val ftyp = byteArrayOf(0x66, 0x74, 0x79, 0x70)
+        private val mif1 = byteArrayOf(0x6d, 0x69, 0x66, 0x31)
+        private val msf1 = byteArrayOf(0x6d, 0x73, 0x66, 0x31)
         private val m = arrayOf(mif1, msf1)
 
         override fun check(tested: ByteArray): Boolean {
@@ -255,14 +223,14 @@ sealed class FormatStandard(
         format = ImageFormat.HEIC,
         requiredByteArraySize = 12,
     ) {
-        private val ftyp = byteArrayOf(0x66.toByte(), 0x74.toByte(), 0x79.toByte(), 0x70.toByte())
-        private val he = byteArrayOf(0x68.toByte(), 0x65.toByte())
+        private val ftyp = byteArrayOf(0x66, 0x74, 0x79, 0x70)
+        private val he = byteArrayOf(0x68, 0x65)
         private val icIxIsVcVx = arrayOf(
-            byteArrayOf(0x69.toByte(), 0x63.toByte()),
-            byteArrayOf(0x69.toByte(), 0x78.toByte()),
-            byteArrayOf(0x69.toByte(), 0x73.toByte()),
-            byteArrayOf(0x76.toByte(), 0x63.toByte()),
-            byteArrayOf(0x76.toByte(), 0x78.toByte()),
+            byteArrayOf(0x69, 0x63),
+            byteArrayOf(0x69, 0x78),
+            byteArrayOf(0x69, 0x73),
+            byteArrayOf(0x76, 0x63),
+            byteArrayOf(0x76, 0x78),
         )
 
         override fun check(tested: ByteArray): Boolean {

@@ -54,6 +54,7 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -138,7 +139,11 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
         modifier = Modifier.imePadding(),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
-            AnimatedVisibility(visible = searchResultListState.firstVisibleItemIndex > 2) {
+            AnimatedVisibility(
+                visible = remember {
+                    derivedStateOf { searchResultListState.firstVisibleItemIndex > 2 }
+                }.value
+            ) {
                 RaysFloatingActionButton(
                     onClick = { scope.launch { searchResultListState.animateScrollToItem(0) } },
                     onSizeWithSinglePaddingChanged = { width, height ->
