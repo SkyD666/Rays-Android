@@ -36,6 +36,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -53,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -345,7 +347,8 @@ private fun SponsorDialog(visible: Boolean, onClose: () -> Unit) {
                     headlineContent = { Text(text = stringResource(R.string.sponsor_afadian)) },
                     leadingContent = {
                         Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null)
-                    }
+                    },
+                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                 )
                 HorizontalDivider()
                 ListItem(
@@ -356,7 +359,8 @@ private fun SponsorDialog(visible: Boolean, onClose: () -> Unit) {
                     headlineContent = { Text(text = stringResource(R.string.sponsor_buy_me_a_coffee)) },
                     leadingContent = {
                         Icon(imageVector = Icons.Default.Coffee, contentDescription = null)
-                    }
+                    },
+                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                 )
             }
         },

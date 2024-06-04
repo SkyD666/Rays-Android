@@ -28,16 +28,15 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -87,10 +86,10 @@ class SearchRepository @Inject constructor(
                 )
             }
             .distinctUntilChanged()
-            .flatMapConcat { triple ->
+            .flatMapLatest { (query, _, _) ->
                 var msg: String? = null
                 var isRegexInvalid: SearchRegexInvalidException? = null
-                val sql = runCatching { genSql(triple.first) }.getOrElse {
+                val sql = runCatching { genSql(query) }.getOrElse {
                     if (it is SearchRegexInvalidException) isRegexInvalid = it
                     msg = it.message.toString()
                     null
@@ -104,21 +103,8 @@ class SearchRepository @Inject constructor(
                         )
                     )
                 } else {
-                    combine(
-                        stickerDao.getStickerWithTagsList(sql),
-                        appContext.dataStore.data.debounce(70),
-                    ) { list, ds ->
-                        list to ds
-                    }.takeWhile {
-                        triple == Triple(
-                            it.second[QueryPreference.key] ?: QueryPreference.default,
-                            it.second[SearchResultSortPreference.key]
-                                ?: SearchResultSortPreference.default,
-                            it.second[SearchResultReversePreference.key]
-                                ?: SearchResultReversePreference.default,
-                        )
-                    }.map { pair ->
-                        SearchResult(stickerWithTagsList = sortSearchResultList(pair.first))
+                    stickerDao.getStickerWithTagsList(sql).map { list ->
+                        SearchResult(stickerWithTagsList = sortSearchResultList(list))
                     }.flowOn(Dispatchers.IO)
                 }
             }

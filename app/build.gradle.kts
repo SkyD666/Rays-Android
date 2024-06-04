@@ -22,7 +22,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 66
-        versionName = "2.2-rc07"
+        versionName = "2.2-rc08"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -145,13 +145,11 @@ tasks.withType(KotlinCompile::class.java).configureEach {
 }
 
 dependencies {
-    val composeVersion: String by rootProject.extra
     val md3Version: String by rootProject.extra
-    val accompanistVersion: String by rootProject.extra
     val mlkitRecognitionVersion: String by rootProject.extra
     val roomVersion: String by rootProject.extra
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.compose.ui:ui:$composeVersion")
+    implementation("androidx.compose.ui:ui:1.6.7")
     implementation("androidx.compose.material3:material3:$md3Version")
     implementation("androidx.compose.material3:material3-window-size-class:$md3Version")
     implementation("androidx.compose.material:material:1.6.7")
@@ -167,7 +165,7 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
-    implementation("com.google.accompanist:accompanist-drawablepainter:$accompanistVersion")
+    implementation("com.google.accompanist:accompanist-drawablepainter:0.34.0")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("io.coil-kt:coil-gif:2.6.0")
     implementation("io.coil-kt:coil-svg:2.6.0")
@@ -178,9 +176,9 @@ dependencies {
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("com.github.thegrizzlylabs:sardine-android:0.8")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-    implementation("com.materialkolor:material-kolor:1.4.4")
+    implementation("com.materialkolor:material-kolor:1.6.1")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
-    implementation("com.airbnb.android:lottie-compose:6.3.0")
+    implementation("com.airbnb.android:lottie-compose:6.4.1")
 
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
@@ -194,10 +192,10 @@ dependencies {
     implementation("com.google.mlkit:segmentation-selfie:16.0.0-beta5")
 
     // TF Lite
-    implementation("org.tensorflow:tensorflow-lite:2.14.0")
+    implementation("org.tensorflow:tensorflow-lite:2.16.1")
     implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
 
-    implementation("com.github.penfeizhou.android.animation:apng:2.28.0")
+    implementation("com.github.penfeizhou.android.animation:apng:3.0.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.7")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.7")
