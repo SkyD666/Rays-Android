@@ -1,3 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    </resources>
+    <string name="home_screen_search_hint">Pencarian</string>
+    <string name="back">Kembali</string>
+    <string name="app_name">Rays</string>
+    <string name="more_screen_name">Lebih Banyak</string>
+    <string name="home_screen_name">Beranda</string>
+    <string name="home_screen_add">Tambah</string>
+    <string name="add_screen_save_current_sticker">Simpan stiker saat ini</string>
+    <string name="add_screen_title">Judul (Opsional)</string>
+    <string name="add_screen_add_tags">Tambahkan tag (Opsional)</string>
+    <string name="add_screen_name_edit">Ubah</string>
+    <string name="add_screen_name">Tambah</string>
+</resources>
