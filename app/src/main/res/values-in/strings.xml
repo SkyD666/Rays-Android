@@ -1,3 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    </resources>
+    <string name="home_screen_search_hint">Pencarian</string>
+    <string name="back">Kembali</string>
+    <string name="app_name">Rays</string>
+    <string name="more_screen_name">Lebih Banyak</string>
+    <string name="home_screen_name">Beranda</string>
+    <string name="home_screen_add">Tambah</string>
+    <string name="add_screen_save_current_sticker">Simpan stiker saat ini</string>
+    <string name="add_screen_title">Judul (Opsional)</string>
+    <string name="add_screen_add_tags">Tambahkan tag (Opsional)</string>
+    <string name="add_screen_name_edit">Ubah</string>
+    <string name="add_screen_name">Tambah</string>
+    <string name="add_screen_global_tags_tips">Tag global akan ditambahkan ke semua stiker dalam daftar tunggu.</string>
+    <string name="add_screen_global_tags">Tag global</string>
+    <string name="add_screen_skip_current_sticker">Batalkan pengeditan konten saat ini</string>
+    <string name="search_config_screen_name">Cari</string>
+    <string name="failed_info">Gagal: %s</string>
+    <string name="add_screen_waiting_uris">Daftar tunggu</string>
+    <string name="add_screen_sticker_is_not_set">Silakan pilih stiker!</string>
+    <string name="add_screen_tag_field_hint">Tekan Enter untuk menambahkan</string>
+    <string name="add_screen_add_tag">Tambah</string>
+    <string name="add_screen_add_tag_to_all">Tambahkan ke semua stiker dalam daftar tunggu</string>
+</resources>
