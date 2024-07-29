@@ -54,6 +54,7 @@ fun RaysTheme(
                 dynamicColorScheme(
                     seedColor = ThemeNamePreference.values[0].keyColor,
                     isDark = darkTheme,
+                    isAmoled = false,
                 )
             }
         },

@@ -125,7 +125,7 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
         mutableStateOf<Set<StickerWithTags>?>(null)
     }
     var fabHeight by remember { mutableStateOf(0.dp) }
-    var fabWidht by remember { mutableStateOf(0.dp) }
+    var fabWidth by remember { mutableStateOf(0.dp) }
     var searchFieldValueState by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         val query = if (context.dataStore.getOrDefault(ShowLastQueryPreference)) {
             context.dataStore.getOrDefault(QueryPreference)
@@ -147,7 +147,7 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                 RaysFloatingActionButton(
                     onClick = { scope.launch { searchResultListState.animateScrollToItem(0) } },
                     onSizeWithSinglePaddingChanged = { width, height ->
-                        fabWidht = width
+                        fabWidth = width
                         fabHeight = height
                     },
                     contentDescription = stringResource(R.string.home_screen_search_result_list_to_top),
@@ -255,7 +255,7 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                             }
                             MultiSelectActionBar(
                                 modifier = Modifier.run {
-                                    if (windowSizeClass.isCompact) padding(end = fabWidht)
+                                    if (windowSizeClass.isCompact) padding(end = fabWidth)
                                     else this
                                 },
                                 selectedStickers = selectedStickers,

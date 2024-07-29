@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("kotlinx-serialization")
     id("kotlin-parcelize")
     id("kotlin-android")
@@ -22,7 +23,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 66
-        versionName = "2.2-rc08"
+        versionName = "2.2-rc09"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -107,9 +108,6 @@ android {
         buildConfig = true
         aidl = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
-    }
     packaging {
         resources.excludes += mutableSetOf(
             "/META-INF/{AL2.0,LGPL2.1}",
@@ -149,16 +147,16 @@ dependencies {
     val mlkitRecognitionVersion: String by rootProject.extra
     val roomVersion: String by rootProject.extra
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.compose.ui:ui:1.6.7")
+    implementation("androidx.compose.ui:ui:1.6.8")
     implementation("androidx.compose.material3:material3:$md3Version")
     implementation("androidx.compose.material3:material3-window-size-class:$md3Version")
-    implementation("androidx.compose.material:material:1.6.7")
-    implementation("androidx.compose.material:material-icons-extended:1.6.7")
-    implementation("androidx.compose.ui:ui-tooling-preview:$md3Version")
+    implementation("androidx.compose.material:material:1.6.8")
+    implementation("androidx.compose.material:material-icons-extended:1.6.8")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.6.8")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+    implementation("androidx.activity:activity-compose:1.9.1")
     implementation("androidx.palette:palette-ktx:1.0.0")
     implementation("com.google.dagger:hilt-android:2.51.1")
     ksp("com.google.dagger:hilt-android-compiler:2.51.1")
@@ -166,17 +164,17 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation("com.google.accompanist:accompanist-drawablepainter:0.34.0")
-    implementation("io.coil-kt:coil-compose:2.6.0")
-    implementation("io.coil-kt:coil-gif:2.6.0")
-    implementation("io.coil-kt:coil-svg:2.6.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("io.coil-kt:coil-gif:2.7.0")
+    implementation("io.coil-kt:coil-svg:2.7.0")
     implementation("androidx.profileinstaller:profileinstaller:1.3.1")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("com.github.thegrizzlylabs:sardine-android:0.8")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-    implementation("com.materialkolor:material-kolor:1.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
+    implementation("com.materialkolor:material-kolor:1.7.0")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("com.airbnb.android:lottie-compose:6.4.1")
 
@@ -197,6 +195,6 @@ dependencies {
 
     implementation("com.github.penfeizhou.android.animation:apng:3.0.1")
 
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.7")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.7")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.8")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.8")
 }
