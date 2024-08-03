@@ -3,7 +3,6 @@ package com.skyd.rays.ui.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -164,12 +163,17 @@ class MainActivity : AppCompatActivity() {
                     LocalWindowSizeClass provides calculateWindowSizeClass(this)
                 ) {
                     AppContent()
-                    LaunchedEffect(Unit) {
-                        navController.handleDeepLink(intent)
+                    var needHandleIntent by rememberSaveable { mutableStateOf(true) }
+                    if (needHandleIntent) {
+                        LaunchedEffect(Unit) {
+                            needHandleIntent = false
+                            navController.handleDeepLink(intent)
+                        }
                     }
                     DisposableEffect(navController) {
-                        val listener =
-                            Consumer<Intent> { newIntent -> navController.handleDeepLink(newIntent)/*initIntent(newIntent)*/ }
+                        val listener = Consumer<Intent> { newIntent ->
+                            navController.handleDeepLink(newIntent)/*initIntent(newIntent)*/
+                        }
                         addOnNewIntentListener(listener)
                         onDispose { removeOnNewIntentListener(listener) }
                     }
