@@ -71,7 +71,7 @@ private fun RaysSearchBarPreview() {
                 AnimatedVisibility(visible = LocalShowPopularTags.current) {
                     PopularTagsBar(
                         onTagClicked = {},
-                        tags = listOf("Tag" to 1f, "LOL" to 0.9f),
+                        tags = listOf("Tag", "LOL"),
                     )
                 }
                 SearchResultList(

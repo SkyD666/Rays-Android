@@ -41,17 +41,13 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -367,33 +363,16 @@ fun TrailingIcon(
 @Composable
 fun PopularTagsBar(
     onTagClicked: (String) -> Unit,
-    tags: List<Pair<String, Float>>,
+    tags: List<String>,
 ) {
-    val eachTag: @Composable (Pair<String, Float>) -> Unit = { item ->
-        TooltipBox(
-            positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
-            tooltip = {
-                RichTooltip(
-                    title = { Text(item.first) },
-                    text = {
-                        Text(
-                            text = stringResource(
-                                R.string.home_screen_popular_tags_popular_value, item.second
-                            )
-                        )
-                    }
-                )
-            },
-            state = rememberTooltipState(),
-        ) {
-            Text(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(6.dp))
-                    .clickable { onTagClicked(item.first) }
-                    .padding(horizontal = 10.dp, vertical = 6.dp),
-                text = item.first
-            )
-        }
+    val eachTag: @Composable (String) -> Unit = { item ->
+        Text(
+            modifier = Modifier
+                .clip(RoundedCornerShape(6.dp))
+                .clickable { onTagClicked(item) }
+                .padding(horizontal = 10.dp, vertical = 6.dp),
+            text = item
+        )
     }
 
     Box {

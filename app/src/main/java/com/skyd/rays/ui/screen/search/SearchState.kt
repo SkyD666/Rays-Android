@@ -21,6 +21,6 @@ sealed class SearchDataState {
     data object Init : SearchDataState()
     data class Success(
         val stickerWithTagsList: List<StickerWithTags>,
-        val popularTags: List<Pair<String, Float>>,
+        val popularTags: List<String>,
     ) : SearchDataState()
 }

@@ -14,6 +14,7 @@ import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.db.dao.SearchDomainDao
+import com.skyd.rays.model.db.dao.cache.StickerShareTimeDao
 import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.model.preference.ExportStickerDirPreference
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
@@ -28,6 +29,7 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -39,9 +41,11 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
+import kotlin.math.pow
 
 class SearchRepository @Inject constructor(
     private val stickerDao: StickerDao,
+    private val stickerShareTimeDao: StickerShareTimeDao,
 ) : BaseRepository() {
     fun requestStickerWithTagsList(keyword: String): List<StickerWithTags> = runBlocking {
         stickerDao.getStickerWithTagsList(genSql(k = keyword)).first()
@@ -118,49 +122,42 @@ class SearchRepository @Inject constructor(
         }
     }
 
-    fun requestSearchBarPopularTags(count: Int): Flow<List<Pair<String, Float>>> {
-        return stickerDao.getPopularStickersList(count = count)
+    fun requestSearchBarPopularTags(count: Int): Flow<List<String>> {
+        return combine(
+            stickerDao.getRecentSharedStickers(count = count shr 1),
+            stickerDao.getPopularStickersList(count = count shr 1),
+        ) { recentSharedStickers, popularStickers ->
+            recentSharedStickers.toMutableSet().apply {
+                addAll(popularStickers)
+            }.map {
+                it to stickerShareTimeDao.getShareTimeByUuid(it.sticker.uuid)
+            }
+        }
             .distinctUntilChanged()
-            .map { popularStickersList ->
-                val tagsMap: MutableMap<Pair<String, String>, Long> = mutableMapOf()
-                val tagsCountMap: MutableMap<Pair<String, String>, Long> = mutableMapOf()
-                val stickerUuidCountMap: MutableMap<String, Long> = mutableMapOf()
-                popularStickersList.forEach {
-                    it.tags.forEach { tag ->
-                        val tagString = tag.tag
-                        if (tagString.length < 6) {
-                            tagsCountMap[tagString to it.sticker.uuid] = tagsCountMap
-                                .getOrDefault(tagString to it.sticker.uuid, 0) + 1
-                            tagsMap[tagString to it.sticker.uuid] = tagsMap
-                                .getOrDefault(
-                                    tagString to it.sticker.uuid,
-                                    0
-                                ) + it.sticker.shareCount
-                        }
+            .map { stickersList ->
+                // Step 2: Sort the list
+                val sortedDataList = stickersList.sortedWith(
+                    compareByDescending<Pair<StickerWithTags, List<Long>>> {
+                        it.second.sum()
+                    }.thenByDescending { it.first.sticker.shareCount },
+                )
+
+                // Step 3: Count tag frequencies and add weights
+                val tagFrequency = mutableMapOf<String, Double>()
+                for ((index, data) in sortedDataList.withIndex()) {
+                    val weight = (sortedDataList.size - index).toDouble().pow(4)  // weight factor
+                    for (tag in data.first.tags) {
+                        // As the number of times a tag appears increases,
+                        // reduce its new weight to avoid the first few tags being difficult to change
+                        val newWeight = weight *
+                                (1f / tagFrequency.getOrDefault(tag.tag, 1.0)
+                                    .coerceAtLeast(1.0)).pow(4)
+                        tagFrequency[tag.tag] = tagFrequency.getOrDefault(tag.tag, 0.0) + newWeight
                     }
-                    stickerUuidCountMap[it.sticker.uuid] = 0
                 }
-                tagsCountMap.forEach { (t, u) ->
-                    tagsMap[t] = tagsMap.getOrDefault(t, 0) * u
-                }
-                var result = tagsMap.toList().sortedByDescending { (_, value) -> value }
-                result = result.filter {
-                    val stickUuid = it.first.second
-                    val cnt = stickerUuidCountMap[stickUuid]
-                    if (cnt != null) {
-                        // 限制每个表情包只能推荐两个标签
-                        if (cnt >= 2) {
-                            false
-                        } else {
-                            stickerUuidCountMap[stickUuid] = cnt + 1
-                            true
-                        }
-                    } else {
-                        false
-                    }
-                }.distinctBy { it.first.first }
-                val maxPopularValue = result.getOrNull(0)?.second ?: 1
-                result.map { it.first.first to it.second.toFloat() / maxPopularValue }
+
+                // Step 4: Sort tags by their frequencies
+                tagFrequency.entries.sortedByDescending { it.value }.map { it.key }
             }.flowOn(Dispatchers.IO)
     }
 

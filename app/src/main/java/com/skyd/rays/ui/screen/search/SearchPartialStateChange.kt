@@ -47,7 +47,7 @@ internal sealed interface SearchPartialStateChange {
         data class Failed(val msg: String) : SearchDataResult
         data class Success(
             val stickerWithTagsList: List<StickerWithTags>,
-            val popularTags: List<Pair<String, Float>>
+            val popularTags: List<String>
         ) : SearchDataResult
     }
 

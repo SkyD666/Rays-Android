@@ -223,7 +223,6 @@
     <string name="detail_screen_sticker_info_last_modified_time">Last modified time</string>
     <string name="home_screen_select_export_folder">Select export folder</string>
     <string name="home_screen_select_export_folder_tip">Please select an export folder</string>
-    <string name="home_screen_popular_tags_popular_value">Popular value: %.2f</string>
     <string name="db_sticker_table">Sticker table</string>
     <string name="db_sticker_table_uuid">UUID</string>
     <string name="db_sticker_table_title">Title</string>

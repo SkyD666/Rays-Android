@@ -217,7 +217,6 @@
     <string name="detail_screen_sticker_info_last_modified_time">上次修改时间</string>
     <string name="home_screen_select_export_folder">选择导出文件夹</string>
     <string name="home_screen_select_export_folder_tip">请选择导出文件夹</string>
-    <string name="home_screen_popular_tags_popular_value">热门值：%.2f</string>
     <string name="db_sticker_table">表情包表</string>
     <string name="db_sticker_table_uuid">UUID</string>
     <string name="db_sticker_table_title">标题</string>

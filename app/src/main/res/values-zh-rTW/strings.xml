@@ -292,7 +292,6 @@
     <string name="webdav_screen_progress_delete">刪除本地資料 + 表情包</string>
     <string name="api_grant_repo_no_package">沒有軟體包可用：%s</string>
     <string name="add_screen_suggest_tag">建議的標籤</string>
-    <string name="home_screen_popular_tags_popular_value">熱門值：%.2f</string>
     <string name="sticker_modify_time">修改時間</string>
     <string name="image_scale_inside">內部</string>
     <string name="db_tag_table">標籤表</string>

@@ -211,7 +211,6 @@
     <string name="image_scale_fill_bounds">Preencher limites</string>
     <string name="empty_tip">Vazio~</string>
     <string name="webdav_screen_remote_recycle_bin">Lixeira remota</string>
-    <string name="home_screen_popular_tags_popular_value">Valor popular: %.2f</string>
     <string name="send_sticker">Enviar sticker</string>
     <string name="webdav_screen_upload_tip">Ao enviar dados locais para o remoto, os stickers locais substituirão o conteúdo remoto se houver um conflito. Se um sticker não estiver existente no local, mas no remoto, o sticker será movido para a lixeira remota.</string>
     <string name="webdav_screen_remote_recycle_bin_description">Visualizar a lixeira remota (logicamente excluída)</string>
