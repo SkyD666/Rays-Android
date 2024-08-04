@@ -341,7 +341,7 @@ private fun SponsorDialog(visible: Boolean, onClose: () -> Unit) {
                 Spacer(modifier = Modifier.height(6.dp))
                 ListItem(
                     modifier = Modifier.clickable {
-                        openBrowser("https://afdian.net/a/SkyD666")
+                        openBrowser("https://afdian.com/a/SkyD666")
                         onClose()
                     },
                     headlineContent = { Text(text = stringResource(R.string.sponsor_afadian)) },

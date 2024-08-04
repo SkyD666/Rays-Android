@@ -23,7 +23,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 67
-        versionName = "2.3-alpha01"
+        versionName = "2.3-alpha02"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -124,9 +124,8 @@ android {
 }
 
 tasks.withType(KotlinCompile::class.java).configureEach {
-    //noinspection GrDeprecatedAPIUsage
-    kotlinOptions {
-        freeCompilerArgs += listOf(
+    compilerOptions {
+        freeCompilerArgs.addAll(
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
             "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
             "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
@@ -176,7 +175,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
     implementation("com.materialkolor:material-kolor:1.7.0")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
-    implementation("com.airbnb.android:lottie-compose:6.4.1")
+    implementation("com.airbnb.android:lottie-compose:6.5.0")
 
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
