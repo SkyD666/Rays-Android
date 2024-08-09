@@ -1,0 +1,15 @@
+<p><b>Rays (Record All Your Stickers)</b>，一个在本地<b>记录、查找、管理表情包</b>的工具。</p>
+<p>🥰 您还在为手机中的<b>表情包太多</b>，找不到想要的表情包而苦恼吗？使用这款工具将帮助您<b>管理您存储的表情包</b>，再也不因为找不到表情包而烦恼！😋</p>
+<h3>💡主要功能</h3>
+<ol>
+<li>支持为表情包打<strong>标签</strong></li>
+<li>支持设置<strong>搜索域</strong>（设置搜索<strong>数据库表的字段</strong>）</li>
+<li>支持使用<strong>正则表达式搜索</strong></li>
+<li>支持<strong>识别</strong>表情包中的<strong>文本</strong></li>
+<li>支持 <strong>Ai 推荐表情包标签</strong>（支持更换模型）</li>
+<li>支持<strong>使用 WebDAV 和文件同步</strong>数据</li>
+<li>支持 <strong>Ai 转移</strong>图片的<strong>风格</strong></li>
+<li>支持通过<strong>系统“分享”页面导入</strong>表情包</li>
+<li>支持<strong>莫奈取色和自定义主题色</strong>，支持主题色<strong>跟随表情包主色调</strong>变化</li>
+<li>支持<strong>深色模式</strong></li>
+</ol>
