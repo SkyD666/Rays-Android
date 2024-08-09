@@ -1,0 +1,15 @@
+<p><b>Rays (Record All Your Stickers)</b>, A tool to <b>record, search and manage stickers</b> on your phone.</p>
+<p>🥰 Are you still struggling with <b>too many stickers on your phone</b> and having trouble finding the ones you want? This tool will help you <b>manage your stickers</b>! 😋</p>
+<h3>💡 Features</h3>
+<ol>
+<li>Support <strong>tagging</strong> for stickers</li>
+<li>Support setting <strong>search domains</strong> (set the <strong>fields of the database tables</strong> to be searched)</li>
+<li>Support searching using <strong>regular expressions</strong></li>
+<li>Support <strong>recognizing text</strong> in stickers</li>
+<li>Support <strong>recommending sticker tags</strong> using <strong>Ai</strong> (support change models)</li>
+<li>Support <strong>syncing data using WebDAV and files</strong></li>
+<li>Support <strong>AI image style transfer</strong></li>
+<li>Support importing some stickers through the <strong>system "Share" page</strong></li>
+<li>Support <strong>Monet theming and customizing theme colors</strong>, support <strong>theme color following the sticker's main color</strong></li>
+<li>Support <strong>dark color mode</strong></li>
+</ol>
