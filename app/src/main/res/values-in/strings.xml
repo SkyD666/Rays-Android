@@ -21,4 +21,15 @@
     <string name="add_screen_tag_field_hint">Tekan Enter untuk menambahkan</string>
     <string name="add_screen_add_tag">Tambah</string>
     <string name="add_screen_add_tag_to_all">Tambahkan ke semua stiker dalam daftar tunggu</string>
+    <string name="home_screen_clear_search_text">Bersihkan kueri</string>
+    <string name="search_config_screen_common_category">Umum</string>
+    <string name="home_screen_close_search">Tutup</string>
+    <string name="search_config_screen_use_regex">Ekspresi reguler</string>
+    <string name="search_config_screen_use_regex_description">Pertimbangkan kata kunci pencarian sebagai ekspresi reguler</string>
+    <string name="search_config_screen_domain_category">Cari domain (cari semua jika tidak dipilih)</string>
+    <string name="detail_screen_edit">Ubah</string>
+    <string name="home_screen_delete">Hapus</string>
+    <string name="detail_screen_copied">Disalin</string>
+    <string name="home_screen_export">Ekspor</string>
+    <string name="detail_screen_copy">Salin</string>
 </resources>
