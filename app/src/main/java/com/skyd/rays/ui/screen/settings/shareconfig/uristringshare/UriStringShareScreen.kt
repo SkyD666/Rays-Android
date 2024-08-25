@@ -31,8 +31,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.UriStringSharePackageBean
 import com.skyd.rays.model.preference.share.UriStringSharePreference
 import com.skyd.rays.ui.component.BannerItem
@@ -59,20 +59,16 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
     var openDeleteDialog by rememberSaveable { mutableStateOf<String?>(null) }
     var inputPackageName by rememberSaveable { mutableStateOf("") }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
-
     val dispatch = viewModel.getDispatcher(startWith = UriStringShareIntent.GetAllUriStringShare)
 
-    when (val event = uiEvent) {
-        is UriStringShareEvent.AddPackageNameUiEvent.Failed -> {
-            snackbarHostState.showSnackbarWithLaunchedEffect(
-                message = context.getString(R.string.failed_info, event.msg),
-                key2 = event,
+    MviEventListener(viewModel.singleEvent) { event ->
+        when (event) {
+            is UriStringShareEvent.AddPackageNameUiEvent.Failed -> snackbarHostState.showSnackbar(
+                context.getString(R.string.failed_info, event.msg),
             )
-        }
 
-        UriStringShareEvent.AddPackageNameUiEvent.Success,
-        null -> Unit
+            UriStringShareEvent.AddPackageNameUiEvent.Success -> Unit
+        }
     }
 
     Scaffold(

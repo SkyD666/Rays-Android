@@ -49,10 +49,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.editor
 import com.skyd.rays.ext.secretSharedPreferences
-import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.bean.BackupInfo
 import com.skyd.rays.model.bean.WebDavWaitingInfo
@@ -89,8 +89,6 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
     var inputDialogIsPassword by rememberSaveable { mutableStateOf(false) }
     var openRecycleBinBottomSheet by rememberSaveable { mutableStateOf(false) }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
-
     val dispatch = viewModel.getDispatcher(startWith = WebDavIntent.Init)
 
     Scaffold(
@@ -311,51 +309,36 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
         }
     }
 
-    when (val event = uiEvent) {
-        is WebDavEvent.DownloadResultEvent.Error -> {
-            snackbarHostState.showSnackbarWithLaunchedEffect(
-                message = context.getString(R.string.failed_info, event.msg),
-                key2 = event,
+    MviEventListener(viewModel.singleEvent) { event ->
+        when (event) {
+            is WebDavEvent.DownloadResultEvent.Error -> snackbarHostState.showSnackbar(
+                context.getString(R.string.failed_info, event.msg),
             )
-        }
 
-        is WebDavEvent.DownloadResultEvent.Success -> {
-            snackbarHostState.showSnackbarWithLaunchedEffect(
-                message = context.resources.getQuantityString(
+            is WebDavEvent.DownloadResultEvent.Success -> snackbarHostState.showSnackbar(
+                context.resources.getQuantityString(
                     R.plurals.webdav_screen_download_success,
                     event.result.count,
                     event.result.time / 1000.0f, event.result.count
                 ),
-                key2 = event,
             )
-        }
 
-        is WebDavEvent.GetRemoteRecycleBinResultEvent.Error -> {
-            snackbarHostState.showSnackbarWithLaunchedEffect(
-                message = context.getString(R.string.failed_info, event.msg),
-                key2 = event,
+            is WebDavEvent.GetRemoteRecycleBinResultEvent.Error -> snackbarHostState.showSnackbar(
+                context.getString(R.string.failed_info, event.msg),
             )
-        }
 
-        is WebDavEvent.UploadResultEvent.Error -> {
-            snackbarHostState.showSnackbarWithLaunchedEffect(
-                message = context.getString(R.string.failed_info, event.msg),
-                key2 = event,
+            is WebDavEvent.UploadResultEvent.Error -> snackbarHostState.showSnackbar(
+                context.getString(R.string.failed_info, event.msg),
             )
-        }
 
-        is WebDavEvent.UploadResultEvent.Success -> {
-            snackbarHostState.showSnackbarWithLaunchedEffect(
-                message = context.resources.getQuantityString(
+            is WebDavEvent.UploadResultEvent.Success -> snackbarHostState.showSnackbar(
+                context.resources.getQuantityString(
                     R.plurals.webdav_screen_upload_success,
                     event.result.count,
                     event.result.time / 1000.0f, event.result.count
                 ),
-                key2 = event,
             )
         }
-
-        null -> Unit
     }
 
     waitingDialogData = when (val uploadProgressState = uiState.uploadProgressState) {

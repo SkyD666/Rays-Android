@@ -3,7 +3,12 @@ package com.skyd.rays.ext
 import android.os.Bundle
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
-import androidx.navigation.*
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.NavDestination
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigator
 
 fun NavController.navigate(
     route: String,
@@ -20,7 +25,12 @@ fun NavController.navigate(
     if (deepLinkMatch != null) {
         val destination = deepLinkMatch.destination
         val id = destination.id
-        navigate(id, args, navOptions, navigatorExtras)
+        navigate(
+            id,
+            args.apply { putAll(deepLinkMatch.matchingArgs ?: Bundle()) },
+            navOptions,
+            navigatorExtras
+        )
     } else {
         navigate(route, navOptions, navigatorExtras)
     }

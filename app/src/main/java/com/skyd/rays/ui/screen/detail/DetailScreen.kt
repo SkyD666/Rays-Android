@@ -67,12 +67,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
-import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
@@ -126,7 +126,6 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
     var openStickerInfoDialog by rememberSaveable { mutableStateOf(false) }
     var openStickerScaleSheet by rememberSaveable { mutableStateOf(false) }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
     val mainCardScrollState = rememberScrollState()
     val windowSizeClass = LocalWindowSizeClass.current
     var fabHeight by remember { mutableStateOf(0.dp) }
@@ -264,31 +263,19 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
             )
         }
 
-        when (uiEvent) {
-            is DetailEvent.DeleteResult.Success -> navController.popBackStackWithLifecycle()
+        MviEventListener(viewModel.singleEvent) { event ->
+            when (event) {
+                is DetailEvent.DeleteResult.Success -> navController.popBackStackWithLifecycle()
 
-            DetailEvent.ExportResult.Success -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(R.string.export_sticker_success),
-                    key2 = uiEvent,
-                )
+                DetailEvent.ExportResult.Success ->
+                    snackbarHostState.showSnackbar(context.getString(R.string.export_sticker_success))
+
+                DetailEvent.ExportResult.Failed ->
+                    snackbarHostState.showSnackbar(context.getString(R.string.export_sticker_failed))
+
+                DetailEvent.DeleteResult.Failed ->
+                    snackbarHostState.showSnackbar(context.getString(R.string.delete_sticker_failed))
             }
-
-            DetailEvent.ExportResult.Failed -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(R.string.export_sticker_failed),
-                    key2 = uiEvent,
-                )
-            }
-
-            DetailEvent.DeleteResult.Failed -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(R.string.delete_sticker_failed),
-                    key2 = uiEvent,
-                )
-            }
-
-            null -> Unit
         }
 
         DeleteWarningDialog(

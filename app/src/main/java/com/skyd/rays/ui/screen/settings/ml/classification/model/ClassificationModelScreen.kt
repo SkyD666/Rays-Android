@@ -36,9 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.safeLaunch
-import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ModelBean
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
 import com.skyd.rays.ui.component.BaseSettingsItem
@@ -60,8 +60,6 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
     val snackbarHostState = remember { SnackbarHostState() }
     var openDeleteWarningDialog by remember { mutableStateOf<ModelBean?>(null) }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
-
     val dispatch = viewModel.getDispatcher(startWith = ClassificationModelIntent.GetModels)
 
     Scaffold(
@@ -89,24 +87,19 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
             }
         )
 
-        when (val event = uiEvent) {
-            is ClassificationModelEvent.DeleteEvent.Failed -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(R.string.failed_info, event.msg),
-                    key2 = event,
+        MviEventListener(viewModel.singleEvent) { event ->
+            when (event) {
+                is ClassificationModelEvent.DeleteEvent.Failed -> snackbarHostState.showSnackbar(
+                    context.getString(R.string.failed_info, event.msg),
                 )
-            }
 
-            is ClassificationModelEvent.ImportEvent.Failed -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(R.string.failed_info, event.msg),
-                    key2 = event,
+                is ClassificationModelEvent.ImportEvent.Failed -> snackbarHostState.showSnackbar(
+                    context.getString(R.string.failed_info, event.msg),
                 )
-            }
 
-            is ClassificationModelEvent.DeleteEvent.Success,
-            is ClassificationModelEvent.ImportEvent.Success,
-            null -> Unit
+                is ClassificationModelEvent.DeleteEvent.Success,
+                is ClassificationModelEvent.ImportEvent.Success -> Unit
+            }
         }
 
         WaitingDialog(visible = uiState.loadingDialog && openDeleteWarningDialog == null)

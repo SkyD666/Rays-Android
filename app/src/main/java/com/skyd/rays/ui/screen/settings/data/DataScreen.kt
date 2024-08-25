@@ -26,8 +26,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.CategorySettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
@@ -50,8 +50,6 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
     var openDeleteAllStickersDialog by rememberSaveable { mutableStateOf(false) }
     var openDeleteStickerShareTimeDialog by rememberSaveable { mutableStateOf(false) }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
-
     val dispatch = viewModel.getDispatcher(startWith = DataIntent.Init)
 
     Scaffold(
@@ -115,28 +113,22 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             }
         }
 
-        when (val event = uiEvent) {
-            is DataEvent.DeleteAllResultEvent.Success -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(
+        MviEventListener(viewModel.singleEvent) { event ->
+            when (event) {
+                is DataEvent.DeleteAllResultEvent.Success -> snackbarHostState.showSnackbar(
+                    context.getString(
                         R.string.data_screen_delete_all_success,
                         event.time / 1000.0f
                     ),
-                    key2 = event,
                 )
-            }
 
-            is DataEvent.DeleteStickerShareTimeResultEvent.Success -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(
+                is DataEvent.DeleteStickerShareTimeResultEvent.Success -> snackbarHostState.showSnackbar(
+                    context.getString(
                         R.string.data_screen_delete_sticker_share_time_success,
                         event.time / 1000.0f
                     ),
-                    key2 = event,
                 )
             }
-
-            null -> Unit
         }
 
         WaitingDialog(visible = uiState.loadingDialog)

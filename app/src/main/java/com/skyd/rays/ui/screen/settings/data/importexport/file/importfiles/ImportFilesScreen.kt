@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,10 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.safeLaunch
-import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.ImportExportResultInfo
 import com.skyd.rays.model.bean.ImportExportWaitingInfo
 import com.skyd.rays.model.db.dao.sticker.HandleImportedStickerStrategy
@@ -63,11 +62,13 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
     var openImportDialog by rememberSaveable { mutableStateOf<ImportExportResultInfo?>(null) }
     var waitingDialogData by rememberSaveable { mutableStateOf<ImportExportWaitingInfo?>(null) }
     val importedStickerProxyList = rememberSaveable {
-        listOf(HandleImportedStickerStrategy.SkipStrategy, HandleImportedStickerStrategy.ReplaceStrategy)
+        listOf(
+            HandleImportedStickerStrategy.SkipStrategy,
+            HandleImportedStickerStrategy.ReplaceStrategy
+        )
     }
     var selectedImportedStickerProxyIndex by rememberSaveable { mutableIntStateOf(0) }
 
@@ -189,19 +190,13 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
         }
     )
 
-    when (val event = uiEvent) {
-        is ImportFilesEvent.ImportResultEvent.Success -> LaunchedEffect(event) {
-            openImportDialog = event.info
-        }
-
-        is ImportFilesEvent.ImportResultEvent.Error -> {
-            snackbarHostState.showSnackbarWithLaunchedEffect(
-                message = context.getString(R.string.failed_info, event.msg),
-                key2 = event,
+    MviEventListener(viewModel.singleEvent) { event ->
+        when (event) {
+            is ImportFilesEvent.ImportResultEvent.Success -> openImportDialog = event.info
+            is ImportFilesEvent.ImportResultEvent.Error -> snackbarHostState.showSnackbar(
+                context.getString(R.string.failed_info, event.msg),
             )
         }
-
-        null -> Unit
     }
 
     waitingDialogData = when (val state = uiState.importProgressEvent) {

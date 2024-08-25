@@ -75,12 +75,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
-import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.search.QueryPreference
@@ -108,7 +108,6 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
     val navController = LocalNavController.current
     var multiSelect by rememberSaveable { mutableStateOf(false) }
     val selectedStickers = remember { mutableStateListOf<StickerWithTags>() }
@@ -305,29 +304,24 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
         }
     }
 
-    when (val event = uiEvent) {
-        is SearchEvent.ExportStickers.Success -> snackbarHostState.showSnackbarWithLaunchedEffect(
-            message = context.resources.getQuantityString(
-                R.plurals.export_stickers_result,
-                event.successCount,
-                event.successCount,
-            ),
-            key2 = uiEvent,
-        )
+    MviEventListener(viewModel.singleEvent) { event ->
+        when (event) {
+            is SearchEvent.ExportStickers.Success -> snackbarHostState.showSnackbar(
+                context.resources.getQuantityString(
+                    R.plurals.export_stickers_result,
+                    event.successCount,
+                    event.successCount,
+                ),
+            )
 
-        is SearchEvent.SearchData.Failed -> snackbarHostState.showSnackbarWithLaunchedEffect(
-            message = context.getString(R.string.failed_info, event.msg),
-            key2 = uiEvent,
-        )
+            is SearchEvent.SearchData.Failed ->
+                snackbarHostState.showSnackbar(context.getString(R.string.failed_info, event.msg))
 
-        is SearchEvent.DeleteStickerWithTags.Failed -> snackbarHostState.showSnackbarWithLaunchedEffect(
-            message = context.getString(R.string.failed_info, event.msg),
-            key2 = uiEvent,
-        )
+            is SearchEvent.DeleteStickerWithTags.Failed ->
+                snackbarHostState.showSnackbar(context.getString(R.string.failed_info, event.msg))
 
-        is SearchEvent.DeleteStickerWithTags.Success,
-        null -> Unit
-
+            is SearchEvent.DeleteStickerWithTags.Success -> Unit
+        }
     }
 
     // 删除多选的表情包警告

@@ -38,7 +38,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -63,11 +62,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbar
-import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysIconButtonStyle
@@ -89,7 +88,6 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
     var selfieUri by rememberSaveable { mutableStateOf<Uri?>(null) }
     val pickSelfieLauncher = rememberImagePicker(multiple = false) {
         if (it.firstOrNull() != null) selfieUri = it.first()
@@ -175,21 +173,13 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
             }
         }
 
-        when (val event = uiEvent) {
-            is SelfieSegmentationEvent.ExportUiEvent.Success -> {
-                LaunchedEffect(uiEvent) {
-                    context.sendSticker(bitmap = event.bitmap)
-                }
-            }
-
-            is SelfieSegmentationEvent.SegmentUiEvent.Failed -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(R.string.failed_info, event.msg),
-                    key1 = event,
+        MviEventListener(viewModel.singleEvent) { event ->
+            when (event) {
+                is SelfieSegmentationEvent.ExportUiEvent.Success -> context.sendSticker(bitmap = event.bitmap)
+                is SelfieSegmentationEvent.SegmentUiEvent.Failed -> snackbarHostState.showSnackbar(
+                    context.getString(R.string.failed_info, event.msg),
                 )
             }
-
-            null -> Unit
         }
 
         WaitingDialog(visible = uiState.loadingDialog)

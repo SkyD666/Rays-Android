@@ -96,11 +96,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
-import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
@@ -152,8 +152,6 @@ fun AddScreen(
     var openErrorDialog by rememberSaveable { mutableStateOf<String?>(null) }
     var saveButtonEnable by rememberSaveable { mutableStateOf(true) }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
-
     val dispatch = viewModel.getDispatcher(startWith = AddIntent.Init(initStickers))
 
     // 添加/修改完成后重设页面数据
@@ -339,29 +337,28 @@ fun AddScreen(
             }
         }
 
-        when (val event = uiEvent) {
-            is AddEvent.AddStickersResultEvent.Duplicate -> LaunchedEffect(event) {
-                saveButtonEnable = true
-                openDuplicateDialog = true
-                onGetStickersWithTagsStateChanged()
-            }
+        MviEventListener(viewModel.singleEvent) { event ->
+            when (event) {
+                is AddEvent.AddStickersResultEvent.Duplicate -> {
+                    saveButtonEnable = true
+                    openDuplicateDialog = true
+                    onGetStickersWithTagsStateChanged()
+                }
 
-            is AddEvent.AddStickersResultEvent.Failed -> {
-                saveButtonEnable = true
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(R.string.failed_info, event.msg),
-                    key1 = event,
-                )
-            }
+                is AddEvent.AddStickersResultEvent.Failed -> {
+                    saveButtonEnable = true
+                    snackbarHostState.showSnackbar(
+                        context.getString(R.string.failed_info, event.msg)
+                    )
+                }
 
-            is AddEvent.AddStickersResultEvent.Success -> LaunchedEffect(event) {
-                saveButtonEnable = true
-                resetStickerData()
-                processNext()
-            }
+                is AddEvent.AddStickersResultEvent.Success -> {
+                    saveButtonEnable = true
+                    resetStickerData()
+                    processNext()
+                }
 
-            AddEvent.CurrentStickerChanged -> {
-                LaunchedEffect(uiState.currentSticker) {
+                AddEvent.CurrentStickerChanged -> {
                     val currentSticker = uiState.currentSticker
                     resetStickerData()
                     if (currentSticker?.stickerUuid.isNullOrBlank()) {
@@ -373,18 +370,12 @@ fun AddScreen(
                         currentSticker.uri?.let { uri ->
                             dispatch(AddIntent.GetSuggestTags(uri))
                         }
-                    } else {
-                        processNext()
                     }
                 }
-            }
 
-            AddEvent.GetStickersWithTagsStateChanged -> LaunchedEffect(uiState.getStickersWithTagsState) {
-                onGetStickersWithTagsStateChanged()
+                AddEvent.GetStickersWithTagsStateChanged -> onGetStickersWithTagsStateChanged()
+                is AddEvent.InitFailed -> openErrorDialog = event.msg
             }
-
-            is AddEvent.InitFailed -> openErrorDialog = event.msg
-            null -> Unit
         }
 
         RaysDialog(

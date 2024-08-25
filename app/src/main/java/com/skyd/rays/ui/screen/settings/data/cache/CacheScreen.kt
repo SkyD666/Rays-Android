@@ -21,8 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.showSnackbarWithLaunchedEffect
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
@@ -36,8 +36,6 @@ fun CacheScreen(viewModel: CacheViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
-
     val dispatch = viewModel.getDispatcher(startWith = CacheIntent.Init)
 
     Scaffold(
@@ -74,28 +72,22 @@ fun CacheScreen(viewModel: CacheViewModel = hiltViewModel()) {
             }
         }
 
-        when (val event = uiEvent) {
-            is CacheEvent.DeleteDocumentsProviderThumbnailsResultEvent.Success -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(
+        MviEventListener(viewModel.singleEvent) { event ->
+            when (event) {
+                is CacheEvent.DeleteDocumentsProviderThumbnailsResultEvent.Success -> snackbarHostState.showSnackbar(
+                    context.getString(
                         R.string.cache_screen_delete_provider_thumbnails_success,
                         event.time / 1000.0f
                     ),
-                    key2 = event,
                 )
-            }
 
-            is CacheEvent.DeleteAllMimetypesResultEvent.Success -> {
-                snackbarHostState.showSnackbarWithLaunchedEffect(
-                    message = context.getString(
+                is CacheEvent.DeleteAllMimetypesResultEvent.Success -> snackbarHostState.showSnackbar(
+                    context.getString(
                         R.string.cache_screen_delete_all_mimetypes_success,
                         event.time / 1000.0f
                     ),
-                    key2 = event,
                 )
             }
-
-            null -> Unit
         }
 
         WaitingDialog(visible = uiState.loadingDialog)

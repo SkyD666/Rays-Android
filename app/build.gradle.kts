@@ -23,7 +23,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 67
-        versionName = "2.3-alpha03"
+        versionName = "2.3-alpha04"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -157,8 +157,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
     implementation("androidx.activity:activity-compose:1.9.1")
     implementation("androidx.palette:palette-ktx:1.0.0")
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    ksp("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation("com.google.dagger:hilt-android:2.52")
+    ksp("com.google.dagger:hilt-android-compiler:2.52")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
@@ -185,8 +185,8 @@ dependencies {
     implementation("com.google.mlkit:text-recognition-chinese:$mlkitRecognitionVersion")
     implementation("com.google.mlkit:text-recognition-japanese:$mlkitRecognitionVersion")
     implementation("com.google.mlkit:text-recognition-korean:$mlkitRecognitionVersion")
-    implementation("com.google.mlkit:image-labeling-custom:17.0.2")
-    implementation("com.google.mlkit:segmentation-selfie:16.0.0-beta5")
+    implementation("com.google.mlkit:image-labeling-custom:17.0.3")
+    implementation("com.google.mlkit:segmentation-selfie:16.0.0-beta6")
 
     // TF Lite
     implementation("org.tensorflow:tensorflow-lite:2.16.1")

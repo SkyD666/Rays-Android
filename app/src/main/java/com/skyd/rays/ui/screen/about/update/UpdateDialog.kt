@@ -35,6 +35,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.model.bean.UpdateBean
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
@@ -54,8 +55,6 @@ fun UpdateDialog(
     viewModel: UpdateViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
-    val uiEvent by viewModel.singleEvent.collectAsStateWithLifecycle(initialValue = null)
-
     val dispatch = viewModel.getDispatcher(startWith = UpdateIntent.CheckUpdate(isRetry = false))
 
     LaunchedEffect(Unit) {
@@ -95,13 +94,11 @@ fun UpdateDialog(
         }
     }
 
-    when (val event = uiEvent) {
-        is UpdateEvent.CheckError -> LaunchedEffect(event) {
-            onError(event.msg)
+    MviEventListener(viewModel.singleEvent) { event ->
+        when (event) {
+            is UpdateEvent.CheckError -> onError(event.msg)
+            is UpdateEvent.CheckSuccess -> onSuccess()
         }
-
-        is UpdateEvent.CheckSuccess -> onSuccess()
-        null -> Unit
     }
 }
 
