@@ -32,4 +32,14 @@
     <string name="detail_screen_copied">Disalin</string>
     <string name="home_screen_export">Ekspor</string>
     <string name="detail_screen_copy">Salin</string>
+    <string name="dialog_warning">Peringatan</string>
+    <string name="dialog_ok">Oke</string>
+    <string name="info">Info</string>
+    <string name="dialog_close">Tutup</string>
+    <string name="cancel">Batal</string>
+    <string name="home_screen_delete_warning">Hapus? Operasi ini tidak dapat dibatalkan!</string>
+    <string name="dialog_exit">Keluar</string>
+    <string name="settings">Pengaturan</string>
+    <string name="setting_screen_search_description">Preferensi pencarian, domain pencarian</string>
+    <string name="about">Tentang</string>
 </resources>
