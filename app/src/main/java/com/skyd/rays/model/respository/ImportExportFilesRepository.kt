@@ -113,14 +113,29 @@ class ImportExportFilesRepository @Inject constructor(
         excludeShareCount: Boolean = false,
         excludeCreateTime: Boolean = false,
         excludeModifyTime: Boolean = false,
-        exportStickers: Collection<String>? = null,
+        exportStickers: List<String>? = null,
     ): Flow<ImportExportInfo> {
         return flowOnIo {
             val startTime = System.currentTimeMillis()
             val allStickerWithTagsList = if (exportStickers == null) {
                 stickerDao.getAllStickerWithTagsList()
             } else {
-                stickerDao.getAllStickerWithTagsList(exportStickers)
+                // https://stackoverflow.com/questions/7106016/too-many-sql-variables-error-in-django-with-sqlite3
+                // SQLite: To prevent excessive memory allocations,
+                // the maximum value of a host parameter number is SQLITE_MAX_VARIABLE_NUMBER,
+                // which defaults to 999
+                mutableListOf<StickerWithTags>().apply {
+                    for (i in exportStickers.indices step 900) {
+                        addAll(
+                            stickerDao.getAllStickerWithTagsList(
+                                exportStickers.subList(
+                                    fromIndex = i,
+                                    toIndex = minOf(i + 900, exportStickers.size),
+                                )
+                            )
+                        )
+                    }
+                }
             }
             val totalCount = allStickerWithTagsList.size
             var currentCount = 0

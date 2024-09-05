@@ -1,10 +1,3 @@
-buildscript {
-    extra.apply {
-        set("md3Version", "1.2.1")
-        set("mlkitRecognitionVersion", "16.0.1")
-        set("roomVersion", "2.6.1")
-    }
-}
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     id("com.android.application") version "8.5.2" apply false

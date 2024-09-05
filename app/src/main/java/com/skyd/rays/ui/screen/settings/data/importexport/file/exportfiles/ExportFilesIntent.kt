@@ -11,6 +11,6 @@ sealed interface ExportFilesIntent : MviIntent {
         val excludeShareCount: Boolean = false,
         val excludeCreateTime: Boolean = false,
         val excludeModifyTime: Boolean = false,
-        val exportStickers: Collection<String>? = null,
+        val exportStickers: List<String>? = null,
     ) : ExportFilesIntent
 }

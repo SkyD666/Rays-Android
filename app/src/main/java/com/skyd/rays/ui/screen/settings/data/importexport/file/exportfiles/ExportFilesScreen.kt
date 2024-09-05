@@ -227,7 +227,7 @@ fun ExportFilesScreen(
         },
         dismissButton = {
             TextButton(onClick = { openExportDialog = null }) {
-                Text(text = stringResource(id = R.string.cancel))
+                Text(text = stringResource(id = R.string.dialog_ok))
             }
         }
     )

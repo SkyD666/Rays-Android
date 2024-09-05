@@ -23,7 +23,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 67
-        versionName = "2.3-alpha04"
+        versionName = "2.3-alpha05"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -142,49 +142,46 @@ tasks.withType(KotlinCompile::class.java).configureEach {
 }
 
 dependencies {
-    val md3Version: String by rootProject.extra
-    val mlkitRecognitionVersion: String by rootProject.extra
-    val roomVersion: String by rootProject.extra
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.compose.ui:ui:1.6.8")
-    implementation("androidx.compose.material3:material3:$md3Version")
-    implementation("androidx.compose.material3:material3-window-size-class:$md3Version")
-    implementation("androidx.compose.material:material:1.6.8")
-    implementation("androidx.compose.material:material-icons-extended:1.6.8")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.6.8")
+    implementation("androidx.compose.ui:ui:1.7.0")
+    implementation("androidx.compose.material3:material3:1.3.0")
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.0")
+    implementation("androidx.compose.material:material:1.7.0")
+    implementation("androidx.compose.material:material-icons-extended:1.7.0")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
-    implementation("androidx.activity:activity-compose:1.9.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.5")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.5")
+    implementation("androidx.activity:activity-compose:1.9.2")
     implementation("androidx.palette:palette-ktx:1.0.0")
     implementation("com.google.dagger:hilt-android:2.52")
     ksp("com.google.dagger:hilt-android-compiler:2.52")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.navigation:navigation-compose:2.8.0")
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
-    implementation("com.google.accompanist:accompanist-drawablepainter:0.34.0")
+    implementation("com.google.accompanist:accompanist-drawablepainter:0.36.0")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("io.coil-kt:coil-gif:2.7.0")
     implementation("io.coil-kt:coil-svg:2.7.0")
     implementation("androidx.profileinstaller:profileinstaller:1.3.1")
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
     implementation("com.github.thegrizzlylabs:sardine-android:0.8")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.2")
     implementation("com.materialkolor:material-kolor:1.7.0")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
-    implementation("com.airbnb.android:lottie-compose:6.5.0")
+    implementation("com.airbnb.android:lottie-compose:6.5.2")
 
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
 
     // Google ML Kit
-    implementation("com.google.mlkit:text-recognition:$mlkitRecognitionVersion")
-    implementation("com.google.mlkit:text-recognition-chinese:$mlkitRecognitionVersion")
-    implementation("com.google.mlkit:text-recognition-japanese:$mlkitRecognitionVersion")
-    implementation("com.google.mlkit:text-recognition-korean:$mlkitRecognitionVersion")
+    implementation("com.google.mlkit:text-recognition:16.0.1")
+    implementation("com.google.mlkit:text-recognition-chinese:16.0.1")
+    implementation("com.google.mlkit:text-recognition-japanese:16.0.1")
+    implementation("com.google.mlkit:text-recognition-korean:16.0.1")
     implementation("com.google.mlkit:image-labeling-custom:17.0.3")
     implementation("com.google.mlkit:segmentation-selfie:16.0.0-beta6")
 
@@ -194,6 +191,6 @@ dependencies {
 
     implementation("com.github.penfeizhou.android.animation:apng:3.0.1")
 
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.8")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.8")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.7.0")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.0")
 }
