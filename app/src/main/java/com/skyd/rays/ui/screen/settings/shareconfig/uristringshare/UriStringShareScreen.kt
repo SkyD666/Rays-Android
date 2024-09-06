@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -81,7 +81,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
                 actions = {
                     RaysIconButton(
                         onClick = { openAddDialog = true },
-                        imageVector = Icons.Default.Add,
+                        imageVector = Icons.Outlined.Add,
                         contentDescription = stringResource(R.string.uri_string_share_screen_add_app_package)
                     )
                 },
@@ -98,7 +98,7 @@ fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {
             item {
                 BannerItem {
                     SwitchSettingsItem(
-                        imageVector = Icons.Default.Link,
+                        imageVector = Icons.Outlined.Link,
                         text = stringResource(id = R.string.enable),
                         checked = uriStringShare,
                         onCheckedChange = {

@@ -3,8 +3,8 @@ package com.skyd.rays.ui.screen.settings.privacy
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BlurOn
-import androidx.compose.material.icons.filled.Screenshot
+import androidx.compose.material.icons.outlined.BlurOn
+import androidx.compose.material.icons.outlined.Screenshot
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -53,7 +53,7 @@ fun PrivacyScreen() {
         ) {
             item {
                 SwitchSettingsItem(
-                    imageVector = Icons.Default.Screenshot,
+                    imageVector = Icons.Outlined.Screenshot,
                     checked = LocalDisableScreenshot.current,
                     text = stringResource(R.string.privacy_screen_disable_screenshot),
                     description = stringResource(R.string.privacy_screen_disable_screenshot_description),
@@ -69,7 +69,7 @@ fun PrivacyScreen() {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(Icons.Default.BlurOn),
+                    painter = rememberVectorPainter(Icons.Outlined.BlurOn),
                     text = stringResource(R.string.blur_stickers_screen_name),
                     descriptionText = stringResource(R.string.blur_stickers_screen_description),
                     onClick = { navController.navigate(BLUR_STICKERS_SCREEN_ROUTE) },

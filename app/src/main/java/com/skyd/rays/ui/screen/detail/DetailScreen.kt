@@ -28,14 +28,14 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.AdsClick
-import androidx.compose.material.icons.filled.Badge
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.AddCircle
+import androidx.compose.material.icons.outlined.AdsClick
+import androidx.compose.material.icons.outlined.Badge
+import androidx.compose.material.icons.outlined.ContentCopy
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -169,7 +169,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                 },
                 actions = {
                     RaysIconButton(
-                        imageVector = Icons.Default.Share,
+                        imageVector = Icons.Outlined.Share,
                         contentDescription = stringResource(R.string.send_sticker),
                         enabled = uiState.stickerDetailState is StickerDetailState.Success,
                         onClick = {
@@ -185,7 +185,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                         },
                     )
                     RaysIconButton(
-                        imageVector = Icons.Default.ContentCopy,
+                        imageVector = Icons.Outlined.ContentCopy,
                         contentDescription = stringResource(id = R.string.detail_screen_copy),
                         enabled = uiState.stickerDetailState is StickerDetailState.Success,
                         onClick = {
@@ -201,7 +201,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                     RaysIconButton(
                         onClick = { openMenu = true },
                         enabled = uiState.stickerDetailState is StickerDetailState.Success,
-                        imageVector = Icons.Default.MoreVert,
+                        imageVector = Icons.Outlined.MoreVert,
                         contentDescription = stringResource(id = R.string.more)
                     )
                     DetailMenu(
@@ -422,32 +422,32 @@ fun StickerDetailInfo(modifier: Modifier = Modifier, stickerWithTags: StickerWit
     val sticker = stickerWithTags.sticker
     Column(modifier = modifier) {
         DetailInfoItem(
-            icon = Icons.Default.Badge,
+            icon = Icons.Outlined.Badge,
             title = stringResource(id = R.string.detail_screen_sticker_info_uuid),
             text = sticker.uuid,
         )
         DetailInfoItem(
-            icon = Icons.Default.Image,
+            icon = Icons.Outlined.Image,
             title = stringResource(id = R.string.detail_screen_sticker_info_md5),
             text = sticker.stickerMd5,
         )
         DetailInfoItem(
-            icon = Icons.Default.AdsClick,
+            icon = Icons.Outlined.AdsClick,
             title = stringResource(id = R.string.sticker_click_count),
             text = sticker.clickCount.toString(),
         )
         DetailInfoItem(
-            icon = Icons.Default.Share,
+            icon = Icons.Outlined.Share,
             title = stringResource(id = R.string.sticker_share_count),
             text = sticker.shareCount.toString()
         )
         DetailInfoItem(
-            icon = Icons.Default.AddCircle,
+            icon = Icons.Outlined.AddCircle,
             title = stringResource(id = R.string.sticker_create_time),
             text = sticker.createTime.toDateTimeString()
         )
         DetailInfoItem(
-            icon = Icons.Default.Edit,
+            icon = Icons.Outlined.Edit,
             title = stringResource(id = R.string.detail_screen_sticker_info_last_modified_time),
             text = (sticker.modifyTime ?: sticker.createTime).toDateTimeString()
         )
@@ -487,7 +487,7 @@ fun DetailScreenFloatingActionButton(
 
     val content: @Composable () -> Unit = remember {
         @Composable {
-            Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+            Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
         }
     }
 

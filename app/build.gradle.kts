@@ -16,14 +16,14 @@ apply(from = "../secret.gradle.kts")
 
 android {
     namespace = "com.skyd.rays"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.skyd.rays"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 67
-        versionName = "2.3-alpha05"
+        versionName = "2.3-alpha06"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -120,6 +120,10 @@ android {
         jniLibs {
             useLegacyPackaging = true
         }
+    }
+    androidResources {
+        @Suppress("UnstableApiUsage")
+        generateLocaleConfig = true
     }
 }
 

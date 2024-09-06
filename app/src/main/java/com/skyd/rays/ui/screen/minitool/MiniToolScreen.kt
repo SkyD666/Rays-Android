@@ -3,9 +3,9 @@ package com.skyd.rays.ui.screen.minitool
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Extension
-import androidx.compose.material.icons.filled.PeopleAlt
-import androidx.compose.material.icons.filled.Style
+import androidx.compose.material.icons.outlined.Extension
+import androidx.compose.material.icons.outlined.PeopleAlt
+import androidx.compose.material.icons.outlined.Style
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -50,7 +50,7 @@ fun MiniToolScreen() {
                 title = { Text(text = stringResource(id = R.string.mini_tool_screen_name)) },
                 navigationIcon = {
                     RaysIconButton(
-                        imageVector = Icons.Default.Extension,
+                        imageVector = Icons.Outlined.Extension,
                         onClick = {
                             snackbarHostState.showSnackbar(
                                 message = "\ud83c\udfee Happy New Year 2024~",
@@ -66,12 +66,12 @@ fun MiniToolScreen() {
         val miniToolList = listOf(
             MiniTool1Bean(
                 title = stringResource(R.string.style_transfer_screen_name),
-                icon = Icons.Default.Style,
+                icon = Icons.Outlined.Style,
                 action = { navController.navigate(STYLE_TRANSFER_SCREEN_ROUTE) }
             ),
             MiniTool1Bean(
                 title = stringResource(R.string.selfie_segmentation_screen_name),
-                icon = Icons.Default.PeopleAlt,
+                icon = Icons.Outlined.PeopleAlt,
                 action = { navController.navigate(SELFIE_SEGMENTATION_SCREEN_ROUTE) }
             ),
         )

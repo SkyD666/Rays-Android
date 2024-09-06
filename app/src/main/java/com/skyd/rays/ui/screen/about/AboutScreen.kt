@@ -24,11 +24,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Balance
-import androidx.compose.material.icons.filled.Coffee
-import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material.icons.filled.Translate
-import androidx.compose.material.icons.filled.Update
+import androidx.compose.material.icons.outlined.Balance
+import androidx.compose.material.icons.outlined.Coffee
+import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.Translate
+import androidx.compose.material.icons.outlined.Update
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
@@ -112,13 +112,13 @@ fun AboutScreen() {
                 title = { Text(text = stringResource(R.string.about)) },
                 actions = {
                     RaysIconButton(
-                        imageVector = Icons.Default.Balance,
+                        imageVector = Icons.Outlined.Balance,
                         contentDescription = stringResource(id = R.string.license_screen_name),
                         onClick = { navController.navigate(LICENSE_SCREEN_ROUTE) }
                     )
                     RaysIconButton(
                         onClick = { openUpdateDialog = true },
-                        imageVector = Icons.Default.Update,
+                        imageVector = Icons.Outlined.Update,
                         contentDescription = stringResource(id = R.string.update_check)
                     )
                 },
@@ -308,7 +308,7 @@ private fun HelpArea(
                 .weight(1f)
                 .fillMaxHeight()
         ) {
-            Icon(imageVector = Icons.Default.Translate, contentDescription = null)
+            Icon(imageVector = Icons.Outlined.Translate, contentDescription = null)
             Spacer(modifier = Modifier.width(6.dp))
             Text(text = stringResource(id = R.string.help_translate), textAlign = TextAlign.Center)
         }
@@ -319,7 +319,7 @@ private fun HelpArea(
                 .weight(1f)
                 .fillMaxHeight()
         ) {
-            Icon(imageVector = Icons.Default.Coffee, contentDescription = null)
+            Icon(imageVector = Icons.Outlined.Coffee, contentDescription = null)
             Spacer(modifier = Modifier.width(6.dp))
             Text(text = stringResource(id = R.string.sponsor), textAlign = TextAlign.Center)
         }
@@ -332,7 +332,7 @@ private fun SponsorDialog(visible: Boolean, onClose: () -> Unit) {
     RaysDialog(
         visible = visible,
         onDismissRequest = onClose,
-        icon = { Icon(imageVector = Icons.Default.Coffee, contentDescription = null) },
+        icon = { Icon(imageVector = Icons.Outlined.Coffee, contentDescription = null) },
         title = { Text(text = stringResource(id = R.string.sponsor)) },
         selectable = false,
         text = {
@@ -346,7 +346,7 @@ private fun SponsorDialog(visible: Boolean, onClose: () -> Unit) {
                     },
                     headlineContent = { Text(text = stringResource(R.string.sponsor_afadian)) },
                     leadingContent = {
-                        Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null)
+                        Icon(imageVector = Icons.Outlined.Lightbulb, contentDescription = null)
                     },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                 )
@@ -358,7 +358,7 @@ private fun SponsorDialog(visible: Boolean, onClose: () -> Unit) {
                     },
                     headlineContent = { Text(text = stringResource(R.string.sponsor_buy_me_a_coffee)) },
                     leadingContent = {
-                        Icon(imageVector = Icons.Default.Coffee, contentDescription = null)
+                        Icon(imageVector = Icons.Outlined.Coffee, contentDescription = null)
                     },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                 )

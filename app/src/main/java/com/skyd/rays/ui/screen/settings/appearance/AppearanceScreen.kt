@@ -28,10 +28,10 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -146,7 +146,7 @@ fun AppearanceScreen() {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.DarkMode),
+                    painter = rememberVectorPainter(image = Icons.Outlined.DarkMode),
                     text = stringResource(id = R.string.appearance_screen_dark_mode),
                     descriptionText = stringResource(id = R.string.appearance_screen_dark_mode_description),
                     onClick = { openDarkBottomSheet = true }
@@ -154,7 +154,7 @@ fun AppearanceScreen() {
             }
             item {
                 SwitchSettingsItem(
-                    imageVector = Icons.Default.Palette,
+                    imageVector = Icons.Outlined.Palette,
                     text = stringResource(R.string.appearance_screen_sticker_color_theme),
                     description = stringResource(R.string.appearance_screen_sticker_color_theme_description),
                     checked = LocalStickerColorTheme.current,
@@ -172,7 +172,7 @@ fun AppearanceScreen() {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.Search),
+                    painter = rememberVectorPainter(image = Icons.Outlined.Search),
                     text = stringResource(id = R.string.search_style_screen_name),
                     descriptionText = null,
                     onClick = { navController.navigate(SEARCH_STYLE_SCREEN_ROUTE) }

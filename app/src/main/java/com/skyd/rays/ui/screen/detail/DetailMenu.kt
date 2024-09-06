@@ -1,11 +1,11 @@
 package com.skyd.rays.ui.screen.detail
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Help
-import androidx.compose.material.icons.filled.AspectRatio
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.automirrored.outlined.Help
+import androidx.compose.material.icons.outlined.AspectRatio
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -40,11 +40,11 @@ fun DetailMenu(
                 onDismissRequest()
                 onStickerScaleClick()
             },
-            leadingIcon = { Icon(Icons.Default.AspectRatio, contentDescription = null) },
+            leadingIcon = { Icon(Icons.Outlined.AspectRatio, contentDescription = null) },
             trailingIcon = {
                 RaysIconButton(
                     onClick = { openBrowser(IMAGE_CONTENT_SCALE_HELP_URL) },
-                    imageVector = Icons.AutoMirrored.Default.Help,
+                    imageVector = Icons.AutoMirrored.Outlined.Help,
                 )
             }
         )
@@ -56,7 +56,7 @@ fun DetailMenu(
                 onDismissRequest()
                 onDeleteClick()
             },
-            leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) }
+            leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) }
         )
         DropdownMenuItem(
             enabled = stickerMenuItemEnabled,
@@ -65,7 +65,7 @@ fun DetailMenu(
                 onDismissRequest()
                 onExportClick()
             },
-            leadingIcon = { Icon(Icons.Default.Save, contentDescription = null) }
+            leadingIcon = { Icon(Icons.Outlined.Save, contentDescription = null) }
         )
         DropdownMenuItem(
             enabled = stickerMenuItemEnabled,
@@ -74,7 +74,7 @@ fun DetailMenu(
                 onDismissRequest()
                 onStickerInfoClick()
             },
-            leadingIcon = { Icon(Icons.Default.Info, contentDescription = null) }
+            leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) }
         )
     }
 }

@@ -40,7 +40,11 @@ class BlurTransformation @JvmOverloads constructor(
 
         val scaledWidth = (input.width / sampling).toInt()
         val scaledHeight = (input.height / sampling).toInt()
-        val output = createBitmap(scaledWidth, scaledHeight, input.safeConfig)
+        val output = createBitmap(
+            scaledWidth,
+            scaledHeight,
+            input.safeConfig ?: Bitmap.Config.ARGB_8888,
+        )
         //val output = pool.get(scaledWidth, scaledHeight, input.safeConfig)
         output.applyCanvas {
             scale(1 / sampling, 1 / sampling)
@@ -102,5 +106,5 @@ class BlurTransformation @JvmOverloads constructor(
 
 }
 
-internal val Bitmap.safeConfig: Bitmap.Config
+internal val Bitmap.safeConfig: Bitmap.Config?
     get() = config

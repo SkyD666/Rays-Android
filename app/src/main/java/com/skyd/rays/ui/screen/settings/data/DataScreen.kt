@@ -3,10 +3,10 @@ package com.skyd.rays.ui.screen.settings.data
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cached
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.ImportExport
-import androidx.compose.material.icons.filled.Source
+import androidx.compose.material.icons.outlined.Cached
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.ImportExport
+import androidx.compose.material.icons.outlined.Source
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -70,7 +70,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
         ) {
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(Icons.Default.Source),
+                    painter = rememberVectorPainter(Icons.Outlined.Source),
                     text = stringResource(id = R.string.image_source_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_image_source_description),
                     onClick = { navController.navigate(IMAGE_SOURCE_SCREEN_ROUTE) }
@@ -78,7 +78,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.ImportExport),
+                    painter = rememberVectorPainter(image = Icons.Outlined.ImportExport),
                     text = stringResource(id = R.string.import_export_screen_name),
                     descriptionText = stringResource(id = R.string.data_screen_import_export_description),
                     onClick = { navController.navigate(IMPORT_EXPORT_SCREEN_ROUTE) }
@@ -86,7 +86,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.Cached),
+                    painter = rememberVectorPainter(image = Icons.Outlined.Cached),
                     text = stringResource(id = R.string.cache_screen_name),
                     descriptionText = stringResource(id = R.string.cache_screen_description),
                     onClick = { navController.navigate(CACHE_SCREEN_ROUTE) }
@@ -97,7 +97,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.Delete),
+                    painter = rememberVectorPainter(image = Icons.Outlined.Delete),
                     text = stringResource(id = R.string.data_screen_delete_all),
                     descriptionText = stringResource(id = R.string.data_screen_delete_all_description),
                     onClick = { openDeleteAllStickersDialog = true }
@@ -105,7 +105,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.Delete),
+                    painter = rememberVectorPainter(image = Icons.Outlined.Delete),
                     text = stringResource(id = R.string.data_screen_delete_all_sticker_share_time_data),
                     descriptionText = stringResource(id = R.string.data_screen_delete_all_sticker_share_time_data_description),
                     onClick = { openDeleteStickerShareTimeDialog = true }

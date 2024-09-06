@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Domain
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.JoinInner
+import androidx.compose.material.icons.outlined.Code
+import androidx.compose.material.icons.outlined.Domain
+import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material.icons.outlined.JoinInner
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -85,7 +85,7 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
             }
             item {
                 SwitchSettingsItem(
-                    imageVector = Icons.Default.Code,
+                    imageVector = Icons.Outlined.Code,
                     text = stringResource(id = R.string.search_config_screen_use_regex),
                     description = stringResource(id = R.string.search_config_screen_use_regex_description),
                     checked = useRegexSearch,
@@ -100,7 +100,7 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
             }
             item {
                 SwitchSettingsItem(
-                    imageVector = Icons.Default.JoinInner,
+                    imageVector = Icons.Outlined.JoinInner,
                     text = stringResource(id = R.string.search_config_screen_intersect_search_by_space),
                     description = stringResource(id = R.string.search_config_screen_intersect_search_by_space_description),
                     checked = intersectSearchBySpace,
@@ -142,7 +142,7 @@ fun SearchDomainItem(
     table: Pair<String, Int>,
     searchDomain: Map<String, Boolean>,
     onSetSearchDomain: (SearchDomainBean) -> Unit,
-    icon: Painter = rememberVectorPainter(image = Icons.Default.Domain),
+    icon: Painter = rememberVectorPainter(image = Icons.Outlined.Domain),
 ) {
     val (tableName, tableDisplayName) = table
     BaseSettingsItem(
@@ -175,7 +175,7 @@ fun SearchDomainItem(
                         leadingIcon = if (selected[columnIndex] == true) {
                             {
                                 Icon(
-                                    imageVector = Icons.Default.Done,
+                                    imageVector = Icons.Outlined.Done,
                                     contentDescription = null,
                                     modifier = Modifier.size(FilterChipDefaults.IconSize)
                                 )

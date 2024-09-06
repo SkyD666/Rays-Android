@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FolderZip
+import androidx.compose.material.icons.outlined.FolderZip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -86,7 +86,7 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
                                     ?.stickerWithTagsList?.map { it.sticker.uuid }.orEmpty(),
                             )
                         },
-                        imageVector = Icons.Default.FolderZip,
+                        imageVector = Icons.Outlined.FolderZip,
                         contentDescription = stringResource(id = R.string.stickers_list_screen_export_current_stickers),
                     )
                 }

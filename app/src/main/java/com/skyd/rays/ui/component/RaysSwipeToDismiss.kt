@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxState
@@ -31,7 +31,7 @@ fun RaysSwipeToDismiss(
             contentAlignment = Alignment.CenterEnd
         ) {
             Icon(
-                imageVector = Icons.Default.Delete,
+                imageVector = Icons.Outlined.Delete,
                 contentDescription = stringResource(R.string.delete),
                 tint = Color.White
             )

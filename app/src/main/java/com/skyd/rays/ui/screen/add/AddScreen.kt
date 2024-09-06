@@ -36,18 +36,18 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Help
-import androidx.compose.material.icons.filled.AddBox
-import androidx.compose.material.icons.filled.AddPhotoAlternate
-import androidx.compose.material.icons.filled.AddToPhotos
-import androidx.compose.material.icons.filled.Autorenew
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.EditOff
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.HighlightOff
-import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.automirrored.outlined.Help
+import androidx.compose.material.icons.outlined.AddBox
+import androidx.compose.material.icons.outlined.AddPhotoAlternate
+import androidx.compose.material.icons.outlined.AddToPhotos
+import androidx.compose.material.icons.outlined.Autorenew
+import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.EditOff
+import androidx.compose.material.icons.outlined.ExpandLess
+import androidx.compose.material.icons.outlined.ExpandMore
+import androidx.compose.material.icons.outlined.HighlightOff
+import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
@@ -209,7 +209,7 @@ fun AddScreen(
                             processNext()
                         },
                         contentDescription = stringResource(R.string.add_screen_skip_current_sticker),
-                        imageVector = Icons.Default.EditOff,
+                        imageVector = Icons.Outlined.EditOff,
                     )
                     RaysIconButton(
                         onClick = {
@@ -254,12 +254,12 @@ fun AddScreen(
                         },
                         enabled = saveButtonEnable && !uiState.loadingDialog,
                         contentDescription = stringResource(R.string.add_screen_save_current_sticker),
-                        imageVector = Icons.Default.Save,
+                        imageVector = Icons.Outlined.Save,
                     )
 //                    RaysIconButton(
 //                        onClick = { openMoreMenu = true },
 //                        contentDescription = stringResource(R.string.more),
-//                        imageVector = Icons.Default.MoreVert,
+//                        imageVector = Icons.Outlined.MoreVert,
 //                    )
 //                    MoreMenu(
 //                        expanded = openMoreMenu,
@@ -429,7 +429,7 @@ private fun LazyListScope.titleInputFieldItem(
                 if (value.isNotEmpty()) {
                     RaysIconButton(
                         onClick = { onValueChange("") },
-                        imageVector = Icons.Default.Cancel,
+                        imageVector = Icons.Outlined.Cancel,
                         contentDescription = stringResource(R.string.cancel),
                     )
                 }
@@ -473,17 +473,17 @@ private fun LazyListScope.tagsInputFieldItem(
                                 onAddClick()
                                 onValueChange("")
                             },
-                            imageVector = Icons.Default.AddBox,
+                            imageVector = Icons.Outlined.AddBox,
                             contentDescription = stringResource(R.string.add_screen_add_tag),
                         )
                         RaysIconButton(
                             onClick = onAddToAllClick,
-                            imageVector = Icons.Default.AddToPhotos,
+                            imageVector = Icons.Outlined.AddToPhotos,
                             contentDescription = stringResource(R.string.add_screen_add_tag_to_all),
                         )
                         RaysIconButton(
                             onClick = { onValueChange("") },
-                            imageVector = Icons.Default.Cancel,
+                            imageVector = Icons.Outlined.Cancel,
                             contentDescription = stringResource(R.string.clear_input_text),
                         )
                     }
@@ -539,14 +539,14 @@ private fun AddToAllList(list: List<String>, onDeleteTag: (String) -> Unit) {
                 ) {
                     RaysIconButton(
                         onClick = { scope.launch { tooltipState.show(MutatePriority.PreventUserInput) } },
-                        imageVector = Icons.AutoMirrored.Default.Help,
+                        imageVector = Icons.AutoMirrored.Outlined.Help,
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 RaysIconButton(
                     onClick = { expandFlowRow = !expandFlowRow },
-                    imageVector = if (expandFlowRow) Icons.Default.ExpandLess
-                    else Icons.Default.ExpandMore,
+                    imageVector = if (expandFlowRow) Icons.Outlined.ExpandLess
+                    else Icons.Outlined.ExpandMore,
                     interactionSource = interactionSource,
                 )
             }
@@ -569,7 +569,7 @@ private fun AddToAllList(list: List<String>, onDeleteTag: (String) -> Unit) {
                             trailingIcon = {
                                 Icon(
                                     modifier = Modifier.size(AssistChipDefaults.IconSize),
-                                    imageVector = Icons.Default.Close,
+                                    imageVector = Icons.Outlined.Close,
                                     contentDescription = null
                                 )
                             }
@@ -608,7 +608,7 @@ private fun WaitingRow(
             if (!isEdit) {
                 RaysIconButton(
                     onClick = onSelectStickersClick,
-                    imageVector = Icons.Default.AddPhotoAlternate,
+                    imageVector = Icons.Outlined.AddPhotoAlternate,
                     contentDescription = stringResource(R.string.add_screen_add_stickers),
                 )
             }
@@ -650,7 +650,7 @@ private fun WaitingRow(
                                     modifier = iconButtonModifier,
                                     colors = iconButtonColors,
                                     onClick = { onRemoveStickerFromWaitingListClick(index) },
-                                    imageVector = Icons.Default.HighlightOff,
+                                    imageVector = Icons.Outlined.HighlightOff,
                                     contentDescription = stringResource(R.string.add_screen_remove_sticker_from_waiting_list),
                                 )
                                 Spacer(modifier = Modifier.width(3.dp))
@@ -658,7 +658,7 @@ private fun WaitingRow(
                                     modifier = iconButtonModifier,
                                     colors = iconButtonColors,
                                     onClick = { onReplaceStickerClick(index) },
-                                    imageVector = Icons.Default.Autorenew,
+                                    imageVector = Icons.Outlined.Autorenew,
                                     contentDescription = stringResource(R.string.add_screen_update_sticker),
                                 )
                             }
@@ -688,7 +688,7 @@ private fun AddedTags(tags: List<String>, onClick: (Int) -> Unit) {
                 trailingIcon = {
                     Icon(
                         modifier = Modifier.size(AssistChipDefaults.IconSize),
-                        imageVector = Icons.Default.Close,
+                        imageVector = Icons.Outlined.Close,
                         contentDescription = null
                     )
                 }

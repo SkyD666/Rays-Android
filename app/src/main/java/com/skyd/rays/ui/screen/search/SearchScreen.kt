@@ -34,10 +34,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.outlined.ArrowUpward
+import androidx.compose.material.icons.outlined.Clear
+import androidx.compose.material.icons.outlined.ExpandLess
+import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -148,7 +148,7 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                     contentDescription = stringResource(R.string.home_screen_search_result_list_to_top),
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowUpward,
+                        imageVector = Icons.Outlined.ArrowUpward,
                         contentDescription = null
                     )
                 }
@@ -347,7 +347,7 @@ fun TrailingIcon(
 ) {
     if (showClearButton) {
         RaysIconButton(
-            imageVector = Icons.Default.Clear,
+            imageVector = Icons.Outlined.Clear,
             contentDescription = stringResource(R.string.home_screen_clear_search_text),
             onClick = { onClick?.invoke() }
         )
@@ -424,7 +424,7 @@ fun PopularTagsBar(
             }
 
             RaysIconButton(
-                imageVector = if (expand) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                imageVector = if (expand) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
                 contentDescription = if (expand) stringResource(R.string.collapse)
                 else stringResource(R.string.expand),
                 onClick = { expand = !expand },

@@ -7,8 +7,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -51,22 +52,30 @@ private fun RaysSearchBarPreview() {
     ) {
         Box(modifier = Modifier.align(Alignment.TopCenter)) {
             val query = if (LocalShowLastQuery.current) "LOL" else ""
+            val onActiveChange: (Boolean) -> Unit =
+                { if (!it) navController.popBackStackWithLifecycle() }
             SearchBar(
-                windowInsets = WindowInsets(0.dp),
-                onQueryChange = {},
-                query = query,
-                onSearch = { },
-                active = true,
-                onActiveChange = { if (!it) navController.popBackStackWithLifecycle() },
-                placeholder = { Text(text = stringResource(R.string.home_screen_search_hint)) },
-                leadingIcon = {
-                    RaysIconButton(
-                        imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                        contentDescription = stringResource(id = R.string.home_screen_close_search),
-                        onClick = { }
+                inputField = {
+                    SearchBarDefaults.InputField(
+                        query = query,
+                        onQueryChange = { },
+                        onSearch = { },
+                        expanded = true,
+                        onExpandedChange = onActiveChange,
+                        placeholder = { Text(text = stringResource(R.string.home_screen_search_hint)) },
+                        leadingIcon = {
+                            RaysIconButton(
+                                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                                contentDescription = stringResource(id = R.string.home_screen_close_search),
+                                onClick = { }
+                            )
+                        },
+                        trailingIcon = { TrailingIcon(showClearButton = query.isNotBlank()) {} },
                     )
                 },
-                trailingIcon = { TrailingIcon(showClearButton = query.isNotBlank()) {} },
+                expanded = true,
+                onExpandedChange = onActiveChange,
+                windowInsets = WindowInsets(0.dp),
             ) {
                 AnimatedVisibility(visible = LocalShowPopularTags.current) {
                     PopularTagsBar(

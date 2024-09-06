@@ -9,7 +9,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ManageSearch
-import androidx.compose.material.icons.filled.LocalOffer
+import androidx.compose.material.icons.automirrored.outlined.ManageSearch
+import androidx.compose.material.icons.outlined.LocalOffer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -68,7 +69,7 @@ fun SearchStyleScreen() {
             }
             item {
                 SwitchSettingsItem(
-                    imageVector = Icons.Default.LocalOffer,
+                    imageVector = Icons.Outlined.LocalOffer,
                     checked = LocalShowPopularTags.current,
                     text = stringResource(R.string.home_style_screen_show_popular_tags),
                     description = stringResource(R.string.home_style_screen_show_popular_tags_description),
@@ -83,7 +84,7 @@ fun SearchStyleScreen() {
             }
             item {
                 SwitchSettingsItem(
-                    imageVector = Icons.AutoMirrored.Filled.ManageSearch,
+                    imageVector = Icons.AutoMirrored.Outlined.ManageSearch,
                     checked = LocalShowLastQuery.current,
                     text = stringResource(R.string.home_style_screen_show_last_query),
                     description = stringResource(R.string.home_style_screen_show_last_query_description),

@@ -37,7 +37,7 @@ object CommonUtil {
                     .packageManager
                     .getPackageInfo(appContext.packageName, 0)
             }
-            appVersionName = packageInfo.versionName
+            appVersionName = packageInfo.versionName.orEmpty()
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }

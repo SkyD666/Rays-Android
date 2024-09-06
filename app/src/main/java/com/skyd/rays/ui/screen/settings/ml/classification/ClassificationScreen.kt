@@ -3,8 +3,8 @@ package com.skyd.rays.ui.screen.settings.ml.classification
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DataThresholding
-import androidx.compose.material.icons.filled.ModelTraining
+import androidx.compose.material.icons.outlined.DataThresholding
+import androidx.compose.material.icons.outlined.ModelTraining
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -50,7 +50,7 @@ fun ClassificationScreen() {
         ) {
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.ModelTraining),
+                    painter = rememberVectorPainter(image = Icons.Outlined.ModelTraining),
                     text = stringResource(id = R.string.classification_model_screen_name),
                     descriptionText = stringResource(
                         R.string.classification_model_screen_description,
@@ -70,7 +70,7 @@ private fun ClassificationThresholdSettingItem() {
     val scope = rememberCoroutineScope()
 
     SliderSettingsItem(
-        imageVector = Icons.Default.DataThresholding,
+        imageVector = Icons.Outlined.DataThresholding,
         text = stringResource(id = R.string.classification_screen_threshold),
         value = LocalClassificationThreshold.current,
         onValueChange = {

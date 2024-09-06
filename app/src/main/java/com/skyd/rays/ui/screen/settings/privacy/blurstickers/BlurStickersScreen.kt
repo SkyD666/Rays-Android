@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.BlurLinear
-import androidx.compose.material.icons.filled.BlurOn
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.BlurLinear
+import androidx.compose.material.icons.outlined.BlurOn
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
@@ -74,7 +74,7 @@ fun BlurStickersScreen() {
             item {
                 BannerItem {
                     SwitchSettingsItem(
-                        imageVector = Icons.Default.BlurOn,
+                        imageVector = Icons.Outlined.BlurOn,
                         checked = LocalBlurSticker.current,
                         text = stringResource(R.string.enable),
                         onCheckedChange = {
@@ -108,14 +108,14 @@ private fun BlurStickersKeywordsSettingItem() {
     val blurStickersKeywords = LocalBlurStickerKeywords.current
 
     BaseSettingsItem(
-        painter = rememberVectorPainter(Icons.Default.Tag),
+        painter = rememberVectorPainter(Icons.Outlined.Tag),
         text = stringResource(R.string.blur_stickers_screen_blur_keywords),
         enabled = LocalBlurSticker.current,
         content = {
             RaysIconButton(
                 enabled = LocalBlurSticker.current,
                 onClick = { openAddDialog = true },
-                imageVector = Icons.Default.Add,
+                imageVector = Icons.Outlined.Add,
             )
         },
         description = {
@@ -139,7 +139,7 @@ private fun BlurStickersKeywordsSettingItem() {
                         trailingIcon = {
                             Icon(
                                 modifier = Modifier.size(AssistChipDefaults.IconSize),
-                                imageVector = Icons.Default.Close,
+                                imageVector = Icons.Outlined.Close,
                                 contentDescription = null
                             )
                         }
@@ -174,7 +174,7 @@ private fun BlurStickerRadiusSettingItem() {
     val scope = rememberCoroutineScope()
 
     SliderSettingsItem(
-        imageVector = Icons.Default.BlurLinear,
+        imageVector = Icons.Outlined.BlurLinear,
         text = stringResource(id = R.string.blur_stickers_screen_radius),
         enabled = LocalBlurSticker.current,
         valueRange = 0.01f..25f,

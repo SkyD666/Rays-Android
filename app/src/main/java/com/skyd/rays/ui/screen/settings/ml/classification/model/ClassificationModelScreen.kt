@@ -9,9 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CreateNewFolder
 import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material.icons.filled.LightbulbCircle
+import androidx.compose.material.icons.outlined.CreateNewFolder
+import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.LightbulbCircle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -151,7 +152,7 @@ private fun ModelList(
         item {
             RadioSettingsItem(
                 selected = classificationModel.isBlank(),
-                imageVector = Icons.Default.LightbulbCircle,
+                imageVector = Icons.Outlined.LightbulbCircle,
                 text = stringResource(id = R.string.classification_model_screen_default),
                 description = stringResource(id = R.string.classification_model_screen_default_name),
                 onClick = {
@@ -167,7 +168,7 @@ private fun ModelList(
         }
         item {
             BaseSettingsItem(
-                painter = rememberVectorPainter(image = Icons.Default.CreateNewFolder),
+                painter = rememberVectorPainter(image = Icons.Outlined.CreateNewFolder),
                 text = stringResource(id = R.string.classification_model_screen_select),
                 descriptionText = stringResource(
                     R.string.classification_model_screen_select_description,
@@ -191,7 +192,7 @@ private fun ModelList(
                 RadioSettingsItem(
                     modifier = Modifier.background(MaterialTheme.colorScheme.background),
                     selected = item.name == classificationModelName,
-                    painter = rememberVectorPainter(image = Icons.Default.Lightbulb),
+                    painter = rememberVectorPainter(image = Icons.Outlined.Lightbulb),
                     text = item.name,
                     description = item.path,
                     onClick = {

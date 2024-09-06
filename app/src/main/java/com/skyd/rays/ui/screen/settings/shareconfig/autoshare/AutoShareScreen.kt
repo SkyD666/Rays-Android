@@ -7,8 +7,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.MoveDown
+import androidx.compose.material.icons.outlined.Block
+import androidx.compose.material.icons.outlined.MoveDown
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -87,7 +87,7 @@ fun AutoShareScreen() {
             item {
                 BannerItem {
                     SwitchSettingsItem(
-                        imageVector = Icons.Default.MoveDown,
+                        imageVector = Icons.Outlined.MoveDown,
                         text = stringResource(id = R.string.enable),
                         checked = autoShareEnabled,
                         onCheckedChange = {
@@ -98,7 +98,7 @@ fun AutoShareScreen() {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.Block),
+                    painter = rememberVectorPainter(image = Icons.Outlined.Block),
                     text = stringResource(id = R.string.auto_share_screen_ignore),
                     descriptionText = stringResource(id = R.string.auto_share_screen_ignore_description),
                     enabled = autoShareEnabled,

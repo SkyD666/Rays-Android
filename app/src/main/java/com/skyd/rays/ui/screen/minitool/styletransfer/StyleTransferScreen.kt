@@ -19,9 +19,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Transform
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Transform
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -89,7 +89,7 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
         floatingActionButton = {
             RaysExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.style_transfer_screen_transfer)) },
-                icon = { Icon(imageVector = Icons.Default.Transform, contentDescription = null) },
+                icon = { Icon(imageVector = Icons.Outlined.Transform, contentDescription = null) },
                 onClick = {
                     val style = styleUri
                     val content = contentUri
@@ -185,7 +185,7 @@ private fun InputArea(
             )
             Icon(
                 modifier = Modifier.padding(10.dp),
-                imageVector = Icons.Default.Add,
+                imageVector = Icons.Outlined.Add,
                 contentDescription = null
             )
             InputItem(
@@ -231,7 +231,7 @@ private fun InputItem(
                 ) {
                     Icon(
                         modifier = Modifier.size(40.dp),
-                        imageVector = Icons.Default.Image,
+                        imageVector = Icons.Outlined.Image,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onPrimary,
                     )

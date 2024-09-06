@@ -24,10 +24,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.ContentCut
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.ContentCut
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -106,7 +106,7 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
         floatingActionButton = {
             RaysExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.selfie_segmentation_screen_segment)) },
-                icon = { Icon(imageVector = Icons.Default.ContentCut, contentDescription = null) },
+                icon = { Icon(imageVector = Icons.Outlined.ContentCut, contentDescription = null) },
                 onClick = {
                     val foreground = selfieUri
                     if (foreground == null) {
@@ -347,7 +347,7 @@ private fun InputArea(
             )
             Icon(
                 modifier = Modifier.padding(10.dp),
-                imageVector = Icons.Default.Add,
+                imageVector = Icons.Outlined.Add,
                 contentDescription = null
             )
             InputItem(
@@ -395,7 +395,7 @@ private fun InputItem(
                 ) {
                     Icon(
                         modifier = Modifier.size(40.dp),
-                        imageVector = Icons.Default.Image,
+                        imageVector = Icons.Outlined.Image,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onPrimary,
                     )
@@ -435,7 +435,7 @@ private fun InputItem(
                     RaysIconButton(
                         modifier = Modifier.align(Alignment.TopEnd),
                         onClick = onRemoveClick,
-                        imageVector = Icons.Default.Close,
+                        imageVector = Icons.Outlined.Close,
                         style = RaysIconButtonStyle.Filled,
                     )
                 }

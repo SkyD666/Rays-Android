@@ -25,9 +25,9 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Reply
 import androidx.compose.material.icons.automirrored.outlined.ScheduleSend
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.MoreTime
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Shuffle
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedCard
@@ -115,7 +115,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 onClick = { navController.navigate(SEARCH_SCREEN_ROUTE) }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Search,
+                    imageVector = Icons.Outlined.Search,
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null
                 )
@@ -446,7 +446,7 @@ private fun HomeScreenFloatingActionButton(
 
     val content: @Composable () -> Unit = remember {
         @Composable {
-            Icon(imageVector = Icons.Default.Add, contentDescription = null)
+            Icon(imageVector = Icons.Outlined.Add, contentDescription = null)
         }
     }
     val onClick = remember {

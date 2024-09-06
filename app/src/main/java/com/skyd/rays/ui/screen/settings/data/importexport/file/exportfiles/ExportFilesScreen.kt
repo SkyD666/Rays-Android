@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.LayersClear
+import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.outlined.LayersClear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -122,7 +122,7 @@ fun ExportFilesScreen(
         floatingActionButton = {
             RaysExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.export_files_screen_export)) },
-                icon = { Icon(imageVector = Icons.Default.Done, contentDescription = null) },
+                icon = { Icon(imageVector = Icons.Outlined.Done, contentDescription = null) },
                 onClick = {
                     if (exportStickers != null && exportStickers.isEmpty()) {
                         snackbarHostState.showSnackbar(
@@ -156,7 +156,7 @@ fun ExportFilesScreen(
         ) {
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.Folder),
+                    painter = rememberVectorPainter(image = Icons.Outlined.Folder),
                     text = stringResource(id = R.string.export_files_screen_select_dir),
                     descriptionText = exportDir.toString().ifBlank { null },
                     onClick = { pickExportDirLauncher.safeLaunch(exportDir) }
@@ -164,7 +164,7 @@ fun ExportFilesScreen(
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.LayersClear),
+                    painter = rememberVectorPainter(image = Icons.Outlined.LayersClear),
                     text = stringResource(R.string.export_files_screen_exclude_field),
                     descriptionText = excludeOptions.filterIndexed { index, _ ->
                         index in excludeCheckedList

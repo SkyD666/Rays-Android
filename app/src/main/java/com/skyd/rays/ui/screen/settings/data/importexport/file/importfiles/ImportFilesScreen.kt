@@ -11,8 +11,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.FolderZip
+import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material.icons.outlined.FolderZip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
@@ -97,7 +97,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
         floatingActionButton = {
             RaysExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.import_files_screen_import)) },
-                icon = { Icon(imageVector = Icons.Default.Done, contentDescription = null) },
+                icon = { Icon(imageVector = Icons.Outlined.Done, contentDescription = null) },
                 onClick = {
                     dispatch(
                         ImportFilesIntent.Import(
@@ -120,7 +120,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
         ) {
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.FolderZip),
+                    painter = rememberVectorPainter(image = Icons.Outlined.FolderZip),
                     text = stringResource(id = R.string.import_files_screen_select_file),
                     descriptionText = fileUri.toString().ifBlank { null },
                     onClick = { pickFileLauncher.safeLaunch("application/zip") }

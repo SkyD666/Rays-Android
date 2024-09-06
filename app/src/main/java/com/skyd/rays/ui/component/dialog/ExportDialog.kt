@@ -6,7 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -61,7 +61,7 @@ fun ExportDialog(
                     onClick = {
                         pickExportDirLauncher.safeLaunch(Uri.parse(exportStickerDir))
                     },
-                    imageVector = Icons.Default.Folder,
+                    imageVector = Icons.Outlined.Folder,
                     contentDescription = stringResource(R.string.home_screen_select_export_folder)
                 )
             }

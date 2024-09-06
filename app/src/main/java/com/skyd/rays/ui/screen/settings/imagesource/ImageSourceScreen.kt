@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ImageSearch
+import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -57,7 +57,7 @@ fun ImageSourceScreen() {
         ) {
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.ImageSearch),
+                    painter = rememberVectorPainter(image = Icons.Outlined.ImageSearch),
                     text = stringResource(R.string.image_screen_picker),
                     descriptionText = stringResource(R.string.image_screen_picker_description),
                     onClick = { openPickImageMethodBottomSheet = true }

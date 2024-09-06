@@ -30,14 +30,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FolderZip
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.ArrowDropDown
+import androidx.compose.material.icons.outlined.ArrowDropUp
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.FolderZip
+import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Badge
 import androidx.compose.material3.FilterChip
@@ -171,8 +171,8 @@ fun SearchResultConfigBar(
                     label = { Text(text = stringResource(R.string.search_result_sort)) },
                     trailingIcon = {
                         Icon(
-                            imageVector = if (expandMenu) Icons.Default.ArrowDropUp
-                            else Icons.Default.ArrowDropDown,
+                            imageVector = if (expandMenu) Icons.Outlined.ArrowDropUp
+                            else Icons.Outlined.ArrowDropDown,
                             contentDescription = null,
                             modifier = Modifier.size(AssistChipDefaults.IconSize),
                         )
@@ -248,7 +248,7 @@ internal fun MultiSelectActionBar(
                         )
                     },
                     enabled = selectedStickers.isNotEmpty(),
-                    imageVector = Icons.Default.Share,
+                    imageVector = Icons.Outlined.Share,
                     contentDescription = stringResource(id = R.string.send_sticker)
                 )
             },
@@ -256,7 +256,7 @@ internal fun MultiSelectActionBar(
                 RaysIconButton(
                     onClick = onEditClick,
                     enabled = selectedStickers.isNotEmpty(),
-                    imageVector = Icons.Default.Edit,
+                    imageVector = Icons.Outlined.Edit,
                     contentDescription = stringResource(id = R.string.add_screen_name_edit)
                 )
             },
@@ -264,7 +264,7 @@ internal fun MultiSelectActionBar(
                 RaysIconButton(
                     onClick = onExportClick,
                     enabled = selectedStickers.isNotEmpty(),
-                    imageVector = Icons.Default.Save,
+                    imageVector = Icons.Outlined.Save,
                     contentDescription = stringResource(id = R.string.home_screen_export)
                 )
             },
@@ -272,7 +272,7 @@ internal fun MultiSelectActionBar(
                 RaysIconButton(
                     onClick = onExportAsZipClick,
                     enabled = selectedStickers.isNotEmpty(),
-                    imageVector = Icons.Default.FolderZip,
+                    imageVector = Icons.Outlined.FolderZip,
                     contentDescription = stringResource(id = R.string.home_screen_export_to_backup_zip)
                 )
             },
@@ -280,7 +280,7 @@ internal fun MultiSelectActionBar(
                 RaysIconButton(
                     onClick = onDeleteClick,
                     enabled = selectedStickers.isNotEmpty(),
-                    imageVector = Icons.Default.Delete,
+                    imageVector = Icons.Outlined.Delete,
                     contentDescription = stringResource(id = R.string.home_screen_delete)
                 )
             }

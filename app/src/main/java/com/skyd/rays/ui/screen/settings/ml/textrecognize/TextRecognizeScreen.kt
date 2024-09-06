@@ -3,7 +3,7 @@ package com.skyd.rays.ui.screen.settings.ml.textrecognize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DataThresholding
+import androidx.compose.material.icons.outlined.DataThresholding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -54,7 +54,7 @@ private fun TextRecognizeThresholdSettingItem() {
     val scope = rememberCoroutineScope()
 
     SliderSettingsItem(
-        imageVector = Icons.Default.DataThresholding,
+        imageVector = Icons.Outlined.DataThresholding,
         text = stringResource(id = R.string.text_recognize_screen_threshold),
         value = LocalTextRecognizeThreshold.current,
         onValueChange = {

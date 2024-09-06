@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
@@ -80,7 +80,7 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
                 actions = {
                     RaysIconButton(
                         onClick = { openAddDialog = true },
-                        imageVector = Icons.Default.Add,
+                        imageVector = Icons.Outlined.Add,
                         contentDescription = stringResource(R.string.uri_string_share_screen_add_app_package)
                     )
                 },
@@ -97,7 +97,7 @@ fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {
             item {
                 BannerItem {
                     SwitchSettingsItem(
-                        imageVector = if (apiGrant) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        imageVector = if (apiGrant) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
                         text = stringResource(id = R.string.api_grant_screen_enable),
                         checked = apiGrant,
                         onCheckedChange = {

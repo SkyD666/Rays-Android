@@ -45,7 +45,7 @@ class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
             val underlayBitmap = if (backgroundUri != null) {
                 appContext.contentResolver.openInputStream(backgroundUri)!!.use {
                     val origin = BitmapFactory.decodeStream(it)
-                    origin.copy(origin.config, true).apply {
+                    origin.copy(origin.config!!, true).apply {
                         setHasAlpha(true)
                         origin.recycle()
                     }
@@ -104,7 +104,7 @@ class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
             val foregroundBitmap =
                 appContext.contentResolver.openInputStream(foregroundUri)!!.use {
                     val origin = BitmapFactory.decodeStream(it)
-                    origin.copy(origin.config, true).apply {
+                    origin.copy(origin.config!!, true).apply {
                         setHasAlpha(true)
                         origin.recycle()
                     }

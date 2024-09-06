@@ -10,15 +10,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.CloudDownload
-import androidx.compose.material.icons.filled.CloudUpload
-import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.Dns
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Key
-import androidx.compose.material.icons.filled.Recycling
-import androidx.compose.material.icons.filled.RestoreFromTrash
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.CloudDownload
+import androidx.compose.material.icons.outlined.CloudUpload
+import androidx.compose.material.icons.outlined.DeleteForever
+import androidx.compose.material.icons.outlined.Dns
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Key
+import androidx.compose.material.icons.outlined.Recycling
+import androidx.compose.material.icons.outlined.RestoreFromTrash
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
@@ -101,7 +101,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 actions = {
                     RaysIconButton(
                         onClick = { openWarningDialog = true },
-                        imageVector = Icons.Default.Info,
+                        imageVector = Icons.Outlined.Info,
                         contentDescription = stringResource(R.string.info)
                     )
                 },
@@ -399,12 +399,12 @@ private fun RecycleBinBottomSheet(
                         trailingContent = {
                             Row {
                                 RaysIconButton(
-                                    imageVector = Icons.Default.RestoreFromTrash,
+                                    imageVector = Icons.Outlined.RestoreFromTrash,
                                     contentDescription = stringResource(R.string.webdav_screen_restore),
                                     onClick = { onRestore(list[it].uuid) }
                                 )
                                 RaysIconButton(
-                                    imageVector = Icons.Default.DeleteForever,
+                                    imageVector = Icons.Outlined.DeleteForever,
                                     contentDescription = stringResource(R.string.webdav_screen_delete),
                                     onClick = { onDelete(list[it].uuid) }
                                 )
@@ -451,7 +451,7 @@ private fun LazyListScope.webDavItem(
     }
     item {
         BaseSettingsItem(
-            painter = rememberVectorPainter(image = Icons.Default.Dns),
+            painter = rememberVectorPainter(image = Icons.Outlined.Dns),
             text = stringResource(id = R.string.webdav_screen_server),
             descriptionText = server.ifBlank {
                 stringResource(id = R.string.webdav_screen_server_description)
@@ -459,7 +459,7 @@ private fun LazyListScope.webDavItem(
             onClick = onServerItemClick
         )
         BaseSettingsItem(
-            painter = rememberVectorPainter(image = Icons.Default.AccountCircle),
+            painter = rememberVectorPainter(image = Icons.Outlined.AccountCircle),
             text = stringResource(id = R.string.webdav_screen_account),
             descriptionText = account.ifBlank {
                 stringResource(id = R.string.webdav_screen_account_description)
@@ -467,7 +467,7 @@ private fun LazyListScope.webDavItem(
             onClick = onAccountItemClick
         )
         BaseSettingsItem(
-            painter = rememberVectorPainter(image = Icons.Default.Key),
+            painter = rememberVectorPainter(image = Icons.Outlined.Key),
             text = stringResource(id = R.string.webdav_screen_password),
             descriptionText = stringResource(
                 id = if (password.isBlank()) R.string.webdav_screen_password_description
@@ -488,19 +488,19 @@ private fun LazyListScope.syncItem(
     }
     item {
         BaseSettingsItem(
-            painter = rememberVectorPainter(image = Icons.Default.CloudDownload),
+            painter = rememberVectorPainter(image = Icons.Outlined.CloudDownload),
             text = stringResource(id = R.string.webdav_screen_download),
             descriptionText = stringResource(id = R.string.webdav_screen_download_description),
             onClick = onPullItemClick
         )
         BaseSettingsItem(
-            painter = rememberVectorPainter(image = Icons.Default.CloudUpload),
+            painter = rememberVectorPainter(image = Icons.Outlined.CloudUpload),
             text = stringResource(id = R.string.webdav_screen_upload),
             descriptionText = stringResource(id = R.string.webdav_screen_upload_description),
             onClick = onPushItemClick
         )
         BaseSettingsItem(
-            painter = rememberVectorPainter(image = Icons.Default.Recycling),
+            painter = rememberVectorPainter(image = Icons.Outlined.Recycling),
             text = stringResource(id = R.string.webdav_screen_remote_recycle_bin),
             descriptionText = stringResource(id = R.string.webdav_screen_remote_recycle_bin_description),
             onClick = onRemoteRecycleBinItemClick

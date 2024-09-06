@@ -1,7 +1,7 @@
 package com.skyd.rays.ui.screen.search
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -32,7 +32,7 @@ internal fun SearchResultSortMenu(
                 leadingIcon = {
                     if (searchResultSort == it) {
                         Icon(
-                            imageVector = Icons.Default.Done,
+                            imageVector = Icons.Outlined.Done,
                             contentDescription = null
                         )
                     }

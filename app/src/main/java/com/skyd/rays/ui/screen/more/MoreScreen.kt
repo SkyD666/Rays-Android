@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ImportExport
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Widgets
+import androidx.compose.material.icons.outlined.ImportExport
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Widgets
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -64,7 +64,7 @@ fun MoreScreen() {
                 title = { Text(text = stringResource(id = R.string.more_screen_name)) },
                 navigationIcon = {
                     RaysIconButton(
-                        imageVector = Icons.Default.Widgets,
+                        imageVector = Icons.Outlined.Widgets,
                         onClick = {
                             snackbarHostState.showSnackbar(
                                 message = "\uD83C\uDFEE Happy New Year 2024~",
@@ -109,7 +109,7 @@ private fun getMoreList(
     return listOf(
         More1Bean(
             title = context.getString(R.string.import_export_screen_name),
-            icon = Icons.Default.ImportExport,
+            icon = Icons.Outlined.ImportExport,
             iconTint = colorScheme.onPrimary,
             shape = SquircleShape,
             shapeColor = colorScheme.primary,
@@ -117,7 +117,7 @@ private fun getMoreList(
         ),
         More1Bean(
             title = context.getString(R.string.settings),
-            icon = Icons.Default.Settings,
+            icon = Icons.Outlined.Settings,
             iconTint = colorScheme.onSecondary,
             shape = CloverShape,
             shapeColor = colorScheme.secondary,
@@ -125,7 +125,7 @@ private fun getMoreList(
         ),
         More1Bean(
             title = context.getString(R.string.about),
-            icon = Icons.Default.Info,
+            icon = Icons.Outlined.Info,
             iconTint = colorScheme.onTertiary,
             shape = CurlyCornerShape(amp = with(density) { 2.dp.toPx() }, count = 10),
             shapeColor = colorScheme.tertiary,

@@ -3,10 +3,10 @@ package com.skyd.rays.ui.screen.settings.shareconfig
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.FileCopy
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.filled.MoveDown
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.FileCopy
+import androidx.compose.material.icons.outlined.Link
+import androidx.compose.material.icons.outlined.MoveDown
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -58,7 +58,7 @@ fun ShareConfigScreen() {
         ) {
             item {
                 SwitchSettingsItem(
-                    imageVector = Icons.Default.Description,
+                    imageVector = Icons.Outlined.Description,
                     checked = LocalStickerExtName.current,
                     text = stringResource(R.string.share_config_screen_file_extension),
                     description = stringResource(R.string.share_config_screen_file_extension_description),
@@ -73,7 +73,7 @@ fun ShareConfigScreen() {
             }
             item {
                 SwitchSettingsItem(
-                    imageVector = Icons.Default.FileCopy,
+                    imageVector = Icons.Outlined.FileCopy,
                     checked = LocalCopyStickerToClipboardWhenSharing.current,
                     text = stringResource(R.string.share_config_screen_copy_sticker_to_clipboard),
                     description = stringResource(R.string.share_config_screen_copy_sticker_to_clipboard_description),
@@ -90,7 +90,7 @@ fun ShareConfigScreen() {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.Link),
+                    painter = rememberVectorPainter(image = Icons.Outlined.Link),
                     text = stringResource(id = R.string.uri_string_share_screen_name),
                     descriptionText = stringResource(id = R.string.uri_string_share_screen_description),
                     onClick = { navController.navigate(URI_STRING_SHARE_SCREEN_ROUTE) }
@@ -98,7 +98,7 @@ fun ShareConfigScreen() {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.MoveDown),
+                    painter = rememberVectorPainter(image = Icons.Outlined.MoveDown),
                     text = stringResource(id = R.string.auto_share_screen_name),
                     descriptionText = stringResource(id = R.string.auto_share_screen_description),
                     onClick = { navController.navigate(AUTO_SHARE_SCREEN_ROUTE) }

@@ -3,8 +3,8 @@ package com.skyd.rays.ui.screen.settings.ml
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Sell
-import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material.icons.outlined.Sell
+import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -46,7 +46,7 @@ fun MlScreen() {
         ) {
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.Sell),
+                    painter = rememberVectorPainter(image = Icons.Outlined.Sell),
                     text = stringResource(id = R.string.classification_screen_name),
                     descriptionText = stringResource(R.string.classification_screen_description),
                     onClick = { navController.navigate(CLASSIFICATION_SCREEN_ROUTE) }
@@ -54,7 +54,7 @@ fun MlScreen() {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.TextFields),
+                    painter = rememberVectorPainter(image = Icons.Outlined.TextFields),
                     text = stringResource(id = R.string.text_recognize_screen_name),
                     descriptionText = stringResource(R.string.text_recognize_screen_description),
                     onClick = { navController.navigate(TEXT_RECOGNIZE_SCREEN_ROUTE) }

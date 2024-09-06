@@ -3,9 +3,9 @@ package com.skyd.rays.ui.screen.settings.data.importexport
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CloudSync
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Upload
+import androidx.compose.material.icons.outlined.CloudSync
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Upload
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -53,7 +53,7 @@ fun ImportExportScreen() {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.CloudSync),
+                    painter = rememberVectorPainter(image = Icons.Outlined.CloudSync),
                     text = stringResource(id = R.string.webdav_screen_name),
                     descriptionText = stringResource(id = R.string.import_export_screen_webdav_description),
                     onClick = { navController.navigate(WEBDAV_SCREEN_ROUTE) }
@@ -66,7 +66,7 @@ fun ImportExportScreen() {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.Download),
+                    painter = rememberVectorPainter(image = Icons.Outlined.Download),
                     text = stringResource(id = R.string.import_files_screen_name),
                     descriptionText = stringResource(id = R.string.import_files_screen_description),
                     onClick = { navController.navigate(IMPORT_FILES_SCREEN_ROUTE) }
@@ -74,7 +74,7 @@ fun ImportExportScreen() {
             }
             item {
                 BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Default.Upload),
+                    painter = rememberVectorPainter(image = Icons.Outlined.Upload),
                     text = stringResource(id = R.string.export_files_screen_name),
                     descriptionText = stringResource(id = R.string.export_files_screen_description),
                     onClick = { openExportFilesScreen(navController = navController) }
