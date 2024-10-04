@@ -8,6 +8,7 @@ import com.skyd.rays.ext.checkUriReadPermission
 import com.skyd.rays.ext.endWith
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.StickerWithTags
+import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.respository.AddRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,18 +21,19 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
 @HiltViewModel
 class AddViewModel @Inject constructor(private var addRepository: AddRepository) :
     AbstractMviViewModel<AddIntent, AddState, AddEvent>() {
-
 
     override val viewState: StateFlow<AddState>
 
@@ -55,7 +57,6 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
             )
     }
 
-
     private fun Flow<AddPartialStateChange>.sendSingleEvent(): Flow<AddPartialStateChange> {
         return onEach { change ->
             val event = when (change) {
@@ -71,22 +72,9 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                     AddEvent.AddStickersResultEvent.Failed(change.msg)
                 }
 
-                is AddPartialStateChange.GetStickersWithTagsStateChanged -> {
-                    AddEvent.GetStickersWithTagsStateChanged
-                }
-
                 is AddPartialStateChange.Init.Failed -> {
                     AddEvent.InitFailed(change.msg)
                 }
-
-                is AddPartialStateChange.RemoveWaitingListSingleSticker -> {
-                    if (change.index == 0) AddEvent.CurrentStickerChanged else return@onEach
-                }
-
-                is AddPartialStateChange.Init.Success,
-                is AddPartialStateChange.ProcessNext,
-                is AddPartialStateChange.ReplaceWaitingListSingleSticker,
-                is AddPartialStateChange.AddToWaitingList -> AddEvent.CurrentStickerChanged
 
                 else -> return@onEach
             }
@@ -119,17 +107,62 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                 }.startWith(AddPartialStateChange.LoadingDialog.Show)
                     .catchMap { AddPartialStateChange.Init.Failed(it.message.orEmpty()) }
             },
-            filterIsInstance<AddIntent.ProcessNext>().map {
-                AddPartialStateChange.ProcessNext
+            filterIsInstance<AddIntent.UpdateTitleText>().map { intent ->
+                AddPartialStateChange.UpdateTitleText(intent.title)
             },
-            filterIsInstance<AddIntent.ReplaceWaitingListSingleSticker>().map { intent ->
-                AddPartialStateChange.ReplaceWaitingListSingleSticker(
-                    sticker = intent.sticker,
-                    index = intent.index,
-                )
+            filterIsInstance<AddIntent.UpdateCurrentTagText>().map { intent ->
+                AddPartialStateChange.UpdateCurrentTagText(intent.currentTag)
             },
-            filterIsInstance<AddIntent.RemoveWaitingListSingleSticker>().map { intent ->
-                AddPartialStateChange.RemoveWaitingListSingleSticker(index = intent.index)
+            filterIsInstance<AddIntent.ReplaceWaitingListSingleSticker>().flatMapConcat { intent ->
+                val currentStickerChanged = intent.index == 0
+                if (currentStickerChanged) {
+                    currentStickerChange(intent.sticker)
+                } else {
+                    flowOf(null to null)
+                }.map { (stickersWithTags, suggestTags) ->
+                    AddPartialStateChange.ReplaceWaitingListSingleSticker(
+                        sticker = intent.sticker,
+                        index = intent.index,
+                        getStickersWithTagsState = {
+                            if (currentStickerChanged) {
+                                GetStickersWithTagsState.fromStickersWithTags(stickersWithTags)
+                            } else it.getStickersWithTagsState
+                        },
+                        suggestTags = if (currentStickerChanged) {
+                            suggestTags.orEmpty().toList()
+                        } else null,
+                        currentStickerChanged = currentStickerChanged,
+                    )
+                }.startWith(AddPartialStateChange.LoadingDialog.Show).catchMap {
+                    AddPartialStateChange.ReplaceWaitingListSingleSticker(
+                        sticker = intent.sticker,
+                        index = intent.index,
+                    )
+                }.endWith(AddPartialStateChange.LoadingDialog.Close)
+            },
+            filterIsInstance<AddIntent.RemoveWaitingListSingleSticker>().flatMapConcat { intent ->
+                val currentStickerChanged = intent.index == 0
+                val willRemove = intent.onSticker(intent.index)!!
+                if (currentStickerChanged) {
+                    currentStickerChange(intent.onSticker(1))
+                } else {
+                    flowOf(null to null)
+                }.map { (stickersWithTags, suggestTags) ->
+                    AddPartialStateChange.RemoveWaitingListSingleSticker(
+                        willSticker = willRemove,
+                        getStickersWithTagsState = {
+                            if (currentStickerChanged) {
+                                GetStickersWithTagsState.fromStickersWithTags(stickersWithTags)
+                            } else it.getStickersWithTagsState
+                        },
+                        suggestTags = if (currentStickerChanged) {
+                            suggestTags.orEmpty().toList()
+                        } else null,
+                        currentStickerChanged = currentStickerChanged,
+                    )
+                }.startWith(AddPartialStateChange.LoadingDialog.Show).catchMap {
+                    AddPartialStateChange.RemoveWaitingListSingleSticker(willSticker = willRemove)
+                }.endWith(AddPartialStateChange.LoadingDialog.Close)
             },
             filterIsInstance<AddIntent.AddTag>().map { intent ->
                 AddPartialStateChange.AddTag(intent.text)
@@ -137,8 +170,28 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
             filterIsInstance<AddIntent.RemoveTag>().map { intent ->
                 AddPartialStateChange.RemoveTag(intent.text)
             },
-            filterIsInstance<AddIntent.AddToWaitingList>().map { intent ->
-                AddPartialStateChange.AddToWaitingList(intent.stickers)
+            filterIsInstance<AddIntent.AddToWaitingList>().flatMapConcat { intent ->
+                val currentStickerChanged = intent.currentListIsEmpty
+                if (currentStickerChanged) {
+                    currentStickerChange(intent.stickers[0])
+                } else {
+                    flowOf(null to null)
+                }.map { (stickersWithTags, suggestTags) ->
+                    AddPartialStateChange.AddToWaitingList(
+                        stickers = intent.stickers,
+                        getStickersWithTagsState = {
+                            if (currentStickerChanged) {
+                                GetStickersWithTagsState.fromStickersWithTags(stickersWithTags)
+                            } else it.getStickersWithTagsState
+                        },
+                        suggestTags = if (currentStickerChanged) {
+                            suggestTags.orEmpty().toList()
+                        } else null,
+                        currentStickerChanged = currentStickerChanged,
+                    )
+                }.startWith(AddPartialStateChange.LoadingDialog.Show).catchMap {
+                    AddPartialStateChange.AddToWaitingList(stickers = intent.stickers)
+                }.endWith(AddPartialStateChange.LoadingDialog.Close)
             },
             filterIsInstance<AddIntent.AddAddToAllTag>().map { intent ->
                 AddPartialStateChange.AllToAllTag.Add(intent.text)
@@ -147,15 +200,7 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                 AddPartialStateChange.AllToAllTag.Remove(intent.text)
             },
             filterIsInstance<AddIntent.RemoveSuggestTag>().map { intent ->
-                AddPartialStateChange.GetSuggestTags.Remove(intent.text)
-            },
-
-            filterIsInstance<AddIntent.GetStickerWithTags>().flatMapConcat { intent ->
-                addRepository.requestGetStickerWithTags(intent.stickerUuid).map {
-                    if (it == null) AddPartialStateChange.GetStickersWithTags.Failed(intent.stickerUuid)
-                    else AddPartialStateChange.GetStickersWithTags.Success(it)
-                }.startWith(AddPartialStateChange.LoadingDialog.Show)
-                    .endWith(AddPartialStateChange.GetStickersWithTagsStateChanged)
+                AddPartialStateChange.RemoveSuggestTag.Success(intent.text)
             },
 
             filterIsInstance<AddIntent.AddNewStickerWithTags>().flatMapConcat { intent ->
@@ -180,15 +225,21 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                     .endWith(AddPartialStateChange.LoadingDialog.Close)
                     .catchMap { AddPartialStateChange.AddStickers.Failed(it.message.orEmpty()) }
             },
-
-            filterIsInstance<AddIntent.GetSuggestTags>().flatMapConcat { intent ->
-                addRepository.requestSuggestTags(intent.sticker)
-                    .catchMap { emptySet() }.map { result ->
-                        AddPartialStateChange.GetSuggestTags.Success(result)
-                    }.catchMap<AddPartialStateChange> {
-                        AddPartialStateChange.GetSuggestTags.Failed(it.message.orEmpty())
-                    }
-            },
         )
+    }
+
+    private suspend fun currentStickerChange(newCurrentSticker: UriWithStickerUuidBean?):
+            Flow<Pair<StickerWithTags?, Set<String>?>> {
+        if (newCurrentSticker == null) return flowOf(null to null)
+        var getStickerWithTags: Flow<StickerWithTags?> = flowOf(null)
+        if (newCurrentSticker.stickerUuid.isNotBlank()) {
+            getStickerWithTags =
+                addRepository.requestGetStickerWithTags(newCurrentSticker.stickerUuid)
+        }
+        return getStickerWithTags.zip(
+            addRepository.requestSuggestTags(newCurrentSticker.uri!!)
+        ) { stickerWithTags, suggestTags ->
+            stickerWithTags to suggestTags
+        }
     }
 }

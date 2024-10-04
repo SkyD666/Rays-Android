@@ -71,7 +71,6 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -114,6 +113,7 @@ import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 const val ADD_SCREEN_ROUTE = "addScreen"
 
@@ -145,29 +145,22 @@ fun AddScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val navController = LocalNavController.current
-    var titleText by rememberSaveable { mutableStateOf("") }
-    var currentTagText by rememberSaveable { mutableStateOf("") }
-    var stickerCreateTime by rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     var openMoreMenu by rememberSaveable { mutableStateOf(false) }
     var openErrorDialog by rememberSaveable { mutableStateOf<String?>(null) }
     var saveButtonEnable by rememberSaveable { mutableStateOf(true) }
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     val dispatch = viewModel.getDispatcher(startWith = AddIntent.Init(initStickers))
 
-    // 添加/修改完成后重设页面数据
-    fun resetStickerData() {
-        titleText = ""
-        currentTagText = ""
-        stickerCreateTime = System.currentTimeMillis()
-    }
-
     fun processNext() {
-        if (uiState.waitingList.size <= 1) {
-            if (isEdit) {
-                navController.popBackStackWithLifecycle()
-            }
+        if (uiState.waitingList.size <= 1 && isEdit) {
+            navController.popBackStackWithLifecycle()
+        } else {
+            dispatch(
+                AddIntent.RemoveWaitingListSingleSticker(
+                    index = 0, onSticker = { uiState.waitingList.getOrNull(it) }
+                )
+            )
         }
-        dispatch(AddIntent.ProcessNext(uiState.waitingList.getOrNull(1)))
     }
 
     var currentReplaceIndex = rememberSaveable { 0 }
@@ -186,7 +179,12 @@ fun AddScreen(
     }
     val pickStickersLauncher = rememberImagePicker(multiple = true) { result ->
         if (result.isEmpty()) return@rememberImagePicker
-        dispatch(AddIntent.AddToWaitingList(result.map { UriWithStickerUuidBean(uri = it) }))
+        dispatch(
+            AddIntent.AddToWaitingList(
+                result.map { UriWithStickerUuidBean(uri = it) },
+                currentListIsEmpty = uiState.waitingList.isEmpty(),
+            )
+        )
     }
 
     Scaffold(
@@ -204,10 +202,7 @@ fun AddScreen(
                 },
                 actions = {
                     RaysIconButton(
-                        onClick = {
-                            resetStickerData()
-                            processNext()
-                        },
+                        onClick = { processNext() },
                         contentDescription = stringResource(R.string.add_screen_skip_current_sticker),
                         imageVector = Icons.Outlined.EditOff,
                     )
@@ -225,23 +220,17 @@ fun AddScreen(
                                 val getStickersWithTagsState = uiState.getStickersWithTagsState
                                 val stickerBean =
                                     if (getStickersWithTagsState is GetStickersWithTagsState.Success) {
-                                        getStickersWithTagsState.stickerWithTags.sticker
+                                        getStickersWithTagsState.stickerWithTags.sticker.copy(
+                                            title = uiState.titleText
+                                        )
                                     } else StickerBean(
-                                        title = titleText,
-                                        createTime = stickerCreateTime
+                                        title = uiState.titleText,
+                                        createTime = System.currentTimeMillis(),
+                                        uuid = uiState.currentSticker?.stickerUuid.orEmpty()
+                                            .ifBlank { UUID.randomUUID().toString() }
                                     )
                                 val stickerWithTags = StickerWithTags(
-                                    sticker = stickerBean.copy(
-                                        title = titleText,
-                                        createTime = stickerCreateTime
-                                    ).apply {
-                                        uuid = uiState.currentSticker?.stickerUuid.orEmpty()
-                                            .ifBlank {
-                                                (uiState.getStickersWithTagsState as?
-                                                        GetStickersWithTagsState.Success)
-                                                    ?.stickerWithTags?.sticker?.uuid.orEmpty()
-                                            }
-                                    },
+                                    sticker = stickerBean,
                                     tags = uiState.addedTags.distinct().map { TagBean(tag = it) }
                                 )
                                 dispatch(
@@ -284,7 +273,11 @@ fun AddScreen(
                             pickStickerLauncher.launchImagePicker()
                         },
                         onRemoveStickerFromWaitingListClick = { index ->
-                            dispatch(AddIntent.RemoveWaitingListSingleSticker(index))
+                            dispatch(
+                                AddIntent.RemoveWaitingListSingleSticker(
+                                    index = index,
+                                    onSticker = { uiState.waitingList.getOrNull(it) })
+                            )
                         },
                     )
                     AnimatedVisibility(
@@ -300,14 +293,14 @@ fun AddScreen(
                 }
             }
             titleInputFieldItem(
-                value = titleText,
-                onValueChange = { titleText = it },
+                value = uiState.titleText,
+                onValueChange = { dispatch(AddIntent.UpdateTitleText(it)) },
             )
             tagsInputFieldItem(
-                value = currentTagText,
-                onValueChange = { currentTagText = it },
-                onAddClick = { dispatch(AddIntent.AddTag(currentTagText)) },
-                onAddToAllClick = { dispatch(AddIntent.AddAddToAllTag(currentTagText)) }
+                value = uiState.currentTagText,
+                onValueChange = { dispatch(AddIntent.UpdateCurrentTagText(it)) },
+                onAddClick = { dispatch(AddIntent.AddTag(uiState.currentTagText)) },
+                onAddToAllClick = { dispatch(AddIntent.AddAddToAllTag(uiState.currentTagText)) }
             )
             item {
                 AnimatedVisibility(
@@ -322,18 +315,10 @@ fun AddScreen(
             }
             item {
                 SuggestedTags(suggestedTags = uiState.suggestTags, onClick = { index ->
-                    currentTagText = uiState.suggestTags[index]
+                    dispatch(AddIntent.UpdateCurrentTagText(uiState.suggestTags[index]))
                     dispatch(AddIntent.AddTag(uiState.suggestTags[index]))
                     dispatch(AddIntent.RemoveSuggestTag(uiState.suggestTags[index]))
                 })
-            }
-        }
-
-        fun onGetStickersWithTagsStateChanged() {
-            val getStickersWithTagsState = uiState.getStickersWithTagsState
-            if (getStickersWithTagsState is GetStickersWithTagsState.Success) {
-                titleText = getStickersWithTagsState.stickerWithTags.sticker.title
-                stickerCreateTime = getStickersWithTagsState.stickerWithTags.sticker.createTime
             }
         }
 
@@ -342,7 +327,6 @@ fun AddScreen(
                 is AddEvent.AddStickersResultEvent.Duplicate -> {
                     saveButtonEnable = true
                     openDuplicateDialog = true
-                    onGetStickersWithTagsStateChanged()
                 }
 
                 is AddEvent.AddStickersResultEvent.Failed -> {
@@ -354,26 +338,9 @@ fun AddScreen(
 
                 is AddEvent.AddStickersResultEvent.Success -> {
                     saveButtonEnable = true
-                    resetStickerData()
                     processNext()
                 }
 
-                AddEvent.CurrentStickerChanged -> {
-                    val currentSticker = uiState.currentSticker
-                    resetStickerData()
-                    if (currentSticker?.stickerUuid.isNullOrBlank()) {
-                        onGetStickersWithTagsStateChanged()
-                    } else {
-                        dispatch(AddIntent.GetStickerWithTags(currentSticker!!.stickerUuid))
-                    }
-                    if (currentSticker != null) {
-                        currentSticker.uri?.let { uri ->
-                            dispatch(AddIntent.GetSuggestTags(uri))
-                        }
-                    }
-                }
-
-                AddEvent.GetStickersWithTagsStateChanged -> onGetStickersWithTagsStateChanged()
                 is AddEvent.InitFailed -> openErrorDialog = event.msg
             }
         }

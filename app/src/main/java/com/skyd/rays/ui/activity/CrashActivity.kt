@@ -4,9 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,9 +26,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -42,12 +37,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
+import com.skyd.rays.base.BaseComposeActivity
 import com.skyd.rays.config.GITHUB_NEW_ISSUE_URL
 import com.skyd.rays.ext.showSnackbar
-import com.skyd.rays.model.preference.SettingsProvider
-import com.skyd.rays.ui.local.LocalDarkMode
-import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.theme.RaysTheme
 import com.skyd.rays.util.CommonUtil.getAppVersionCode
 import com.skyd.rays.util.CommonUtil.getAppVersionName
 import com.skyd.rays.util.CommonUtil.openBrowser
@@ -55,7 +47,7 @@ import com.skyd.rays.util.CommonUtil.openBrowser
 /**
  * CrashActivity
  */
-class CrashActivity : ComponentActivity() {
+class CrashActivity : BaseComposeActivity() {
     companion object {
         const val CRASH_INFO = "crashInfo"
 
@@ -68,7 +60,6 @@ class CrashActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         val crashInfo = intent.getStringExtra(CRASH_INFO)
@@ -83,19 +74,11 @@ class CrashActivity : ComponentActivity() {
             append(crashInfo)
         }
 
-        setContent {
-            CompositionLocalProvider(
-                LocalWindowSizeClass provides calculateWindowSizeClass(this)
-            ) {
-                SettingsProvider {
-                    RaysTheme(darkTheme = LocalDarkMode.current) {
-                        CrashScreen(
-                            message = message,
-                            onReport = { openBrowser(GITHUB_NEW_ISSUE_URL) }
-                        )
-                    }
-                }
-            }
+        setContentBase {
+            CrashScreen(
+                message = message,
+                onReport = { openBrowser(GITHUB_NEW_ISSUE_URL) }
+            )
         }
     }
 }

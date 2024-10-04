@@ -16,10 +16,6 @@ internal sealed interface AddPartialStateChange {
         }
     }
 
-    data object GetStickersWithTagsStateChanged : AddPartialStateChange {
-        override fun reduce(oldState: AddState) = oldState
-    }
-
     sealed interface Init : AddPartialStateChange {
         data class Success(
             val stickerWithTags: StickerWithTags?,
@@ -34,6 +30,7 @@ internal sealed interface AddPartialStateChange {
                 suggestTags = suggestTags.toList(),
                 addedTags = stickerWithTags?.tags?.map { it.tag }.orEmpty(),
                 addToAllTags = emptyList(),
+                titleText = stickerWithTags?.sticker?.title.orEmpty(),
                 loadingDialog = false,
             )
         }
@@ -43,29 +40,53 @@ internal sealed interface AddPartialStateChange {
         }
     }
 
-    data object ProcessNext : AddPartialStateChange {
-        override fun reduce(oldState: AddState) = oldState.copy(
-            waitingList = oldState.waitingList.toMutableList().apply { removeFirstOrNull() },
-            getStickersWithTagsState = GetStickersWithTagsState.Init,
-            suggestTags = emptyList(),
-            addedTags = oldState.addToAllTags,
-            loadingDialog = false,
-        )
+    data class UpdateTitleText(val title: String) : AddPartialStateChange {
+        override fun reduce(oldState: AddState) = oldState.copy(titleText = title)
+    }
+
+    data class UpdateCurrentTagText(val currentTag: String) : AddPartialStateChange {
+        override fun reduce(oldState: AddState) = oldState.copy(currentTagText = currentTag)
     }
 
     data class ReplaceWaitingListSingleSticker(
         val sticker: UriWithStickerUuidBean,
-        val index: Int
+        val index: Int,
+        val getStickersWithTagsState: (oldState: AddState) -> GetStickersWithTagsState = { it.getStickersWithTagsState },
+        val suggestTags: List<String>? = null,
+        val currentStickerChanged: Boolean = false,
     ) : AddPartialStateChange {
-        override fun reduce(oldState: AddState) = oldState.copy(
-            waitingList = oldState.waitingList.toMutableList().apply { set(index, sticker) }
-        )
+        override fun reduce(oldState: AddState): AddState {
+            val getStickersWithTagsState = getStickersWithTagsState(oldState)
+            return oldState.copy(
+                waitingList = oldState.waitingList.toMutableList().apply { set(index, sticker) },
+                getStickersWithTagsState = getStickersWithTagsState,
+                suggestTags = suggestTags ?: oldState.suggestTags,
+                addedTags = if (currentStickerChanged) emptyList() else oldState.addedTags,
+                titleText = if (currentStickerChanged) {
+                    (getStickersWithTagsState as? GetStickersWithTagsState.Success)?.stickerWithTags?.sticker?.title.orEmpty()
+                } else oldState.titleText,
+            )
+        }
     }
 
-    data class RemoveWaitingListSingleSticker(val index: Int) : AddPartialStateChange {
-        override fun reduce(oldState: AddState) = oldState.copy(
-            waitingList = oldState.waitingList.toMutableList().apply { removeAt(index) }
-        )
+    data class RemoveWaitingListSingleSticker(
+        val willSticker: UriWithStickerUuidBean,
+        val getStickersWithTagsState: (oldState: AddState) -> GetStickersWithTagsState = { it.getStickersWithTagsState },
+        val suggestTags: List<String>? = null,
+        val currentStickerChanged: Boolean = false,
+    ) : AddPartialStateChange {
+        override fun reduce(oldState: AddState): AddState {
+            val getStickersWithTagsState = getStickersWithTagsState(oldState)
+            return oldState.copy(
+                waitingList = oldState.waitingList.toMutableList().apply { remove(willSticker) },
+                getStickersWithTagsState = getStickersWithTagsState,
+                suggestTags = suggestTags ?: oldState.suggestTags,
+                addedTags = if (currentStickerChanged) emptyList() else oldState.addedTags,
+                titleText = if (currentStickerChanged) {
+                    (getStickersWithTagsState as? GetStickersWithTagsState.Success)?.stickerWithTags?.sticker?.title.orEmpty()
+                } else oldState.titleText,
+            )
+        }
     }
 
     data class AddTag(val tag: String) : AddPartialStateChange {
@@ -80,11 +101,24 @@ internal sealed interface AddPartialStateChange {
         )
     }
 
-    data class AddToWaitingList(val stickers: List<UriWithStickerUuidBean>) :
-        AddPartialStateChange {
-        override fun reduce(oldState: AddState) = oldState.copy(
-            waitingList = oldState.waitingList + stickers
-        )
+    data class AddToWaitingList(
+        val stickers: List<UriWithStickerUuidBean>,
+        val getStickersWithTagsState: (oldState: AddState) -> GetStickersWithTagsState = { it.getStickersWithTagsState },
+        val suggestTags: List<String>? = null,
+        val currentStickerChanged: Boolean = false,
+    ) : AddPartialStateChange {
+        override fun reduce(oldState: AddState): AddState {
+            val getStickersWithTagsState = getStickersWithTagsState(oldState)
+            return oldState.copy(
+                waitingList = oldState.waitingList + stickers,
+                getStickersWithTagsState = getStickersWithTagsState,
+                suggestTags = suggestTags ?: oldState.suggestTags,
+                addedTags = if (currentStickerChanged) emptyList() else oldState.addedTags,
+                titleText = if (currentStickerChanged) {
+                    (getStickersWithTagsState as? GetStickersWithTagsState.Success)?.stickerWithTags?.sticker?.title.orEmpty()
+                } else oldState.titleText,
+            )
+        }
     }
 
     sealed interface AllToAllTag : AddPartialStateChange {
@@ -121,22 +155,14 @@ internal sealed interface AddPartialStateChange {
         data class Failed(val stickerUuid: String) : GetStickersWithTags
     }
 
-    sealed interface GetSuggestTags : AddPartialStateChange {
-
-        data class Success(val texts: Set<String>) : GetSuggestTags {
-            override fun reduce(oldState: AddState): AddState = oldState.copy(
-                suggestTags = texts.toList(),
-                loadingDialog = false,
-            )
-        }
-
-        data class Remove(val text: String) : GetSuggestTags {
+    sealed interface RemoveSuggestTag : AddPartialStateChange {
+        data class Success(val text: String) : RemoveSuggestTag {
             override fun reduce(oldState: AddState): AddState = oldState.copy(
                 suggestTags = oldState.suggestTags - text
             )
         }
 
-        data class Failed(val msg: String) : GetSuggestTags {
+        data class Failed(val msg: String) : RemoveSuggestTag {
             override fun reduce(oldState: AddState): AddState = oldState
         }
     }

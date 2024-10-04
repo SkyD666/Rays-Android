@@ -34,8 +34,9 @@ data class StickerBean(
     constructor(
         title: String,
         createTime: Long = System.currentTimeMillis(),
+        uuid: String = UUID.randomUUID().toString(),
     ) : this(
-        uuid = UUID.randomUUID().toString(),
+        uuid = uuid,
         title = title,
         stickerMd5 = "",
         clickCount = 0L,

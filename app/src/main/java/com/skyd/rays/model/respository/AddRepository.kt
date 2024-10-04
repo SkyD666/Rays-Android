@@ -67,6 +67,9 @@ class AddRepository @Inject constructor(
                 emit(stickerDao.getStickerWithTags(uuidGotByMd5)!!)
             } else {
                 stickerWithTags.sticker.stickerMd5 = stickerMd5
+                if (stickerWithTags.sticker.createTime == 0L) {
+                    stickerWithTags.sticker.createTime = System.currentTimeMillis()
+                }
                 val uuid = stickerDao.addStickerWithTags(stickerWithTags)
                 if (!tempFile.renameTo(File(appContext.STICKER_DIR, uuid))) {
                     tempFile.deleteRecursively()

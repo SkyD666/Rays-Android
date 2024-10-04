@@ -10,6 +10,8 @@ data class AddState(
     val suggestTags: List<String>,
     val addedTags: List<String>,
     val addToAllTags: List<String>,
+    val titleText: String,
+    val currentTagText: String,
     val loadingDialog: Boolean,
 ) : MviViewState {
     val currentSticker: UriWithStickerUuidBean? = waitingList.firstOrNull()
@@ -21,6 +23,8 @@ data class AddState(
             suggestTags = emptyList(),
             addedTags = emptyList(),
             addToAllTags = emptyList(),
+            titleText = "",
+            currentTagText = "",
             loadingDialog = false,
         )
     }
@@ -30,4 +34,10 @@ sealed interface GetStickersWithTagsState {
     data class Success(val stickerWithTags: StickerWithTags) : GetStickersWithTagsState
     data object Init : GetStickersWithTagsState
     data object Failed : GetStickersWithTagsState
+
+    companion object {
+        fun fromStickersWithTags(stickerWithTags: StickerWithTags?): GetStickersWithTagsState {
+            return if (stickerWithTags == null) Failed else Success(stickerWithTags)
+        }
+    }
 }
