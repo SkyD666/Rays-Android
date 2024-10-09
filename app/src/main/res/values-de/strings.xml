@@ -1,2 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Rays</string>
+    <string name="more_screen_name">Mehr</string>
+    <string name="home_screen_name">Home</string>
+    <string name="home_screen_search_hint">Suche</string>
+    <string name="home_screen_add">Hinzufügen</string>
+    <string name="add_screen_save_current_sticker">Sticker speichern</string>
+    <string name="add_screen_title">Titel (Optional)</string>
+    <string name="add_screen_add_tags">Tag hinzufügen</string>
+    <string name="add_screen_name">Hinzufügen</string>
+    <string name="add_screen_name_edit">Bearbeiten</string>
+    <string name="back">Zurück</string>
+    <string name="add_screen_waiting_uris">Warteliste</string>
+    <string name="add_screen_sticker_is_not_set">Wähle einen Sticker aus!</string>
+    <string name="add_screen_add_tag">Hinzufügen</string>
+    <string name="add_screen_add_tag_to_all">Alle Sticker zur Warteschlange hinzufügen</string>
+    <string name="search_config_screen_name">Suche</string>
+    <string name="detail_screen_edit">Bearbeiten</string>
+    <string name="home_screen_delete">Löschen</string>
+    <string name="detail_screen_copy">Kopieren</string>
+    <string name="detail_screen_copied">Kopiert</string>
+    <string name="info">Info</string>
+    <string name="settings">Einstellungen</string>
+    <string name="about">Über</string>
+    <string name="about_screen_description_2">Hast du keinen Überblick über deine Sticker? Dieses Tool hilft dir dabei, deine Sticker zu verwalten! 😋</string>
+    <string name="about_screen_description_3">Rays verwendet die MVI Architektur und setzt vollständig auf das Material You Design. Die Ansichten wurden alle mit Jetpack Compose entwickelt.</string>
+    <string name="about_screen_join_telegram">Telegram Gruppe</string>
+    <string name="license_screen_name">Open Source Lizenz</string>
+    <string name="no_browser_found">Browser konnte nicht erkannt werden! Link: %s</string>
+    <string name="appearance_screen_name">Aussehen &amp; Stil</string>
+    <string name="home_screen_close_search">Schließen</string>
+    <string name="home_screen_export">Exportieren</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_close">Schließen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="home_screen_delete_warning">Löschen? Dies kann nicht rückgängig gemacht werden!</string>
+    <string name="dialog_warning">Warnung</string>
+    <string name="about_screen_goto_github_repo">GitHub repository</string>
+    <string name="about_screen_join_discord">Discord Server</string>
+</resources>
