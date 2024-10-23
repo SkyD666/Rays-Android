@@ -358,4 +358,5 @@
     <string name="copied">已复制</string>
     <string name="crash_screen_crash_log">日志</string>
     <string name="crash_screen_copy_crash_log">复制日志</string>
+    <string name="appearance_screen_amoled_dark">Amoled 深色</string>
 </resources>

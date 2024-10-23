@@ -351,4 +351,5 @@
     <string name="copied">Copied</string>
     <string name="crash_screen_crash_log">Log</string>
     <string name="crash_screen_copy_crash_log">Copy log</string>
+    <string name="appearance_screen_amoled_dark">Amoled dark</string>
 </resources>

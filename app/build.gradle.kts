@@ -23,7 +23,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 67
-        versionName = "2.3-alpha07"
+        versionName = "2.3-beta01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -147,21 +147,21 @@ tasks.withType(KotlinCompile::class.java).configureEach {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.compose.ui:ui:1.7.3")
+    implementation("androidx.compose.ui:ui:1.7.4")
     implementation("androidx.compose.material3:material3:1.3.0")
     implementation("androidx.compose.material3:material3-window-size-class:1.3.0")
-    implementation("androidx.compose.material:material:1.7.3")
-    implementation("androidx.compose.material:material-icons-extended:1.7.3")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.7.3")
+    implementation("androidx.compose.material:material:1.7.4")
+    implementation("androidx.compose.material:material-icons-extended:1.7.4")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.7.4")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.6")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
-    implementation("androidx.activity:activity-compose:1.9.2")
+    implementation("androidx.activity:activity-compose:1.9.3")
     implementation("androidx.palette:palette-ktx:1.0.0")
     implementation("com.google.dagger:hilt-android:2.52")
     ksp("com.google.dagger:hilt-android-compiler:2.52")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-    implementation("androidx.navigation:navigation-compose:2.8.2")
+    implementation("androidx.navigation:navigation-compose:2.8.3")
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation("com.google.accompanist:accompanist-drawablepainter:0.36.0")
     implementation("io.coil-kt:coil-compose:2.7.0")
@@ -173,8 +173,8 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("com.github.thegrizzlylabs:sardine-android:0.8")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.2")
-    implementation("com.materialkolor:material-kolor:1.7.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation("com.materialkolor:material-kolor:2.0.0")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("com.airbnb.android:lottie-compose:6.5.2")
 
@@ -195,6 +195,6 @@ dependencies {
 
     implementation("com.github.penfeizhou.android.animation:apng:3.0.1")
 
-    debugImplementation("androidx.compose.ui:ui-tooling:1.7.3")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.3")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.7.4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.4")
 }

@@ -28,6 +28,7 @@ import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
+import com.skyd.rays.model.preference.theme.AmoledDarkModePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.StickerColorThemePreference
@@ -39,6 +40,7 @@ fun Preferences.toSettings(): Settings {
         themeName = ThemeNamePreference.fromPreferences(this),
         customPrimaryColor = CustomPrimaryColorPreference.fromPreferences(this),
         darkMode = DarkModePreference.fromPreferences(this),
+        amoledDarkMode = AmoledDarkModePreference.fromPreferences(this),
         stickerColorTheme = StickerColorThemePreference.fromPreferences(this),
 
         // Theme

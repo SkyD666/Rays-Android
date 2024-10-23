@@ -19,6 +19,7 @@ import com.skyd.rays.ext.activity
 import com.skyd.rays.ext.toColorOrNull
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
+import com.skyd.rays.ui.local.LocalAmoledDarkMode
 import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalThemeName
 
@@ -47,14 +48,15 @@ fun RaysTheme(
     }
 
     val themeName = LocalThemeName.current
+    val amoledDarkMode = LocalAmoledDarkMode.current
 
     MaterialTheme(
-        colorScheme = remember(themeName, LocalCustomPrimaryColor.current) {
+        colorScheme = remember(themeName, LocalCustomPrimaryColor.current, amoledDarkMode) {
             wallpaperColors.getOrElse(themeName) {
                 dynamicColorScheme(
                     seedColor = ThemeNamePreference.values[0].keyColor,
                     isDark = darkTheme,
-                    isAmoled = false,
+                    isAmoled = amoledDarkMode,
                 )
             }
         },
@@ -88,12 +90,19 @@ fun extractAllColors(darkTheme: Boolean): Map<String, ColorScheme> {
 @Composable
 fun extractColors(darkTheme: Boolean): Map<String, ColorScheme> {
     return ThemeNamePreference.values.associate {
-        it.name to rememberDynamicColorScheme(it.keyColor, isDark = darkTheme)
+        it.name to rememberDynamicColorScheme(
+            primary = it.keyColor,
+            isDark = darkTheme,
+            isAmoled = LocalAmoledDarkMode.current,
+        )
     }.toMutableMap().also { map ->
         val customPrimaryColor =
             LocalCustomPrimaryColor.current.toColorOrNull() ?: Color.Transparent
-        map[ThemeNamePreference.CUSTOM_THEME_NAME] =
-            rememberDynamicColorScheme(customPrimaryColor, isDark = darkTheme)
+        map[ThemeNamePreference.CUSTOM_THEME_NAME] = rememberDynamicColorScheme(
+            primary = customPrimaryColor,
+            isDark = darkTheme,
+            isAmoled = LocalAmoledDarkMode.current,
+        )
     }
 }
 
@@ -113,18 +122,24 @@ fun extractColorsFromWallpaper(darkTheme: Boolean): Map<String, ColorScheme> {
                 preset["WallpaperPrimary"] = rememberSystemDynamicColorScheme(isDark = darkTheme)
             } else {
                 preset["WallpaperPrimary"] = rememberDynamicColorScheme(
-                    seedColor = Color(primary), isDark = darkTheme,
+                    primary = Color(primary),
+                    isDark = darkTheme,
+                    isAmoled = LocalAmoledDarkMode.current,
                 )
             }
         }
         if (secondary != null) {
             preset["WallpaperSecondary"] = rememberDynamicColorScheme(
-                seedColor = Color(secondary), isDark = darkTheme,
+                primary = Color(secondary),
+                isDark = darkTheme,
+                isAmoled = LocalAmoledDarkMode.current,
             )
         }
         if (tertiary != null) {
             preset["WallpaperTertiary"] = rememberDynamicColorScheme(
-                seedColor = Color(tertiary), isDark = darkTheme,
+                primary = Color(tertiary),
+                isDark = darkTheme,
+                isAmoled = LocalAmoledDarkMode.current,
             )
         }
     }

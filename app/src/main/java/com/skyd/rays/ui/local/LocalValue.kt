@@ -29,6 +29,7 @@ import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
+import com.skyd.rays.model.preference.theme.AmoledDarkModePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.StickerColorThemePreference
@@ -44,6 +45,7 @@ val LocalWindowSizeClass = compositionLocalOf<WindowSizeClass> {
 
 // Theme
 val LocalDarkMode = compositionLocalOf { DarkModePreference.default }
+val LocalAmoledDarkMode = compositionLocalOf { AmoledDarkModePreference.default }
 val LocalThemeName = compositionLocalOf { ThemeNamePreference.default }
 val LocalCustomPrimaryColor = compositionLocalOf { CustomPrimaryColorPreference.default }
 val LocalStickerColorTheme = compositionLocalOf { StickerColorThemePreference.default }

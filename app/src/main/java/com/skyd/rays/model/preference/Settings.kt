@@ -23,10 +23,12 @@ import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
+import com.skyd.rays.model.preference.theme.AmoledDarkModePreference
 import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
+import com.skyd.rays.ui.local.LocalAmoledDarkMode
 import com.skyd.rays.ui.local.LocalApiGrant
 import com.skyd.rays.ui.local.LocalAutoShareIgnoreStrategy
 import com.skyd.rays.ui.local.LocalBlurSticker
@@ -65,6 +67,7 @@ data class Settings(
     val themeName: String = ThemeNamePreference.default,
     val customPrimaryColor: String = CustomPrimaryColorPreference.default,
     val darkMode: Int = DarkModePreference.default,
+    val amoledDarkMode: Boolean = AmoledDarkModePreference.default,
     val stickerColorTheme: Boolean = StickerColorThemePreference.default,
     // Update
     val ignoreUpdateVersion: Long = IgnoreUpdateVersionPreference.default,
@@ -118,6 +121,7 @@ fun SettingsProvider(
         LocalThemeName provides settings.themeName,
         LocalCustomPrimaryColor provides settings.customPrimaryColor,
         LocalDarkMode provides settings.darkMode,
+        LocalAmoledDarkMode provides settings.amoledDarkMode,
         LocalStickerColorTheme provides settings.stickerColorTheme,
         // Update
         LocalIgnoreUpdateVersion provides settings.ignoreUpdateVersion,

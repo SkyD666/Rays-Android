@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -376,9 +375,7 @@ fun MainCard(
                 FlowRow(
                     modifier = Modifier
                         .padding(vertical = 6.dp, horizontal = 16.dp)
-                        .fillMaxWidth()
-                        .heightIn(max = 150.dp)
-                        .verticalScroll(rememberScrollState()),
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     repeat(tags.size) { index ->
