@@ -73,6 +73,9 @@ import kotlinx.coroutines.launch
 
 const val WEBDAV_SCREEN_ROUTE = "webDavScreen"
 
+private const val WEBDAV_ACCOUNT_KEY = "webDavAccount"
+private const val WEBDAV_PASSWORD_KEY = "webDavPassword"
+
 @Composable
 fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -146,7 +149,11 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                         WebDavServerPreference.put(
                             context = context,
                             scope = scope,
-                            value = if (!it.endsWith("/")) "$it/" else it
+                            value = if (it.isBlank()) {
+                                WebDavServerPreference.default
+                            } else {
+                                if (it.endsWith("/")) it else "$it/"
+                            }
                         )
                     }
                     inputDialogIsPassword = false
@@ -156,9 +163,14 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                     inputDialogInfo = Triple(
                         context.getString(R.string.webdav_screen_input_account), account
                     ) {
-                        account = it
                         openInputDialog = false
-                        secretSharedPreferences().editor { putString("webDavAccount", it) }
+                        if (it.isBlank()) {
+                            account = ""
+                            secretSharedPreferences().editor { remove(WEBDAV_ACCOUNT_KEY) }
+                        } else {
+                            account = it
+                            secretSharedPreferences().editor { putString(WEBDAV_ACCOUNT_KEY, it) }
+                        }
                     }
                     inputDialogIsPassword = false
                     openInputDialog = true
@@ -167,9 +179,14 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                     inputDialogInfo = Triple(
                         context.getString(R.string.webdav_screen_input_password), password
                     ) {
-                        password = it
                         openInputDialog = false
-                        secretSharedPreferences().editor { putString("webDavPassword", it) }
+                        if (it.isBlank()) {
+                            password = ""
+                            secretSharedPreferences().editor { remove(WEBDAV_PASSWORD_KEY) }
+                        } else {
+                            password = it
+                            secretSharedPreferences().editor { putString(WEBDAV_PASSWORD_KEY, it) }
+                        }
                     }
                     inputDialogIsPassword = true
                     openInputDialog = true
@@ -284,6 +301,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             isPassword = inputDialogIsPassword,
             onDismissRequest = { openInputDialog = false },
             onConfirm = inputDialogInfo.third,
+            disableConfirmWhenBlank = false,
             onValueChange = {
                 inputDialogInfo = inputDialogInfo.copy(second = it)
             },
