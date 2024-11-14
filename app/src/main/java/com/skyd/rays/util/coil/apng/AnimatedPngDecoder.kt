@@ -1,11 +1,12 @@
 package com.skyd.rays.util.coil.apng
 
-import coil.ImageLoader
-import coil.decode.DecodeResult
-import coil.decode.Decoder
-import coil.decode.ImageSource
-import coil.fetch.SourceResult
-import coil.request.Options
+import coil3.ImageLoader
+import coil3.asImage
+import coil3.decode.DecodeResult
+import coil3.decode.Decoder
+import coil3.decode.ImageSource
+import coil3.fetch.SourceFetchResult
+import coil3.request.Options
 import com.github.penfeizhou.animation.apng.APNGDrawable
 import com.github.penfeizhou.animation.loader.StreamLoader
 import com.skyd.rays.util.image.format.FormatStandard.PngFormat.PNG_FORMAT_DATA
@@ -24,7 +25,7 @@ class AnimatedPngDecoder(private val source: ImageSource) : Decoder {
         drawable.start()
         drawable.setLoopLimit(-1)
         return DecodeResult(
-            drawable = drawable,
+            image = drawable.asImage(),
             isSampled = false
         )
     }
@@ -36,7 +37,7 @@ class AnimatedPngDecoder(private val source: ImageSource) : Decoder {
          * https://twitter.com/angealbertini/status/1372082666632327169
          */
         override fun create(
-            result: SourceResult,
+            result: SourceFetchResult,
             options: Options,
             imageLoader: ImageLoader
         ): Decoder? {

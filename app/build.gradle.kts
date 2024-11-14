@@ -23,7 +23,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 67
-        versionName = "2.3-beta02"
+        versionName = "2.3-rc01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -161,12 +161,12 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.52")
     ksp("com.google.dagger:hilt-android-compiler:2.52")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-    implementation("androidx.navigation:navigation-compose:2.8.3")
+    implementation("androidx.navigation:navigation-compose:2.8.4")
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation("com.google.accompanist:accompanist-drawablepainter:0.36.0")
-    implementation("io.coil-kt:coil-compose:2.7.0")
-    implementation("io.coil-kt:coil-gif:2.7.0")
-    implementation("io.coil-kt:coil-svg:2.7.0")
+    implementation("io.coil-kt.coil3:coil-compose:3.0.2")
+    implementation("io.coil-kt.coil3:coil-gif:3.0.2")
+    implementation("io.coil-kt.coil3:coil-svg:3.0.2")
     implementation("androidx.profileinstaller:profileinstaller:1.4.1")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.room:room-runtime:2.6.1")

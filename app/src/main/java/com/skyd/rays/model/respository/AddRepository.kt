@@ -98,9 +98,7 @@ class AddRepository @Inject constructor(
                 TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
                     .process(image)
                     .addOnSuccessListener {
-                        cont.resume(
-                            getTexts(it, textRecognizeThreshold), onCancellation = null
-                        )
+                        cont.resume(getTexts(it, textRecognizeThreshold), onCancellation = null)
                     }
                     .addOnFailureListener { cont.resumeWithException(it) }
             })
@@ -109,9 +107,7 @@ class AddRepository @Inject constructor(
                 TextRecognition.getClient(ChineseTextRecognizerOptions.Builder().build())
                     .process(image)
                     .addOnSuccessListener {
-                        cont.resume(
-                            getTexts(it, textRecognizeThreshold), onCancellation = null
-                        )
+                        cont.resume(getTexts(it, textRecognizeThreshold), onCancellation = null)
                     }
                     .addOnFailureListener { cont.resumeWithException(it) }
             })

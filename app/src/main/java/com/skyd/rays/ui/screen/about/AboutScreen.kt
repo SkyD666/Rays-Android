@@ -65,7 +65,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.skyd.rays.R
 import com.skyd.rays.config.ANIVU_URL
 import com.skyd.rays.config.GITHUB_REPO
@@ -76,6 +75,7 @@ import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.model.bean.OtherWorksBean
 import com.skyd.rays.ui.component.RaysIconButton
+import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.dialog.RaysDialog
@@ -467,12 +467,13 @@ private fun OtherWorksItem(
                 .padding(15.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                AsyncImage(
+                RaysImage(
                     modifier = Modifier
                         .size(30.dp)
                         .aspectRatio(1f),
                     model = data.icon,
-                    contentDescription = data.name
+                    contentDescription = data.name,
+                    blur = false,
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(

@@ -151,6 +151,10 @@ fun AddScreen(
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     val dispatch = viewModel.getDispatcher(startWith = AddIntent.Init(initStickers))
 
+    LaunchedEffect(uiState.currentSticker) {
+        saveButtonEnable = true
+    }
+
     fun processNext() {
         if (uiState.waitingList.size <= 1 && isEdit) {
             navController.popBackStackWithLifecycle()
@@ -231,7 +235,8 @@ fun AddScreen(
                                     )
                                 val stickerWithTags = StickerWithTags(
                                     sticker = stickerBean,
-                                    tags = uiState.addedTags.distinct().map { TagBean(tag = it) }
+                                    tags = (uiState.addedTags + uiState.addToAllTags).distinct()
+                                        .map { TagBean(tag = it) }
                                 )
                                 dispatch(
                                     AddIntent.AddNewStickerWithTags(
@@ -336,11 +341,7 @@ fun AddScreen(
                     )
                 }
 
-                is AddEvent.AddStickersResultEvent.Success -> {
-                    saveButtonEnable = true
-                    processNext()
-                }
-
+                is AddEvent.AddStickersResultEvent.Success -> processNext()
                 is AddEvent.InitFailed -> openErrorDialog = event.msg
             }
         }
