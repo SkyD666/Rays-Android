@@ -23,7 +23,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 67
-        versionName = "2.3-rc01"
+        versionName = "2.3-rc02"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -158,15 +158,15 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.activity:activity-compose:1.9.3")
     implementation("androidx.palette:palette-ktx:1.0.0")
-    implementation("com.google.dagger:hilt-android:2.52")
-    ksp("com.google.dagger:hilt-android-compiler:2.52")
+    implementation("com.google.dagger:hilt-android:2.53")
+    ksp("com.google.dagger:hilt-android-compiler:2.53")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("androidx.navigation:navigation-compose:2.8.4")
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation("com.google.accompanist:accompanist-drawablepainter:0.36.0")
-    implementation("io.coil-kt.coil3:coil-compose:3.0.2")
-    implementation("io.coil-kt.coil3:coil-gif:3.0.2")
-    implementation("io.coil-kt.coil3:coil-svg:3.0.2")
+    implementation("io.coil-kt.coil3:coil-compose:3.0.4")
+    implementation("io.coil-kt.coil3:coil-gif:3.0.4")
+    implementation("io.coil-kt.coil3:coil-svg:3.0.4")
     implementation("androidx.profileinstaller:profileinstaller:1.4.1")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.room:room-runtime:2.6.1")
@@ -176,7 +176,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation("com.materialkolor:material-kolor:2.0.0")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
-    implementation("com.airbnb.android:lottie-compose:6.6.0")
+    implementation("com.airbnb.android:lottie-compose:6.6.1")
 
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
@@ -193,7 +193,7 @@ dependencies {
     implementation("org.tensorflow:tensorflow-lite:2.16.1")
     implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
 
-    implementation("com.github.penfeizhou.android.animation:apng:3.0.1")
+    implementation("com.github.penfeizhou.android.animation:apng:3.0.2")
 
     debugImplementation("androidx.compose.ui:ui-tooling:1.7.5")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.5")
