@@ -127,3 +127,14 @@
 -dontwarn org.openjsse.javax.net.ssl.SSLParameters
 -dontwarn org.openjsse.javax.net.ssl.SSLSocket
 -dontwarn org.openjsse.net.ssl.OpenJSSE
+
+# com.google.ai.edge.litert
+-keep class javax.lang.model.** { *; }
+-dontwarn javax.lang.model.**
+-keep class com.google.mediapipe.proto.** { *; }
+-keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite { *; }
+-keep class com.google.common.flogger.** { *; }
+
+# ObjectBox
+-keep class io.objectbox.** { *; }
+-dontwarn io.objectbox.**

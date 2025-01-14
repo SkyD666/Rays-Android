@@ -9,7 +9,11 @@ import io.objectbox.annotation.Index
 data class StickerEmbedding(
     @Id var id: Long = 0,
     @Index var uuid: String,
-    @HnswIndex(dimensions = 1024)
+    @HnswIndex(
+        dimensions = 1024,
+        neighborsPerNode = 128,
+        indexingSearchCount = 400,
+    )
     var embedding: FloatArray? = null,
 ) {
     override fun equals(other: Any?): Boolean {
