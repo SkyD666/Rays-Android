@@ -496,7 +496,7 @@ private fun AddToAllList(list: List<String>, onDeleteTag: (String) -> Unit) {
                 )
                 val tooltipState = rememberTooltipState(isPersistent = true)
                 TooltipBox(
-                    positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
                     tooltip = {
                         RichTooltip(
                             title = { Text(stringResource(R.string.add_screen_global_tags)) },

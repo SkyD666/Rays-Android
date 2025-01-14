@@ -58,6 +58,9 @@ import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUT
 import com.skyd.rays.ui.screen.minitool.styletransfer.StyleTransferScreen
 import com.skyd.rays.ui.screen.search.SEARCH_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.search.SearchScreen
+import com.skyd.rays.ui.screen.search.imagesearch.BASE_IMAGE_KEY
+import com.skyd.rays.ui.screen.search.imagesearch.IMAGE_SEARCH_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.search.imagesearch.ImageSearchScreen
 import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.settings.SettingsScreen
 import com.skyd.rays.ui.screen.settings.api.API_SCREEN_ROUTE
@@ -325,6 +328,11 @@ class MainActivity : BaseComposeActivity() {
             }
             composable(route = SEARCH_SCREEN_ROUTE) {
                 SearchScreen()
+            }
+            composable(route = IMAGE_SEARCH_SCREEN_ROUTE ) {
+                ImageSearchScreen(
+                    baseImage = it.arguments?.getParcelable(BASE_IMAGE_KEY)
+                )
             }
             composable(route = IMAGE_SOURCE_SCREEN_ROUTE) {
                 ImageSourceScreen()

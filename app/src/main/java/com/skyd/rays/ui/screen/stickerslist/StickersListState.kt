@@ -1,7 +1,9 @@
 package com.skyd.rays.ui.screen.stickerslist
 
+import androidx.paging.PagingData
 import com.skyd.rays.base.mvi.MviViewState
 import com.skyd.rays.model.bean.StickerWithTags
+import kotlinx.coroutines.flow.Flow
 
 data class StickersListState(
     val listState: ListState,
@@ -19,5 +21,6 @@ sealed class ListState {
     var loading: Boolean = false
 
     data object Init : ListState()
-    data class Success(val stickerWithTagsList: List<StickerWithTags>) : ListState()
+    data class Success(val stickerWithTagsPagingFlow: Flow<PagingData<StickerWithTags>>) :
+        ListState()
 }

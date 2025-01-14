@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Help
 import androidx.compose.material.icons.outlined.AspectRatio
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.DropdownMenu
@@ -27,6 +28,7 @@ fun DetailMenu(
     onDeleteClick: () -> Unit,
     onExportClick: () -> Unit,
     onStickerInfoClick: () -> Unit,
+    onStickerSearchClick: () -> Unit,
     onStickerScaleClick: () -> Unit,
 ) {
     DropdownMenu(
@@ -66,6 +68,15 @@ fun DetailMenu(
                 onExportClick()
             },
             leadingIcon = { Icon(Icons.Outlined.Save, contentDescription = null) }
+        )
+        DropdownMenuItem(
+            enabled = stickerMenuItemEnabled,
+            text = { Text(stringResource(R.string.image_search_screen_name)) },
+            onClick = {
+                onDismissRequest()
+                onStickerSearchClick()
+            },
+            leadingIcon = { Icon(Icons.Outlined.ImageSearch, contentDescription = null) }
         )
         DropdownMenuItem(
             enabled = stickerMenuItemEnabled,

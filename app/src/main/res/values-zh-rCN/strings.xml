@@ -359,4 +359,10 @@
     <string name="crash_screen_crash_log">日志</string>
     <string name="crash_screen_copy_crash_log">复制日志</string>
     <string name="appearance_screen_amoled_dark">Amoled 深色</string>
+    <string name="image_search_screen_name">图片搜索</string>
+    <string name="image_search_screen_search">搜索</string>
+    <string name="image_search_screen_max_result_count">最大结果数：%d</string>
+    <string name="image_search_screen_long_time_tip">首次使用此功能可能需要一些时间，请耐心等待。</string>
+    <string name="image_search_screen_source_image">原图</string>
+    <string name="image_search_screen_source_image_hint">选择图片</string>
 </resources>

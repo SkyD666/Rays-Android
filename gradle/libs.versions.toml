@@ -1,0 +1,76 @@
+[versions]
+coil = "3.0.4"
+hilt = "2.55"
+composeMaterial = "1.7.6"
+composeMaterial3 = "1.4.0-alpha04"
+room = "2.6.1"
+textRecognition = "16.0.1"
+kotlin = "2.0.21"
+
+[libraries]
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.9.3" }
+androidx-compose-ui-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "composeMaterial" }
+androidx-compose-ui-ui-tooling3 = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeMaterial" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version = "1.15.0" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.5" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version = "2.8.7" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "composeMaterial" }
+androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "composeMaterial" }
+androidx-compose-icons = { module = "androidx.compose.material:material-icons-extended", version.ref = "composeMaterial" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "composeMaterial3" }
+androidx-compose-window-size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "composeMaterial3" }
+androidx-palette-ktx = { module = "androidx.palette:palette-ktx", version = "1.0.0" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "composeMaterial" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.1" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version = "1.0.1" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version = "3.3.5" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version = "1.2.0" }
+androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version = "1.4.1" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version = "1.1.0-alpha06" }
+
+apng = { module = "com.github.penfeizhou.android.animation:apng", version = "3.0.2" }
+material-kolor = { module = "com.materialkolor:material-kolor", version = "2.0.0" }
+
+retrofit2 = { module = "com.squareup.retrofit2:retrofit", version = "2.11.0" }
+retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version = "1.0.0" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.8.0" }
+
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil" }
+coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil" }
+
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version = "6.6.2" }
+
+sardine-android = { module = "com.github.thegrizzlylabs:sardine-android", version = "0.8" }
+
+material = { module = "com.google.android.material:material", version = "1.12.0" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+accompanist-drawablepainter = { module = "com.google.accompanist:accompanist-drawablepainter", version = "0.37.0" }
+tasks-vision = { module = "com.google.mediapipe:tasks-vision", version = "0.10.20" }
+text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "textRecognition" }
+text-recognition-korean = { module = "com.google.mlkit:text-recognition-korean", version.ref = "textRecognition" }
+text-recognition-japanese = { module = "com.google.mlkit:text-recognition-japanese", version.ref = "textRecognition" }
+text-recognition-chinese = { module = "com.google.mlkit:text-recognition-chinese", version.ref = "textRecognition" }
+image-labeling-custom = { module = "com.google.mlkit:image-labeling-custom", version = "17.0.3" }
+segmentation-selfie = { module = "com.google.mlkit:segmentation-selfie", version = "16.0.0-beta6" }
+
+ai-edge-litert-support = { module = "com.google.ai.edge.litert:litert-support", version = "1.0.1" }
+ai-edge-litert = { module = "com.google.ai.edge.litert:litert", version = "1.0.1" }
+
+junit = { module = "junit:junit", version = "4.13.2" }
+
+[plugins]
+android-application = { id = "com.android.application", version = "8.7.3" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+hilt = { id = "com.google.dagger.hilt.android", version = "2.51.1" }
+ksp = { id = "com.google.devtools.ksp", version = "2.0.21-1.0.25" }
+android-library = { id = "com.android.library", version = "8.7.3" }
+objectbox = { id = "io.objectbox", version = "4.0.3" }

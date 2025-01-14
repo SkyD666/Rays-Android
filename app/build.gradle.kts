@@ -2,14 +2,14 @@ import com.android.build.api.variant.FilterConfiguration
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose")
-    id("kotlinx-serialization")
-    id("kotlin-parcelize")
-    id("kotlin-android")
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.objectbox)
 }
 
 apply(from = "../secret.gradle.kts")
@@ -23,7 +23,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 67
-        versionName = "2.3-rc02"
+        versionName = "2.3-rc04"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -146,55 +146,58 @@ tasks.withType(KotlinCompile::class.java).configureEach {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.compose.ui:ui:1.7.5")
-    implementation("androidx.compose.material3:material3:1.3.1")
-    implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
-    implementation("androidx.compose.material:material:1.7.5")
-    implementation("androidx.compose.material:material-icons-extended:1.7.5")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.7.5")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-    implementation("androidx.activity:activity-compose:1.9.3")
-    implementation("androidx.palette:palette-ktx:1.0.0")
-    implementation("com.google.dagger:hilt-android:2.53")
-    ksp("com.google.dagger:hilt-android-compiler:2.53")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-    implementation("androidx.navigation:navigation-compose:2.8.4")
-    implementation("androidx.security:security-crypto:1.1.0-alpha06")
-    implementation("com.google.accompanist:accompanist-drawablepainter:0.36.0")
-    implementation("io.coil-kt.coil3:coil-compose:3.0.4")
-    implementation("io.coil-kt.coil3:coil-gif:3.0.4")
-    implementation("io.coil-kt.coil3:coil-svg:3.0.4")
-    implementation("androidx.profileinstaller:profileinstaller:1.4.1")
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
-    implementation("com.github.thegrizzlylabs:sardine-android:0.8")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
-    implementation("com.materialkolor:material-kolor:2.0.0")
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
-    implementation("com.airbnb.android:lottie-compose:6.6.1")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.window.size)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.icons)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.material)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.palette.ktx)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.security.crypto)
+    implementation(libs.accompanist.drawablepainter)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
+    implementation(libs.coil.svg)
+    implementation(libs.androidx.profileinstaller)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.paging)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.sardine.android)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.material.kolor)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.lottie.compose)
 
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+    implementation(libs.retrofit2)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
 
     // Google ML Kit
-    implementation("com.google.mlkit:text-recognition:16.0.1")
-    implementation("com.google.mlkit:text-recognition-chinese:16.0.1")
-    implementation("com.google.mlkit:text-recognition-japanese:16.0.1")
-    implementation("com.google.mlkit:text-recognition-korean:16.0.1")
-    implementation("com.google.mlkit:image-labeling-custom:17.0.3")
-    implementation("com.google.mlkit:segmentation-selfie:16.0.0-beta6")
-
+    implementation(libs.text.recognition)
+    implementation(libs.text.recognition.chinese)
+    implementation(libs.text.recognition.japanese)
+    implementation(libs.text.recognition.korean)
+    implementation(libs.image.labeling.custom)
+    implementation(libs.segmentation.selfie)
+    implementation(libs.tasks.vision)
     // TF Lite
-    implementation("org.tensorflow:tensorflow-lite:2.16.1")
-    implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
+    implementation(libs.ai.edge.litert)
+    implementation(libs.ai.edge.litert.support)
 
-    implementation("com.github.penfeizhou.android.animation:apng:3.0.2")
+    implementation(libs.apng)
 
-    debugImplementation("androidx.compose.ui:ui-tooling:1.7.5")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.5")
+    debugImplementation(libs.androidx.compose.ui.ui.tooling3)
+    debugImplementation(libs.androidx.compose.ui.ui.test.manifest)
+
+    testImplementation(libs.junit)
 }

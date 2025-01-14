@@ -46,37 +46,35 @@ class AddRepository @Inject constructor(
     suspend fun requestAddStickerWithTags(
         stickerWithTags: StickerWithTags,
         uri: Uri
-    ): Flow<Any> {
-        return flowOnIo {
-            var imageFormat: ImageFormat
-            appContext.contentResolver.openInputStream(uri)!!.use {
-                imageFormat = ImageFormatChecker.check(it)
-                check(imageFormat != ImageFormat.UNDEFINED) {
-                    "Unsupported image format"
-                }
+    ): Flow<Any> = flowOnIo {
+        var imageFormat: ImageFormat
+        appContext.contentResolver.openInputStream(uri)!!.use {
+            imageFormat = ImageFormatChecker.check(it)
+            check(imageFormat != ImageFormat.UNDEFINED) {
+                "Unsupported image format"
             }
+        }
 
-            val tempFile = File(appContext.STICKER_DIR, "${Random.nextLong()}")
-            uri.copyTo(tempFile)
-            val stickerMd5 = tempFile.md5() ?: error("can not calc sticker's md5!")
-            val uuidGotByMd5 = stickerDao.containsByMd5(stickerMd5)
-            if (uuidGotByMd5 != null &&
-                stickerDao.containsByUuid(stickerWithTags.sticker.uuid) == 0
-            ) {
-                tempFile.deleteRecursively()
-                emit(stickerDao.getStickerWithTags(uuidGotByMd5)!!)
-            } else {
-                stickerWithTags.sticker.stickerMd5 = stickerMd5
-                if (stickerWithTags.sticker.createTime == 0L) {
-                    stickerWithTags.sticker.createTime = System.currentTimeMillis()
-                }
-                val uuid = stickerDao.addStickerWithTags(stickerWithTags)
-                if (!tempFile.renameTo(File(appContext.STICKER_DIR, uuid))) {
-                    tempFile.deleteRecursively()
-                }
-                ImageFormatChecker.saveMimeType(format = imageFormat, stickerUuid = uuid)
-                emit(uuid)
+        val tempFile = File(appContext.STICKER_DIR, "${Random.nextLong()}")
+        uri.copyTo(tempFile)
+        val stickerMd5 = tempFile.md5() ?: error("can not calc sticker's md5!")
+        val uuidGotByMd5 = stickerDao.containsByMd5(stickerMd5)
+        if (uuidGotByMd5 != null &&
+            stickerDao.containsByUuid(stickerWithTags.sticker.uuid) == 0
+        ) {
+            tempFile.deleteRecursively()
+            emit(stickerDao.getStickerWithTags(uuidGotByMd5)!!)
+        } else {
+            stickerWithTags.sticker.stickerMd5 = stickerMd5
+            if (stickerWithTags.sticker.createTime == 0L) {
+                stickerWithTags.sticker.createTime = System.currentTimeMillis()
             }
+            val uuid = stickerDao.addStickerWithTags(stickerWithTags)
+            if (!tempFile.renameTo(File(appContext.STICKER_DIR, uuid))) {
+                tempFile.deleteRecursively()
+            }
+            ImageFormatChecker.saveMimeType(format = imageFormat, stickerUuid = uuid)
+            emit(uuid)
         }
     }
 

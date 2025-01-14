@@ -92,7 +92,7 @@ fun RaysIconButton(
     } else {
         TooltipBox(
             modifier = modifier,
-            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
             tooltip = {
                 PlainTooltip {
                     Text(contentDescription)
@@ -157,7 +157,7 @@ fun RaysIconToggleButton(
     } else {
         TooltipBox(
             modifier = modifier,
-            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
             tooltip = {
                 PlainTooltip {
                     Text(contentDescription)

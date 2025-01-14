@@ -9,16 +9,23 @@ import com.skyd.rays.model.db.dao.UriStringSharePackageDao
 import com.skyd.rays.model.db.dao.cache.StickerShareTimeDao
 import com.skyd.rays.model.db.dao.sticker.MimeTypeDao
 import com.skyd.rays.model.db.dao.sticker.StickerDao
+import com.skyd.rays.model.db.objectbox.ObjectBox
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.objectbox.BoxStore
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
+
+    @Provides
+    @Singleton
+    fun provideObjectBoxStore(@ApplicationContext context: Context): BoxStore =
+        ObjectBox.getInstance(context)
 
     @Provides
     @Singleton

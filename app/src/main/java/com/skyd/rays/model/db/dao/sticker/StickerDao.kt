@@ -1,11 +1,13 @@
 package com.skyd.rays.model.db.dao.sticker
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RawQuery
+import androidx.room.RewriteQueriesToDropUnusedColumns
 import androidx.room.Transaction
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.skyd.rays.appContext
@@ -27,11 +29,15 @@ import com.skyd.rays.model.bean.StickerWithTagsAndFile
 import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.db.dao.TagDao
 import com.skyd.rays.model.db.dao.cache.StickerShareTimeDao
+import com.skyd.rays.model.db.objectbox.entity.StickerEmbedding
+import com.skyd.rays.model.db.objectbox.entity.StickerEmbedding_
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import io.objectbox.BoxStore
+import io.objectbox.query.QueryBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -45,11 +51,24 @@ interface StickerDao {
     interface StickerDaoEntryPoint {
         val tagDao: TagDao
         val stickerShareTimeDao: StickerShareTimeDao
+        val boxStore: BoxStore
     }
 
     @Transaction
     @RawQuery(observedEntities = [StickerBean::class, TagBean::class])
     fun getStickerWithTagsList(sql: SupportSQLiteQuery): Flow<List<StickerWithTags>>
+
+    @Transaction
+    @RawQuery(observedEntities = [StickerBean::class, TagBean::class])
+    fun getStickerWithTagsPaging(sql: SupportSQLiteQuery): PagingSource<Int, StickerWithTags>
+
+    @Transaction
+    @RawQuery(observedEntities = [StickerBean::class, TagBean::class])
+    fun getStickerUuidList(sql: SupportSQLiteQuery): List<String>
+
+    @Transaction
+    @Query("SELECT $UUID_COLUMN FROM $STICKER_TABLE_NAME")
+    fun getAllStickerUuidList(): List<String>
 
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME")
@@ -119,6 +138,7 @@ interface StickerDao {
     fun getMostSharedStickersList(count: Int): Flow<List<StickerWithTags>>
 
     @Transaction
+    @RewriteQueriesToDropUnusedColumns
     @Query(
         """
         SELECT * FROM $STICKER_TABLE_NAME LEFT JOIN (
@@ -191,7 +211,7 @@ interface StickerDao {
             stickerUuid = UUID.randomUUID().toString()
             stickerWithTags.sticker.uuid = stickerUuid
         }
-        innerAddSticker(stickerWithTags.sticker)
+        addSticker(stickerWithTags.sticker)
         stickerWithTags.tags.forEach {
             it.stickerUuid = stickerUuid
         }
@@ -202,9 +222,25 @@ interface StickerDao {
         return stickerUuid
     }
 
+    fun addSticker(stickerBean: StickerBean) {
+        EntryPointAccessors.fromApplication(appContext, StickerDaoEntryPoint::class.java)
+            .boxStore.boxFor(StickerEmbedding::class.java).apply {
+                val oldEmbedding = query().equal(
+                    StickerEmbedding_.uuid,
+                    stickerBean.uuid,
+                    QueryBuilder.StringOrder.CASE_SENSITIVE
+                ).build().findUnique()
+                if (oldEmbedding != null) {
+                    remove(oldEmbedding)
+                }
+            }
+        _innerAddSticker(stickerBean)
+    }
+
+    @Suppress("FunctionName")
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun innerAddSticker(stickerBean: StickerBean)
+    fun _innerAddSticker(stickerBean: StickerBean)
 
     @Transaction
     fun deleteStickerWithTags(stickerUuids: List<String>): Int {

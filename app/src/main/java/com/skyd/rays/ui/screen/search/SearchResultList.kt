@@ -36,6 +36,7 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FolderZip
+import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AssistChipDefaults
@@ -228,6 +229,7 @@ internal fun MultiSelectActionBar(
     onDeleteClick: () -> Unit,
     onExportClick: () -> Unit,
     onExportAsZipClick: () -> Unit,
+    onSearchImageClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val windowSizeClass = LocalWindowSizeClass.current
@@ -283,7 +285,15 @@ internal fun MultiSelectActionBar(
                     imageVector = Icons.Outlined.Delete,
                     contentDescription = stringResource(id = R.string.home_screen_delete)
                 )
-            }
+            },
+            @Composable {
+                RaysIconButton(
+                    onClick = onSearchImageClick,
+                    enabled = selectedStickers.size == 1,
+                    imageVector = Icons.Outlined.ImageSearch,
+                    contentDescription = stringResource(id = R.string.home_screen_image_search)
+                )
+            },
         )
     }
     if (windowSizeClass.isCompact) {

@@ -352,4 +352,11 @@
     <string name="crash_screen_crash_log">Log</string>
     <string name="crash_screen_copy_crash_log">Copy log</string>
     <string name="appearance_screen_amoled_dark">Amoled dark</string>
+    <string name="home_screen_image_search">Image search</string>
+    <string name="image_search_screen_name">Image search</string>
+    <string name="image_search_screen_search">Search</string>
+    <string name="image_search_screen_max_result_count">Max result count: %d</string>
+    <string name="image_search_screen_long_time_tip">The first use of this feature may take some time. Please be patient.</string>
+    <string name="image_search_screen_source_image">Source</string>
+    <string name="image_search_screen_source_image_hint">Select a image</string>
 </resources>

@@ -2,6 +2,9 @@ package com.skyd.rays.model.respository
 
 import android.database.DatabaseUtils
 import android.net.Uri
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseRepository
@@ -46,9 +49,20 @@ import kotlin.math.pow
 class SearchRepository @Inject constructor(
     private val stickerDao: StickerDao,
     private val stickerShareTimeDao: StickerShareTimeDao,
+    private val pagingConfig: PagingConfig,
 ) : BaseRepository() {
     fun requestStickerWithTagsList(keyword: String): List<StickerWithTags> = runBlocking {
         stickerDao.getStickerWithTagsList(genSql(k = keyword)).first()
+    }
+
+    fun requestStickerUuidList(keyword: String): Flow<List<String>> {
+        return flow {
+            emit(
+                stickerDao.getStickerUuidList(
+                    genSql(k = keyword, field = StickerBean.UUID_COLUMN)
+                )
+            )
+        }.flowOn(Dispatchers.IO)
     }
 
     fun requestStickerWithTagsListFlow(keyword: String): Flow<List<StickerWithTags>> {
@@ -62,15 +76,10 @@ class SearchRepository @Inject constructor(
             .catchMap { emptyList() }
     }
 
-    fun requestStickerWithTagsListWithAllSearchDomain(keyword: String): Flow<List<StickerWithTags>> {
+    fun requestStickerWithTagsListWithAllSearchDomain(keyword: String): Flow<PagingData<StickerWithTags>> {
         return flow { emit(genSql(k = keyword, useSearchDomain = { _, _ -> true })) }
             .flowOn(Dispatchers.IO)
-            .flatMapConcat {
-                stickerDao.getStickerWithTagsList(it)
-                    .flowOn(Dispatchers.IO)
-                    .distinctUntilChanged()
-            }
-            .catchMap { emptyList() }
+            .flatMapLatest { Pager(pagingConfig) { stickerDao.getStickerWithTagsPaging(it) }.flow }
     }
 
     data class SearchResult(
@@ -115,7 +124,7 @@ class SearchRepository @Inject constructor(
             .flowOn(Dispatchers.IO)
     }
 
-    suspend fun requestDeleteStickerWithTagsDetail(stickerUuids: List<String>): Flow<List<String>> {
+    fun requestDeleteStickerWithTagsDetail(stickerUuids: List<String>): Flow<List<String>> {
         return flowOnIo {
             stickerDao.deleteStickerWithTags(stickerUuids)
             emit(stickerUuids)
@@ -161,7 +170,7 @@ class SearchRepository @Inject constructor(
             }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun requestExportStickers(stickerUuids: List<String>): Flow<Int> {
+    fun requestExportStickers(stickerUuids: List<String>): Flow<Int> {
         return flowOnIo {
             val exportStickerDir = appContext.dataStore.getOrDefault(ExportStickerDirPreference)
             check(exportStickerDir.isNotBlank()) { "exportStickerDir is null" }
@@ -251,6 +260,7 @@ class SearchRepository @Inject constructor(
 
         fun genSql(
             k: String,
+            field: String = "*",
             useSearchDomain: (tableName: String, columnName: String) -> Boolean =
                 { tableName, columnName ->
                     EntryPointAccessors.fromApplication(
@@ -276,7 +286,7 @@ class SearchRepository @Inject constructor(
                     keywords.forEachIndexed { index, s ->
                         if (index > 0) append("INTERSECT \n")
                         append(
-                            "SELECT * FROM $STICKER_TABLE_NAME WHERE ${
+                            "SELECT $field FROM $STICKER_TABLE_NAME WHERE ${
                                 getFilter(k = s, useSearchDomain = useSearchDomain)
                             } \n"
                         )
@@ -285,7 +295,7 @@ class SearchRepository @Inject constructor(
                 SimpleSQLiteQuery(sql)
             } else {
                 SimpleSQLiteQuery(
-                    "SELECT * FROM $STICKER_TABLE_NAME WHERE ${
+                    "SELECT $field FROM $STICKER_TABLE_NAME WHERE ${
                         getFilter(k = k, useSearchDomain = useSearchDomain)
                     }"
                 )

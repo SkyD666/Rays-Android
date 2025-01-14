@@ -15,3 +15,13 @@ operator fun PaddingValues.plus(other: PaddingValues): PaddingValues = PaddingVa
     end = calculateEndPadding(LocalLayoutDirection.current) +
             other.calculateEndPadding(LocalLayoutDirection.current)
 )
+
+@Composable
+operator fun PaddingValues.minus(other: PaddingValues): PaddingValues = PaddingValues(
+    top = calculateTopPadding() - other.calculateTopPadding(),
+    bottom = calculateBottomPadding() - other.calculateBottomPadding(),
+    start = calculateStartPadding(LocalLayoutDirection.current) -
+            other.calculateStartPadding(LocalLayoutDirection.current),
+    end = calculateEndPadding(LocalLayoutDirection.current) -
+            other.calculateEndPadding(LocalLayoutDirection.current)
+)

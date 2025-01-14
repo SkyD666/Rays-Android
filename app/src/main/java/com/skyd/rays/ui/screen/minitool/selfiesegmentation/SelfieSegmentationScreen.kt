@@ -2,37 +2,26 @@ package com.skyd.rays.ui.screen.minitool.selfiesegmentation
 
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateOffsetAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.ContentCut
-import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -49,14 +38,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Matrix
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -67,9 +54,8 @@ import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbar
+import com.skyd.rays.ui.component.ImageInput
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
-import com.skyd.rays.ui.component.RaysIconButton
-import com.skyd.rays.ui.component.RaysIconButtonStyle
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.WaitingDialog
@@ -337,7 +323,7 @@ private fun InputArea(
         horizontalAlignment = Alignment.End,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            InputItem(
+            ImageInput(
                 modifier = Modifier.weight(0.5f),
                 title = stringResource(R.string.selfie_segmentation_screen_selfie),
                 hintText = stringResource(R.string.selfie_segmentation_screen_select_selfie_image),
@@ -350,7 +336,7 @@ private fun InputArea(
                 imageVector = Icons.Outlined.Add,
                 contentDescription = null
             )
-            InputItem(
+            ImageInput(
                 modifier = Modifier.weight(0.5f),
                 title = stringResource(R.string.selfie_segmentation_screen_background),
                 hintText = stringResource(R.string.selfie_segmentation_screen_select_background_image),
@@ -359,87 +345,6 @@ private fun InputArea(
                 onRemoveClick = onRemoveBackgroundImage,
                 onSelectImage = onSelectBackgroundImage,
             )
-        }
-    }
-}
-
-@Composable
-private fun InputItem(
-    modifier: Modifier = Modifier,
-    title: String,
-    hintText: String,
-    shape: Shape,
-    imageUri: Uri?,
-    onRemoveClick: (() -> Unit)? = null,
-    onSelectImage: () -> Unit
-) {
-    OutlinedCard(modifier = modifier, onClick = onSelectImage) {
-        AnimatedVisibility(
-            visible = imageUri == null,
-            modifier = Modifier.clickable(onClick = onSelectImage)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 6.dp, vertical = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = shape,
-                        )
-                        .padding(16.dp)
-                ) {
-                    Icon(
-                        modifier = Modifier.size(40.dp),
-                        imageVector = Icons.Outlined.Image,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    modifier = Modifier.padding(horizontal = 6.dp),
-                    text = hintText,
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-        AnimatedVisibility(
-            visible = imageUri != null,
-            modifier = Modifier.clickable(onClick = onSelectImage)
-        ) {
-            Box {
-                Column {
-                    RaysImage(
-                        model = imageUri,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 120.dp),
-                        blur = false,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                    )
-                    Text(
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.CenterHorizontally),
-                        text = title,
-                    )
-                }
-                if (onRemoveClick != null) {
-                    RaysIconButton(
-                        modifier = Modifier.align(Alignment.TopEnd),
-                        onClick = onRemoveClick,
-                        imageVector = Icons.Outlined.Close,
-                        style = RaysIconButtonStyle.Filled,
-                    )
-                }
-            }
         }
     }
 }

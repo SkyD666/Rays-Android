@@ -49,7 +49,7 @@ sealed interface HandleImportedStickerStrategy : Parcelable {
                 return false
             }
             moveFile(stickerFile)
-            stickerDao.innerAddSticker(importedStickerWithTags.sticker)
+            stickerDao.addSticker(importedStickerWithTags.sticker)
             importedStickerWithTags.tags.forEach {
                 it.stickerUuid = stickerUuid
             }
@@ -74,7 +74,7 @@ sealed interface HandleImportedStickerStrategy : Parcelable {
             checkStickerWithTagsFormat(importedStickerWithTags)
             val stickerUuid = importedStickerWithTags.sticker.uuid
             moveFile(stickerFile)
-            stickerDao.innerAddSticker(importedStickerWithTags.sticker)
+            stickerDao.addSticker(importedStickerWithTags.sticker)
             importedStickerWithTags.tags.forEach {
                 it.stickerUuid = stickerUuid
             }

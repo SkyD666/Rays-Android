@@ -1,6 +1,7 @@
 package com.skyd.rays.ui.screen.stickerslist
 
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.skyd.rays.base.mvi.AbstractMviViewModel
 import com.skyd.rays.base.mvi.MviSingleEvent
 import com.skyd.rays.ext.startWith
@@ -13,8 +14,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
@@ -37,6 +40,7 @@ class StickersListViewModel @Inject constructor(
             .shareWhileSubscribed()
             .toStickersListPartialStateChangeFlow()
             .debugLog("StickersListPartialStateChange")
+            .sendSingleEvent()
             .scan(initialVS) { vs, change -> change.reduce(vs) }
             .debugLog("ViewState")
             .stateIn(
@@ -46,19 +50,32 @@ class StickersListViewModel @Inject constructor(
             )
     }
 
+    private fun Flow<StickersListPartialStateChange>.sendSingleEvent(): Flow<StickersListPartialStateChange> {
+        return onEach { change ->
+            val event = when (change) {
+                is StickersListPartialStateChange.ExportStickers.Success ->
+                    StickersListEvent.ExportStickers.Success(change.stickerUuids)
+
+                else -> return@onEach
+            }
+            sendEvent(event)
+        }
+    }
+
     private fun SharedFlow<StickersListIntent>.toStickersListPartialStateChangeFlow(): Flow<StickersListPartialStateChange> {
         return merge(
-            merge(
-                filterIsInstance<StickersListIntent.GetStickersList>(),
-                filterIsInstance<StickersListIntent.RefreshStickersList>()
-            ).flatMapConcat { intent ->
-                val keyword = when (intent) {
-                    is StickersListIntent.GetStickersList -> intent.query
-                    is StickersListIntent.RefreshStickersList -> intent.query
-                }
-                searchRepo.requestStickerWithTagsListWithAllSearchDomain(keyword = keyword).map {
-                    StickersListPartialStateChange.StickersList.Success(stickerWithTagsList = it)
+            filterIsInstance<StickersListIntent.GetStickersList>().flatMapConcat { intent ->
+                flowOf(
+                    searchRepo.requestStickerWithTagsListWithAllSearchDomain(keyword = intent.query)
+                        .cachedIn(viewModelScope)
+                ).map {
+                    StickersListPartialStateChange.StickersList.Success(it)
                 }.startWith(StickersListPartialStateChange.StickersList.Loading)
+            },
+            filterIsInstance<StickersListIntent.ExportStickers>().flatMapConcat { intent ->
+                searchRepo.requestStickerUuidList(keyword = intent.query).map {
+                    StickersListPartialStateChange.ExportStickers.Success(it)
+                }.startWith(StickersListPartialStateChange.ExportStickers.Loading)
             },
         )
     }

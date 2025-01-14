@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Reply
 import androidx.compose.material.icons.automirrored.outlined.ScheduleSend
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material.icons.outlined.MoreTime
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Shuffle
@@ -60,10 +61,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
+import com.skyd.rays.ext.minus
+import com.skyd.rays.ext.plus
 import com.skyd.rays.model.preference.privacy.shouldBlur
 import com.skyd.rays.ui.component.AnimatedPlaceholder
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysFloatingActionButton
+import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
@@ -71,6 +75,7 @@ import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.search.SEARCH_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.search.imagesearch.openImageSearchScreen
 import com.skyd.rays.ui.screen.stickerslist.openStickersListScreen
 import com.skyd.rays.util.sendStickerByUuid
 
@@ -112,7 +117,12 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 colors = ButtonDefaults.filledTonalButtonColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
-                onClick = { navController.navigate(SEARCH_SCREEN_ROUTE) }
+                onClick = { navController.navigate(SEARCH_SCREEN_ROUTE) },
+                contentPadding = ButtonDefaults.ContentPadding - PaddingValues(
+                    end = ButtonDefaults.ContentPadding.calculateEndPadding(
+                        LocalLayoutDirection.current
+                    )
+                ) + PaddingValues(end = 10.dp)
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Search,
@@ -126,6 +136,14 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     text = stringResource(R.string.home_screen_search_hint),
                     style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                RaysIconButton(
+                    onClick = { openImageSearchScreen(navController, baseImage = null) },
+                    imageVector = Icons.Outlined.ImageSearch,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    contentDescription = stringResource(R.string.image_search_screen_name)
                 )
             }
             when (val homeUiState = uiState.homeListState) {

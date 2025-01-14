@@ -95,6 +95,7 @@ import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.detail.openDetailScreen
+import com.skyd.rays.ui.screen.search.imagesearch.openImageSearchScreen
 import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.openExportFilesScreen
 import com.skyd.rays.util.stickerUuidToUri
 import kotlinx.coroutines.delay
@@ -276,6 +277,13 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                                         navController = navController,
                                         exportStickers = selectedStickers.map { it.sticker.uuid },
                                     )
+                                },
+                                onSearchImageClick = {
+                                    selectedStickers.firstOrNull()?.let {
+                                        openImageSearchScreen(
+                                            navController, stickerUuidToUri(it.sticker.uuid),
+                                        )
+                                    }
                                 },
                             )
                             ExportDialog(

@@ -93,7 +93,7 @@ fun RaysFloatingActionButton(
     } else {
         TooltipBox(
             modifier = modifier,
-            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
             tooltip = {
                 PlainTooltip {
                     Text(contentDescription)
@@ -143,7 +143,7 @@ fun RaysExtendedFloatingActionButton(
     } else {
         TooltipBox(
             modifier = modifier,
-            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
             tooltip = {
                 PlainTooltip {
                     Text(contentDescription)
