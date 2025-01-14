@@ -25,6 +25,8 @@ import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.preference.search.ShowLastQueryPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
+import com.skyd.rays.model.preference.search.imagesearch.AddScreenImageSearchPreference
+import com.skyd.rays.model.preference.search.imagesearch.ImageSearchMaxResultCountPreference
 import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
@@ -58,6 +60,8 @@ fun Preferences.toSettings(): Settings {
         searchResultReverse = SearchResultReversePreference.fromPreferences(this),
         showPopularTags = ShowPopularTagsPreference.fromPreferences(this),
         showLastQuery = ShowLastQueryPreference.fromPreferences(this),
+        addScreenImageSearch = AddScreenImageSearchPreference.fromPreferences(this),
+        imageSearchMaxResultCount = ImageSearchMaxResultCountPreference.fromPreferences(this),
 
         // WebDav
         webDavServer = WebDavServerPreference.fromPreferences(this),

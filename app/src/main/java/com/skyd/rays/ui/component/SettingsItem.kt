@@ -44,6 +44,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.skyd.rays.ext.alwaysLight
+import java.util.Locale
 
 val LocalUseColorfulIcon = compositionLocalOf { false }
 val LocalVerticalPadding = compositionLocalOf { 16.dp }
@@ -79,7 +80,7 @@ fun SliderSettingsItem(
     @IntRange(from = 0)
     steps: Int = 0,
     onValueChangeFinished: (() -> Unit)? = null,
-    valueFormat: String = "%.2f",
+    valueFormater: (Float) -> String = { "%.2f".format(Locale.getDefault(), value) },
     enabled: Boolean = true,
     onValueChange: (Float) -> Unit,
 ) {
@@ -91,7 +92,7 @@ fun SliderSettingsItem(
         valueRange = valueRange,
         steps = steps,
         onValueChangeFinished = onValueChangeFinished,
-        valueFormat = valueFormat,
+        valueFormater = valueFormater,
         enabled = enabled,
         onValueChange = onValueChange,
     )
@@ -107,7 +108,7 @@ fun SliderSettingsItem(
     @IntRange(from = 0)
     steps: Int = 0,
     onValueChangeFinished: (() -> Unit)? = null,
-    valueFormat: String = "%.2f",
+    valueFormater: (Float) -> String = { "%.2f".format(Locale.getDefault(), value) },
     enabled: Boolean = true,
     onValueChange: (Float) -> Unit,
 ) {
@@ -128,7 +129,7 @@ fun SliderSettingsItem(
                     onValueChange = onValueChange,
                 )
                 Spacer(modifier = Modifier.width(6.dp))
-                Text(text = String.format(valueFormat, value))
+                Text(text = valueFormater(value))
             }
         }
     )

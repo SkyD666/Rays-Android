@@ -359,4 +359,9 @@
     <string name="image_search_screen_long_time_tip">The first use of this feature may take some time. Please be patient.</string>
     <string name="image_search_screen_source_image">Source</string>
     <string name="image_search_screen_source_image_hint">Select a image</string>
+    <string name="image_search_screen_threshold">Threshold: %.2f</string>
+    <string name="search_config_screen_enable_add_screen_image_search">Add screen search</string>
+    <string name="search_config_screen_enable_add_screen_image_search_description">Show similar images on the Add Screen</string>
+    <string name="search_config_screen_image_search_max_result_count">Max result count</string>
+    <string name="add_screen_similar_stickers">Similar stickers</string>
 </resources>

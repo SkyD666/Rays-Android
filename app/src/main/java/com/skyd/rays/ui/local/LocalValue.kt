@@ -26,6 +26,8 @@ import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.preference.search.ShowLastQueryPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
+import com.skyd.rays.model.preference.search.imagesearch.AddScreenImageSearchPreference
+import com.skyd.rays.model.preference.search.imagesearch.ImageSearchMaxResultCountPreference
 import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
@@ -65,6 +67,9 @@ val LocalSearchResultSort = compositionLocalOf { SearchResultSortPreference.defa
 val LocalSearchResultReverse = compositionLocalOf { SearchResultReversePreference.default }
 val LocalShowPopularTags = compositionLocalOf { ShowPopularTagsPreference.default }
 val LocalShowLastQuery = compositionLocalOf { ShowLastQueryPreference.default }
+val LocalAddScreenImageSearch = compositionLocalOf { AddScreenImageSearchPreference.default }
+val LocalImageSearchMaxResultCount =
+    compositionLocalOf { ImageSearchMaxResultCountPreference.default }
 
 // WebDav
 val LocalWebDavServer = compositionLocalOf { WebDavServerPreference.default }

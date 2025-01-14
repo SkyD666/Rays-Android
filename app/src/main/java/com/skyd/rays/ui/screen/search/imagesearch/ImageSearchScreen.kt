@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,11 +45,13 @@ import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
+import com.skyd.rays.model.preference.search.imagesearch.ImageSearchMaxResultCountPreference
 import com.skyd.rays.ui.component.ImageInput
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
+import com.skyd.rays.ui.local.LocalImageSearchMaxResultCount
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.stickerslist.StickerList
 import com.skyd.rays.util.launchImagePicker
@@ -72,7 +75,6 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
     val context = LocalContext.current
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     var fabHeight by remember { mutableStateOf(0.dp) }
-    var maxCount by rememberSaveable { mutableFloatStateOf(20f) }
     var currentBaseImage by rememberSaveable(baseImage) { mutableStateOf(baseImage) }
     val imagePickLauncher = rememberImagePicker(multiple = false) {
         if (it.firstOrNull() != null) currentBaseImage = it.first()
@@ -83,12 +85,13 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
+            val maxCount = LocalImageSearchMaxResultCount.current
             RaysExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.image_search_screen_search)) },
                 icon = { Icon(imageVector = Icons.Outlined.Search, contentDescription = null) },
                 onClick = {
                     if (currentBaseImage != null) {
-                        dispatch(ImageSearchIntent.Search(currentBaseImage!!, maxCount.toInt()))
+                        dispatch(ImageSearchIntent.Search(currentBaseImage!!, maxCount))
                     }
                 },
                 onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
@@ -110,25 +113,6 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
                     imageUri = currentBaseImage,
                     onSelectImage = { imagePickLauncher.launchImagePicker() },
                 )
-            }
-        }
-        val maxCountSlider: @Composable () -> Unit = remember {
-            {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = stringResource(
-                            R.string.image_search_screen_max_result_count,
-                            maxCount.toInt(),
-                        ),
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Slider(
-                        maxCount,
-                        onValueChange = { maxCount = it },
-                        valueRange = 1f..100f,
-                    )
-                }
             }
         }
         val stickerList: @Composable () -> Unit = remember {
@@ -160,7 +144,7 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
                 ) {
                     inputItem()
                     Spacer(modifier = Modifier.width(12.dp))
-                    maxCountSlider()
+                    MaxResultCountSlider()
                 }
                 stickerList()
             }
@@ -175,7 +159,7 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
                 ) {
                     inputItem()
                     Spacer(modifier = Modifier.height(12.dp))
-                    maxCountSlider()
+                    MaxResultCountSlider()
                 }
                 Box(modifier = Modifier.weight(0.75f)) {
                     stickerList()
@@ -194,6 +178,33 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
         WaitingDialog(
             visible = uiState.loadingDialog,
             text = { Text(stringResource(R.string.image_search_screen_long_time_tip)) },
+        )
+    }
+}
+
+@Composable
+private fun MaxResultCountSlider() {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val maxCount = LocalImageSearchMaxResultCount.current
+    var maxCountFloat by rememberSaveable { mutableFloatStateOf(maxCount.toFloat()) }
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = stringResource(
+                R.string.image_search_screen_max_result_count,
+                maxCountFloat.toInt()
+            ),
+            style = MaterialTheme.typography.labelLarge,
+        )
+        Slider(
+            maxCountFloat,
+            onValueChange = {
+                ImageSearchMaxResultCountPreference.put(
+                    context = context, scope = scope, value = it.toInt()
+                )
+                maxCountFloat = it
+            },
+            valueRange = 1f..100f,
         )
     }
 }

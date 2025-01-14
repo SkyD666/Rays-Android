@@ -63,11 +63,14 @@ class ImageSearchViewModel @Inject constructor(private var selfieSegmentationRep
     private fun SharedFlow<ImageSearchIntent>.toImageSearchPartialStateChangeFlow()
             : Flow<ImageSearchPartialStateChange> {
         return merge(
-            filterIsInstance<ImageSearchIntent.Init>()
-                .map { ImageSearchPartialStateChange.Init },
-
+            filterIsInstance<ImageSearchIntent.Init>().map {
+                ImageSearchPartialStateChange.Init
+            },
             filterIsInstance<ImageSearchIntent.Search>().flatMapConcat { intent ->
-                selfieSegmentationRepo.imageSearch(intent.base, intent.maxResultCount).map {
+                selfieSegmentationRepo.imageSearch(
+                    intent.base,
+                    maxResultCount = intent.maxResultCount,
+                ).map {
                     ImageSearchPartialStateChange.ImageSearch.Success(it)
                 }.startWith(ImageSearchPartialStateChange.LoadingDialog)
                     .catchMap { ImageSearchPartialStateChange.ImageSearch.Failed(it.message.toString()) }

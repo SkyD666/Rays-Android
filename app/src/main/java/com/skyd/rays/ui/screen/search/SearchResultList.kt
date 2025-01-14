@@ -316,6 +316,8 @@ fun SearchResultItem(
     selectable: Boolean = false,
     selected: Boolean = false,
     showTitle: Boolean = LocalStickerItemWidth.current.dp >= 111.dp,
+    contentScale: ContentScale = ContentScale.Crop,
+    imageAspectRatio: Float? = 0.97f,
     onClickListener: ((data: StickerWithTags, selected: Boolean) -> Unit)? = null
 ) {
     val context = LocalContext.current
@@ -336,9 +338,9 @@ fun SearchResultItem(
             RaysImage(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(0.97f),
+                    .run { imageAspectRatio?.let { aspectRatio(it) } ?: this },
                 blur = rememberShouldBlur(c = data.tags.map { it.tag } + data.sticker.title),
-                contentScale = ContentScale.Crop,
+                contentScale = contentScale,
                 uuid = data.sticker.uuid
             )
             if (selectable && selected) {

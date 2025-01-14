@@ -155,14 +155,19 @@ private fun getLicenseList(): List<LicenseBean> {
             url = "https://github.com/JakeWharton/retrofit2-kotlinx-serialization-converter"
         ),
         LicenseBean(
-            name = "TensorFlow Lite",
+            name = "LiteRT",
             license = "Apache-2.0",
-            url = "https://www.tensorflow.org/lite/"
+            url = "https://github.com/google-ai-edge/LiteRT"
         ),
         LicenseBean(
             name = "APNG4Android",
             license = "Apache-2.0",
             url = "https://github.com/penfeizhou/APNG4Android"
+        ),
+        LicenseBean(
+            name = "ObjectBox",
+            license = "Apache-2.0",
+            url = "https://github.com/objectbox/objectbox-java"
         ),
     ).sortedBy { it.name }
 }

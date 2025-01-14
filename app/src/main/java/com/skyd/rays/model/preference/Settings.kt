@@ -20,6 +20,8 @@ import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.preference.search.ShowLastQueryPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
+import com.skyd.rays.model.preference.search.imagesearch.AddScreenImageSearchPreference
+import com.skyd.rays.model.preference.search.imagesearch.ImageSearchMaxResultCountPreference
 import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
@@ -28,6 +30,7 @@ import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
+import com.skyd.rays.ui.local.LocalAddScreenImageSearch
 import com.skyd.rays.ui.local.LocalAmoledDarkMode
 import com.skyd.rays.ui.local.LocalApiGrant
 import com.skyd.rays.ui.local.LocalAutoShareIgnoreStrategy
@@ -42,6 +45,7 @@ import com.skyd.rays.ui.local.LocalDarkMode
 import com.skyd.rays.ui.local.LocalDisableScreenshot
 import com.skyd.rays.ui.local.LocalExportStickerDir
 import com.skyd.rays.ui.local.LocalIgnoreUpdateVersion
+import com.skyd.rays.ui.local.LocalImageSearchMaxResultCount
 import com.skyd.rays.ui.local.LocalIntersectSearchBySpace
 import com.skyd.rays.ui.local.LocalPickImageMethod
 import com.skyd.rays.ui.local.LocalQuery
@@ -82,6 +86,8 @@ data class Settings(
     val searchResultReverse: Boolean = SearchResultReversePreference.default,
     val showPopularTags: Boolean = ShowPopularTagsPreference.default,
     val showLastQuery: Boolean = ShowLastQueryPreference.default,
+    val addScreenImageSearch: Boolean = AddScreenImageSearchPreference.default,
+    val imageSearchMaxResultCount: Int = ImageSearchMaxResultCountPreference.default,
     // WebDav
     val webDavServer: String = WebDavServerPreference.default,
     // ML
@@ -136,6 +142,8 @@ fun SettingsProvider(
         LocalSearchResultReverse provides settings.searchResultReverse,
         LocalShowPopularTags provides settings.showPopularTags,
         LocalShowLastQuery provides settings.showLastQuery,
+        LocalAddScreenImageSearch provides settings.addScreenImageSearch,
+        LocalImageSearchMaxResultCount provides settings.imageSearchMaxResultCount,
         // WebDav
         LocalWebDavServer provides settings.webDavServer,
         // ML

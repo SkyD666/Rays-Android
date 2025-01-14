@@ -5,12 +5,17 @@ import com.skyd.rays.appContext
 import com.skyd.rays.base.mvi.AbstractMviViewModel
 import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.checkUriReadPermission
+import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.endWith
+import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
+import com.skyd.rays.model.preference.search.imagesearch.AddScreenImageSearchPreference
+import com.skyd.rays.model.preference.search.imagesearch.ImageSearchMaxResultCountPreference
 import com.skyd.rays.model.respository.AddRepository
+import com.skyd.rays.model.respository.ImageSearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
@@ -28,12 +33,13 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
 @HiltViewModel
-class AddViewModel @Inject constructor(private var addRepository: AddRepository) :
-    AbstractMviViewModel<AddIntent, AddState, AddEvent>() {
+class AddViewModel @Inject constructor(
+    private var addRepository: AddRepository,
+    private var imageSearchRepository: ImageSearchRepository,
+) : AbstractMviViewModel<AddIntent, AddState, AddEvent>() {
 
     override val viewState: StateFlow<AddState>
 
@@ -91,18 +97,28 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
             }.filter {
                 it.initStickers.isNotEmpty()
             }.flatMapConcat { intent ->
+                val firstSticker = intent.initStickers.first()
                 combine(
-                    addRepository.requestGetStickerWithTags(
-                        intent.initStickers.first().stickerUuid
-                    ),
-                    addRepository.requestSuggestTags(
-                        intent.initStickers.first().uri!!
-                    ).catchMap { emptySet() }
-                ) { stickerWithTags, suggestTags ->
+                    addRepository.requestGetStickerWithTags(firstSticker.stickerUuid),
+                    addRepository.requestSuggestTags(firstSticker.uri!!)
+                        .catchMap { emptySet() },
+                    if (appContext.dataStore.getOrDefault(AddScreenImageSearchPreference)) {
+                        imageSearchRepository.imageSearch(
+                            base = firstSticker.uri,
+                            baseUuid = firstSticker.stickerUuid,
+                            maxResultCount = appContext.dataStore.getOrDefault(
+                                ImageSearchMaxResultCountPreference
+                            )
+                        )
+                    } else {
+                        flowOf(emptyList())
+                    },
+                ) { stickerWithTags, suggestTags, similarStickers ->
                     AddPartialStateChange.Init.Success(
                         stickerWithTags,
                         intent.initStickers,
                         suggestTags,
+                        similarStickers,
                     )
                 }.startWith(AddPartialStateChange.LoadingDialog.Show)
                     .catchMap { AddPartialStateChange.Init.Failed(it.message.orEmpty()) }
@@ -118,8 +134,8 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                 if (currentStickerChanged) {
                     currentStickerChange(intent.sticker)
                 } else {
-                    flowOf(null to null)
-                }.map { (stickersWithTags, suggestTags) ->
+                    flowOf(Triple(null, null, null))
+                }.map { (stickersWithTags, suggestTags, similarStickers) ->
                     AddPartialStateChange.ReplaceWaitingListSingleSticker(
                         sticker = intent.sticker,
                         index = intent.index,
@@ -130,6 +146,9 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                         },
                         suggestTags = if (currentStickerChanged) {
                             suggestTags.orEmpty().toList()
+                        } else null,
+                        similarStickers = if (currentStickerChanged) {
+                            similarStickers.orEmpty()
                         } else null,
                         currentStickerChanged = currentStickerChanged,
                     )
@@ -146,8 +165,8 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                 if (currentStickerChanged) {
                     currentStickerChange(intent.onSticker(1))
                 } else {
-                    flowOf(null to null)
-                }.map { (stickersWithTags, suggestTags) ->
+                    flowOf(Triple(null, null, null))
+                }.map { (stickersWithTags, suggestTags, similarStickers) ->
                     AddPartialStateChange.RemoveWaitingListSingleSticker(
                         willSticker = willRemove,
                         getStickersWithTagsState = {
@@ -157,6 +176,9 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                         },
                         suggestTags = if (currentStickerChanged) {
                             suggestTags.orEmpty().toList()
+                        } else null,
+                        similarStickers = if (currentStickerChanged) {
+                            similarStickers.orEmpty()
                         } else null,
                         currentStickerChanged = currentStickerChanged,
                     )
@@ -175,8 +197,8 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                 if (currentStickerChanged) {
                     currentStickerChange(intent.stickers[0])
                 } else {
-                    flowOf(null to null)
-                }.map { (stickersWithTags, suggestTags) ->
+                    flowOf(Triple(null, null, null))
+                }.map { (stickersWithTags, suggestTags, similarStickers) ->
                     AddPartialStateChange.AddToWaitingList(
                         stickers = intent.stickers,
                         getStickersWithTagsState = {
@@ -186,6 +208,9 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
                         },
                         suggestTags = if (currentStickerChanged) {
                             suggestTags.orEmpty().toList()
+                        } else null,
+                        similarStickers = if (currentStickerChanged) {
+                            similarStickers.orEmpty()
                         } else null,
                         currentStickerChanged = currentStickerChanged,
                     )
@@ -229,17 +254,29 @@ class AddViewModel @Inject constructor(private var addRepository: AddRepository)
     }
 
     private suspend fun currentStickerChange(newCurrentSticker: UriWithStickerUuidBean?):
-            Flow<Pair<StickerWithTags?, Set<String>?>> {
-        if (newCurrentSticker == null) return flowOf(null to null)
+            Flow<Triple<StickerWithTags?, Set<String>?, List<StickerWithTags>?>> {
+        if (newCurrentSticker == null) return flowOf(Triple(null, null, null))
         var getStickerWithTags: Flow<StickerWithTags?> = flowOf(null)
         if (newCurrentSticker.stickerUuid.isNotBlank()) {
             getStickerWithTags =
                 addRepository.requestGetStickerWithTags(newCurrentSticker.stickerUuid)
         }
-        return getStickerWithTags.zip(
-            addRepository.requestSuggestTags(newCurrentSticker.uri!!)
-        ) { stickerWithTags, suggestTags ->
-            stickerWithTags to suggestTags
+        return combine(
+            getStickerWithTags,
+            addRepository.requestSuggestTags(newCurrentSticker.uri!!),
+            if (appContext.dataStore.getOrDefault(AddScreenImageSearchPreference)) {
+                imageSearchRepository.imageSearch(
+                    base = newCurrentSticker.uri,
+                    baseUuid = newCurrentSticker.stickerUuid,
+                    maxResultCount = appContext.dataStore.getOrDefault(
+                        ImageSearchMaxResultCountPreference
+                    )
+                )
+            } else {
+                flowOf(emptyList())
+            },
+        ) { stickerWithTags, suggestTags, similarStickers ->
+            Triple(stickerWithTags, suggestTags, similarStickers)
         }
     }
 }

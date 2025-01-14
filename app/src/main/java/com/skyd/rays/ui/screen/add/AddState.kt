@@ -12,6 +12,7 @@ data class AddState(
     val addToAllTags: List<String>,
     val titleText: String,
     val currentTagText: String,
+    val similarStickers: List<StickerWithTags>,
     val loadingDialog: Boolean,
 ) : MviViewState {
     val currentSticker: UriWithStickerUuidBean? = waitingList.firstOrNull()
@@ -25,6 +26,7 @@ data class AddState(
             addToAllTags = emptyList(),
             titleText = "",
             currentTagText = "",
+            similarStickers = emptyList(),
             loadingDialog = false,
         )
     }

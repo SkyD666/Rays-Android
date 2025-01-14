@@ -53,8 +53,16 @@ class ImageSearchRepository @Inject constructor(
         }
     }
 
-    fun imageSearch(base: Uri, maxResultCount: Int): Flow<List<StickerWithTags>> = flow {
-        val nearestNeighborsResult = nearestNeighbors(base.toBitmap(), maxResultCount)
+    fun imageSearch(
+        base: Uri,
+        baseUuid: String? = null,
+        maxResultCount: Int,
+        distance: Double = 500.0,
+    ): Flow<List<StickerWithTags>> = flow {
+        val nearestNeighborsResult = nearestNeighbors(base.toBitmap(), maxResultCount, distance)
+        if (baseUuid != null) {
+            nearestNeighborsResult.remove(baseUuid)
+        }
         emit(
             stickerDao.getAllStickerWithTagsList(nearestNeighborsResult.keys).sortedBy {
                 nearestNeighborsResult[it.sticker.uuid]
@@ -62,7 +70,11 @@ class ImageSearchRepository @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    fun nearestNeighbors(base: Bitmap, maxResultCount: Int): Map<String, Double> {
+    private fun nearestNeighbors(
+        base: Bitmap,
+        maxResultCount: Int,
+        distance: Double = 500.0,
+    ): MutableMap<String, Double> {
         val result = mutableMapOf<String, Double>()
         preprocessingEmbedding()
         imageEmbedder?.let { imageEmbedder ->
@@ -73,12 +85,13 @@ class ImageSearchRepository @Inject constructor(
             val query = stickerEmbeddingBox
                 .query(StickerEmbedding_.embedding.nearestNeighbors(baseEmbedding, maxResultCount))
                 .build()
-            result.putAll(query.findWithScores().associate { it.get().uuid to it.score })
+            result.putAll(query.findWithScores().filter { it.score <= distance }
+                .associate { it.get().uuid to it.score })
         }
         return result
     }
 
-    private fun preprocessingEmbedding() = imageEmbedder?.let { imageEmbedder ->
+    fun preprocessingEmbedding() = imageEmbedder?.let { imageEmbedder ->
         val allStickers = stickerDao.getAllStickerUuidList()
         val stickerEmbeddingBox = boxStore.boxFor(StickerEmbedding::class)
         val cachedEmbeddings = stickerEmbeddingBox.query()

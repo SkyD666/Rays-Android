@@ -6,4 +6,5 @@ import com.skyd.rays.model.bean.SearchDomainBean
 sealed interface SearchConfigIntent : MviIntent {
     data object GetSearchDomain : SearchConfigIntent
     data class SetSearchDomain(val searchDomainBean: SearchDomainBean) : SearchConfigIntent
+    data object EnableAddScreenImageSearch : SearchConfigIntent
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,10 +27,12 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -98,6 +101,7 @@ import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.navigate
+import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.model.bean.StickerBean
@@ -110,6 +114,8 @@ import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
+import com.skyd.rays.ui.screen.detail.openDetailScreen
+import com.skyd.rays.ui.screen.search.SearchResultItem
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
 import kotlinx.coroutines.launch
@@ -324,6 +330,9 @@ fun AddScreen(
                     dispatch(AddIntent.AddTag(uiState.suggestTags[index]))
                     dispatch(AddIntent.RemoveSuggestTag(uiState.suggestTags[index]))
                 })
+            }
+            item {
+                SimilarStickers(similarStickers = uiState.similarStickers)
             }
         }
 
@@ -678,7 +687,7 @@ private fun SuggestedTags(suggestedTags: List<String>, onClick: (Int) -> Unit) {
                     .padding(horizontal = 16.dp)
                     .padding(top = 12.dp),
                 text = stringResource(R.string.add_screen_suggest_tag),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
             )
             FlowRow(
                 modifier = Modifier
@@ -693,6 +702,51 @@ private fun SuggestedTags(suggestedTags: List<String>, onClick: (Int) -> Unit) {
                         modifier = Modifier.combinedClickable { },
                         label = { Text(suggestedTags[index]) },
                         onClick = { onClick(index) },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SimilarStickers(similarStickers: List<StickerWithTags>) {
+    AnimatedVisibility(
+        visible = similarStickers.isNotEmpty(),
+        enter = expandVertically() + fadeIn(),
+        exit = shrinkVertically() + fadeOut(),
+    ) {
+        val navController = LocalNavController.current
+        Card(modifier = Modifier.padding(horizontal = 16.dp, vertical = 7.dp)) {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 12.dp),
+                text = stringResource(R.string.add_screen_similar_stickers),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 12.dp) +
+                        PaddingValues(bottom = 12.dp, top = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                items(similarStickers) { sticker ->
+                    SearchResultItem(
+                        modifier = Modifier
+                            .height(70.dp)
+                            .width(IntrinsicSize.Max)
+                            .widthIn(max = 120.dp),
+                        data = sticker,
+                        selectable = false,
+                        selected = false,
+                        contentScale = ContentScale.FillHeight,
+                        imageAspectRatio = null,
+                        onClickListener = { _, _ ->
+                            openDetailScreen(
+                                navController = navController,
+                                stickerUuid = sticker.sticker.uuid
+                            )
+                        }
                     )
                 }
             }

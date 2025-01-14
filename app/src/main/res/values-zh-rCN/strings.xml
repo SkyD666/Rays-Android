@@ -365,4 +365,9 @@
     <string name="image_search_screen_long_time_tip">首次使用此功能可能需要一些时间，请耐心等待。</string>
     <string name="image_search_screen_source_image">原图</string>
     <string name="image_search_screen_source_image_hint">选择图片</string>
+    <string name="image_search_screen_threshold">阈值：%.2f</string>
+    <string name="search_config_screen_enable_add_screen_image_search">添加页面搜索</string>
+    <string name="search_config_screen_enable_add_screen_image_search_description">在添加页面显示相似的图片</string>
+    <string name="search_config_screen_image_search_max_result_count">最大结果数</string>
+    <string name="add_screen_similar_stickers">相似表情包</string>
 </resources>

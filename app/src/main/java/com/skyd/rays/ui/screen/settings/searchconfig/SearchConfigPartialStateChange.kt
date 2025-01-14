@@ -41,4 +41,13 @@ internal sealed interface SearchConfigPartialStateChange {
             }
         }
     }
+
+    sealed interface EnableAddScreenImageSearchResult : SearchConfigPartialStateChange {
+        override fun reduce(oldState: SearchConfigState): SearchConfigState {
+            return oldState.copy(loadingDialog = false)
+        }
+
+        data object Success : EnableAddScreenImageSearchResult
+        data class Failed(val msg: String) : EnableAddScreenImageSearchResult
+    }
 }

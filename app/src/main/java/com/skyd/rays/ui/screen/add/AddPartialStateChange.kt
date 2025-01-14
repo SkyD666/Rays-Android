@@ -21,6 +21,7 @@ internal sealed interface AddPartialStateChange {
             val stickerWithTags: StickerWithTags?,
             val waitingList: List<UriWithStickerUuidBean>,
             val suggestTags: Set<String>,
+            val similarStickers: List<StickerWithTags>,
         ) : Init {
             override fun reduce(oldState: AddState) = oldState.copy(
                 waitingList = waitingList,
@@ -31,6 +32,7 @@ internal sealed interface AddPartialStateChange {
                 addedTags = stickerWithTags?.tags?.map { it.tag }.orEmpty(),
                 addToAllTags = emptyList(),
                 titleText = stickerWithTags?.sticker?.title.orEmpty(),
+                similarStickers = similarStickers,
                 loadingDialog = false,
             )
         }
@@ -53,6 +55,7 @@ internal sealed interface AddPartialStateChange {
         val index: Int,
         val getStickersWithTagsState: (oldState: AddState) -> GetStickersWithTagsState = { it.getStickersWithTagsState },
         val suggestTags: List<String>? = null,
+        val similarStickers: List<StickerWithTags>? = null,
         val currentStickerChanged: Boolean = false,
     ) : AddPartialStateChange {
         override fun reduce(oldState: AddState): AddState {
@@ -69,6 +72,7 @@ internal sealed interface AddPartialStateChange {
                 titleText = if (currentStickerChanged) {
                     stickerWithTags?.sticker?.title.orEmpty()
                 } else oldState.titleText,
+                similarStickers = similarStickers ?: oldState.similarStickers,
             )
         }
     }
@@ -77,6 +81,7 @@ internal sealed interface AddPartialStateChange {
         val willSticker: UriWithStickerUuidBean,
         val getStickersWithTagsState: (oldState: AddState) -> GetStickersWithTagsState = { it.getStickersWithTagsState },
         val suggestTags: List<String>? = null,
+        val similarStickers: List<StickerWithTags>? = null,
         val currentStickerChanged: Boolean = false,
     ) : AddPartialStateChange {
         override fun reduce(oldState: AddState): AddState {
@@ -93,6 +98,7 @@ internal sealed interface AddPartialStateChange {
                 titleText = if (currentStickerChanged) {
                     stickerWithTags?.sticker?.title.orEmpty()
                 } else oldState.titleText,
+                similarStickers = similarStickers ?: oldState.similarStickers,
             )
         }
     }
@@ -113,6 +119,7 @@ internal sealed interface AddPartialStateChange {
         val stickers: List<UriWithStickerUuidBean>,
         val getStickersWithTagsState: (oldState: AddState) -> GetStickersWithTagsState = { it.getStickersWithTagsState },
         val suggestTags: List<String>? = null,
+        val similarStickers: List<StickerWithTags>? = null,
         val currentStickerChanged: Boolean = false,
     ) : AddPartialStateChange {
         override fun reduce(oldState: AddState): AddState {
@@ -129,6 +136,7 @@ internal sealed interface AddPartialStateChange {
                 titleText = if (currentStickerChanged) {
                     stickerWithTags?.sticker?.title.orEmpty()
                 } else oldState.titleText,
+                similarStickers = similarStickers ?: oldState.similarStickers,
             )
         }
     }

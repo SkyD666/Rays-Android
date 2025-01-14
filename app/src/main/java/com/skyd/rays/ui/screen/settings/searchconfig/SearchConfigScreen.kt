@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddPhotoAlternate
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Domain
 import androidx.compose.material.icons.outlined.Done
@@ -15,13 +16,18 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -33,17 +39,23 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
+import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.config.allSearchDomain
 import com.skyd.rays.model.bean.SearchDomainBean
 import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
+import com.skyd.rays.model.preference.search.imagesearch.AddScreenImageSearchPreference
+import com.skyd.rays.model.preference.search.imagesearch.ImageSearchMaxResultCountPreference
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.CategorySettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
+import com.skyd.rays.ui.component.SliderSettingsItem
 import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.component.dialog.WaitingDialog
+import com.skyd.rays.ui.local.LocalAddScreenImageSearch
+import com.skyd.rays.ui.local.LocalImageSearchMaxResultCount
 import com.skyd.rays.ui.local.LocalIntersectSearchBySpace
 import com.skyd.rays.ui.local.LocalUseRegexSearch
 
@@ -51,6 +63,7 @@ const val SEARCH_CONFIG_SCREEN_ROUTE = "searchConfigScreen"
 
 @Composable
 fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
+    val snackbarHostState = remember { SnackbarHostState() }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -61,6 +74,7 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
     val dispatch = viewModel.getDispatcher(startWith = SearchConfigIntent.GetSearchDomain)
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             RaysTopBar(
                 style = RaysTopBarStyle.Large,
@@ -129,6 +143,52 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
                         )
                     }
                 }
+            }
+            item {
+                CategorySettingsItem(text = stringResource(id = R.string.image_search_screen_name))
+            }
+            item {
+                SwitchSettingsItem(
+                    imageVector = Icons.Outlined.AddPhotoAlternate,
+                    text = stringResource(id = R.string.search_config_screen_enable_add_screen_image_search),
+                    description = stringResource(id = R.string.search_config_screen_enable_add_screen_image_search_description),
+                    checked = LocalAddScreenImageSearch.current,
+                    onCheckedChange = {
+                        AddScreenImageSearchPreference.put(
+                            context = context,
+                            scope = scope,
+                            value = it
+                        )
+                        if (it) dispatch(SearchConfigIntent.EnableAddScreenImageSearch)
+                    },
+                )
+            }
+            item {
+                val maxCount = LocalImageSearchMaxResultCount.current
+                var maxCountFloat by rememberSaveable { mutableFloatStateOf(maxCount.toFloat()) }
+                SliderSettingsItem(
+                    imageVector = Icons.Outlined.Code,
+                    value = maxCountFloat,
+                    valueFormater = { it.toInt().toString() },
+                    text = stringResource(id = R.string.search_config_screen_image_search_max_result_count),
+                    valueRange = 1f..100f,
+                    onValueChange = {
+                        ImageSearchMaxResultCountPreference.put(
+                            context = context,
+                            scope = scope,
+                            value = it.toInt(),
+                        )
+                        maxCountFloat = it
+                    },
+                )
+            }
+        }
+
+        MviEventListener(viewModel.singleEvent) { event ->
+            when (event) {
+                is SearchConfigEvent.EnableAddScreenImageSearchUiEvent.Failed -> snackbarHostState.showSnackbar(
+                    context.getString(R.string.failed_info, event.msg),
+                )
             }
         }
 
