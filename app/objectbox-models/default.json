@@ -1,0 +1,46 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:6271456781840555987",
+      "lastPropertyId": "3:1226899768236430839",
+      "name": "StickerEmbedding",
+      "properties": [
+        {
+          "id": "1:9014875415999067198",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:514944178648872073",
+          "name": "uuid",
+          "indexId": "1:7304278368284265980",
+          "type": 9,
+          "flags": 2048
+        },
+        {
+          "id": "3:1226899768236430839",
+          "name": "embedding",
+          "indexId": "2:8784958264615928743",
+          "type": 28,
+          "flags": 8
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "1:6271456781840555987",
+  "lastIndexId": "2:8784958264615928743",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}
