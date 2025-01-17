@@ -23,7 +23,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 67
-        versionName = "2.3-rc05"
+        versionName = "2.3-rc06"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -173,7 +173,9 @@ dependencies {
     implementation(libs.androidx.room.paging)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.paging.compose)
-    implementation(libs.sardine.android)
+    implementation(libs.sardine.android) {
+        exclude(group = "xpp3", module = "xpp3")
+    }
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.material.kolor)
     implementation(libs.androidx.datastore.preferences)

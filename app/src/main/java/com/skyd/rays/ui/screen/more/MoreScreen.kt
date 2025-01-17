@@ -1,15 +1,30 @@
 package com.skyd.rays.ui.screen.more
 
 import android.content.Context
+import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ImportExport
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Widgets
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -18,11 +33,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -33,9 +50,6 @@ import com.skyd.rays.model.bean.More1Bean
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.lazyverticalgrid.RaysLazyVerticalGrid
-import com.skyd.rays.ui.component.lazyverticalgrid.adapter.LazyGridAdapter
-import com.skyd.rays.ui.component.lazyverticalgrid.adapter.proxy.More1Proxy
 import com.skyd.rays.ui.component.shape.CloverShape
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.component.shape.SquircleShape
@@ -77,26 +91,73 @@ fun MoreScreen() {
             )
         },
     ) {
-        val adapter = remember {
-            LazyGridAdapter(
-                mutableListOf(
-                    More1Proxy(onClickListener = { data ->
-                        data.action.invoke()
-                    })
-                )
-            )
-        }
         val colorScheme: ColorScheme = MaterialTheme.colorScheme
-        RaysLazyVerticalGrid(
+        val dataList = remember(context, colorScheme, density, navController) {
+            getMoreList(context, colorScheme, density, navController)
+        }
+        LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
-            dataList = remember(context, colorScheme, density, navController) {
-                getMoreList(context, colorScheme, density, navController)
-            },
-            adapter = adapter,
-            contentPadding = it + PaddingValues(vertical = 10.dp),
-        )
+            contentPadding = it + PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+            columns = GridCells.Adaptive(130.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            items(dataList) { item ->
+                More1Item(
+                    data = item,
+                    onClickListener = { data -> data.action.invoke() }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun More1Item(
+    data: More1Bean,
+    onClickListener: ((data: More1Bean) -> Unit)? = null
+) {
+    OutlinedCard(shape = RoundedCornerShape(16)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .combinedClickable(
+                    onClick = {
+                        onClickListener?.invoke(data)
+                    }
+                )
+                .padding(25.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .background(
+                        color = data.shapeColor,
+                        shape = data.shape
+                    )
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    modifier = Modifier.size(35.dp),
+                    imageVector = data.icon,
+                    contentDescription = null,
+                    tint = data.iconTint
+                )
+            }
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 5.dp)
+                    .padding(top = 15.dp)
+                    .basicMarquee(iterations = Int.MAX_VALUE),
+                text = data.title,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 

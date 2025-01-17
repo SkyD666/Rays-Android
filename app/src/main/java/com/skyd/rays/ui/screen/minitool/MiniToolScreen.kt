@@ -1,11 +1,24 @@
 package com.skyd.rays.ui.screen.minitool
 
+import android.content.Context
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.PeopleAlt
 import androidx.compose.material.icons.outlined.Style
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -14,10 +27,16 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.skyd.rays.R
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbar
@@ -25,9 +44,6 @@ import com.skyd.rays.model.bean.MiniTool1Bean
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.lazyverticalgrid.RaysLazyVerticalGrid
-import com.skyd.rays.ui.component.lazyverticalgrid.adapter.LazyGridAdapter
-import com.skyd.rays.ui.component.lazyverticalgrid.adapter.proxy.MiniTool1Proxy
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SELFIE_SEGMENTATION_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUTE
@@ -37,6 +53,7 @@ const val MINI_TOOL_SCREEN_ROUTE = "miniToolScreen"
 @Composable
 fun MiniToolScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val context = LocalContext.current
     val navController = LocalNavController.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -63,31 +80,91 @@ fun MiniToolScreen() {
             )
         },
     ) {
-        val miniToolList = listOf(
-            MiniTool1Bean(
-                title = stringResource(R.string.style_transfer_screen_name),
-                icon = Icons.Outlined.Style,
-                action = { navController.navigate(STYLE_TRANSFER_SCREEN_ROUTE) }
-            ),
-            MiniTool1Bean(
-                title = stringResource(R.string.selfie_segmentation_screen_name),
-                icon = Icons.Outlined.PeopleAlt,
-                action = { navController.navigate(SELFIE_SEGMENTATION_SCREEN_ROUTE) }
-            ),
-        )
-
-        val adapter = remember {
-            LazyGridAdapter(
-                mutableListOf(MiniTool1Proxy(onClickListener = { data -> data.action.invoke() }))
-            )
+        val miniToolList = remember {
+            getMiniToolLost(context = context, navController = navController)
         }
-        RaysLazyVerticalGrid(
+
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
-            dataList = miniToolList,
-            adapter = adapter,
-            contentPadding = it + PaddingValues(vertical = 10.dp),
-        )
+            contentPadding = it + PaddingValues(vertical = 10.dp, horizontal = 16.dp),
+        ) {
+            items(miniToolList) { item ->
+                MiniTool1Item(
+                    data = item,
+                    onClickListener = { data -> data.action.invoke() },
+                )
+            }
+        }
     }
 }
+
+@Composable
+private fun MiniTool1Item(
+    data: MiniTool1Bean,
+    onClickListener: ((data: MiniTool1Bean) -> Unit)? = null
+) {
+    val context = LocalContext.current
+    OutlinedCard(
+        modifier = Modifier.padding(vertical = 6.dp),
+        shape = RoundedCornerShape(16)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .combinedClickable(
+                    onClick = {
+                        onClickListener?.invoke(data)
+                    }
+                )
+                .padding(25.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier.size(35.dp),
+                imageVector = data.icon,
+                contentDescription = null,
+            )
+            BadgedBox(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                badge = {
+                    if (data.experimental) {
+                        Text(
+                            text = stringResource(R.string.mini_tool_experimental),
+                            modifier = Modifier.semantics {
+                                contentDescription =
+                                    context.getString(R.string.mini_tool_experimental)
+                            },
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                }
+            ) {
+                Text(
+                    text = data.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+private fun getMiniToolLost(
+    context: Context,
+    navController: NavController,
+) = listOf(
+    MiniTool1Bean(
+        title = context.getString(R.string.style_transfer_screen_name),
+        icon = Icons.Outlined.Style,
+        action = { navController.navigate(STYLE_TRANSFER_SCREEN_ROUTE) }
+    ),
+    MiniTool1Bean(
+        title = context.getString(R.string.selfie_segmentation_screen_name),
+        icon = Icons.Outlined.PeopleAlt,
+        action = { navController.navigate(SELFIE_SEGMENTATION_SCREEN_ROUTE) }
+    ),
+)
