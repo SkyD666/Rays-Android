@@ -349,7 +349,7 @@
     <string name="data_screen_danger_category">危险区域</string>
     <string name="data_screen_delete_all_sticker_share_time_data">删除分享数据</string>
     <string name="data_screen_delete_all_sticker_share_time_data_description">删除分享表情包操作的统计数据，例如每次分享的时间</string>
-    <string name="about_screen_other_works_anivu_description">一个集 RSS 番剧订阅与更新、比特洪流下载、视频播放为一体的工具。</string>
+    <string name="about_screen_other_works_podaura_description">一个集 RSS 订阅与更新、媒体下载与播放为一体的播客应用。</string>
     <string name="cache_screen_delete_all_mimetypes">删除 Mimetype</string>
     <string name="cache_screen_delete_all_mimetypes_description">删除所有已缓存的表情包 Mimetype 数据</string>
     <string name="cache_screen_delete_all_mimetypes_success">已删除 Mimetype 数据，花费 %.2f 秒</string>
@@ -370,4 +370,5 @@
     <string name="search_config_screen_enable_add_screen_image_search_description">在添加页面显示相似的图片</string>
     <string name="search_config_screen_image_search_max_result_count">最大结果数</string>
     <string name="add_screen_similar_stickers">相似表情包</string>
+    <string name="detail_screen_full_image">全屏查看</string>
 </resources>

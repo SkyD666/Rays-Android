@@ -8,7 +8,7 @@ import androidx.security.crypto.EncryptedSharedPreferences.PrefValueEncryptionSc
 import androidx.security.crypto.MasterKey
 import javax.crypto.AEADBadTagException
 
-class AniVuEncryptedSharedPreferences(
+class RaysEncryptedSharedPreferences(
     private val encryptedSharedPreferences: EncryptedSharedPreferences,
 ) : SharedPreferences {
 
@@ -19,7 +19,7 @@ class AniVuEncryptedSharedPreferences(
             masterKey: MasterKey,
             prefKeyEncryptionScheme: PrefKeyEncryptionScheme,
             prefValueEncryptionScheme: PrefValueEncryptionScheme,
-        ): AniVuEncryptedSharedPreferences {
+        ): RaysEncryptedSharedPreferences {
             val creator: () -> EncryptedSharedPreferences = {
                 EncryptedSharedPreferences.create(
                     context,
@@ -29,7 +29,7 @@ class AniVuEncryptedSharedPreferences(
                     prefValueEncryptionScheme
                 ) as EncryptedSharedPreferences
             }
-            return AniVuEncryptedSharedPreferences(
+            return RaysEncryptedSharedPreferences(
                 safeBlock(creator)
                     ?: context.deleteSharedPreferences(fileName).run { creator() }
             )

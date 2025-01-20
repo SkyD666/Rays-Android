@@ -50,6 +50,9 @@ import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.add.AddScreen
 import com.skyd.rays.ui.screen.detail.DETAIL_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.detail.DetailScreen
+import com.skyd.rays.ui.screen.fullimage.FULL_IMAGE_SCREEN_IMAGE_KEY
+import com.skyd.rays.ui.screen.fullimage.FULL_IMAGE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.fullimage.FullImageScreen
 import com.skyd.rays.ui.screen.main.MAIN_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.main.MainScreen
 import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SELFIE_SEGMENTATION_SCREEN_ROUTE
@@ -323,13 +326,16 @@ class MainActivity : BaseComposeActivity() {
             composable(route = "$DETAIL_SCREEN_ROUTE?stickerUuid={stickerUuid}") {
                 DetailScreen(stickerUuid = it.arguments?.getString("stickerUuid").orEmpty())
             }
+            composable(route = "$FULL_IMAGE_SCREEN_ROUTE?$FULL_IMAGE_SCREEN_IMAGE_KEY={$FULL_IMAGE_SCREEN_IMAGE_KEY}") {
+                FullImageScreen(image = it.arguments?.getParcelable(FULL_IMAGE_SCREEN_IMAGE_KEY)!!)
+            }
             composable(route = "$STICKERS_LIST_SCREEN_ROUTE?query={query}") {
                 StickersListScreen(query = it.arguments?.getString("query").orEmpty())
             }
             composable(route = SEARCH_SCREEN_ROUTE) {
                 SearchScreen()
             }
-            composable(route = IMAGE_SEARCH_SCREEN_ROUTE ) {
+            composable(route = IMAGE_SEARCH_SCREEN_ROUTE) {
                 ImageSearchScreen(
                     baseImage = it.arguments?.getParcelable(BASE_IMAGE_KEY)
                 )

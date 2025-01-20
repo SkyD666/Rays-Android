@@ -8,7 +8,7 @@ textRecognition = "16.0.1"
 kotlin = "2.0.21"
 
 [libraries]
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.9.3" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.10.0" }
 androidx-compose-ui-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "composeMaterial" }
 androidx-compose-ui-ui-tooling3 = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeMaterial" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version = "1.15.0" }
@@ -25,7 +25,7 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "composeMaterial" }
-androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.1" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.2" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version = "1.0.1" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version = "3.3.5" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version = "1.2.0" }
@@ -44,6 +44,7 @@ coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil" }
 coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil" }
 
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version = "6.6.2" }
+zoomable = { module = "me.saket.telephoto:zoomable", version = "0.14.0" }
 
 sardine-android = { module = "com.github.thegrizzlylabs:sardine-android", version = "0.8" }
 

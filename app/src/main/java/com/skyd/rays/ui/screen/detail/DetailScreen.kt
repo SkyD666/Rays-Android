@@ -91,6 +91,7 @@ import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.openAddScreen
+import com.skyd.rays.ui.screen.fullimage.openFullImageScreen
 import com.skyd.rays.ui.screen.search.imagesearch.openImageSearchScreen
 import com.skyd.rays.ui.screen.stickerslist.openStickersListScreen
 import com.skyd.rays.util.copyStickerToClipboard
@@ -211,11 +212,20 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                         onDeleteClick = { openDeleteWarningDialog = true },
                         onExportClick = { openExportPathDialog = true },
                         onStickerInfoClick = { openStickerInfoDialog = true },
+                        onFullImageClick = {
+                            val state = uiState.stickerDetailState as? StickerDetailState.Success
+                                ?: return@DetailMenu
+                            openFullImageScreen(
+                                navController = navController,
+                                image = stickerUuidToUri(state.stickerWithTags.sticker.uuid)
+                            )
+                        },
                         onStickerSearchClick = {
                             val state = uiState.stickerDetailState as? StickerDetailState.Success
                                 ?: return@DetailMenu
                             openImageSearchScreen(
-                                navController, stickerUuidToUri(state.stickerWithTags.sticker.uuid),
+                                navController = navController,
+                                baseImage = stickerUuidToUri(state.stickerWithTags.sticker.uuid),
                             )
                         },
                         onStickerScaleClick = { openStickerScaleSheet = true },

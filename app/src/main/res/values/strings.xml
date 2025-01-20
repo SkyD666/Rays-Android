@@ -341,8 +341,8 @@
     <string name="data_screen_danger_category">Danger area</string>
     <string name="data_screen_delete_all_sticker_share_time_data">Delete share data</string>
     <string name="data_screen_delete_all_sticker_share_time_data_description">Delete sticker share statistics, e.g. time of each share</string>
-    <string name="about_screen_other_works_anivu_name" translatable="false">AniVu</string>
-    <string name="about_screen_other_works_anivu_description">An all-in-one tool for RSS anime subscription and updates, bit torrent downloads, and video playback.</string>
+    <string name="about_screen_other_works_podaura_name" translatable="false">PodAura</string>
+    <string name="about_screen_other_works_podaura_description">All-in-one Android podcast app for RSS, media dl &amp; play.</string>
     <string name="cache_screen_delete_all_mimetypes">Delete mimetypes</string>
     <string name="cache_screen_delete_all_mimetypes_description">Delete cached Mimetype data</string>
     <string name="cache_screen_delete_all_mimetypes_success">All Mimetype deleted, spent %.2fs</string>
@@ -364,4 +364,5 @@
     <string name="search_config_screen_enable_add_screen_image_search_description">Show similar images on the Add Screen</string>
     <string name="search_config_screen_image_search_max_result_count">Max result count</string>
     <string name="add_screen_similar_stickers">Similar stickers</string>
+    <string name="detail_screen_full_image">View in full screen</string>
 </resources>

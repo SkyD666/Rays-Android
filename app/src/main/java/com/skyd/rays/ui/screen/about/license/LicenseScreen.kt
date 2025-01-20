@@ -169,5 +169,10 @@ private fun getLicenseList(): List<LicenseBean> {
             license = "Apache-2.0",
             url = "https://github.com/objectbox/objectbox-java"
         ),
+        LicenseBean(
+            name = "Telephoto",
+            license = "Apache-2.0",
+            url = "https://github.com/saket/telephoto"
+        ),
     ).sortedBy { it.name }
 }

@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Help
 import androidx.compose.material.icons.outlined.AspectRatio
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Fullscreen
 import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Save
@@ -28,6 +29,7 @@ fun DetailMenu(
     onDeleteClick: () -> Unit,
     onExportClick: () -> Unit,
     onStickerInfoClick: () -> Unit,
+    onFullImageClick: () -> Unit,
     onStickerSearchClick: () -> Unit,
     onStickerScaleClick: () -> Unit,
 ) {
@@ -68,6 +70,15 @@ fun DetailMenu(
                 onExportClick()
             },
             leadingIcon = { Icon(Icons.Outlined.Save, contentDescription = null) }
+        )
+        DropdownMenuItem(
+            enabled = stickerMenuItemEnabled,
+            text = { Text(stringResource(R.string.detail_screen_full_image)) },
+            onClick = {
+                onDismissRequest()
+                onFullImageClick()
+            },
+            leadingIcon = { Icon(Icons.Outlined.Fullscreen, contentDescription = null) }
         )
         DropdownMenuItem(
             enabled = stickerMenuItemEnabled,

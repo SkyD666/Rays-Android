@@ -8,18 +8,17 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.MutatePriority
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -115,6 +114,7 @@ import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.detail.openDetailScreen
+import com.skyd.rays.ui.screen.fullimage.openFullImageScreen
 import com.skyd.rays.ui.screen.search.SearchResultItem
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
@@ -605,15 +605,25 @@ private fun WaitingRow(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 3.dp),
             ) {
                 itemsIndexed(items = uris) { index, uri ->
-                    val content: @Composable ColumnScope.() -> Unit = {
-                        Box(contentAlignment = Alignment.TopEnd) {
+                    ElevatedCard {
+                        val navController = LocalNavController.current
+                        Box(
+                            modifier = Modifier.clickable {
+                                openFullImageScreen(
+                                    navController = navController,
+                                    image = uri.uri!!
+                                )
+                            },
+                            contentAlignment = Alignment.TopEnd,
+                        ) {
                             RaysImage(
                                 model = uri.uri,
                                 blur = false,
                                 modifier = Modifier
                                     .height(if (index == 0) 150.dp else 100.dp)
-                                    .aspectRatio(1f),
-                                contentScale = ContentScale.Crop,
+                                    .widthIn(max = 170.dp)
+                                    .align(Alignment.Center),
+                                contentScale = ContentScale.Fit,
                             )
                             Row(modifier = Modifier.padding(3.dp)) {
                                 val iconButtonModifier = Modifier.size(36.dp)
@@ -641,7 +651,6 @@ private fun WaitingRow(
                             }
                         }
                     }
-                    ElevatedCard(content = content)
                 }
             }
         }

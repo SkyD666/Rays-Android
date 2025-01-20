@@ -10,6 +10,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -33,14 +34,14 @@ fun RaysTopBar(
     contentPadding: @Composable () -> PaddingValues = { PaddingValues() },
     navigationIcon: @Composable () -> Unit = { BackIcon() },
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
-    actions: @Composable RowScope.() -> Unit = {},
-    scrollBehavior: TopAppBarScrollBehavior? = null,
-) {
-    val colors = when (style) {
+    colors: TopAppBarColors = when (style) {
         RaysTopBarStyle.Small -> TopAppBarDefaults.topAppBarColors()
         RaysTopBarStyle.Large -> TopAppBarDefaults.largeTopAppBarColors()
         RaysTopBarStyle.CenterAligned -> TopAppBarDefaults.centerAlignedTopAppBarColors()
-    }
+    },
+    actions: @Composable RowScope.() -> Unit = {},
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+) {
     val topBarModifier = Modifier.padding(contentPadding())
     when (style) {
         RaysTopBarStyle.Small -> {

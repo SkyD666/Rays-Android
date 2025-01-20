@@ -23,7 +23,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 67
-        versionName = "2.3-rc06"
+        versionName = "2.3-rc07"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -163,9 +163,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.security.crypto)
     implementation(libs.accompanist.drawablepainter)
-    implementation(libs.coil.compose)
-    implementation(libs.coil.gif)
-    implementation(libs.coil.svg)
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.room.runtime)
@@ -173,13 +170,17 @@ dependencies {
     implementation(libs.androidx.room.paging)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.sardine.android) {
         exclude(group = "xpp3", module = "xpp3")
     }
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.material.kolor)
-    implementation(libs.androidx.datastore.preferences)
     implementation(libs.lottie.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
+    implementation(libs.coil.svg)
+    implementation(libs.zoomable)
 
     implementation(libs.retrofit2)
     implementation(libs.retrofit2.kotlinx.serialization.converter)

@@ -154,9 +154,9 @@ If you are interested, please help us **translate**, thank you.
 </thead>
 <tbody>
   <tr>
-    <td><img src="image/AniVu.svg" style="height: 100px"/></td>
-    <td><b>AniVu</b>, an <b>all-in-one tool</b> for <b>RSS anime subscription and updates</b>, <b>bit torrent downloads</b>, and <b>video playback</b>.</td>
-    <td><a href="https://github.com/SkyD666/AniVu">https://github.com/SkyD666/AniVu</a></td>
+    <td><img src="image/PodAura.svg" style="height: 100px"/></td>
+    <td><b>PodAura</b>, an <b>all-in-one Podcast tool</b> for <b>RSS subscription and updates</b>, <b>media downloads</b> and <b>playback</b>.</td>
+    <td><a href="https://github.com/SkyD666/PodAura">https://github.com/SkyD666/PodAura</a></td>
   </tr>
   <tr>
     <td><img src="image/Raca.svg" style="height: 100px"/></td>

@@ -152,9 +152,9 @@
 </thead>
 <tbody>
   <tr>
-    <td><img src="../../image/AniVu.svg" style="height: 100px"/></td>
-    <td><b>AniVu</b>，一个集<b> RSS 番剧订阅与更新、比特洪流下载、视频播放</b>为一体的工具。</td>
-    <td><a href="https://github.com/SkyD666/AniVu">https://github.com/SkyD666/AniVu</a></td>
+    <td><img src="../../image/PodAura.svg" style="height: 100px"/></td>
+    <td><b>PodAura</b>，一个集<b> RSS 订阅与更新、媒体下载与播放</b>为一体的播客工具。</td>
+    <td><a href="https://github.com/SkyD666/PodAura">https://github.com/SkyD666/PodAura</a></td>
   </tr>
   <tr>
     <td><img src="../../image/Raca.svg" style="height: 100px"/></td>

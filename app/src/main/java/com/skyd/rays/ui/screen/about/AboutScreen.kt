@@ -66,7 +66,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
-import com.skyd.rays.config.ANIVU_URL
+import com.skyd.rays.config.PODAURA_URL
 import com.skyd.rays.config.GITHUB_REPO
 import com.skyd.rays.config.NIGHT_SCREEN_URL
 import com.skyd.rays.config.RACA_ANDROID_URL
@@ -430,10 +430,10 @@ private fun rememberOtherWorksList(): List<OtherWorksBean> {
     return remember {
         listOf(
             OtherWorksBean(
-                name = context.getString(R.string.about_screen_other_works_anivu_name),
-                icon = R.drawable.ic_anivu,
-                description = context.getString(R.string.about_screen_other_works_anivu_description),
-                url = ANIVU_URL,
+                name = context.getString(R.string.about_screen_other_works_podaura_name),
+                icon = R.drawable.ic_podaura,
+                description = context.getString(R.string.about_screen_other_works_podaura_description),
+                url = PODAURA_URL,
             ),
             OtherWorksBean(
                 name = context.getString(R.string.about_screen_other_works_raca_name),
