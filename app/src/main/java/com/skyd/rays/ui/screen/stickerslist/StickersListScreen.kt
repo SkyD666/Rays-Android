@@ -27,6 +27,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
+import com.skyd.rays.ext.collectAsLazyPagingItemsWithLifecycle
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
 import com.skyd.rays.model.bean.StickerWithTags
@@ -94,7 +95,8 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
         when (val listState = uiState.listState) {
             ListState.Init -> Unit
             is ListState.Success -> {
-                val lazyPagingItems = listState.stickerWithTagsPagingFlow.collectAsLazyPagingItems()
+                val lazyPagingItems =
+                    listState.stickerWithTagsPagingFlow.collectAsLazyPagingItemsWithLifecycle()
                 StickerList(
                     count = lazyPagingItems.itemCount,
                     data = { lazyPagingItems[it]!! },

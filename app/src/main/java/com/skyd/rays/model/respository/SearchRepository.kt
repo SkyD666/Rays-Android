@@ -78,8 +78,8 @@ class SearchRepository @Inject constructor(
 
     fun requestStickerWithTagsListWithAllSearchDomain(keyword: String): Flow<PagingData<StickerWithTags>> {
         return flow { emit(genSql(k = keyword, useSearchDomain = { _, _ -> true })) }
-            .flowOn(Dispatchers.IO)
             .flatMapLatest { Pager(pagingConfig) { stickerDao.getStickerWithTagsPaging(it) }.flow }
+            .flowOn(Dispatchers.IO)
     }
 
     data class SearchResult(
