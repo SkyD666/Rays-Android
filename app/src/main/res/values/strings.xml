@@ -365,4 +365,6 @@
     <string name="search_config_screen_image_search_max_result_count">Max result count</string>
     <string name="add_screen_similar_stickers">Similar stickers</string>
     <string name="detail_screen_full_image">View in full screen</string>
+    <string name="data_screen_delete_vector_db">Delete vector DB</string>
+    <string name="data_screen_delete_vector_db_description">The data in this database is all cached data</string>
 </resources>

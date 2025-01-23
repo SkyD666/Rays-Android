@@ -2,6 +2,7 @@ package com.skyd.rays.ui.screen.settings.data
 
 import androidx.lifecycle.viewModelScope
 import com.skyd.rays.base.mvi.AbstractMviViewModel
+import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.DataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,6 +57,12 @@ class DataViewModel @Inject constructor(private var dataRepo: DataRepository) :
                 is DataPartialStateChange.DeleteStickerShareTime.Success ->
                     DataEvent.DeleteStickerShareTimeResultEvent.Success(change.time)
 
+                is DataPartialStateChange.DeleteVectorDbFiles.Success ->
+                    DataEvent.DeleteVectorDbFilesResultEvent.Success(change.time)
+
+                is DataPartialStateChange.DeleteVectorDbFiles.Failed ->
+                    DataEvent.DeleteVectorDbFilesResultEvent.Failed(change.msg)
+
                 else -> return@onEach
             }
             sendEvent(event)
@@ -75,6 +82,12 @@ class DataViewModel @Inject constructor(private var dataRepo: DataRepository) :
                 dataRepo.requestDeleteStickerShareTime()
                     .map { DataPartialStateChange.DeleteStickerShareTime.Success(it) }
                     .startWith(DataPartialStateChange.LoadingDialog)
+            },
+            filterIsInstance<DataIntent.DeleteVectorDbFiles>().flatMapConcat {
+                dataRepo.requestDeleteVectorDbFiles()
+                    .map { DataPartialStateChange.DeleteVectorDbFiles.Success(it) }
+                    .startWith(DataPartialStateChange.LoadingDialog)
+                    .catchMap { DataPartialStateChange.DeleteVectorDbFiles.Failed(it.message.orEmpty()) }
             },
         )
     }

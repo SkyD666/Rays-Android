@@ -24,4 +24,11 @@ internal sealed interface DataPartialStateChange {
                 oldState.copy(loadingDialog = false)
         }
     }
+
+    sealed interface DeleteVectorDbFiles : DataPartialStateChange {
+        override fun reduce(oldState: DataState) = oldState.copy(loadingDialog = false)
+
+        data class Success(val time: Long) : DeleteVectorDbFiles
+        data class Failed(val msg: String) : DeleteVectorDbFiles
+    }
 }

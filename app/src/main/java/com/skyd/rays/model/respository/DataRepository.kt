@@ -7,6 +7,7 @@ import com.skyd.rays.model.db.dao.cache.StickerShareTimeDao
 import com.skyd.rays.model.db.dao.sticker.MimeTypeDao
 import com.skyd.rays.model.db.dao.sticker.StickerDao
 import kotlinx.coroutines.flow.Flow
+import java.io.File
 import javax.inject.Inject
 import kotlin.system.measureTimeMillis
 
@@ -15,27 +16,25 @@ class DataRepository @Inject constructor(
     private val stickerShareTimeDao: StickerShareTimeDao,
     private val mimeTypeDao: MimeTypeDao,
 ) : BaseRepository() {
-    suspend fun requestDeleteAllData(): Flow<Long> {
-        return flowOnIo {
-            emit(measureTimeMillis { stickerDao.deleteAllStickerWithTags() })
-        }
+    fun requestDeleteAllData(): Flow<Long> = flowOnIo {
+        emit(measureTimeMillis { stickerDao.deleteAllStickerWithTags() })
     }
 
-    suspend fun requestDeleteStickerShareTime(): Flow<Long> {
-        return flowOnIo {
-            emit(measureTimeMillis { stickerShareTimeDao.deleteAll() })
-        }
+    fun requestDeleteStickerShareTime(): Flow<Long> = flowOnIo {
+        emit(measureTimeMillis { stickerShareTimeDao.deleteAll() })
     }
 
-    suspend fun requestDeleteDocumentsProviderThumbnails(): Flow<Long> {
-        return flowOnIo {
-            emit(measureTimeMillis { appContext.PROVIDER_THUMBNAIL_DIR.deleteRecursively() })
-        }
+    fun requestDeleteDocumentsProviderThumbnails(): Flow<Long> = flowOnIo {
+        emit(measureTimeMillis { appContext.PROVIDER_THUMBNAIL_DIR.deleteRecursively() })
     }
 
-    suspend fun requestDeleteAllMimetypes(): Flow<Long> {
-        return flowOnIo {
-            emit(measureTimeMillis { mimeTypeDao.deleteAll() })
-        }
+    fun requestDeleteAllMimetypes(): Flow<Long> = flowOnIo {
+        emit(measureTimeMillis { mimeTypeDao.deleteAll() })
+    }
+
+    fun requestDeleteVectorDbFiles(): Flow<Long> = flowOnIo {
+        emit(measureTimeMillis {
+            check(File(appContext.filesDir, "objectbox").deleteRecursively())
+        })
     }
 }

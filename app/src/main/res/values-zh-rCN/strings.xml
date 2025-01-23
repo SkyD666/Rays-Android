@@ -371,4 +371,6 @@
     <string name="search_config_screen_image_search_max_result_count">最大结果数</string>
     <string name="add_screen_similar_stickers">相似表情包</string>
     <string name="detail_screen_full_image">全屏查看</string>
+    <string name="data_screen_delete_vector_db">删除向量数据库</string>
+    <string name="data_screen_delete_vector_db_description">此数据库中的数据均为缓存</string>
 </resources>

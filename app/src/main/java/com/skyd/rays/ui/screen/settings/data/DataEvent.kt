@@ -10,4 +10,9 @@ sealed interface DataEvent : MviSingleEvent {
     sealed interface DeleteStickerShareTimeResultEvent : DataEvent {
         data class Success(val time: Long) : DeleteStickerShareTimeResultEvent
     }
+
+    sealed interface DeleteVectorDbFilesResultEvent : DataEvent {
+        data class Success(val time: Long) : DeleteVectorDbFilesResultEvent
+        data class Failed(val msg: String) : DeleteVectorDbFilesResultEvent
+    }
 }

@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Cached
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.ImportExport
+import androidx.compose.material.icons.outlined.Polyline
 import androidx.compose.material.icons.outlined.Source
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -93,6 +94,14 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                 )
             }
             item {
+                BaseSettingsItem(
+                    painter = rememberVectorPainter(image = Icons.Outlined.Polyline),
+                    text = stringResource(id = R.string.data_screen_delete_vector_db),
+                    descriptionText = stringResource(id = R.string.data_screen_delete_vector_db_description),
+                    onClick = { dispatch(DataIntent.DeleteVectorDbFiles) }
+                )
+            }
+            item {
                 CategorySettingsItem(text = stringResource(id = R.string.data_screen_danger_category))
             }
             item {
@@ -128,6 +137,12 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                         event.time / 1000.0f
                     ),
                 )
+
+                is DataEvent.DeleteVectorDbFilesResultEvent.Failed -> snackbarHostState.showSnackbar(
+                    context.getString(R.string.failed_info, event.msg)
+                )
+
+                is DataEvent.DeleteVectorDbFilesResultEvent.Success -> Unit
             }
         }
 
