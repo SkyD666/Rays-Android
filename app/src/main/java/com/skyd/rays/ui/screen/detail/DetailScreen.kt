@@ -361,7 +361,14 @@ fun MainCard(
                             isEdit = true,
                         )
                     },
-                    onClick = { blur = false }
+                    onClick = {
+                        if (blur) blur = false else {
+                            openFullImageScreen(
+                                navController = navController,
+                                image = stickerUuidToUri(stickerBean.uuid)
+                            )
+                        }
+                    }
                 )
         ) {
             Box {

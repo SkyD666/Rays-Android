@@ -24,11 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
-import coil3.compose.AsyncImage
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ui.component.RaysTopBar
+import me.saket.telephoto.subsamplingimage.SubSamplingImage
+import me.saket.telephoto.subsamplingimage.SubSamplingImageSource
+import me.saket.telephoto.subsamplingimage.rememberSubSamplingImageState
 import me.saket.telephoto.zoomable.ZoomSpec
-import me.saket.telephoto.zoomable.ZoomableContentLocation
 import me.saket.telephoto.zoomable.rememberZoomableState
 import me.saket.telephoto.zoomable.zoomable
 
@@ -78,19 +79,16 @@ fun FullImageScreen(image: Uri) {
             contentAlignment = Alignment.Center,
         ) {
             val zoomableState = rememberZoomableState(zoomSpec = ZoomSpec(maxZoomFactor = 4f))
-            AsyncImage(
-                model = image,
-                contentDescription = null,
+            val imageState = rememberSubSamplingImageState(
+                zoomableState = zoomableState,
+                imageSource = SubSamplingImageSource.contentUri(image),
+            )
+            SubSamplingImage(
                 modifier = Modifier
                     .fillMaxSize()
                     .zoomable(zoomableState, onClick = { showWidget = !showWidget }),
-                onState = {
-                    zoomableState.setContentLocation(
-                        ZoomableContentLocation.scaledToFitAndCenterAligned(
-                            it.painter?.intrinsicSize
-                        )
-                    )
-                }
+                state = imageState,
+                contentDescription = null,
             )
         }
     }

@@ -44,7 +44,7 @@ coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil" }
 coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil" }
 
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version = "6.6.2" }
-zoomable = { module = "me.saket.telephoto:zoomable", version = "0.14.0" }
+telephoto-subsamplingimage = { module = "me.saket.telephoto:sub-sampling-image", version = "0.14.0" }
 
 sardine-android = { module = "com.github.thegrizzlylabs:sardine-android", version = "0.8" }
 

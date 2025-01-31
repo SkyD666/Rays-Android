@@ -23,7 +23,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 67
-        versionName = "2.3-rc09"
+        versionName = "2.3-rc10"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -180,7 +180,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
     implementation(libs.coil.svg)
-    implementation(libs.zoomable)
+    implementation(libs.telephoto.subsamplingimage)
 
     implementation(libs.retrofit2)
     implementation(libs.retrofit2.kotlinx.serialization.converter)

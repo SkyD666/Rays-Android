@@ -1,5 +1,6 @@
 package com.skyd.rays.ui.screen.add
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.skyd.rays.appContext
 import com.skyd.rays.base.mvi.AbstractMviViewModel
@@ -67,6 +68,7 @@ class AddViewModel @Inject constructor(
         return onEach { change ->
             val event = when (change) {
                 is AddPartialStateChange.AddStickers.Success -> {
+                    Log.w("AddViewModel", "Fuck Flow<AddPartialStateChange>.sendSingleEvent()")
                     AddEvent.AddStickersResultEvent.Success(change.stickerUuid)
                 }
 
@@ -76,6 +78,10 @@ class AddViewModel @Inject constructor(
 
                 is AddPartialStateChange.AddStickers.Failed -> {
                     AddEvent.AddStickersResultEvent.Failed(change.msg)
+                }
+
+                is AddPartialStateChange.RemoveWaitingListSingleSticker.Failed -> {
+                    AddEvent.RemoveWaitingListSingleStickerFailedEvent(change.msg)
                 }
 
                 is AddPartialStateChange.Init.Failed -> {
@@ -167,7 +173,7 @@ class AddViewModel @Inject constructor(
                 } else {
                     flowOf(Triple(null, null, null))
                 }.map { (stickersWithTags, suggestTags, similarStickers) ->
-                    AddPartialStateChange.RemoveWaitingListSingleSticker(
+                    AddPartialStateChange.RemoveWaitingListSingleSticker.Success(
                         willSticker = willRemove,
                         getStickersWithTagsState = {
                             if (currentStickerChanged) {
@@ -183,7 +189,7 @@ class AddViewModel @Inject constructor(
                         currentStickerChanged = currentStickerChanged,
                     )
                 }.startWith(AddPartialStateChange.LoadingDialog.Show).catchMap {
-                    AddPartialStateChange.RemoveWaitingListSingleSticker(willSticker = willRemove)
+                    AddPartialStateChange.RemoveWaitingListSingleSticker.Failed(it.message.orEmpty())
                 }.endWith(AddPartialStateChange.LoadingDialog.Close)
             },
             filterIsInstance<AddIntent.AddTag>().map { intent ->
@@ -233,6 +239,7 @@ class AddViewModel @Inject constructor(
                     intent.stickerWithTags,
                     intent.stickerUri
                 ).map {
+                    Log.w("AddViewModel", "Fuck it: $it")
                     when (it) {
                         is String -> {
                             CurrentStickerUuidPreference.put(
@@ -247,7 +254,6 @@ class AddViewModel @Inject constructor(
                         else -> AddPartialStateChange.AddStickers.Failed("")
                     }
                 }.startWith(AddPartialStateChange.LoadingDialog.Show)
-                    .endWith(AddPartialStateChange.LoadingDialog.Close)
                     .catchMap { AddPartialStateChange.AddStickers.Failed(it.message.orEmpty()) }
             },
         )

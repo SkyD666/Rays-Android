@@ -1,6 +1,7 @@
 package com.skyd.rays.ui.screen.add
 
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandVertically
@@ -350,7 +351,19 @@ fun AddScreen(
                     )
                 }
 
-                is AddEvent.AddStickersResultEvent.Success -> processNext()
+                is AddEvent.RemoveWaitingListSingleStickerFailedEvent -> {
+                    Log.w("AddScreen", "Fuck RemoveWaitingListSingleStickerFailedEvent")
+                    saveButtonEnable = true
+                    snackbarHostState.showSnackbar(
+                        context.getString(R.string.failed_info, event.msg)
+                    )
+                }
+
+                is AddEvent.AddStickersResultEvent.Success -> {
+                    Log.w("AddScreen", "Fuck MviEventListener(viewModel.singleEvent) processNext")
+                    processNext()
+                }
+
                 is AddEvent.InitFailed -> openErrorDialog = event.msg
             }
         }

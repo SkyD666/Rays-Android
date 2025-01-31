@@ -10,5 +10,7 @@ sealed interface AddEvent : MviSingleEvent {
         data class Failed(val msg: String) : AddStickersResultEvent
     }
 
+    data class RemoveWaitingListSingleStickerFailedEvent(val msg: String) : AddEvent
+
     data class InitFailed(val msg: String) : AddEvent
 }
