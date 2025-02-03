@@ -64,7 +64,7 @@ import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.minus
 import com.skyd.rays.ext.plus
 import com.skyd.rays.model.preference.privacy.shouldBlur
-import com.skyd.rays.ui.component.AnimatedPlaceholder
+import com.skyd.rays.ui.component.EmptyPlaceholder
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
@@ -147,10 +147,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 )
             }
             when (val homeUiState = uiState.homeListState) {
-                is HomeListState.Init -> {
-                    HomeEmptyPlaceholder()
-                }
-
+                is HomeListState.Init -> EmptyPlaceholder()
                 is HomeListState.Success -> {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -493,12 +490,4 @@ private fun HomeScreenFloatingActionButton(
             contentDescription = stringResource(R.string.home_screen_add),
         )
     }
-}
-
-@Composable
-fun HomeEmptyPlaceholder() {
-    AnimatedPlaceholder(
-        resId = R.raw.lottie_genshin_impact_klee_3,
-        tip = stringResource(id = R.string.loading)
-    )
 }

@@ -67,7 +67,7 @@ import com.skyd.rays.ext.isCompact
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.privacy.rememberShouldBlur
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
-import com.skyd.rays.ui.component.AnimatedPlaceholder
+import com.skyd.rays.ui.component.EmptyPlaceholder
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.ScalableLazyVerticalStaggeredGrid
@@ -97,10 +97,7 @@ fun SearchResultList(
             onInvertSelectClick = onInvertSelectClick,
         )
         if (dataList.isEmpty()) {
-            AnimatedPlaceholder(
-                resId = R.raw.lottie_genshin_impact_klee_2,
-                tip = stringResource(id = R.string.search_screen_no_search_result_tip)
-            )
+            EmptyPlaceholder()
         } else {
             ScalableLazyVerticalStaggeredGrid(
                 modifier = Modifier.fillMaxSize(),

@@ -160,7 +160,6 @@
     </plurals>
     <string name="webdav_screen_restore">Restore</string>
     <string name="empty_tip">Empty~</string>
-    <string name="search_screen_no_search_result_tip">It\'s empty~</string>
     <string name="add_screen_select_sticker">Select stickers</string>
     <string name="add_screen_add_stickers">Add stickers</string>
     <string name="add_screen_update_sticker">Select a new sticker</string>
@@ -307,7 +306,6 @@
     <string name="share_sheet_action_save_toast_success">Saved to \"Pictures/Rays\"</string>
     <string name="share_sheet_action_save_toast_failed">Save failed</string>
     <string name="detail_screen_name">Detail</string>
-    <string name="detail_screen_empty_tip">Nothing</string>
     <string name="more">More</string>
     <string name="home_screen_recommend_tags">Recommend tags</string>
     <string name="home_screen_random_tags">Random tags</string>

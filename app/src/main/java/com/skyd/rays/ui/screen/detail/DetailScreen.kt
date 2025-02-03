@@ -77,7 +77,8 @@ import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.privacy.rememberShouldBlur
-import com.skyd.rays.ui.component.AnimatedPlaceholder
+import com.skyd.rays.ui.component.CircularProgressPlaceholder
+import com.skyd.rays.ui.component.EmptyPlaceholder
 import com.skyd.rays.ui.component.RadioTextItem
 import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysFloatingActionButton
@@ -245,8 +246,8 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
 
             Column(modifier = Modifier.weight(1f)) {
                 when (stickerDetailUiState) {
-                    StickerDetailState.Init -> DetailScreenEmptyPlaceholder()
-                    StickerDetailState.Loading -> DetailScreenLoadingPlaceholder()
+                    StickerDetailState.Init -> EmptyPlaceholder()
+                    StickerDetailState.Loading -> CircularProgressPlaceholder()
 
                     is StickerDetailState.Success -> {
                         val stickerWithTags = stickerDetailUiState.stickerWithTags
@@ -531,22 +532,6 @@ fun DetailScreenFloatingActionButton(
             )
         }
     }
-}
-
-@Composable
-fun DetailScreenEmptyPlaceholder() {
-    AnimatedPlaceholder(
-        resId = R.raw.lottie_genshin_impact_keqing_1,
-        tip = stringResource(id = R.string.detail_screen_empty_tip)
-    )
-}
-
-@Composable
-fun DetailScreenLoadingPlaceholder() {
-    AnimatedPlaceholder(
-        resId = R.raw.lottie_genshin_impact_klee_3,
-        tip = stringResource(id = R.string.loading)
-    )
 }
 
 @Composable

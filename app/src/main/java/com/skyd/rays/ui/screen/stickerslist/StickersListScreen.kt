@@ -4,8 +4,10 @@ import android.os.Bundle
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FolderZip
 import androidx.compose.material3.Scaffold
@@ -23,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.skyd.rays.R
@@ -31,6 +34,7 @@ import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
 import com.skyd.rays.model.bean.StickerWithTags
+import com.skyd.rays.ui.component.PagingRefreshStateIndicator
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.ScalableLazyVerticalStaggeredGrid
@@ -95,15 +99,10 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
     ) { paddingValues ->
         when (val listState = uiState.listState) {
             ListState.Init -> Unit
-            is ListState.Success -> {
-                val lazyPagingItems = listState.stickerWithTagsPagingFlow.collectAsLazyPagingItems()
-                StickerList(
-                    count = lazyPagingItems.itemCount,
-                    onData = { lazyPagingItems[it] },
-                    key = lazyPagingItems.itemKey { it.sticker.uuid },
-                    contentPadding = paddingValues + PaddingValues(16.dp),
-                )
-            }
+            is ListState.Success -> SuccessContent(
+                lazyPagingItems = listState.stickerWithTagsPagingFlow.collectAsLazyPagingItems(),
+                contentPadding = paddingValues
+            )
         }
 
         MviEventListener(viewModel.singleEvent) { event ->
@@ -118,11 +117,29 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
 }
 
 @Composable
+private fun SuccessContent(
+    lazyPagingItems: LazyPagingItems<StickerWithTags>,
+    contentPadding: PaddingValues = PaddingValues(),
+) {
+    PagingRefreshStateIndicator(
+        lazyPagingItems = lazyPagingItems,
+        abnormalContent = { Box(modifier = Modifier.padding(contentPadding)) { it() } },
+    ) {
+        StickerList(
+            count = lazyPagingItems.itemCount,
+            onData = { lazyPagingItems[it] },
+            key = lazyPagingItems.itemKey { it.sticker.uuid },
+            contentPadding = contentPadding + PaddingValues(16.dp),
+        )
+    }
+}
+
+@Composable
 fun StickerList(
     count: Int,
     onData: (Int) -> StickerWithTags?,
     key: ((index: Int) -> Any)? = null,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     val navController = LocalNavController.current
     ScalableLazyVerticalStaggeredGrid(

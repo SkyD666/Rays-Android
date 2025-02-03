@@ -217,7 +217,6 @@
     <string name="setting_screen_data_description">Backup, sincronização, exclusão de dados de stickers</string>
     <string name="export_sticker_success">Exportação bem-sucedida</string>
     <string name="webdav_screen_restore">Recuperar</string>
-    <string name="search_screen_no_search_result_tip">Está vazio~</string>
     <string name="add_screen_select_sticker">Selecionar stickers</string>
     <string name="add_screen_sticker_duplicate">O sticker já foi adicionado e apresenta as informações existentes!</string>
     <string name="add_screen_suggest_tag">Tags sugeridas</string>
