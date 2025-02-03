@@ -24,10 +24,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.collectAsLazyPagingItemsWithLifecycle
 import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
 import com.skyd.rays.model.bean.StickerWithTags
@@ -37,6 +37,7 @@ import com.skyd.rays.ui.component.ScalableLazyVerticalStaggeredGrid
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.detail.openDetailScreen
 import com.skyd.rays.ui.screen.search.SearchResultItem
+import com.skyd.rays.ui.screen.search.SearchResultItemPlaceholder
 import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.openExportFilesScreen
 
 const val STICKERS_LIST_SCREEN_ROUTE = "stickersListScreen"
@@ -95,12 +96,11 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
         when (val listState = uiState.listState) {
             ListState.Init -> Unit
             is ListState.Success -> {
-                val lazyPagingItems =
-                    listState.stickerWithTagsPagingFlow.collectAsLazyPagingItemsWithLifecycle()
+                val lazyPagingItems = listState.stickerWithTagsPagingFlow.collectAsLazyPagingItems()
                 StickerList(
                     count = lazyPagingItems.itemCount,
-                    data = { lazyPagingItems[it]!! },
-                    key = { lazyPagingItems[it]!!.sticker.uuid },
+                    onData = { lazyPagingItems[it] },
+                    key = lazyPagingItems.itemKey { it.sticker.uuid },
                     contentPadding = paddingValues + PaddingValues(16.dp),
                 )
             }
@@ -120,7 +120,7 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
 @Composable
 fun StickerList(
     count: Int,
-    data: (Int) -> StickerWithTags,
+    onData: (Int) -> StickerWithTags?,
     key: ((index: Int) -> Any)? = null,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
@@ -132,17 +132,22 @@ fun StickerList(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(count = count, key = key) {
-            SearchResultItem(
-                data = data(it),
-                selectable = false,
-                selected = false,
-                onClickListener = { sticker, _ ->
-                    openDetailScreen(
-                        navController = navController,
-                        stickerUuid = sticker.sticker.uuid
-                    )
-                }
-            )
+            val data = onData(it)
+            if (data == null) {
+                SearchResultItemPlaceholder()
+            } else {
+                SearchResultItem(
+                    data = data,
+                    selectable = false,
+                    selected = false,
+                    onClickListener = { sticker, _ ->
+                        openDetailScreen(
+                            navController = navController,
+                            stickerUuid = sticker.sticker.uuid
+                        )
+                    }
+                )
+            }
         }
     }
 }

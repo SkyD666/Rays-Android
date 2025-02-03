@@ -371,3 +371,8 @@ fun SearchResultItem(
         }
     }
 }
+
+@Composable
+fun SearchResultItemPlaceholder() {
+    OutlinedCard(modifier = Modifier.fillMaxWidth()) { }
+}

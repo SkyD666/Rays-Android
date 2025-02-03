@@ -17,6 +17,7 @@ import com.skyd.rays.model.preference.search.imagesearch.AddScreenImageSearchPre
 import com.skyd.rays.model.preference.search.imagesearch.ImageSearchMaxResultCountPreference
 import com.skyd.rays.model.respository.AddRepository
 import com.skyd.rays.model.respository.ImageSearchRepository
+import com.skyd.rays.ui.component.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
@@ -78,10 +79,6 @@ class AddViewModel @Inject constructor(
 
                 is AddPartialStateChange.AddStickers.Failed -> {
                     AddEvent.AddStickersResultEvent.Failed(change.msg)
-                }
-
-                is AddPartialStateChange.RemoveWaitingListSingleSticker.Failed -> {
-                    AddEvent.RemoveWaitingListSingleStickerFailedEvent(change.msg)
                 }
 
                 is AddPartialStateChange.Init.Failed -> {
@@ -173,8 +170,8 @@ class AddViewModel @Inject constructor(
                 } else {
                     flowOf(Triple(null, null, null))
                 }.map { (stickersWithTags, suggestTags, similarStickers) ->
-                    AddPartialStateChange.RemoveWaitingListSingleSticker.Success(
-                        willSticker = willRemove,
+                    AddPartialStateChange.RemoveWaitingListSingleSticker(
+                        willRemove = willRemove,
                         getStickersWithTagsState = {
                             if (currentStickerChanged) {
                                 GetStickersWithTagsState.fromStickersWithTags(stickersWithTags)
@@ -188,9 +185,8 @@ class AddViewModel @Inject constructor(
                         } else null,
                         currentStickerChanged = currentStickerChanged,
                     )
-                }.startWith(AddPartialStateChange.LoadingDialog.Show).catchMap {
-                    AddPartialStateChange.RemoveWaitingListSingleSticker.Failed(it.message.orEmpty())
-                }.endWith(AddPartialStateChange.LoadingDialog.Close)
+                }.startWith(AddPartialStateChange.LoadingDialog.Show)
+                    .endWith(AddPartialStateChange.LoadingDialog.Close)
             },
             filterIsInstance<AddIntent.AddTag>().map { intent ->
                 AddPartialStateChange.AddTag(intent.text)
@@ -264,12 +260,21 @@ class AddViewModel @Inject constructor(
         if (newCurrentSticker == null) return flowOf(Triple(null, null, null))
         var getStickerWithTags: Flow<StickerWithTags?> = flowOf(null)
         if (newCurrentSticker.stickerUuid.isNotBlank()) {
-            getStickerWithTags =
-                addRepository.requestGetStickerWithTags(newCurrentSticker.stickerUuid)
+            getStickerWithTags = addRepository.requestGetStickerWithTags(
+                newCurrentSticker.stickerUuid
+            ).catchMap {
+                Log.w("AddScreen", "Fuck currentStickerChange requestGetStickerWithTags $it")
+                "currentStickerChange requestGetStickerWithTags error: ${it.message}".showToast()
+                null
+            }
         }
         return combine(
             getStickerWithTags,
-            addRepository.requestSuggestTags(newCurrentSticker.uri!!),
+            addRepository.requestSuggestTags(newCurrentSticker.uri!!).catchMap {
+                Log.w("AddScreen", "Fuck currentStickerChange requestSuggestTags $it")
+                "currentStickerChange requestSuggestTags error: ${it.message}".showToast()
+                emptySet()
+            },
             if (appContext.dataStore.getOrDefault(AddScreenImageSearchPreference)) {
                 imageSearchRepository.imageSearch(
                     base = newCurrentSticker.uri,
@@ -277,7 +282,11 @@ class AddViewModel @Inject constructor(
                     maxResultCount = appContext.dataStore.getOrDefault(
                         ImageSearchMaxResultCountPreference
                     )
-                )
+                ).catchMap {
+                    Log.w("AddScreen", "Fuck currentStickerChange imageSearch $it")
+                    "currentStickerChange imageSearch error: ${it.message}".showToast()
+                    emptyList()
+                }
             } else {
                 flowOf(emptyList())
             },

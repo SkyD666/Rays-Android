@@ -81,7 +81,7 @@ fun MoreScreen() {
                         imageVector = Icons.Outlined.Widgets,
                         onClick = {
                             snackbarHostState.showSnackbar(
-                                message = "\uD83C\uDFEE Happy New Year 2024~",
+                                message = "\uD83C\uDFEE Happy New Year 2025~",
                                 scope = scope,
                                 withDismissAction = true
                             )

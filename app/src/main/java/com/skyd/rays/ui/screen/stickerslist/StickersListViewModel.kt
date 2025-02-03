@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
@@ -65,10 +64,9 @@ class StickersListViewModel @Inject constructor(
     private fun SharedFlow<StickersListIntent>.toStickersListPartialStateChangeFlow(): Flow<StickersListPartialStateChange> {
         return merge(
             filterIsInstance<StickersListIntent.GetStickersList>().flatMapConcat { intent ->
-                flowOf(
-                    searchRepo.requestStickerWithTagsListWithAllSearchDomain(keyword = intent.query)
-                        .cachedIn(viewModelScope)
-                ).map {
+                searchRepo.requestStickerWithTagsListWithAllSearchDomain(
+                    keyword = intent.query
+                ).map { it.flow.cachedIn(viewModelScope) }.map {
                     StickersListPartialStateChange.StickersList.Success(it)
                 }.startWith(StickersListPartialStateChange.StickersList.Loading)
             },

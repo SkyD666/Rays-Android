@@ -27,8 +27,11 @@ import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
 import com.skyd.rays.util.image.ImageFormatChecker
 import com.skyd.rays.util.image.format.ImageFormat
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.zip
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -91,87 +94,81 @@ class AddRepository @Inject constructor(
         }.getOrElse { return flowOnIo { throw it } }
         val dataStore = appContext.dataStore
         val textRecognizeThreshold = dataStore.getOrDefault(TextRecognizeThresholdPreference)
-        return flowOnIo {
-            emit(suspendCancellableCoroutine { cont ->
-                TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-                    .process(image)
-                    .addOnSuccessListener {
-                        cont.resume(getTexts(it, textRecognizeThreshold), onCancellation = null)
-                    }
-                    .addOnFailureListener { cont.resumeWithException(it) }
-            })
-        }.zip(flowOnIo {
-            emit(suspendCancellableCoroutine { cont ->
-                TextRecognition.getClient(ChineseTextRecognizerOptions.Builder().build())
-                    .process(image)
-                    .addOnSuccessListener {
-                        cont.resume(getTexts(it, textRecognizeThreshold), onCancellation = null)
-                    }
-                    .addOnFailureListener { cont.resumeWithException(it) }
-            })
-        }) { other, chinese ->
-            chinese + other
-        }.zip(flowOnIo {
-            emit(suspendCancellableCoroutine { cont ->
-                TextRecognition.getClient(JapaneseTextRecognizerOptions.Builder().build())
-                    .process(image)
-                    .addOnSuccessListener {
-                        cont.resume(
-                            getTexts(it, textRecognizeThreshold), onCancellation = null
-                        )
-                    }
-                    .addOnFailureListener { cont.resumeWithException(it) }
-            })
-        }) { other, japanese ->
-            other + japanese
-        }.zip(flowOnIo {
-            emit(suspendCancellableCoroutine { cont ->
-                TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
-                    .process(image)
-                    .addOnSuccessListener {
-                        cont.resume(
-                            getTexts(it, textRecognizeThreshold), onCancellation = null
-                        )
-                    }
-                    .addOnFailureListener { cont.resumeWithException(it) }
-            })
-        }) { other, korean ->
-            other + korean
-        }.zip(flowOnIo {
-            emit(suspendCancellableCoroutine { cont ->
-                val model = dataStore.getOrDefault(StickerClassificationModelPreference)
-                val classificationThreshold =
-                    dataStore.getOrDefault(ClassificationThresholdPreference)
-
-                val localModel = LocalModel.Builder()
-                    .apply {
-                        if (model.isBlank()) {
-                            setAssetFilePath("stickerclassification/sticker_classification.tflite")
-                        } else {
-                            setAbsoluteFilePath(File(CLASSIFICATION_MODEL_DIR_FILE, model).path)
+        return combine(
+            flow {
+                emit(suspendCancellableCoroutine { cont ->
+                    TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+                        .process(image)
+                        .addOnSuccessListener {
+                            cont.resume(getTexts(it, textRecognizeThreshold), onCancellation = null)
                         }
-                    }
-                    .build()
+                        .addOnFailureListener { cont.resumeWithException(it) }
+                })
+            },
+            flow {
+                emit(suspendCancellableCoroutine { cont ->
+                    TextRecognition.getClient(ChineseTextRecognizerOptions.Builder().build())
+                        .process(image)
+                        .addOnSuccessListener {
+                            cont.resume(getTexts(it, textRecognizeThreshold), onCancellation = null)
+                        }
+                        .addOnFailureListener { cont.resumeWithException(it) }
+                })
+            },
+            flow {
+                emit(suspendCancellableCoroutine { cont ->
+                    TextRecognition.getClient(JapaneseTextRecognizerOptions.Builder().build())
+                        .process(image)
+                        .addOnSuccessListener {
+                            cont.resume(getTexts(it, textRecognizeThreshold), onCancellation = null)
+                        }
+                        .addOnFailureListener { cont.resumeWithException(it) }
+                })
+            },
+            flow {
+                emit(suspendCancellableCoroutine { cont ->
+                    TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
+                        .process(image)
+                        .addOnSuccessListener {
+                            cont.resume(getTexts(it, textRecognizeThreshold), onCancellation = null)
+                        }
+                        .addOnFailureListener { cont.resumeWithException(it) }
+                })
+            },
+            flow {
+                emit(suspendCancellableCoroutine { cont ->
+                    val model = dataStore.getOrDefault(StickerClassificationModelPreference)
+                    val classificationThreshold =
+                        dataStore.getOrDefault(ClassificationThresholdPreference)
 
-                val customImageLabelerOptions = CustomImageLabelerOptions.Builder(localModel)
-                    .setConfidenceThreshold(classificationThreshold)
-                    .setMaxResultCount(3)
-                    .build()
+                    val localModel = LocalModel.Builder()
+                        .apply {
+                            if (model.isBlank()) {
+                                setAssetFilePath("stickerclassification/sticker_classification.tflite")
+                            } else {
+                                setAbsoluteFilePath(File(CLASSIFICATION_MODEL_DIR_FILE, model).path)
+                            }
+                        }
+                        .build()
 
-                ImageLabeling.getClient(customImageLabelerOptions).process(image)
-                    .addOnSuccessListener { labels ->
-                        cont.resume(
-                            labels.map { translateClassification(it.text) },
-                            onCancellation = null,
-                        )
-                    }
-                    .addOnFailureListener { e ->
-                        cont.resumeWithException(e)
-                    }
-            })
-        }) { other, classification ->
-            (classification + other).toSet()
-        }.catchMap { emptySet() }
+                    val customImageLabelerOptions = CustomImageLabelerOptions.Builder(localModel)
+                        .setConfidenceThreshold(classificationThreshold)
+                        .setMaxResultCount(3)
+                        .build()
+
+                    ImageLabeling.getClient(customImageLabelerOptions).process(image)
+                        .addOnSuccessListener { labels ->
+                            cont.resume(
+                                labels.map { translateClassification(it.text) },
+                                onCancellation = null,
+                            )
+                        }
+                        .addOnFailureListener { e -> cont.resumeWithException(e) }
+                })
+            }
+        ) { other, chinese, japanese, korean, classification ->
+            other.toSet() + chinese + japanese + korean + classification
+        }.flowOn(Dispatchers.IO).catchMap { emptySet() }
     }
 
     private fun getTexts(result: Text, confidence: Float): List<String> {

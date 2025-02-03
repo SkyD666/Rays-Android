@@ -1,5 +1,6 @@
 package com.skyd.rays.ui.screen.add
 
+import android.util.Log
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 
@@ -77,36 +78,31 @@ internal sealed interface AddPartialStateChange {
         }
     }
 
-    interface RemoveWaitingListSingleSticker : AddPartialStateChange {
-        data class Success(
-            val willSticker: UriWithStickerUuidBean,
-            val getStickersWithTagsState: (oldState: AddState) -> GetStickersWithTagsState = { it.getStickersWithTagsState },
-            val suggestTags: List<String>? = null,
-            val similarStickers: List<StickerWithTags>? = null,
-            val currentStickerChanged: Boolean = false,
-        ) : RemoveWaitingListSingleSticker {
-            override fun reduce(oldState: AddState): AddState {
-                val getStickersWithTagsState = getStickersWithTagsState(oldState)
-                val stickerWithTags =
-                    (getStickersWithTagsState as? GetStickersWithTagsState.Success)?.stickerWithTags
-                return oldState.copy(
-                    waitingList = oldState.waitingList.toMutableList()
-                        .apply { remove(willSticker) },
-                    getStickersWithTagsState = getStickersWithTagsState,
-                    suggestTags = suggestTags ?: oldState.suggestTags,
-                    addedTags = if (currentStickerChanged) {
-                        stickerWithTags?.tags?.map { it.tag }.orEmpty()
-                    } else oldState.addedTags,
-                    titleText = if (currentStickerChanged) {
-                        stickerWithTags?.sticker?.title.orEmpty()
-                    } else oldState.titleText,
-                    similarStickers = similarStickers ?: oldState.similarStickers,
-                )
-            }
-        }
-
-        data class Failed(val msg: String) : RemoveWaitingListSingleSticker {
-            override fun reduce(oldState: AddState) = oldState
+    data class RemoveWaitingListSingleSticker(
+        val willRemove: UriWithStickerUuidBean,
+        val getStickersWithTagsState: (oldState: AddState) -> GetStickersWithTagsState = { it.getStickersWithTagsState },
+        val suggestTags: List<String>? = null,
+        val similarStickers: List<StickerWithTags>? = null,
+        val currentStickerChanged: Boolean = false,
+    ) : AddPartialStateChange {
+        override fun reduce(oldState: AddState): AddState {
+            val getStickersWithTagsState = getStickersWithTagsState(oldState)
+            val stickerWithTags =
+                (getStickersWithTagsState as? GetStickersWithTagsState.Success)?.stickerWithTags
+            Log.w("RemoveWaitingListSingleSticker reduce", "Fuck $this")
+            return oldState.copy(
+                waitingList = oldState.waitingList.toMutableList()
+                    .apply { remove(willRemove) },
+                getStickersWithTagsState = getStickersWithTagsState,
+                suggestTags = suggestTags ?: oldState.suggestTags,
+                addedTags = if (currentStickerChanged) {
+                    stickerWithTags?.tags?.map { it.tag }.orEmpty()
+                } else oldState.addedTags,
+                titleText = if (currentStickerChanged) {
+                    stickerWithTags?.sticker?.title.orEmpty()
+                } else oldState.titleText,
+                similarStickers = similarStickers ?: oldState.similarStickers,
+            )
         }
     }
 

@@ -1,8 +1,8 @@
 [versions]
 coil = "3.0.4"
 hilt = "2.55"
-composeMaterial = "1.7.6"
-composeMaterial3 = "1.4.0-alpha04"
+composeMaterial = "1.7.7"
+composeMaterial3 = "1.4.0-alpha07"
 room = "2.6.1"
 textRecognition = "16.0.1"
 kotlin = "2.0.21"

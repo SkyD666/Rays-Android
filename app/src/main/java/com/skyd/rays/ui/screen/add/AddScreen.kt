@@ -175,7 +175,7 @@ fun AddScreen(
     }
 
     var currentReplaceIndex = rememberSaveable { 0 }
-    val pickStickerLauncher = rememberImagePicker(multiple = false) { result ->
+    val replaceStickerLauncher = rememberImagePicker(multiple = false) { result ->
         if (result.firstOrNull() != null) {
             val waitingList = uiState.waitingList
             if (waitingList.isNotEmpty()) {
@@ -282,7 +282,7 @@ fun AddScreen(
                         onSelectStickersClick = { pickStickersLauncher.launchImagePicker() },
                         onReplaceStickerClick = { index ->
                             currentReplaceIndex = index
-                            pickStickerLauncher.launchImagePicker()
+                            replaceStickerLauncher.launchImagePicker()
                         },
                         onRemoveStickerFromWaitingListClick = { index ->
                             dispatch(
@@ -345,14 +345,6 @@ fun AddScreen(
                 }
 
                 is AddEvent.AddStickersResultEvent.Failed -> {
-                    saveButtonEnable = true
-                    snackbarHostState.showSnackbar(
-                        context.getString(R.string.failed_info, event.msg)
-                    )
-                }
-
-                is AddEvent.RemoveWaitingListSingleStickerFailedEvent -> {
-                    Log.w("AddScreen", "Fuck RemoveWaitingListSingleStickerFailedEvent")
                     saveButtonEnable = true
                     snackbarHostState.showSnackbar(
                         context.getString(R.string.failed_info, event.msg)

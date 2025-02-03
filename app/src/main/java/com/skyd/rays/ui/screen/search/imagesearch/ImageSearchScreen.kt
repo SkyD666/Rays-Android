@@ -121,7 +121,7 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
                 if (imageSearchResultState is ImageSearchResultState.Success) {
                     StickerList(
                         count = imageSearchResultState.stickers.size,
-                        data = { imageSearchResultState.stickers[it] },
+                        onData = { imageSearchResultState.stickers[it] },
                         key = { imageSearchResultState.stickers[it].sticker.uuid },
                         contentPadding = PaddingValues(horizontal = 16.dp) +
                                 PaddingValues(bottom = fabHeight + 16.dp),

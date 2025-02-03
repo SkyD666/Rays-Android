@@ -4,7 +4,6 @@ import android.database.DatabaseUtils
 import android.net.Uri
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseRepository
@@ -76,10 +75,11 @@ class SearchRepository @Inject constructor(
             .catchMap { emptyList() }
     }
 
-    fun requestStickerWithTagsListWithAllSearchDomain(keyword: String): Flow<PagingData<StickerWithTags>> {
-        return flow { emit(genSql(k = keyword, useSearchDomain = { _, _ -> true })) }
-            .flatMapLatest { Pager(pagingConfig) { stickerDao.getStickerWithTagsPaging(it) }.flow }
-            .flowOn(Dispatchers.IO)
+    fun requestStickerWithTagsListWithAllSearchDomain(keyword: String): Flow<Pager<Int, StickerWithTags>> {
+        return flow {
+            val sql = genSql(k = keyword, useSearchDomain = { _, _ -> true })
+            emit(Pager(pagingConfig) { stickerDao.getStickerWithTagsPaging(sql) })
+        }.flowOn(Dispatchers.IO)
     }
 
     data class SearchResult(
