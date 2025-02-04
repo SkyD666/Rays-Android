@@ -206,7 +206,7 @@
     <string name="search_result_sort">Sort</string>
     <string name="search_result_reverse">Reverse</string>
     <string name="search_result_multi_select">Select</string>
-    <string name="search_result_invert_selection">Invert</string>
+    <string name="invert_selection">Invert</string>
     <string name="home_screen_search_result_list_to_top">To the top</string>
     <string name="webdav_screen_progress_upload_data_sticker">Updating remote data + sticker</string>
     <string name="webdav_screen_progress_logical_delete_remote">Moving to remote recycle bin</string>
@@ -365,4 +365,12 @@
     <string name="detail_screen_full_image">View in full screen</string>
     <string name="data_screen_delete_vector_db">Delete vector DB</string>
     <string name="data_screen_delete_vector_db_description">The data in this database is all cached data</string>
+    <string name="merge_stickers_screen_name">Merge stickers</string>
+    <string name="merge_stickers_screen_merge_successful">Merge successful</string>
+    <string name="merge_stickers_screen_candidate_titles">Candidate titles</string>
+    <string name="merge_stickers_screen_candidate_images">Candidate images</string>
+    <string name="merge_stickers_screen_candidate_tags">Candidate tags</string>
+    <string name="merge_stickers_screen_empty_sticker_list">Please select at least two stickers to merge</string>
+    <string name="merge_stickers_screen_merge">Merge</string>
+    <string name="merge_stickers_screen_max_count_limit">Up to 20 stickers can be merged, excess will not be processed</string>
 </resources>

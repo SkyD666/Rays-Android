@@ -90,11 +90,13 @@ import com.skyd.rays.ui.component.RaysFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.ExportDialog
+import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.detail.openDetailScreen
+import com.skyd.rays.ui.screen.mergestickers.openMergeStickersScreen
 import com.skyd.rays.ui.screen.search.imagesearch.openImageSearchScreen
 import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.openExportFilesScreen
 import com.skyd.rays.util.stickerUuidToUri
@@ -285,6 +287,13 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                                         )
                                     }
                                 },
+                                onMergeClick = {
+                                    openMergeStickersScreen(
+                                        navController = navController,
+                                        stickerUuids = selectedStickers.map { it.sticker.uuid }
+                                    )
+                                    selectedStickers.clear()
+                                }
                             )
                             ExportDialog(
                                 visible = openMultiStickersExportPathDialog,
@@ -338,14 +347,14 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
         onDismissRequest = { openDeleteMultiStickersDialog = null },
         onDismiss = { openDeleteMultiStickersDialog = null },
         onConfirm = {
-            dispatch(
-                SearchIntent.DeleteStickerWithTags(selectedStickers.map { it.sticker.uuid })
-            )
+            dispatch(SearchIntent.DeleteStickerWithTags(selectedStickers.map { it.sticker.uuid }))
             // 去除所有被删除了，但还在selectedStickers中的数据
             selectedStickers -= openDeleteMultiStickersDialog!!
             openDeleteMultiStickersDialog = null
         }
     )
+
+    WaitingDialog(visible = uiState.loadingDialog)
 }
 
 @Composable

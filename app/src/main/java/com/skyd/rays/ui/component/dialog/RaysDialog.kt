@@ -23,7 +23,7 @@ import com.skyd.rays.ui.component.RaysLottieAnimation
 @Composable
 fun RaysDialog(
     modifier: Modifier = Modifier,
-    visible: Boolean,
+    visible: Boolean = true,
     properties: DialogProperties = DialogProperties(),
     onDismissRequest: () -> Unit = {},
     icon: @Composable (() -> Unit)? = {

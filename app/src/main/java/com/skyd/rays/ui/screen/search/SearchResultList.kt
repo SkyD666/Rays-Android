@@ -37,6 +37,7 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FolderZip
 import androidx.compose.material.icons.outlined.ImageSearch
+import androidx.compose.material.icons.outlined.Merge
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AssistChipDefaults
@@ -211,7 +212,7 @@ fun SearchResultConfigBar(
             if (multiSelect) {
                 SuggestionChip(
                     onClick = onInvertSelectClick,
-                    label = { Text(text = stringResource(R.string.search_result_invert_selection)) },
+                    label = { Text(text = stringResource(R.string.invert_selection)) },
                 )
             }
         }
@@ -227,6 +228,7 @@ internal fun MultiSelectActionBar(
     onExportClick: () -> Unit,
     onExportAsZipClick: () -> Unit,
     onSearchImageClick: () -> Unit,
+    onMergeClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val windowSizeClass = LocalWindowSizeClass.current
@@ -289,6 +291,14 @@ internal fun MultiSelectActionBar(
                     enabled = selectedStickers.size == 1,
                     imageVector = Icons.Outlined.ImageSearch,
                     contentDescription = stringResource(id = R.string.home_screen_image_search)
+                )
+            },
+            @Composable {
+                RaysIconButton(
+                    onClick = onMergeClick,
+                    enabled = selectedStickers.size > 1,
+                    imageVector = Icons.Outlined.Merge,
+                    contentDescription = stringResource(id = R.string.merge_stickers_screen_merge)
                 )
             },
         )

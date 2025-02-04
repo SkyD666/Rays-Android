@@ -33,8 +33,8 @@ fun EmptyPlaceholder(
 
 @Composable
 fun ErrorPlaceholder(
-    modifier: Modifier = Modifier,
     text: String,
+    modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     AnimatedPlaceholder(

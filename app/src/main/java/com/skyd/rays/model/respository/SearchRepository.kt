@@ -11,6 +11,7 @@ import com.skyd.rays.config.allSearchDomain
 import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
+import com.skyd.rays.ext.safeDbVariableNumber
 import com.skyd.rays.model.bean.STICKER_TABLE_NAME
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
@@ -126,7 +127,7 @@ class SearchRepository @Inject constructor(
 
     fun requestDeleteStickerWithTagsDetail(stickerUuids: List<String>): Flow<List<String>> {
         return flowOnIo {
-            stickerDao.deleteStickerWithTags(stickerUuids)
+            stickerUuids.safeDbVariableNumber { stickerDao.deleteStickerWithTags(it) }
             emit(stickerUuids)
         }
     }

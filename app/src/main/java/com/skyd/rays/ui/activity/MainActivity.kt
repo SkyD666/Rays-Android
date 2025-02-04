@@ -55,6 +55,9 @@ import com.skyd.rays.ui.screen.fullimage.FULL_IMAGE_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.fullimage.FullImageScreen
 import com.skyd.rays.ui.screen.main.MAIN_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.main.MainScreen
+import com.skyd.rays.ui.screen.mergestickers.MERGE_STICKERS_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.mergestickers.MERGE_STICKERS_SCREEN_STICKER_UUIDS_KEY
+import com.skyd.rays.ui.screen.mergestickers.MergeStickersScreenRoute
 import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SELFIE_SEGMENTATION_SCREEN_ROUTE
 import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SelfieSegmentationScreen
 import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUTE
@@ -291,6 +294,13 @@ class MainActivity : BaseComposeActivity() {
             composable(route = EXPORT_FILES_SCREEN_ROUTE) {
                 ExportFilesScreen(
                     exportStickers = it.arguments?.getStringArrayList("exportStickers")
+                )
+            }
+            composable(route = MERGE_STICKERS_SCREEN_ROUTE) {
+                MergeStickersScreenRoute(
+                    stickerUuids = it.arguments?.getStringArrayList(
+                        MERGE_STICKERS_SCREEN_STICKER_UUIDS_KEY
+                    )
                 )
             }
             composable(route = IMPORT_FILES_SCREEN_ROUTE) {

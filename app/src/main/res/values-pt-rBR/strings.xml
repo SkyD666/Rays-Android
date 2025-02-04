@@ -226,7 +226,7 @@
 \nDownloads: %3$s
 \n</string>
     <string name="search_result_multi_select">Selecionar</string>
-    <string name="search_result_invert_selection">Inverter</string>
+    <string name="invert_selection">Inverter</string>
     <string name="home_screen_search_result_list_to_top">Para o topo</string>
     <string name="webdav_screen_progress_upload_data_sticker">Atualizando dados remotos + sticker</string>
     <string name="webdav_screen_progress_download_data">Atualizando dados locais</string>

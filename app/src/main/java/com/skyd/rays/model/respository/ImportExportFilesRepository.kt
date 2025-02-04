@@ -7,6 +7,7 @@ import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.EXPORT_FILES_DIR
 import com.skyd.rays.config.IMPORT_FILES_DIR
+import com.skyd.rays.ext.safeDbVariableNumber
 import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.bean.ImportExportInfo
 import com.skyd.rays.model.bean.ImportExportResultInfo
@@ -22,7 +23,6 @@ import com.skyd.rays.util.unzip
 import com.skyd.rays.util.zip
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import okio.use
@@ -125,15 +125,8 @@ class ImportExportFilesRepository @Inject constructor(
                 // the maximum value of a host parameter number is SQLITE_MAX_VARIABLE_NUMBER,
                 // which defaults to 999
                 mutableListOf<StickerWithTags>().apply {
-                    for (i in exportStickers.indices step 900) {
-                        addAll(
-                            stickerDao.getAllStickerWithTagsList(
-                                exportStickers.subList(
-                                    fromIndex = i,
-                                    toIndex = minOf(i + 900, exportStickers.size),
-                                )
-                            )
-                        )
+                    exportStickers.safeDbVariableNumber {
+                        addAll(stickerDao.getAllStickerWithTagsList(it))
                     }
                 }
             }

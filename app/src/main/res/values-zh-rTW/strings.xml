@@ -176,7 +176,7 @@
     <string name="webdav_screen_remote_recycle_bin_tip">遠端回收站中的內容是邏輯上已刪除的表情包。對遠端回收站的操作僅會影響遠端內容，不會修改本地內容。</string>
     <string name="classification_model_screen_name">分類模型</string>
     <string name="paste">貼上</string>
-    <string name="search_result_invert_selection">反選</string>
+    <string name="invert_selection">反選</string>
     <string name="add_screen_sticker_is_not_set">表情包圖片未設定！</string>
     <string name="style_transfer_screen_transfer">轉移</string>
     <string name="selfie_segmentation_screen_image_not_selected">在分割前請選擇一張自拍照片</string>
