@@ -21,8 +21,13 @@ import com.skyd.rays.util.image.format.ImageFormat
 import com.skyd.rays.util.stickerUuidToFile
 import com.skyd.rays.util.unzip
 import com.skyd.rays.util.zip
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import okio.use
@@ -107,7 +112,7 @@ class ImportExportFilesRepository @Inject constructor(
         }
     }
 
-    suspend fun requestExport(
+    fun requestExport(
         dirUri: Uri,
         excludeClickCount: Boolean = false,
         excludeShareCount: Boolean = false,
@@ -115,7 +120,7 @@ class ImportExportFilesRepository @Inject constructor(
         excludeModifyTime: Boolean = false,
         exportStickers: List<String>? = null,
     ): Flow<ImportExportInfo> {
-        return flowOnIo {
+        return flow {
             val startTime = System.currentTimeMillis()
             val allStickerWithTagsList = if (exportStickers == null) {
                 stickerDao.getAllStickerWithTagsList()
@@ -126,7 +131,9 @@ class ImportExportFilesRepository @Inject constructor(
                 // which defaults to 999
                 mutableListOf<StickerWithTags>().apply {
                     exportStickers.safeDbVariableNumber {
-                        addAll(stickerDao.getAllStickerWithTagsList(it))
+                        runBlocking {
+                            addAll(stickerDao.getAllStickerWithTagsList(it).first())
+                        }
                     }
                 }
             }
@@ -189,7 +196,7 @@ class ImportExportFilesRepository @Inject constructor(
                     backupFile = zipFileUri,
                 )
             )
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     private fun stickerWithTagsToJsonFile(stickerWithTags: StickerWithTags): File {

@@ -21,8 +21,13 @@ import io.objectbox.kotlin.inValues
 import io.objectbox.query.QueryBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ImageSearchRepository @Inject constructor(
@@ -53,21 +58,29 @@ class ImageSearchRepository @Inject constructor(
         }
     }
 
+    private val nearestNeighborsResultFlow = MutableStateFlow<Map<String, Double>>(emptyMap())
+    val stickerWithTagsResultList = nearestNeighborsResultFlow.flatMapLatest { uuids ->
+        if (uuids.isEmpty()) {
+            return@flatMapLatest flowOf()
+        } else {
+            stickerDao.getAllStickerWithTagsList(uuids.keys).map { list ->
+                list.sortedBy { uuids[it.sticker.uuid] }
+            }
+        }
+    }
+
     fun imageSearch(
         base: Uri,
         baseUuid: String? = null,
         maxResultCount: Int,
         distance: Double = 500.0,
-    ): Flow<List<StickerWithTags>> = flow {
+    ): Flow<Unit> = flow {
         val nearestNeighborsResult = nearestNeighbors(base.toBitmap(), maxResultCount, distance)
         if (baseUuid != null) {
             nearestNeighborsResult.remove(baseUuid)
         }
-        emit(
-            stickerDao.getAllStickerWithTagsList(nearestNeighborsResult.keys).sortedBy {
-                nearestNeighborsResult[it.sticker.uuid]
-            }
-        )
+        nearestNeighborsResultFlow.emit(nearestNeighborsResult)
+        emit(Unit)
     }.flowOn(Dispatchers.IO)
 
     private fun nearestNeighbors(

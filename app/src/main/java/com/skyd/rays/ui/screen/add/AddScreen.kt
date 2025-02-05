@@ -755,10 +755,10 @@ private fun SimilarStickers(similarStickers: List<StickerWithTags>) {
                         selected = false,
                         contentScale = ContentScale.FillHeight,
                         imageAspectRatio = null,
-                        onClickListener = { _, _ ->
+                        onClick = {
                             openDetailScreen(
                                 navController = navController,
-                                stickerUuid = sticker.sticker.uuid
+                                stickerUuid = it.sticker.uuid
                             )
                         }
                     )

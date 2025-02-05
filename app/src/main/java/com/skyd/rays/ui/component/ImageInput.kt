@@ -3,6 +3,7 @@ package com.skyd.rays.ui.component
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,17 +16,29 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil3.EventListener
+import coil3.request.ErrorResult
+import coil3.request.ImageRequest
+import com.skyd.rays.R
 
 @Composable
 fun ImageInput(
@@ -34,6 +47,7 @@ fun ImageInput(
     hintText: String? = null,
     shape: Shape,
     imageUri: Uri?,
+    maxImageHeight: Dp = Dp.Infinity,
     contentScale: ContentScale = ContentScale.FillWidth,
     onSelectImage: () -> Unit,
     onRemoveClick: (() -> Unit)? = null,
@@ -82,15 +96,44 @@ fun ImageInput(
         ) {
             Box {
                 Column {
-                    RaysImage(
-                        model = imageUri,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 50.dp),
-                        blur = false,
-                        contentDescription = null,
-                        contentScale = contentScale,
-                    )
+                    var imageLoadError by rememberSaveable(imageUri) { mutableStateOf(false) }
+                    if (imageLoadError) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = maxImageHeight)
+                                .padding(horizontal = 12.dp)
+                                .padding(top = 16.dp, bottom = 10.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.ErrorOutline,
+                                contentDescription = null,
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = stringResource(R.string.image_load_error),
+                                modifier = Modifier.basicMarquee(),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    } else {
+                        RaysImage(
+                            model = imageUri,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 50.dp, max = maxImageHeight),
+                            blur = false,
+                            contentDescription = null,
+                            imageLoader = rememberRaysImageLoader(object : EventListener() {
+                                override fun onError(request: ImageRequest, result: ErrorResult) {
+                                    imageLoadError = true
+                                }
+                            }),
+                            contentScale = contentScale,
+                        )
+                    }
                     Text(
                         modifier = Modifier
                             .padding(6.dp)

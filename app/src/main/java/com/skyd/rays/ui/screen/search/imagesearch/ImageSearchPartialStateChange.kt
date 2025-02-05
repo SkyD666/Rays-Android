@@ -10,30 +10,48 @@ internal sealed interface ImageSearchPartialStateChange {
             oldState.copy(loadingDialog = true)
     }
 
-    data object Init : ImageSearchPartialStateChange {
+    data class Init(val stickers: List<StickerWithTags>) : ImageSearchPartialStateChange {
+        override fun reduce(oldState: ImageSearchState): ImageSearchState {
+            return oldState.copy(
+                imageSearchResultState = ImageSearchResultState.Success(stickers),
+                loadingDialog = false,
+            )
+        }
+    }
+
+    sealed interface UpdateImage : ImageSearchPartialStateChange {
+        override fun reduce(oldState: ImageSearchState): ImageSearchState {
+            return oldState.copy(loadingDialog = false)
+        }
+
+        data object Success : UpdateImage
+        data class Failed(val msg: String) : UpdateImage
+    }
+
+    sealed interface DeleteStickerWithTags : ImageSearchPartialStateChange {
         override fun reduce(oldState: ImageSearchState) = oldState.copy(
-            imageSearchResultState = ImageSearchResultState.Init,
+            loadingDialog = false,
+        )
+
+        data object Success : DeleteStickerWithTags
+        data class Failed(val msg: String) : DeleteStickerWithTags
+    }
+
+    data class AddSelectedStickers(
+        val stickers: Collection<String>
+    ) : ImageSearchPartialStateChange {
+        override fun reduce(oldState: ImageSearchState) = oldState.copy(
+            selectedStickers = oldState.selectedStickers + stickers,
             loadingDialog = false,
         )
     }
 
-    sealed interface ImageSearch : ImageSearchPartialStateChange {
-        data class Success(val stickers: List<StickerWithTags>) : ImageSearch {
-            override fun reduce(oldState: ImageSearchState): ImageSearchState {
-                return oldState.copy(
-                    imageSearchResultState = ImageSearchResultState.Success(stickers),
-                    loadingDialog = false,
-                )
-            }
-        }
-
-        data class Failed(val msg: String) : ImageSearch {
-            override fun reduce(oldState: ImageSearchState): ImageSearchState {
-                return oldState.copy(
-                    imageSearchResultState = ImageSearchResultState.Init,
-                    loadingDialog = false,
-                )
-            }
-        }
+    data class RemoveSelectedStickers(
+        val stickers: Collection<String>
+    ) : ImageSearchPartialStateChange {
+        override fun reduce(oldState: ImageSearchState) = oldState.copy(
+            selectedStickers = oldState.selectedStickers - stickers.toSet(),
+            loadingDialog = false,
+        )
     }
 }

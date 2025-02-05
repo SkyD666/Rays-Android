@@ -5,11 +5,13 @@ import com.skyd.rays.model.bean.StickerWithTags
 
 data class SearchState(
     val searchDataState: SearchDataState,
+    val selectedStickers: Set<String>,
     val loadingDialog: Boolean,
 ) : MviViewState {
     companion object {
         fun initial() = SearchState(
             searchDataState = SearchDataState.Init,
+            selectedStickers = emptySet(),
             loadingDialog = false,
         )
     }

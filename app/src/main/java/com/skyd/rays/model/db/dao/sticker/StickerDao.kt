@@ -14,6 +14,7 @@ import com.skyd.rays.appContext
 import com.skyd.rays.config.STICKER_DIR
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
+import com.skyd.rays.ext.safeDbVariableNumber
 import com.skyd.rays.model.bean.STICKER_SHARE_TIME_TABLE_NAME
 import com.skyd.rays.model.bean.STICKER_TABLE_NAME
 import com.skyd.rays.model.bean.StickerBean
@@ -76,7 +77,7 @@ interface StickerDao {
 
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN IN (:uuids)")
-    fun getAllStickerWithTagsList(uuids: Collection<String>): List<StickerWithTags>
+    fun getAllStickerWithTagsList(uuids: Collection<String>): Flow<List<StickerWithTags>>
 
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME")
@@ -176,14 +177,14 @@ interface StickerDao {
            SET $SHARE_COUNT_COLUMN = $SHARE_COUNT_COLUMN + :count
            WHERE $UUID_COLUMN IN (:uuids)"""
     )
-    fun addShareCount(uuids: List<String>, count: Int = 1): Int
+    fun addShareCount(uuids: Collection<String>, count: Int = 1): Int
 
     @Transaction
-    fun shareStickers(uuids: List<String>, count: Int = 1) {
+    fun shareStickers(uuids: Collection<String>, count: Int = 1) {
         val hiltEntryPoint = EntryPointAccessors
             .fromApplication(appContext, StickerDaoEntryPoint::class.java)
         val currentTimeMillis = System.currentTimeMillis()
-        addShareCount(uuids, count)
+        uuids.toList().safeDbVariableNumber { addShareCount(it, count) }
         hiltEntryPoint.stickerShareTimeDao.updateShareTime(uuids.map { stickerUuid ->
             StickerShareTimeBean(stickerUuid, currentTimeMillis)
         })

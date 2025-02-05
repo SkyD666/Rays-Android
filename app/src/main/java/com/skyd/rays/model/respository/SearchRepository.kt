@@ -125,10 +125,20 @@ class SearchRepository @Inject constructor(
             .flowOn(Dispatchers.IO)
     }
 
-    fun requestDeleteStickerWithTagsDetail(stickerUuids: List<String>): Flow<List<String>> {
+    fun requestDeleteStickerWithTagsDetail(stickerUuids: Collection<String>): Flow<Collection<String>> {
         return flowOnIo {
-            stickerUuids.safeDbVariableNumber { stickerDao.deleteStickerWithTags(it) }
+            stickerUuids.distinct().safeDbVariableNumber { stickerDao.deleteStickerWithTags(it) }
             emit(stickerUuids)
+        }
+    }
+
+    fun requestStickersNotIn(
+        keyword: String,
+        selectedStickerUuids: Collection<String>,
+    ): Flow<List<String>> {
+        return flowOnIo {
+            emit(requestStickerUuidList(keyword).first()
+                .filter { it !in selectedStickerUuids })
         }
     }
 
@@ -171,7 +181,7 @@ class SearchRepository @Inject constructor(
             }.flowOn(Dispatchers.IO)
     }
 
-    fun requestExportStickers(stickerUuids: List<String>): Flow<Int> {
+    fun requestExportStickers(stickerUuids: Collection<String>): Flow<Int> {
         return flowOnIo {
             val exportStickerDir = appContext.dataStore.getOrDefault(ExportStickerDirPreference)
             check(exportStickerDir.isNotBlank()) { "exportStickerDir is null" }

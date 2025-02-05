@@ -10,6 +10,8 @@ import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import coil3.ComponentRegistry
+import coil3.EventListener
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.gif.AnimatedImageDecoder
@@ -89,7 +91,9 @@ fun RaysImage(
 }
 
 @Composable
-private fun rememberRaysImageLoader(): ImageLoader {
+fun rememberRaysImageLoader(
+    listener: EventListener? = null,
+): ImageLoader {
     val context = LocalContext.current
     return remember(context) {
         ImageLoader.Builder(context)
@@ -101,6 +105,7 @@ private fun rememberRaysImageLoader(): ImageLoader {
                 }
                 add(SvgDecoder.Factory())
             }
+            .run { if (listener != null) eventListener(listener) else this }
             .build()
     }
 }

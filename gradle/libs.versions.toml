@@ -12,7 +12,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-compose-ui-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "composeMaterial" }
 androidx-compose-ui-ui-tooling3 = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeMaterial" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version = "1.15.0" }
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.5" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.6" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version = "2.8.7" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "composeMaterial" }
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "composeMaterial" }
@@ -60,8 +60,8 @@ text-recognition-chinese = { module = "com.google.mlkit:text-recognition-chinese
 image-labeling-custom = { module = "com.google.mlkit:image-labeling-custom", version = "17.0.3" }
 segmentation-selfie = { module = "com.google.mlkit:segmentation-selfie", version = "16.0.0-beta6" }
 
-ai-edge-litert-support = { module = "com.google.ai.edge.litert:litert-support", version = "1.0.1" }
-ai-edge-litert = { module = "com.google.ai.edge.litert:litert", version = "1.0.1" }
+ai-edge-litert-support = { module = "com.google.ai.edge.litert:litert-support", version = "1.1.0" }
+ai-edge-litert = { module = "com.google.ai.edge.litert:litert", version = "1.1.0" }
 
 junit = { module = "junit:junit", version = "4.13.2" }
 

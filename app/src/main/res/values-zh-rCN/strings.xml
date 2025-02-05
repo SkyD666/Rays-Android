@@ -199,7 +199,7 @@
     <string name="search_result_sort_title">标题</string>
     <string name="search_result_sort">排序</string>
     <string name="search_result_reverse">逆序</string>
-    <string name="search_result_multi_select">多选</string>
+    <string name="multi_select">多选</string>
     <string name="invert_selection">反选</string>
     <string name="home_screen_search_result_list_to_top">到顶部</string>
     <string name="webdav_screen_progress_upload_data_sticker">更新远端数据 + 表情包</string>
@@ -379,4 +379,5 @@
     <string name="merge_stickers_screen_empty_sticker_list">请选择至少两个表情包进行合并</string>
     <string name="merge_stickers_screen_merge">合并</string>
     <string name="merge_stickers_screen_max_count_limit">最多支持同时合并 20 个表情包，超出的部分不会被处理</string>
+    <string name="image_load_error">图片无法显示</string>
 </resources>

@@ -11,12 +11,10 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,20 +24,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.ArrowDropUp
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.FolderZip
-import androidx.compose.material.icons.outlined.ImageSearch
-import androidx.compose.material.icons.outlined.Merge
-import androidx.compose.material.icons.outlined.Save
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Badge
 import androidx.compose.material3.FilterChip
@@ -52,7 +41,6 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -64,31 +52,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
-import com.skyd.rays.ext.isCompact
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.preference.privacy.rememberShouldBlur
 import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.ui.component.EmptyPlaceholder
-import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.ScalableLazyVerticalStaggeredGrid
-import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalSearchResultReverse
 import com.skyd.rays.ui.local.LocalStickerItemWidth
-import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.sendStickerByUuid
-import com.skyd.rays.util.sendStickersByUuids
 
 @Composable
 fun SearchResultList(
     state: LazyStaggeredGridState,
     contentPadding: PaddingValues,
     dataList: List<StickerWithTags>,
-    onItemClickListener: ((data: StickerWithTags, selected: Boolean) -> Unit)? = null,
+    onSelectChanged: ((data: StickerWithTags, selected: Boolean) -> Unit)? = null,
+    onClick: ((data: StickerWithTags) -> Unit)? = null,
     multiSelect: Boolean,
     onMultiSelectChanged: (Boolean) -> Unit,
     onInvertSelectClick: () -> Unit,
-    selectedStickers: List<StickerWithTags>,
+    selectedStickers: Collection<String>,
 ) {
     Column {
         SearchResultConfigBar(
@@ -111,8 +95,9 @@ fun SearchResultList(
                     SearchResultItem(
                         data = it,
                         selectable = multiSelect,
-                        selected = selectedStickers.contains(it),
-                        onClickListener = onItemClickListener
+                        selected = selectedStickers.contains(it.sticker.uuid),
+                        onSelectChanged = onSelectChanged,
+                        onClick = onClick,
                     )
                 }
             }
@@ -204,7 +189,7 @@ fun SearchResultConfigBar(
             FilterChip(
                 selected = multiSelect,
                 onClick = { onMultiSelectChanged(!multiSelect) },
-                label = { Text(text = stringResource(R.string.search_result_multi_select)) },
+                label = { Text(text = stringResource(R.string.multi_select)) },
             )
         }
 
@@ -220,103 +205,6 @@ fun SearchResultConfigBar(
 }
 
 @Composable
-internal fun MultiSelectActionBar(
-    modifier: Modifier = Modifier,
-    selectedStickers: List<StickerWithTags>,
-    onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-    onExportClick: () -> Unit,
-    onExportAsZipClick: () -> Unit,
-    onSearchImageClick: () -> Unit,
-    onMergeClick: () -> Unit,
-) {
-    val context = LocalContext.current
-    val windowSizeClass = LocalWindowSizeClass.current
-    var showWaitingDialog by rememberSaveable { mutableStateOf(false) }
-
-    val items = remember {
-        arrayOf<@Composable () -> Unit>(
-            @Composable {
-                RaysIconButton(
-                    onClick = {
-                        showWaitingDialog = true
-                        context.sendStickersByUuids(
-                            uuids = selectedStickers.map { it.sticker.uuid },
-                            onSuccess = {
-                                selectedStickers.forEach { it.sticker.shareCount++ }
-                                showWaitingDialog = false
-                            }
-                        )
-                    },
-                    enabled = selectedStickers.isNotEmpty(),
-                    imageVector = Icons.Outlined.Share,
-                    contentDescription = stringResource(id = R.string.send_sticker)
-                )
-            },
-            @Composable {
-                RaysIconButton(
-                    onClick = onEditClick,
-                    enabled = selectedStickers.isNotEmpty(),
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = stringResource(id = R.string.add_screen_name_edit)
-                )
-            },
-            @Composable {
-                RaysIconButton(
-                    onClick = onExportClick,
-                    enabled = selectedStickers.isNotEmpty(),
-                    imageVector = Icons.Outlined.Save,
-                    contentDescription = stringResource(id = R.string.home_screen_export)
-                )
-            },
-            @Composable {
-                RaysIconButton(
-                    onClick = onExportAsZipClick,
-                    enabled = selectedStickers.isNotEmpty(),
-                    imageVector = Icons.Outlined.FolderZip,
-                    contentDescription = stringResource(id = R.string.home_screen_export_to_backup_zip)
-                )
-            },
-            @Composable {
-                RaysIconButton(
-                    onClick = onDeleteClick,
-                    enabled = selectedStickers.isNotEmpty(),
-                    imageVector = Icons.Outlined.Delete,
-                    contentDescription = stringResource(id = R.string.home_screen_delete)
-                )
-            },
-            @Composable {
-                RaysIconButton(
-                    onClick = onSearchImageClick,
-                    enabled = selectedStickers.size == 1,
-                    imageVector = Icons.Outlined.ImageSearch,
-                    contentDescription = stringResource(id = R.string.home_screen_image_search)
-                )
-            },
-            @Composable {
-                RaysIconButton(
-                    onClick = onMergeClick,
-                    enabled = selectedStickers.size > 1,
-                    imageVector = Icons.Outlined.Merge,
-                    contentDescription = stringResource(id = R.string.merge_stickers_screen_merge)
-                )
-            },
-        )
-    }
-    if (windowSizeClass.isCompact) {
-        Row(modifier = modifier.horizontalScroll(rememberScrollState())) {
-            items.forEachIndexed { _, function -> function() }
-        }
-    } else {
-        Column(modifier = modifier.verticalScroll(rememberScrollState())) {
-            items.forEachIndexed { _, function -> function() }
-        }
-    }
-
-    WaitingDialog(visible = showWaitingDialog)
-}
-
-@Composable
 fun SearchResultItem(
     modifier: Modifier = Modifier,
     data: StickerWithTags,
@@ -325,7 +213,8 @@ fun SearchResultItem(
     showTitle: Boolean = LocalStickerItemWidth.current.dp >= 111.dp,
     contentScale: ContentScale = ContentScale.Crop,
     imageAspectRatio: Float? = 0.97f,
-    onClickListener: ((data: StickerWithTags, selected: Boolean) -> Unit)? = null
+    onSelectChanged: ((data: StickerWithTags, selected: Boolean) -> Unit)? = null,
+    onClick: ((data: StickerWithTags) -> Unit)? = null,
 ) {
     val context = LocalContext.current
     OutlinedCard(
@@ -338,7 +227,10 @@ fun SearchResultItem(
                         onSuccess = { data.sticker.shareCount++ }
                     )
                 },
-                onClick = { onClickListener?.invoke(data, !selected) }
+                onClick = {
+                    if (selectable) onSelectChanged?.invoke(data, !selected)
+                    else onClick?.invoke(data)
+                }
             ),
     ) {
         Box {
@@ -350,7 +242,7 @@ fun SearchResultItem(
                 contentScale = contentScale,
                 uuid = data.sticker.uuid
             )
-            if (selectable && selected) {
+            if (selected) {
                 Icon(
                     modifier = Modifier
                         .align(Alignment.TopEnd)

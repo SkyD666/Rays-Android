@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
@@ -23,7 +24,9 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class ImageSearchViewModel @Inject constructor(private var selfieSegmentationRepo: ImageSearchRepository) :
+class ImageSearchViewModel @Inject constructor(
+    private val imageSearchRepo: ImageSearchRepository,
+) :
     AbstractMviViewModel<ImageSearchIntent, ImageSearchState, ImageSearchEvent>() {
 
     override val viewState: StateFlow<ImageSearchState>
@@ -51,8 +54,8 @@ class ImageSearchViewModel @Inject constructor(private var selfieSegmentationRep
     private fun Flow<ImageSearchPartialStateChange>.sendSingleEvent(): Flow<ImageSearchPartialStateChange> {
         return onEach { change ->
             val event = when (change) {
-                is ImageSearchPartialStateChange.ImageSearch.Failed ->
-                    ImageSearchEvent.SearchUiEvent.Failed(change.msg)
+                is ImageSearchPartialStateChange.UpdateImage.Failed ->
+                    ImageSearchEvent.UpdateImageUiEvent.Failed(change.msg)
 
                 else -> return@onEach
             }
@@ -63,17 +66,27 @@ class ImageSearchViewModel @Inject constructor(private var selfieSegmentationRep
     private fun SharedFlow<ImageSearchIntent>.toImageSearchPartialStateChangeFlow()
             : Flow<ImageSearchPartialStateChange> {
         return merge(
-            filterIsInstance<ImageSearchIntent.Init>().map {
-                ImageSearchPartialStateChange.Init
+            filterIsInstance<ImageSearchIntent.Init>().flatMapConcat {
+                imageSearchRepo.stickerWithTagsResultList.map {
+                    ImageSearchPartialStateChange.Init(it)
+                }
             },
             filterIsInstance<ImageSearchIntent.Search>().flatMapConcat { intent ->
-                selfieSegmentationRepo.imageSearch(
+                imageSearchRepo.imageSearch(
                     intent.base,
                     maxResultCount = intent.maxResultCount,
                 ).map {
-                    ImageSearchPartialStateChange.ImageSearch.Success(it)
+                    ImageSearchPartialStateChange.UpdateImage.Success
                 }.startWith(ImageSearchPartialStateChange.LoadingDialog)
-                    .catchMap { ImageSearchPartialStateChange.ImageSearch.Failed(it.message.toString()) }
+                    .catchMap { ImageSearchPartialStateChange.UpdateImage.Failed(it.message.toString()) }
+            },
+            filterIsInstance<ImageSearchIntent.AddSelectedStickers>().flatMapConcat { intent ->
+                flowOf(ImageSearchPartialStateChange.AddSelectedStickers(intent.stickers))
+                    .startWith(ImageSearchPartialStateChange.LoadingDialog)
+            },
+            filterIsInstance<ImageSearchIntent.RemoveSelectedStickers>().flatMapConcat { intent ->
+                flowOf(ImageSearchPartialStateChange.RemoveSelectedStickers(intent.stickers))
+                    .startWith(ImageSearchPartialStateChange.LoadingDialog)
             },
         )
     }

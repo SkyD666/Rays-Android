@@ -98,7 +98,6 @@ private fun RaysSearchBarPreview() {
                             )
                         )
                     },
-                    onItemClickListener = { _, _ -> },
                     multiSelect = false,
                     onMultiSelectChanged = {},
                     onInvertSelectClick = {},

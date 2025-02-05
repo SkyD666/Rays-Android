@@ -80,7 +80,7 @@ const val MERGE_STICKERS_SCREEN_STICKER_UUIDS_KEY = "stickerUuids"
 
 fun openMergeStickersScreen(
     navController: NavHostController,
-    stickerUuids: List<String>,
+    stickerUuids: Collection<String>,
 ) {
     navController.navigate(
         MERGE_STICKERS_SCREEN_ROUTE,

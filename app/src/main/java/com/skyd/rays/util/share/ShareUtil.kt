@@ -1,5 +1,6 @@
 package com.skyd.rays.util.share
 
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -96,6 +97,10 @@ object ShareUtil {
                 shareIntent.appendActions(context, uris)
             }
 
+            if (context !is Activity) {
+                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+
             context.startActivity(shareIntent)
         } else {
             val shareIntent: Intent = Intent().apply {
@@ -120,7 +125,11 @@ object ShareUtil {
                 Intent.createChooser(
                     shareIntent,
                     context.resources.getText(R.string.send_sticker)
-                )
+                ).apply {
+                    if (context !is Activity) {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                }
             )
         }
     }

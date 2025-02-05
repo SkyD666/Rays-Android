@@ -52,7 +52,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -81,25 +80,17 @@ import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ext.plus
-import com.skyd.rays.model.bean.StickerWithTags
-import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.ShowLastQueryPreference
 import com.skyd.rays.ui.component.BackIcon
 import com.skyd.rays.ui.component.RaysFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
-import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
-import com.skyd.rays.ui.component.dialog.ExportDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.add.openAddScreen
 import com.skyd.rays.ui.screen.detail.openDetailScreen
-import com.skyd.rays.ui.screen.mergestickers.openMergeStickersScreen
-import com.skyd.rays.ui.screen.search.imagesearch.openImageSearchScreen
-import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.openExportFilesScreen
-import com.skyd.rays.util.stickerUuidToUri
+import com.skyd.rays.ui.screen.search.multiselect.MultiSelectActionBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -113,15 +104,11 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     val navController = LocalNavController.current
     var multiSelect by rememberSaveable { mutableStateOf(false) }
-    val selectedStickers = remember { mutableStateListOf<StickerWithTags>() }
     val windowSizeClass = LocalWindowSizeClass.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val searchResultListState = rememberLazyStaggeredGridState()
     val popularTags =
         (uiState.searchDataState as? SearchDataState.Success)?.popularTags.orEmpty()
-    var openDeleteMultiStickersDialog by rememberSaveable {
-        mutableStateOf<Set<StickerWithTags>?>(null)
-    }
     var fabHeight by remember { mutableStateOf(0.dp) }
     var fabWidth by remember { mutableStateOf(0.dp) }
     var searchFieldValueState by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -214,100 +201,54 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                         contentPadding = PaddingValues(bottom = fabHeight + 16.dp) +
                                 PaddingValues(horizontal = 16.dp),
                         dataList = searchResultUiState.stickerWithTagsList,
-                        onItemClickListener = { data, selected ->
-                            if (multiSelect) {
-                                if (selected) selectedStickers.add(data)
-                                else selectedStickers.remove(data)
+                        onSelectChanged = { data, selected ->
+                            if (selected) {
+                                dispatch(SearchIntent.AddSelectedStickers(listOf(data.sticker.uuid)))
                             } else {
-                                openDetailScreen(
-                                    navController = navController,
-                                    stickerUuid = data.sticker.uuid
-                                )
+                                dispatch(SearchIntent.RemoveSelectedStickers(listOf(data.sticker.uuid)))
                             }
+                        },
+                        onClick = { data ->
+                            openDetailScreen(
+                                navController = navController,
+                                stickerUuid = data.sticker.uuid
+                            )
                         },
                         multiSelect = multiSelect,
                         onMultiSelectChanged = {
                             multiSelect = it
                             if (!it) {
-                                selectedStickers.clear()
+                                dispatch(SearchIntent.RemoveSelectedStickers(uiState.selectedStickers))
                             }
                         },
                         onInvertSelectClick = {
-                            val newSelectedStickers =
-                                searchResultUiState.stickerWithTagsList - selectedStickers
-                            selectedStickers.clear()
-                            selectedStickers.addAll(newSelectedStickers)
+                            val newSelectedStickers = searchResultUiState.stickerWithTagsList.map {
+                                it.sticker.uuid
+                            } - uiState.selectedStickers
+                            dispatch(SearchIntent.RemoveSelectedStickers(uiState.selectedStickers))
+                            dispatch(SearchIntent.AddSelectedStickers(newSelectedStickers))
                         },
-                        selectedStickers = selectedStickers,
+                        selectedStickers = uiState.selectedStickers,
                     )
                 }
-                val multiSelectBar: @Composable (compact: Boolean) -> Unit =
-                    @Composable { compact ->
-                        AnimatedVisibility(
-                            visible = multiSelect,
-                            enter = if (compact) expandVertically() else expandHorizontally(),
-                            exit = if (compact) shrinkVertically() else shrinkHorizontally(),
-                        ) {
-                            var openMultiStickersExportPathDialog by rememberSaveable {
-                                mutableStateOf(false)
+                val multiSelectBar: @Composable (compact: Boolean) -> Unit = { compact ->
+                    AnimatedVisibility(
+                        visible = multiSelect,
+                        enter = if (compact) expandVertically() else expandHorizontally(),
+                        exit = if (compact) shrinkVertically() else shrinkHorizontally(),
+                    ) {
+                        MultiSelectActionBar(
+                            modifier = Modifier.run {
+                                if (windowSizeClass.isCompact) padding(end = fabWidth)
+                                else this
+                            },
+                            selectedStickers = uiState.selectedStickers,
+                            onRemoveSelectedStickers = {
+                                dispatch(SearchIntent.RemoveSelectedStickers(it))
                             }
-                            MultiSelectActionBar(
-                                modifier = Modifier.run {
-                                    if (windowSizeClass.isCompact) padding(end = fabWidth)
-                                    else this
-                                },
-                                selectedStickers = selectedStickers,
-                                onEditClick = {
-                                    openAddScreen(
-                                        navController = navController,
-                                        stickers = selectedStickers.map {
-                                            UriWithStickerUuidBean(
-                                                uri = stickerUuidToUri(it.sticker.uuid),
-                                                stickerUuid = it.sticker.uuid,
-                                            )
-                                        },
-                                        isEdit = true
-                                    )
-                                },
-                                onDeleteClick = {
-                                    openDeleteMultiStickersDialog =
-                                        searchResultUiState.stickerWithTagsList.toSet()
-                                },
-                                onExportClick = { openMultiStickersExportPathDialog = true },
-                                onExportAsZipClick = {
-                                    openExportFilesScreen(
-                                        navController = navController,
-                                        exportStickers = selectedStickers.map { it.sticker.uuid },
-                                    )
-                                },
-                                onSearchImageClick = {
-                                    selectedStickers.firstOrNull()?.let {
-                                        openImageSearchScreen(
-                                            navController, stickerUuidToUri(it.sticker.uuid),
-                                        )
-                                    }
-                                },
-                                onMergeClick = {
-                                    openMergeStickersScreen(
-                                        navController = navController,
-                                        stickerUuids = selectedStickers.map { it.sticker.uuid }
-                                    )
-                                    selectedStickers.clear()
-                                }
-                            )
-                            ExportDialog(
-                                visible = openMultiStickersExportPathDialog,
-                                onDismissRequest = {
-                                    openMultiStickersExportPathDialog = false
-                                },
-                                onExport = {
-                                    dispatch(SearchIntent.ExportStickers(
-                                        selectedStickers.map { it.sticker.uuid }
-                                    ))
-                                },
-                            )
-                        }
+                        )
                     }
+                }
                 if (windowSizeClass.isCompact) {
                     Box(modifier = Modifier.weight(1f)) { searchResultList() }
                     multiSelectBar(true)
@@ -323,36 +264,10 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
 
     MviEventListener(viewModel.singleEvent) { event ->
         when (event) {
-            is SearchEvent.ExportStickers.Success -> snackbarHostState.showSnackbar(
-                context.resources.getQuantityString(
-                    R.plurals.export_stickers_result,
-                    event.successCount,
-                    event.successCount,
-                ),
-            )
-
             is SearchEvent.SearchData.Failed ->
                 snackbarHostState.showSnackbar(context.getString(R.string.failed_info, event.msg))
-
-            is SearchEvent.DeleteStickerWithTags.Failed ->
-                snackbarHostState.showSnackbar(context.getString(R.string.failed_info, event.msg))
-
-            is SearchEvent.DeleteStickerWithTags.Success -> Unit
         }
     }
-
-    // 删除多选的表情包警告
-    DeleteWarningDialog(
-        visible = openDeleteMultiStickersDialog != null,
-        onDismissRequest = { openDeleteMultiStickersDialog = null },
-        onDismiss = { openDeleteMultiStickersDialog = null },
-        onConfirm = {
-            dispatch(SearchIntent.DeleteStickerWithTags(selectedStickers.map { it.sticker.uuid }))
-            // 去除所有被删除了，但还在selectedStickers中的数据
-            selectedStickers -= openDeleteMultiStickersDialog!!
-            openDeleteMultiStickersDialog = null
-        }
-    )
 
     WaitingDialog(visible = uiState.loadingDialog)
 }

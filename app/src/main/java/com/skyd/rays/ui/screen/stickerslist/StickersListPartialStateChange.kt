@@ -7,6 +7,11 @@ import kotlinx.coroutines.flow.Flow
 internal sealed interface StickersListPartialStateChange {
     fun reduce(oldState: StickersListState): StickersListState
 
+    data object LoadingDialog : StickersListPartialStateChange {
+        override fun reduce(oldState: StickersListState) =
+            oldState.copy(loadingDialog = true)
+    }
+
     sealed interface StickersList : StickersListPartialStateChange {
         override fun reduce(oldState: StickersListState): StickersListState {
             return when (this) {
@@ -26,15 +31,37 @@ internal sealed interface StickersListPartialStateChange {
             StickersList
     }
 
-    sealed interface ExportStickers : StickersListPartialStateChange {
+    sealed interface InverseSelectedStickers : StickersListPartialStateChange {
         override fun reduce(oldState: StickersListState): StickersListState {
             return when (this) {
-                is Success -> oldState.copy(loadingDialog = false)
-                Loading -> oldState.copy(loadingDialog = false)
+                is Success -> oldState.copy(
+                    selectedStickers = stickers.toSet(),
+                    loadingDialog = false,
+                )
+
+                is Failed -> oldState.copy(loadingDialog = false)
             }
         }
 
-        data object Loading : ExportStickers
-        data class Success(val stickerUuids: List<String>) : ExportStickers
+        data class Success(val stickers: List<String>) : InverseSelectedStickers
+        data class Failed(val msg: String) : InverseSelectedStickers
+    }
+
+    data class AddSelectedStickers(
+        val stickers: Collection<String>
+    ) : StickersListPartialStateChange {
+        override fun reduce(oldState: StickersListState) = oldState.copy(
+            selectedStickers = oldState.selectedStickers + stickers,
+            loadingDialog = false,
+        )
+    }
+
+    data class RemoveSelectedStickers(
+        val stickers: Collection<String>
+    ) : StickersListPartialStateChange {
+        override fun reduce(oldState: StickersListState) = oldState.copy(
+            selectedStickers = oldState.selectedStickers - stickers.toSet(),
+            loadingDialog = false,
+        )
     }
 }

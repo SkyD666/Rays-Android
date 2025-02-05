@@ -205,7 +205,7 @@
     <string name="search_result_sort_title">Title</string>
     <string name="search_result_sort">Sort</string>
     <string name="search_result_reverse">Reverse</string>
-    <string name="search_result_multi_select">Select</string>
+    <string name="multi_select">Select</string>
     <string name="invert_selection">Invert</string>
     <string name="home_screen_search_result_list_to_top">To the top</string>
     <string name="webdav_screen_progress_upload_data_sticker">Updating remote data + sticker</string>
@@ -373,4 +373,5 @@
     <string name="merge_stickers_screen_empty_sticker_list">Please select at least two stickers to merge</string>
     <string name="merge_stickers_screen_merge">Merge</string>
     <string name="merge_stickers_screen_max_count_limit">Up to 20 stickers can be merged, excess will not be processed</string>
+    <string name="image_load_error">Image can\'t be displayed</string>
 </resources>

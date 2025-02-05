@@ -18,9 +18,8 @@ class MergeStickersRepository @Inject constructor(
     private val addRepo: AddRepository,
     private val searchRepo: SearchRepository,
 ) : BaseRepository() {
-    fun requestStickers(stickerUuids: List<String>): Flow<List<StickerWithTags>> = flow {
-        emit(stickerDao.getAllStickerWithTagsList(stickerUuids))
-    }.flowOn(Dispatchers.IO)
+    fun requestStickers(stickerUuids: List<String>): Flow<List<StickerWithTags>> =
+        stickerDao.getAllStickerWithTagsList(stickerUuids)
 
     fun requestMerge(
         oldStickerUuid: String,

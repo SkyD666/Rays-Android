@@ -7,11 +7,13 @@ import kotlinx.coroutines.flow.Flow
 
 data class StickersListState(
     val listState: ListState,
+    val selectedStickers: Set<String>,
     val loadingDialog: Boolean,
 ) : MviViewState {
     companion object {
         fun initial() = StickersListState(
             listState = ListState.Init,
+            selectedStickers = emptySet(),
             loadingDialog = false,
         )
     }

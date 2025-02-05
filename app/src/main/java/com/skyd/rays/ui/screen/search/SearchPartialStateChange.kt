@@ -51,31 +51,21 @@ internal sealed interface SearchPartialStateChange {
         ) : SearchDataResult
     }
 
-    sealed interface ExportStickers : SearchPartialStateChange {
-        class Success(val successCount: Int) : ExportStickers {
-            override fun reduce(oldState: SearchState) = oldState.copy(loadingDialog = false)
-        }
+    data class AddSelectedStickers(
+        val stickers: Collection<String>
+    ) : SearchPartialStateChange {
+        override fun reduce(oldState: SearchState) = oldState.copy(
+            selectedStickers = oldState.selectedStickers + stickers,
+            loadingDialog = false,
+        )
     }
 
-    sealed interface DeleteStickerWithTags : SearchPartialStateChange {
-        class Success(val stickerUuids: List<String>) : DeleteStickerWithTags {
-            override fun reduce(oldState: SearchState): SearchState = oldState.copy(
-                searchDataState = oldState.searchDataState.let { searchResultState ->
-                    if (searchResultState is SearchDataState.Success) {
-                        searchResultState.copy(
-                            stickerWithTagsList = searchResultState.stickerWithTagsList
-                                .filter { it.sticker.uuid !in stickerUuids },
-                        )
-                    } else searchResultState
-                },
-                loadingDialog = false,
-            )
-        }
-
-        data class Failed(val msg: String) : DeleteStickerWithTags {
-            override fun reduce(oldState: SearchState): SearchState = oldState.copy(
-                loadingDialog = false,
-            )
-        }
+    data class RemoveSelectedStickers(
+        val stickers: Collection<String>
+    ) : SearchPartialStateChange {
+        override fun reduce(oldState: SearchState) = oldState.copy(
+            selectedStickers = oldState.selectedStickers - stickers.toSet(),
+            loadingDialog = false,
+        )
     }
 }

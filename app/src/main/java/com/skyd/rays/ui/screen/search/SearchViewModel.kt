@@ -15,8 +15,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
@@ -57,15 +57,6 @@ class SearchViewModel @Inject constructor(
                 is SearchPartialStateChange.SearchDataResult.Failed ->
                     SearchEvent.SearchData.Failed(change.msg)
 
-                is SearchPartialStateChange.DeleteStickerWithTags.Success ->
-                    SearchEvent.DeleteStickerWithTags.Success(change.stickerUuids)
-
-                is SearchPartialStateChange.ExportStickers.Success ->
-                    SearchEvent.ExportStickers.Success(change.successCount)
-
-                is SearchPartialStateChange.DeleteStickerWithTags.Failed ->
-                    SearchEvent.DeleteStickerWithTags.Failed(change.msg)
-
                 else -> return@onEach
             }
             sendEvent(event)
@@ -96,20 +87,13 @@ class SearchViewModel @Inject constructor(
                         SearchPartialStateChange.SearchDataResult.Failed(it.message.toString())
                     }
             },
-
-            filterIsInstance<SearchIntent.ExportStickers>().flatMapConcat { intent ->
-                searchRepo.requestExportStickers(stickerUuids = intent.stickerUuids)
-                    .map { SearchPartialStateChange.ExportStickers.Success(it) }
+            filterIsInstance<SearchIntent.AddSelectedStickers>().flatMapConcat { intent ->
+                flowOf(SearchPartialStateChange.AddSelectedStickers(intent.stickers))
                     .startWith(SearchPartialStateChange.LoadingDialog)
             },
-
-            filterIsInstance<SearchIntent.DeleteStickerWithTags>().flatMapConcat { intent ->
-                searchRepo.requestDeleteStickerWithTagsDetail(stickerUuids = intent.stickerUuids)
-                    .map { SearchPartialStateChange.DeleteStickerWithTags.Success(it) }
+            filterIsInstance<SearchIntent.RemoveSelectedStickers>().flatMapConcat { intent ->
+                flowOf(SearchPartialStateChange.RemoveSelectedStickers(intent.stickers))
                     .startWith(SearchPartialStateChange.LoadingDialog)
-                    .catchMap {
-                        SearchPartialStateChange.DeleteStickerWithTags.Failed(it.message.toString())
-                    }
             },
         )
     }

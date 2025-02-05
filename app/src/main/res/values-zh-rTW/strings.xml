@@ -51,7 +51,7 @@
     <string name="webdav_screen_password_entered">密碼已輸入</string>
     <string name="selfie_segmentation_screen_name">自拍分割</string>
     <string name="data_screen_delete_all">刪除所有本地表情包</string>
-    <string name="search_result_multi_select">多選</string>
+    <string name="multi_select">多選</string>
     <string name="webdav_screen_download_tip">從遠端拉取資料時，如果存在衝突，本地內容將被覆蓋。如果一個表情包既在本地又在遠端回收站中，則將刪除本地表情包。如果一個表情包在本地而不在遠端，則該表情包不會被修改。</string>
     <string name="classification_model_screen_default">預設</string>
     <string name="default_tag">%s（預設）</string>

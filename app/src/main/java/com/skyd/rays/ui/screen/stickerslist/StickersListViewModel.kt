@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.skyd.rays.base.mvi.AbstractMviViewModel
 import com.skyd.rays.base.mvi.MviSingleEvent
+import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
@@ -52,8 +54,8 @@ class StickersListViewModel @Inject constructor(
     private fun Flow<StickersListPartialStateChange>.sendSingleEvent(): Flow<StickersListPartialStateChange> {
         return onEach { change ->
             val event = when (change) {
-                is StickersListPartialStateChange.ExportStickers.Success ->
-                    StickersListEvent.ExportStickers.Success(change.stickerUuids)
+                is StickersListPartialStateChange.InverseSelectedStickers.Failed ->
+                    StickersListEvent.InverseSelectedStickers.Failed(change.msg)
 
                 else -> return@onEach
             }
@@ -70,10 +72,23 @@ class StickersListViewModel @Inject constructor(
                     StickersListPartialStateChange.StickersList.Success(it)
                 }.startWith(StickersListPartialStateChange.StickersList.Loading)
             },
-            filterIsInstance<StickersListIntent.ExportStickers>().flatMapConcat { intent ->
-                searchRepo.requestStickerUuidList(keyword = intent.query).map {
-                    StickersListPartialStateChange.ExportStickers.Success(it)
-                }.startWith(StickersListPartialStateChange.ExportStickers.Loading)
+            filterIsInstance<StickersListIntent.InverseSelectedStickers>().flatMapConcat { intent ->
+                searchRepo.requestStickersNotIn(
+                    keyword = intent.query,
+                    selectedStickerUuids = intent.selectedStickers,
+                ).map {
+                    StickersListPartialStateChange.InverseSelectedStickers.Success(it)
+                }.startWith(StickersListPartialStateChange.LoadingDialog).catchMap {
+                    StickersListPartialStateChange.InverseSelectedStickers.Failed(it.message.orEmpty())
+                }
+            },
+            filterIsInstance<StickersListIntent.AddSelectedStickers>().flatMapConcat { intent ->
+                flowOf(StickersListPartialStateChange.AddSelectedStickers(intent.stickers))
+                    .startWith(StickersListPartialStateChange.LoadingDialog)
+            },
+            filterIsInstance<StickersListIntent.RemoveSelectedStickers>().flatMapConcat { intent ->
+                flowOf(StickersListPartialStateChange.RemoveSelectedStickers(intent.stickers))
+                    .startWith(StickersListPartialStateChange.LoadingDialog)
             },
         )
     }

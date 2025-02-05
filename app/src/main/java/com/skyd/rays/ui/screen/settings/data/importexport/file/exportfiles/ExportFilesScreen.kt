@@ -59,7 +59,7 @@ const val EXPORT_FILES_SCREEN_ROUTE = "exportFilesScreen"
 
 fun openExportFilesScreen(
     navController: NavHostController,
-    exportStickers: List<String>? = null,
+    exportStickers: Collection<String>? = null,
 ) {
     navController.navigate(
         EXPORT_FILES_SCREEN_ROUTE,

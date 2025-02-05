@@ -2,6 +2,11 @@ package com.skyd.rays.ui.screen.search.imagesearch
 
 import android.net.Uri
 import android.os.Bundle
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,7 +20,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Deselect
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.SelectAll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -47,12 +54,16 @@ import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
 import com.skyd.rays.model.preference.search.imagesearch.ImageSearchMaxResultCountPreference
 import com.skyd.rays.ui.component.ImageInput
-import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
+import com.skyd.rays.ui.component.RaysFloatingActionButton
+import com.skyd.rays.ui.component.RaysIconToggleButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.local.LocalImageSearchMaxResultCount
+import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
+import com.skyd.rays.ui.screen.detail.openDetailScreen
+import com.skyd.rays.ui.screen.search.multiselect.MultiSelectActionBar
 import com.skyd.rays.ui.screen.stickerslist.StickerList
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
@@ -73,12 +84,15 @@ fun openImageSearchScreen(navController: NavHostController, baseImage: Uri?) {
 fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val navController = LocalNavController.current
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     var fabHeight by remember { mutableStateOf(0.dp) }
+    var fabWidth by remember { mutableStateOf(0.dp) }
     var currentBaseImage by rememberSaveable(baseImage) { mutableStateOf(baseImage) }
     val imagePickLauncher = rememberImagePicker(multiple = false) {
         if (it.firstOrNull() != null) currentBaseImage = it.first()
     }
+    var multiSelect by rememberSaveable { mutableStateOf(false) }
 
     val dispatch = viewModel.getDispatcher(startWith = ImageSearchIntent.Init)
 
@@ -86,50 +100,103 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
             val maxCount = LocalImageSearchMaxResultCount.current
-            RaysExtendedFloatingActionButton(
-                text = { Text(text = stringResource(R.string.image_search_screen_search)) },
-                icon = { Icon(imageVector = Icons.Outlined.Search, contentDescription = null) },
+            RaysFloatingActionButton(
                 onClick = {
                     if (currentBaseImage != null) {
                         dispatch(ImageSearchIntent.Search(currentBaseImage!!, maxCount))
                     }
                 },
-                onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
+                onSizeWithSinglePaddingChanged = { width, height ->
+                    fabWidth = width
+                    fabHeight = height
+                },
                 contentDescription = stringResource(R.string.image_search_screen_search)
-            )
+            ) {
+                Icon(imageVector = Icons.Outlined.Search, contentDescription = null)
+            }
         },
         topBar = {
-            RaysTopBar(title = { Text(text = stringResource(id = R.string.image_search_screen_name)) })
+            RaysTopBar(
+                title = { Text(text = stringResource(id = R.string.image_search_screen_name)) },
+                actions = {
+                    RaysIconToggleButton(
+                        checked = multiSelect,
+                        onCheckedChange = {
+                            multiSelect = it
+                            if (!it) {
+                                dispatch(ImageSearchIntent.RemoveSelectedStickers(uiState.selectedStickers))
+                            }
+                        },
+                    ) {
+                        Icon(
+                            if (multiSelect) Icons.Outlined.SelectAll else Icons.Outlined.Deselect,
+                            contentDescription = null,
+                        )
+                    }
+                }
+            )
         }
     ) { paddingValues ->
         val isCompact = LocalWindowSizeClass.current.isCompact
         val inputItem: @Composable () -> Unit = remember {
             {
                 ImageInput(
-                    modifier = Modifier.sizeIn(maxWidth = 120.dp, maxHeight = 170.dp),
+                    modifier = Modifier.sizeIn(maxWidth = 120.dp),
                     title = stringResource(R.string.image_search_screen_source_image),
                     hintText = stringResource(R.string.image_search_screen_source_image_hint),
                     shape = CurlyCornerShape(amp = 5f, count = 12),
                     imageUri = currentBaseImage,
+                    maxImageHeight = 150.dp,
                     onSelectImage = { imagePickLauncher.launchImagePicker() },
                 )
             }
         }
-        val stickerList: @Composable () -> Unit = remember {
-            {
-                val imageSearchResultState = uiState.imageSearchResultState
-                if (imageSearchResultState is ImageSearchResultState.Success) {
-                    StickerList(
-                        count = imageSearchResultState.stickers.size,
-                        onData = { imageSearchResultState.stickers[it] },
-                        key = { imageSearchResultState.stickers[it].sticker.uuid },
-                        contentPadding = PaddingValues(horizontal = 16.dp) +
-                                PaddingValues(bottom = fabHeight + 16.dp),
-                    )
-                }
+        val stickerList: @Composable () -> Unit = {
+            val imageSearchResultState = uiState.imageSearchResultState
+            if (imageSearchResultState is ImageSearchResultState.Success) {
+                StickerList(
+                    count = imageSearchResultState.stickers.size,
+                    onData = { imageSearchResultState.stickers[it] },
+                    key = { imageSearchResultState.stickers[it].sticker.uuid },
+                    selectable = multiSelect,
+                    selected = { it.sticker.uuid in uiState.selectedStickers },
+                    contentPadding = PaddingValues(horizontal = 16.dp) +
+                            PaddingValues(bottom = fabHeight + 16.dp),
+                    onSelectChanged = { data, selected ->
+                        if (selected) {
+                            dispatch(ImageSearchIntent.AddSelectedStickers(listOf(data.sticker.uuid)))
+                        } else {
+                            dispatch(ImageSearchIntent.RemoveSelectedStickers(listOf(data.sticker.uuid)))
+                        }
+                    },
+                    onClick = { data ->
+                        openDetailScreen(
+                            navController = navController,
+                            stickerUuid = data.sticker.uuid
+                        )
+                    },
+                )
             }
         }
 
+        val multiSelectBar: @Composable (compact: Boolean) -> Unit = { compact ->
+            AnimatedVisibility(
+                visible = multiSelect,
+                enter = if (compact) expandVertically() else expandHorizontally(),
+                exit = if (compact) shrinkVertically() else shrinkHorizontally(),
+            ) {
+                MultiSelectActionBar(
+                    modifier = Modifier.run {
+                        if (isCompact) padding(end = fabWidth)
+                        else this
+                    },
+                    selectedStickers = uiState.selectedStickers,
+                    onRemoveSelectedStickers = {
+                        dispatch(ImageSearchIntent.RemoveSelectedStickers(it))
+                    }
+                )
+            }
+        }
         val modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
@@ -146,7 +213,8 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
                     Spacer(modifier = Modifier.width(12.dp))
                     MaxResultCountSlider()
                 }
-                stickerList()
+                Box(modifier = Modifier.weight(1f)) { stickerList() }
+                multiSelectBar(true)
             }
         } else {
             Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
@@ -154,24 +222,15 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
                         .padding(16.dp)
-                        .weight(0.25f),
+                        .width(200.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     inputItem()
                     Spacer(modifier = Modifier.height(12.dp))
                     MaxResultCountSlider()
                 }
-                Box(modifier = Modifier.weight(0.75f)) {
-                    stickerList()
-                }
-            }
-        }
-
-        MviEventListener(viewModel.singleEvent) { event ->
-            when (event) {
-                is ImageSearchEvent.SearchUiEvent.Failed -> snackbarHostState.showSnackbar(
-                    context.getString(R.string.failed_info, event.msg),
-                )
+                multiSelectBar(false)
+                Box(modifier = Modifier.weight(1f)) { stickerList() }
             }
         }
 
@@ -179,6 +238,14 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
             visible = uiState.loadingDialog,
             text = { Text(stringResource(R.string.image_search_screen_long_time_tip)) },
         )
+    }
+
+    MviEventListener(viewModel.singleEvent) { event ->
+        when (event) {
+            is ImageSearchEvent.UpdateImageUiEvent.Failed -> snackbarHostState.showSnackbar(
+                context.getString(R.string.failed_info, event.msg),
+            )
+        }
     }
 }
 

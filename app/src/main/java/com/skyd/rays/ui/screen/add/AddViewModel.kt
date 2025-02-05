@@ -112,7 +112,9 @@ class AddViewModel @Inject constructor(
                             maxResultCount = appContext.dataStore.getOrDefault(
                                 ImageSearchMaxResultCountPreference
                             )
-                        )
+                        ).flatMapConcat {
+                            imageSearchRepository.stickerWithTagsResultList.take(1)
+                        }
                     } else {
                         flowOf(emptyList())
                     },
@@ -282,7 +284,9 @@ class AddViewModel @Inject constructor(
                     maxResultCount = appContext.dataStore.getOrDefault(
                         ImageSearchMaxResultCountPreference
                     )
-                ).catchMap {
+                ).flatMapConcat {
+                    imageSearchRepository.stickerWithTagsResultList.take(1)
+                }.catchMap {
                     Log.w("AddScreen", "Fuck currentStickerChange imageSearch $it")
                     "currentStickerChange imageSearch error: ${it.message}".showToast()
                     emptyList()
