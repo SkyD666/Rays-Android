@@ -13,19 +13,16 @@ import android.provider.MediaStore
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
-import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.config.STICKER_DIR
 import com.skyd.rays.config.TEMP_STICKER_DIR
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
-import com.skyd.rays.ext.subList
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.db.AppDatabase
 import com.skyd.rays.model.preference.share.CopyStickerToClipboardWhenSharingPreference
 import com.skyd.rays.model.preference.share.StickerExtNamePreference
 import com.skyd.rays.model.preference.share.UriStringSharePreference
-import com.skyd.rays.ui.component.showToast
 import com.skyd.rays.ui.service.RaysAccessibilityService
 import com.skyd.rays.util.image.ImageFormatChecker
 import com.skyd.rays.util.share.ShareUtil
@@ -59,8 +56,11 @@ fun Context.sendStickerByUuid(
             stickerFiles = listOf(stickerFile),
             topActivityFullName = topActivityFullName,
             onSuccess = {
-                AppDatabase.getInstance(context).stickerDao().shareStickers(uuids = listOf(uuid))
-                onSuccess?.invoke()
+                scope.launch(Dispatchers.IO) {
+                    AppDatabase.getInstance(context).stickerDao()
+                        .shareStickers(uuids = listOf(uuid))
+                    onSuccess?.invoke()
+                }
             }
         )
     }
@@ -77,9 +77,11 @@ fun Context.sendStickersByUuids(
             stickerFiles = stickerFiles,
             topActivityFullName = topActivityFullName,
             onSuccess = {
-                AppDatabase.getInstance(this@sendStickersByUuids).stickerDao()
-                    .shareStickers(uuids = uuids)
-                onSuccess?.invoke()
+                scope.launch(Dispatchers.IO) {
+                    AppDatabase.getInstance(this@sendStickersByUuids).stickerDao()
+                        .shareStickers(uuids = uuids)
+                    onSuccess?.invoke()
+                }
             }
         )
     }

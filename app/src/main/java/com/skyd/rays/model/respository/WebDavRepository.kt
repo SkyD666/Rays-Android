@@ -16,7 +16,6 @@ import com.thegrizzlylabs.sardineandroid.Sardine
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
@@ -34,7 +33,7 @@ class WebDavRepository @Inject constructor(
         const val BACKUP_INFO_FILE = "BackupInfo"
     }
 
-    suspend fun requestRemoteRecycleBin(
+    fun requestRemoteRecycleBin(
         website: String,
         username: String,
         password: String
@@ -47,7 +46,7 @@ class WebDavRepository @Inject constructor(
         }
     }
 
-    suspend fun requestRestoreFromRemoteRecycleBin(
+    fun requestRestoreFromRemoteRecycleBin(
         website: String,
         username: String,
         password: String,
@@ -65,7 +64,7 @@ class WebDavRepository @Inject constructor(
         }
     }
 
-    suspend fun requestDeleteFromRemoteRecycleBin(
+    fun requestDeleteFromRemoteRecycleBin(
         website: String,
         username: String,
         password: String,
@@ -83,7 +82,7 @@ class WebDavRepository @Inject constructor(
         }
     }
 
-    suspend fun requestClearRemoteRecycleBin(
+    fun requestClearRemoteRecycleBin(
         website: String,
         username: String,
         password: String,
@@ -102,7 +101,7 @@ class WebDavRepository @Inject constructor(
         }
     }
 
-    suspend fun requestDownload(
+    fun requestDownload(
         website: String,
         username: String,
         password: String
@@ -170,7 +169,7 @@ class WebDavRepository @Inject constructor(
         }
     }
 
-    suspend fun requestUpload(
+    fun requestUpload(
         website: String,
         username: String,
         password: String

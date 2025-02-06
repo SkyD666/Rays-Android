@@ -48,13 +48,14 @@
 2. Support setting **search domains** (set the **fields of the database tables** to be searched)
 3. Support searching using **regular expressions**
 4. Support **recognizing text** in stickers
-5. Support **recommending sticker tags** using **Ai** (support change models)
-6. Support **syncing data using WebDAV and files**
-7. Support **AI image style transfer**
-8. Support importing some stickers through the **system "Share" page**
-9. Support **Monet theming and customizing theme colors**, support **theme color following the sticker's main color**
-10. Support **dark color mode**
-11. ......
+5. Support **recommending sticker tags** using **AI** (support change models)
+6. Support **searching similar stickers**
+7. Support **syncing data using WebDAV and files**
+8. Support **AI image style transfer**
+9. Support importing some stickers through the **system "Share" page**
+10. Support **Monet theming and customizing theme colors**, support **theme color following the sticker's main color**
+11. Support **dark color mode**
+12. ......
 
 ## 🤩 Screenshots
 
@@ -128,9 +129,10 @@ If you are interested, please help us **translate**, thank you.
 - **ViewModel**
 - **Hilt**
 - **DataStore**
-- **TensorFlow** Lite
+- **LiteRT**
 - **ML Kit** (Machine Learning)
 - **Room**
+- **Paging**
 - **AIDL**
 - Splash Screen
 - Navigation

@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class StyleTransferRepository @Inject constructor() : BaseRepository() {
-
-    suspend fun requestTransferredImage(
+    fun requestTransferredImage(
         style: Uri,
         content: Uri
     ): Flow<Pair<Bitmap, Long>> {

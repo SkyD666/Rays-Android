@@ -18,7 +18,7 @@ import com.skyd.rays.model.bean.StickerBean
 interface MimeTypeDao {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun setMimeType(mimeTypeBean: MimeTypeBean)
+    suspend fun setMimeType(mimeTypeBean: MimeTypeBean)
 
     @Transaction
     @Query(
@@ -27,11 +27,18 @@ interface MimeTypeDao {
             VALUES (
                 :stickerUuid,
                 (SELECT $STICKER_MD5_COLUMN FROM $STICKER_TABLE_NAME
-                    WHERE ${StickerBean.UUID_COLUMN} LIKE :stickerUuid),
+                    WHERE ${StickerBean.UUID_COLUMN} = :stickerUuid),
                 :mimeType)    
         """
     )
-    fun setMimeType(stickerUuid: String, mimeType: String)
+    suspend fun setMimeType(stickerUuid: String, mimeType: String)
+
+    @Transaction
+    @Query(
+        "SELECT $STICKER_MD5_COLUMN FROM $STICKER_TABLE_NAME " +
+                "WHERE ${StickerBean.UUID_COLUMN} = :stickerUuid"
+    )
+    suspend fun getMd5(stickerUuid: String): String?
 
     @Transaction
     @Query(
@@ -41,7 +48,7 @@ interface MimeTypeDao {
                      WHERE ${StickerBean.UUID_COLUMN} LIKE :stickerUuid)
         """
     )
-    fun getMimeTypeOrNull(stickerUuid: String): String?
+    suspend fun getMimeTypeOrNull(stickerUuid: String): String?
 
     @Transaction
     @Query(
@@ -49,14 +56,14 @@ interface MimeTypeDao {
            WHERE $STICKER_UUID_COLUMN LIKE :stickerUuid
         """
     )
-    fun delete(stickerUuid: String)
+    suspend fun delete(stickerUuid: String)
 
     @Transaction
     @Query("DELETE FROM $MIME_TYPE_TABLE_NAME")
-    fun deleteAll()
+    suspend fun deleteAll()
 
     @Transaction
-    fun getMimeTypeOrNull(
+    suspend fun getMimeTypeOrNull(
         stickerUuid: String,
         deleteInvalid: Boolean = true,
     ): String? {
@@ -74,7 +81,7 @@ interface MimeTypeDao {
         WHERE $STICKER_UUID_COLUMN IN (:stickerUuids)
         """
     )
-    fun getStickerMimeTypes(
+    suspend fun getStickerMimeTypes(
         stickerUuids: List<String>,
     ): Map<@MapColumn(columnName = STICKER_UUID_COLUMN) String,
             @MapColumn(columnName = MIME_TYPE_COLUMN) String>

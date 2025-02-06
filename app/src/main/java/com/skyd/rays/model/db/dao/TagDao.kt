@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.Flow
 interface TagDao {
     @Transaction
     @Query("SELECT * FROM $TAG_TABLE_NAME")
-    fun getTagList(): List<TagBean>
+    suspend fun getTagList(): List<TagBean>
 
     @Transaction
     @Query(
@@ -28,21 +28,21 @@ interface TagDao {
         GROUP BY $STICKER_UUID_COLUMN
         """
     )
-    fun getTagStringMap(stickerUuids: List<String>): Map<
+    suspend fun getTagStringMap(stickerUuids: List<String>): Map<
             @MapColumn(columnName = STICKER_UUID_COLUMN) String,
             @MapColumn(columnName = "CONCAT_TAG") String>
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addTags(tags: List<TagBean>)
+    suspend fun addTags(tags: List<TagBean>)
 
     @Transaction
     @Query(value = "DELETE FROM $TAG_TABLE_NAME WHERE $STICKER_UUID_COLUMN LIKE :stickerUuid")
-    fun deleteTags(stickerUuid: String): Int
+    suspend fun deleteTags(stickerUuid: String): Int
 
     @Transaction
     @Query("DELETE FROM $TAG_TABLE_NAME")
-    fun deleteAllTags()
+    suspend fun deleteAllTags()
 
     @Transaction
     @Query(

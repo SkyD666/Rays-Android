@@ -10,7 +10,6 @@ import com.google.mediapipe.tasks.vision.imageembedder.ImageEmbedder
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.ext.toBitmap
-import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.model.db.objectbox.entity.StickerEmbedding
 import com.skyd.rays.model.db.objectbox.entity.StickerEmbedding_
@@ -22,7 +21,6 @@ import io.objectbox.query.QueryBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -83,7 +81,7 @@ class ImageSearchRepository @Inject constructor(
         emit(Unit)
     }.flowOn(Dispatchers.IO)
 
-    private fun nearestNeighbors(
+    private suspend fun nearestNeighbors(
         base: Bitmap,
         maxResultCount: Int,
         distance: Double = 500.0,
@@ -104,7 +102,7 @@ class ImageSearchRepository @Inject constructor(
         return result
     }
 
-    fun preprocessingEmbedding() = imageEmbedder?.let { imageEmbedder ->
+    suspend fun preprocessingEmbedding() = imageEmbedder?.let { imageEmbedder ->
         val allStickers = stickerDao.getAllStickerUuidList()
         val stickerEmbeddingBox = boxStore.boxFor(StickerEmbedding::class)
         val cachedEmbeddings = stickerEmbeddingBox.query()

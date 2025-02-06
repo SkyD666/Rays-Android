@@ -18,19 +18,16 @@ fun <T> MutableCollection<T>.addAllDistinctly(newData: Collection<T>) {
     }
 }
 
-fun <T> List<T>.subList(step: Int, onEachSub: (List<T>) -> Unit) {
+suspend fun <T, R> List<T>.subList(step: Int, onEachSub: suspend (List<T>) -> R): List<R> {
+    val result = mutableListOf<R>()
     for (i in indices step step) {
-        onEachSub(
-            subList(
-                fromIndex = i,
-                toIndex = minOf(i + step, size),
-            )
-        )
+        result.add(onEachSub(this@subList.subList(fromIndex = i, toIndex = minOf(i + step, size))))
     }
+    return result
 }
 
-fun <T> List<T>.safeDbVariableNumber(onEachSub: (List<T>) -> Unit) {
-    subList(900, onEachSub)
+suspend fun <T, R> List<T>.safeDbVariableNumber(onEachSub: suspend (List<T>) -> R): List<R> {
+    return subList(900) { onEachSub(it) }
 }
 
 fun <T : Any> snapshotStateListSaver() = listSaver<SnapshotStateList<T>, T>(

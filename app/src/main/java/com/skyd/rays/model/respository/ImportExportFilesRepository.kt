@@ -7,6 +7,7 @@ import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.EXPORT_FILES_DIR
 import com.skyd.rays.config.IMPORT_FILES_DIR
+import com.skyd.rays.ext.md5
 import com.skyd.rays.ext.safeDbVariableNumber
 import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.bean.ImportExportInfo
@@ -46,7 +47,7 @@ class ImportExportFilesRepository @Inject constructor(
         const val BACKUP_STICKER_DIR = "BackupSticker/"
     }
 
-    suspend fun requestImport(
+    fun requestImport(
         backupFileUri: Uri,
         handleImportedStickerStrategy: HandleImportedStickerStrategy,
     ): Flow<ImportExportInfo> {
@@ -248,7 +249,7 @@ class ImportExportFilesRepository @Inject constructor(
         // 最终的数据 List
         val stickerWithTagsAndFileList = mutableListOf<StickerWithTagsAndFile>()
         dataListFiles.forEachIndexed { index, file ->
-            // 反序列化 Json 数据
+            // Decode json data
             var stickerWithTags: StickerWithTags? = null
             file!!.inputStream().use { inputStream ->
                 stickerWithTags = json.decodeFromStream<StickerWithTags>(inputStream)
@@ -263,7 +264,7 @@ class ImportExportFilesRepository @Inject constructor(
                 )
             }
 
-            // 检查两者的文件名是否相同
+            // Check json's and image's file name
             check(stickersListFiles[index].name == file.name) {
                 appContext.getString(
                     R.string.import_export_files_repo_invalid_format,
@@ -271,8 +272,11 @@ class ImportExportFilesRepository @Inject constructor(
                 )
             }
 
-            // 检查表情包的图片格式
-            stickersListFiles[index].inputStream().use { inputStream ->
+            val imageFile = stickersListFiles[index]
+            // Check MD5
+            check(imageFile.md5() == stickerWithTags!!.sticker.stickerMd5)
+            // Check sticker's format
+            imageFile.inputStream().use { inputStream ->
                 check(ImageFormatChecker.check(inputStream, stickerUuid) != ImageFormat.UNDEFINED) {
                     appContext.getString(
                         R.string.import_export_files_repo_invalid_format,

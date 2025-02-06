@@ -16,7 +16,7 @@ import javax.inject.Inject
 class ApiGrantRepository @Inject constructor(
     private val apiGrantPackageDao: ApiGrantPackageDao
 ) : BaseRepository() {
-    suspend fun requestUpdate(bean: ApiGrantPackageBean): Flow<IApiGrantData> {
+    fun requestUpdate(bean: ApiGrantPackageBean): Flow<IApiGrantData> {
         return flowOnIo {
             val pm: PackageManager = appContext.packageManager
             val data = runCatching {
@@ -39,13 +39,13 @@ class ApiGrantRepository @Inject constructor(
         }
     }
 
-    suspend fun requestDelete(packageName: String): Flow<Pair<String, Int>> {
+    fun requestDelete(packageName: String): Flow<Pair<String, Int>> {
         return flowOnIo {
             emit(packageName to apiGrantPackageDao.deletePackage(pkgName = packageName))
         }
     }
 
-    suspend fun requestAllPackages(): Flow<List<ApiGrantDataBean>> {
+    fun requestAllPackages(): Flow<List<ApiGrantDataBean>> {
         return flowOnIo {
             val pm: PackageManager = appContext.packageManager
             val data = apiGrantPackageDao.getAllPackage().mapNotNull { bean ->

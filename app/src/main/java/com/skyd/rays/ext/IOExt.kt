@@ -25,16 +25,16 @@ fun InputStream.saveTo(target: File): File {
     return target
 }
 
-fun File.md5(): String? {
+fun File.md5(): String? = FileInputStream(this).use { fis -> fis.md5() }
+
+fun InputStream.md5(): String? {
     var bi: BigInteger? = null
     try {
         val buffer = ByteArray(4096)
         var len: Int
         val md = MessageDigest.getInstance("MD5")
-        FileInputStream(this).use { fis ->
-            while (fis.read(buffer).also { len = it } != -1) {
-                md.update(buffer, 0, len)
-            }
+        while (read(buffer).also { len = it } != -1) {
+            md.update(buffer, 0, len)
         }
         val b = md.digest()
         bi = BigInteger(1, b)

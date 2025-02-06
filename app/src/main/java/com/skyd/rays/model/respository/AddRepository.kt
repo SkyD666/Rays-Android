@@ -46,7 +46,7 @@ class AddRepository @Inject constructor(
     private val stickerDao: StickerDao,
     private val json: Json
 ) : BaseRepository() {
-    suspend fun requestAddStickerWithTags(
+    fun requestAddStickerWithTags(
         stickerWithTags: StickerWithTags,
         uri: Uri
     ): Flow<Any> = flowOnIo {
@@ -88,7 +88,7 @@ class AddRepository @Inject constructor(
         }
     }
 
-    suspend fun requestSuggestTags(sticker: Uri): Flow<Set<String>> {
+    fun requestSuggestTags(sticker: Uri): Flow<Set<String>> {
         val image: InputImage = runCatching {
             InputImage.fromFilePath(appContext, sticker)
         }.getOrElse { return flowOnIo { throw it } }

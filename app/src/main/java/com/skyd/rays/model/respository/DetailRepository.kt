@@ -29,13 +29,13 @@ class DetailRepository @Inject constructor(private val stickerDao: StickerDao) :
             }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun requestDeleteStickerWithTagsDetail(stickerUuid: String): Flow<Int> {
+    fun requestDeleteStickerWithTagsDetail(stickerUuid: String): Flow<Int> {
         return flowOnIo {
             emit(stickerDao.deleteStickerWithTags(listOf(stickerUuid)))
         }
     }
 
-    suspend fun requestExportStickers(stickerUuid: String): Flow<Int> {
+    fun requestExportStickers(stickerUuid: String): Flow<Int> {
         return flowOnIo {
             val exportStickerDir = appContext.dataStore.getOrDefault(ExportStickerDirPreference)
             check(exportStickerDir.isNotBlank()) { "exportStickerDir is null" }

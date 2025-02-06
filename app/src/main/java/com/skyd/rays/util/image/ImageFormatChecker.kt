@@ -8,22 +8,18 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.InputStream
 
 object ImageFormatChecker {
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
-
-    private fun check(stickerUuid: String?): ImageFormat? {
+    private suspend fun check(stickerUuid: String?): ImageFormat? {
         stickerUuid ?: return null
         val mimeType = hiltEntryPoint.mimeTypeDao.getMimeTypeOrNull(stickerUuid)
         return if (mimeType == null) null else ImageFormat.fromMimeType(mimeType)
     }
 
-    fun check(tested: InputStream, stickerUuid: String? = null): ImageFormat {
-        check(stickerUuid = stickerUuid)?.let { return it }
+    fun check(tested: InputStream, stickerUuid: String? = null): ImageFormat = runBlocking {
+        check(stickerUuid = stickerUuid)?.let { return@runBlocking it }
 
         var readByteArray: ByteArray? = null
         formatStandards.forEach {
@@ -31,22 +27,22 @@ object ImageFormatChecker {
             readByteArray = result.second
             if (result.first) {
                 if (!stickerUuid.isNullOrBlank()) saveMimeType(it.format, stickerUuid)
-                return it.format
+                return@runBlocking it.format
             }
         }
-        return ImageFormat.UNDEFINED
+        ImageFormat.UNDEFINED
     }
 
-    fun check(tested: ByteArray, stickerUuid: String? = null): ImageFormat {
-        check(stickerUuid = stickerUuid)?.let { return it }
+    fun check(tested: ByteArray, stickerUuid: String? = null): ImageFormat = runBlocking {
+        check(stickerUuid = stickerUuid)?.let { return@runBlocking it }
 
         formatStandards.forEach {
             if (it.check(tested)) {
                 if (!stickerUuid.isNullOrBlank()) saveMimeType(it.format, stickerUuid)
-                return it.format
+                return@runBlocking it.format
             }
         }
-        return ImageFormat.UNDEFINED
+        ImageFormat.UNDEFINED
     }
 
     @EntryPoint
@@ -58,16 +54,13 @@ object ImageFormatChecker {
     private val hiltEntryPoint =
         EntryPointAccessors.fromApplication(appContext, ImageFormatEntryPoint::class.java)
 
-    fun saveMimeType(format: ImageFormat, stickerUuid: String) {
-        coroutineScope.launch {
-            runCatching {
-                hiltEntryPoint.mimeTypeDao.setMimeType(
-                    stickerUuid = stickerUuid,
-                    mimeType = format.toMimeType(),
-                )
-            }.onFailure {
-                it.printStackTrace()
+    suspend fun saveMimeType(format: ImageFormat, stickerUuid: String) = runCatching {
+        with(hiltEntryPoint.mimeTypeDao) {
+            if (getMd5(stickerUuid = stickerUuid) != null) {
+                setMimeType(stickerUuid = stickerUuid, mimeType = format.toMimeType())
             }
         }
+    }.onFailure {
+        it.printStackTrace()
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -36,8 +37,8 @@ fun RaysTopBar(
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     colors: TopAppBarColors = when (style) {
         RaysTopBarStyle.Small -> TopAppBarDefaults.topAppBarColors()
-        RaysTopBarStyle.Large -> TopAppBarDefaults.largeTopAppBarColors()
-        RaysTopBarStyle.CenterAligned -> TopAppBarDefaults.centerAlignedTopAppBarColors()
+        RaysTopBarStyle.Large -> topAppBarColors()
+        RaysTopBarStyle.CenterAligned -> topAppBarColors()
     },
     actions: @Composable RowScope.() -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null,

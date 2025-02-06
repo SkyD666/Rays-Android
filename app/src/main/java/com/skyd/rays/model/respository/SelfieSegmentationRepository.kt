@@ -26,8 +26,7 @@ import kotlin.coroutines.resumeWithException
 
 
 class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
-
-    suspend fun requestExport(
+    fun requestExport(
         foregroundBitmap: Bitmap,
         backgroundUri: Uri?,
         backgroundSize: IntSize,

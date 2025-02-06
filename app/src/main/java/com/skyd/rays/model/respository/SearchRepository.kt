@@ -127,7 +127,10 @@ class SearchRepository @Inject constructor(
 
     fun requestDeleteStickerWithTagsDetail(stickerUuids: Collection<String>): Flow<Collection<String>> {
         return flowOnIo {
-            stickerUuids.distinct().safeDbVariableNumber { stickerDao.deleteStickerWithTags(it) }
+            stickerUuids.distinct().safeDbVariableNumber {
+                stickerDao.deleteStickerWithTags(it)
+                stickerShareTimeDao.deleteShareTimeByUuids(it)
+            }
             emit(stickerUuids)
         }
     }
@@ -269,10 +272,10 @@ class SearchRepository @Inject constructor(
             val searchDomainDao: SearchDomainDao
         }
 
-        fun genSql(
+        suspend fun genSql(
             k: String,
             field: String = "*",
-            useSearchDomain: (tableName: String, columnName: String) -> Boolean =
+            useSearchDomain: suspend (tableName: String, columnName: String) -> Boolean =
                 { tableName, columnName ->
                     EntryPointAccessors.fromApplication(
                         appContext, HomeRepositoryEntryPoint::class.java
@@ -313,9 +316,9 @@ class SearchRepository @Inject constructor(
             }
         }
 
-        private fun getFilter(
+        private suspend fun getFilter(
             k: String,
-            useSearchDomain: (tableName: String, columnName: String) -> Boolean,
+            useSearchDomain: suspend (tableName: String, columnName: String) -> Boolean,
         ): String {
             if (k.isBlank()) return "1"
 

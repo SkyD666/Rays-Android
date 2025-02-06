@@ -12,11 +12,11 @@ import com.skyd.rays.model.bean.StickerShareTimeBean
 interface StickerShareTimeDao {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun updateShareTime(stickerShareTimeBean: StickerShareTimeBean)
+    suspend fun updateShareTime(stickerShareTimeBean: StickerShareTimeBean)
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun updateShareTime(stickerShareTimeList: List<StickerShareTimeBean>)
+    suspend fun updateShareTime(stickerShareTimeList: List<StickerShareTimeBean>)
 
     @Transaction
     @Query(
@@ -25,20 +25,20 @@ interface StickerShareTimeDao {
         WHERE ${StickerShareTimeBean.STICKER_UUID_COLUMN} LIKE :uuid
         """
     )
-    fun getShareTimeByUuid(uuid: String): List<Long>
+    suspend fun getShareTimeByUuid(uuid: String): List<Long>
 
     @Transaction
     @Query("DELETE FROM $STICKER_SHARE_TIME_TABLE_NAME")
-    fun deleteAll(): Int
+    suspend fun deleteAll(): Int
 
     @Transaction
     @Query(
         """
         DELETE FROM $STICKER_SHARE_TIME_TABLE_NAME
-        WHERE ${StickerShareTimeBean.STICKER_UUID_COLUMN} LIKE :uuid
+        WHERE ${StickerShareTimeBean.STICKER_UUID_COLUMN} in (:uuids)
         """
     )
-    fun deleteShareTimeByUuid(uuid: String): Int
+    suspend fun deleteShareTimeByUuids(uuids: Collection<String>): Int
 
     @Transaction
     @Query(
@@ -47,5 +47,5 @@ interface StickerShareTimeDao {
         WHERE ${StickerShareTimeBean.SHARE_TIME_COLUMN} < :timestamp
         """
     )
-    fun deleteShareTimeBefore(timestamp: Long): Int
+    suspend fun deleteShareTimeBefore(timestamp: Long): Int
 }

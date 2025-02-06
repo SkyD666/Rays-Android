@@ -16,7 +16,7 @@ import javax.inject.Inject
 class UriStringShareRepository @Inject constructor(
     private val uriStringSharePackageDao: UriStringSharePackageDao
 ) : BaseRepository() {
-    suspend fun requestUpdate(bean: UriStringSharePackageBean): Flow<IUriStringShareData> {
+    fun requestUpdate(bean: UriStringSharePackageBean): Flow<IUriStringShareData> {
         return flowOnIo {
             val pm: PackageManager = appContext.packageManager
             val data = runCatching {
@@ -39,13 +39,13 @@ class UriStringShareRepository @Inject constructor(
         }
     }
 
-    suspend fun requestDelete(packageName: String): Flow<Pair<String, Int>> {
+    fun requestDelete(packageName: String): Flow<Pair<String, Int>> {
         return flowOnIo {
             emit(packageName to uriStringSharePackageDao.deletePackage(pkgName = packageName))
         }
     }
 
-    suspend fun requestAllPackages(): Flow<List<UriStringShareDataBean>> {
+    fun requestAllPackages(): Flow<List<UriStringShareDataBean>> {
         return flowOnIo {
             val pm: PackageManager = appContext.packageManager
             val data = uriStringSharePackageDao.getAllPackage().mapNotNull { bean ->

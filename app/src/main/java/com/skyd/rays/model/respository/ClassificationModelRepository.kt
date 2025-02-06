@@ -15,13 +15,13 @@ import java.io.File
 import javax.inject.Inject
 
 class ClassificationModelRepository @Inject constructor() : BaseRepository() {
-    suspend fun requestGetModels(): Flow<List<ModelBean>> {
+    fun requestGetModels(): Flow<List<ModelBean>> {
         return flowOnIo {
             emit(getModels())
         }
     }
 
-    suspend fun requestSetModel(modelUri: Uri): Flow<String> {
+    fun requestSetModel(modelUri: Uri): Flow<String> {
         return flowOnIo {
             val name = modelUri.path?.substringAfterLast("/")
                 ?: System.currentTimeMillis().toString()
@@ -33,7 +33,7 @@ class ClassificationModelRepository @Inject constructor() : BaseRepository() {
         }
     }
 
-    suspend fun requestImportModel(modelUri: Uri): Flow<ModelBean> {
+    fun requestImportModel(modelUri: Uri): Flow<ModelBean> {
         return flowOnIo {
             val name = modelUri.path?.substringAfterLast("/")
                 ?: System.currentTimeMillis().toString()
@@ -49,7 +49,7 @@ class ClassificationModelRepository @Inject constructor() : BaseRepository() {
         }
     }
 
-    suspend fun requestDeleteModel(modelUri: Uri): Flow<Uri> {
+    fun requestDeleteModel(modelUri: Uri): Flow<Uri> {
         return flowOnIo {
             val name = modelUri.path?.substringAfterLast("/")
                 ?: System.currentTimeMillis().toString()

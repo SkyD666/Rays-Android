@@ -9,7 +9,7 @@ import javax.inject.Inject
 class SearchConfigRepository @Inject constructor(
     private val searchDomainDao: SearchDomainDao
 ) : BaseRepository() {
-    suspend fun requestGetSearchDomain(): Flow<Map<String, Boolean>> {
+    fun requestGetSearchDomain(): Flow<Map<String, Boolean>> {
         return flowOnIo {
             val map = mutableMapOf<String, Boolean>()
             searchDomainDao.getAllSearchDomain().forEach {
@@ -19,7 +19,7 @@ class SearchConfigRepository @Inject constructor(
         }
     }
 
-    suspend fun requestSetSearchDomain(
+    fun requestSetSearchDomain(
         searchDomainBean: SearchDomainBean
     ): Flow<SearchDomainBean> {
         return flowOnIo {

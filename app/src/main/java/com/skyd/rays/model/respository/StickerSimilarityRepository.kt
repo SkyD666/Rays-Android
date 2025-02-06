@@ -7,8 +7,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class StickerSimilarityRepository @Inject constructor() : BaseRepository() {
-
-    suspend fun requestSimilarStickers(
+    fun requestSimilarStickers(
         style: Bitmap,
         content: Bitmap
     ): Flow<Pair<Bitmap, Long>> {

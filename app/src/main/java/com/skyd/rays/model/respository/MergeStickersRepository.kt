@@ -1,16 +1,16 @@
 package com.skyd.rays.model.respository
 
+import android.net.Uri
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.db.dao.sticker.StickerDao
+import com.skyd.rays.util.copyStickerToTempFolder
 import com.skyd.rays.util.stickerUuidToFile
-import com.skyd.rays.util.stickerUuidToUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import java.util.UUID
 import javax.inject.Inject
 
 class MergeStickersRepository @Inject constructor(
@@ -25,22 +25,17 @@ class MergeStickersRepository @Inject constructor(
         oldStickerUuid: String,
         sticker: StickerWithTags,
         deleteUuids: List<String>,
-    ): Flow<Unit> {
+    ): Flow<Any> {
         return flow {
             val stickerFile = stickerUuidToFile(oldStickerUuid)
             check(stickerFile.exists())
-            if (sticker.sticker.uuid == oldStickerUuid) {
-                sticker.sticker.uuid = UUID.randomUUID().toString()
-            }
-            val newStickerFile = stickerUuidToFile(sticker.sticker.uuid)
-            stickerFile.copyTo(newStickerFile)
+            val newStickerFile = stickerFile.copyStickerToTempFolder(fileExtension = false)
             check(newStickerFile.exists())
-
-            searchRepo.requestDeleteStickerWithTagsDetail(deleteUuids).collect()
-            addRepo.requestAddStickerWithTags(sticker, stickerUuidToUri(sticker.sticker.uuid))
-                .collect()
-
-            emit(Unit)
+            emit(newStickerFile)
+        }.flatMapConcat { newStickerFile ->
+            searchRepo.requestDeleteStickerWithTagsDetail(deleteUuids).flatMapConcat {
+                addRepo.requestAddStickerWithTags(sticker, Uri.fromFile(newStickerFile))
+            }
         }.flowOn(Dispatchers.IO)
     }
 }

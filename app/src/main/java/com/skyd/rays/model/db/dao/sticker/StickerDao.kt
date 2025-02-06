@@ -33,6 +33,7 @@ import com.skyd.rays.model.db.dao.cache.StickerShareTimeDao
 import com.skyd.rays.model.db.objectbox.entity.StickerEmbedding
 import com.skyd.rays.model.db.objectbox.entity.StickerEmbedding_
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
+import com.skyd.rays.util.stickerUuidToFile
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -42,6 +43,7 @@ import io.objectbox.query.QueryBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.util.UUID
 
@@ -65,15 +67,15 @@ interface StickerDao {
 
     @Transaction
     @RawQuery(observedEntities = [StickerBean::class, TagBean::class])
-    fun getStickerUuidList(sql: SupportSQLiteQuery): List<String>
+    suspend fun getStickerUuidList(sql: SupportSQLiteQuery): List<String>
 
     @Transaction
     @Query("SELECT $UUID_COLUMN FROM $STICKER_TABLE_NAME")
-    fun getAllStickerUuidList(): List<String>
+    suspend fun getAllStickerUuidList(): List<String>
 
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME")
-    fun getAllStickerWithTagsList(): List<StickerWithTags>
+    suspend fun getAllStickerWithTagsList(): List<StickerWithTags>
 
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN IN (:uuids)")
@@ -81,15 +83,15 @@ interface StickerDao {
 
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME")
-    fun getStickerList(): List<StickerBean>
+    suspend fun getStickerList(): List<StickerBean>
 
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN LIKE :stickerUuid")
-    fun getStickerWithTags(stickerUuid: String): StickerWithTags?
+    suspend fun getStickerWithTags(stickerUuid: String): StickerWithTags?
 
     @Transaction
     @Query("SELECT * FROM $STICKER_TABLE_NAME ORDER BY $MODIFY_TIME_COLUMN DESC LIMIT :count")
-    fun getRecentModifiedStickers(count: Int = 15): List<StickerWithTags>
+    suspend fun getRecentModifiedStickers(count: Int = 15): List<StickerWithTags>
 
     @Transaction
     @Query(
@@ -98,7 +100,7 @@ interface StickerDao {
         WHERE $UUID_COLUMN IN (:stickerUuids)
         """
     )
-    fun getStickerModified(stickerUuids: List<String>): Map<
+    suspend fun getStickerModified(stickerUuids: List<String>): Map<
             @MapColumn(columnName = UUID_COLUMN) String,
             @MapColumn(columnName = MODIFY_TIME_COLUMN) Long>
 
@@ -109,7 +111,7 @@ interface StickerDao {
         WHERE $UUID_COLUMN IN (:stickerUuids)
         """
     )
-    fun getStickerTitles(stickerUuids: List<String>): Map<
+    suspend fun getStickerTitles(stickerUuids: List<String>): Map<
             @MapColumn(columnName = UUID_COLUMN) String,
             @MapColumn(columnName = StickerBean.TITLE_COLUMN) String>
 
@@ -157,11 +159,11 @@ interface StickerDao {
 
     @Transaction
     @Query("SELECT $UUID_COLUMN FROM $STICKER_TABLE_NAME WHERE $STICKER_MD5_COLUMN LIKE :stickerMd5")
-    fun containsByMd5(stickerMd5: String): String?
+    suspend fun containsByMd5(stickerMd5: String): String?
 
     @Transaction
     @Query("SELECT COUNT(*) FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN LIKE :uuid")
-    fun containsByUuid(uuid: String): Int
+    suspend fun containsByUuid(uuid: String): Int
 
     @Transaction
     @Query(
@@ -169,7 +171,7 @@ interface StickerDao {
            SET $CLICK_COUNT_COLUMN = $CLICK_COUNT_COLUMN + :count
            WHERE $UUID_COLUMN = :uuid"""
     )
-    fun addClickCount(uuid: String, count: Int = 1): Int
+    suspend fun addClickCount(uuid: String, count: Int = 1): Int
 
     @Transaction
     @Query(
@@ -177,10 +179,10 @@ interface StickerDao {
            SET $SHARE_COUNT_COLUMN = $SHARE_COUNT_COLUMN + :count
            WHERE $UUID_COLUMN IN (:uuids)"""
     )
-    fun addShareCount(uuids: Collection<String>, count: Int = 1): Int
+    suspend fun addShareCount(uuids: Collection<String>, count: Int = 1): Int
 
     @Transaction
-    fun shareStickers(uuids: Collection<String>, count: Int = 1) {
+    suspend fun shareStickers(uuids: Collection<String>, count: Int = 1) = runBlocking {
         val hiltEntryPoint = EntryPointAccessors
             .fromApplication(appContext, StickerDaoEntryPoint::class.java)
         val currentTimeMillis = System.currentTimeMillis()
@@ -195,7 +197,7 @@ interface StickerDao {
     fun getPopularStickersList(count: Int = 15): Flow<List<StickerWithTags>>
 
     @Transaction
-    fun addStickerWithTags(
+    suspend fun addStickerWithTags(
         stickerWithTags: StickerWithTags,
         updateModifyTime: Boolean = true
     ): String {
@@ -223,7 +225,7 @@ interface StickerDao {
         return stickerUuid
     }
 
-    fun addSticker(stickerBean: StickerBean) {
+    suspend fun addSticker(stickerBean: StickerBean) {
         EntryPointAccessors.fromApplication(appContext, StickerDaoEntryPoint::class.java)
             .boxStore.boxFor(StickerEmbedding::class.java).apply {
                 val oldEmbedding = query().equal(
@@ -241,10 +243,10 @@ interface StickerDao {
     @Suppress("FunctionName")
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun _innerAddSticker(stickerBean: StickerBean)
+    suspend fun _innerAddSticker(stickerBean: StickerBean)
 
     @Transaction
-    fun deleteStickerWithTags(stickerUuids: List<String>): Int {
+    suspend fun deleteStickerWithTags(stickerUuids: List<String>): Int {
         val scope = CoroutineScope(Dispatchers.IO)
         val currentStickerUuid = appContext.dataStore.getOrDefault(CurrentStickerUuidPreference)
         stickerUuids.forEach { stickerUuid ->
@@ -253,14 +255,14 @@ interface StickerDao {
                     appContext, scope, CurrentStickerUuidPreference.default
                 )
             }
-            File(appContext.STICKER_DIR, stickerUuid).deleteRecursively()
+            stickerUuidToFile(stickerUuid).deleteRecursively()
         }
         // 设置了外键，ForeignKey.CASCADE，因此会自动deleteTags
         return innerDeleteStickers(stickerUuids)
     }
 
     @Transaction
-    fun deleteAllStickerWithTags() {
+    suspend fun deleteAllStickerWithTags() {
         val scope = CoroutineScope(Dispatchers.IO)
         CurrentStickerUuidPreference.put(appContext, scope, CurrentStickerUuidPreference.default)
         File(appContext.STICKER_DIR).deleteRecursively()
@@ -270,14 +272,14 @@ interface StickerDao {
 
     @Transaction  //加上后会导致Flow更新不正常（搜索页面不能及时删除没有tag的表情包）
     @Query("DELETE FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN IN (:stickerUuids)")
-    fun innerDeleteStickers(stickerUuids: List<String>): Int
+    suspend fun innerDeleteStickers(stickerUuids: List<String>): Int
 
     @Transaction
     @Query("DELETE FROM $STICKER_TABLE_NAME WHERE $UUID_COLUMN LIKE :stickerUuid")
-    fun innerDeleteSticker(stickerUuid: String): Int
+    suspend fun innerDeleteSticker(stickerUuid: String): Int
 
     @Transaction
-    fun importDataFromExternal(stickerWithTagsList: List<StickerWithTags>) {
+    suspend fun importDataFromExternal(stickerWithTagsList: List<StickerWithTags>) {
         // 原始方案就是覆盖
         stickerWithTagsList.forEach {
             addStickerWithTags(stickerWithTags = it, updateModifyTime = false)
@@ -285,7 +287,7 @@ interface StickerDao {
     }
 
     @Transaction
-    fun importDataFromExternal(
+    suspend fun importDataFromExternal(
         stickerWithTagsList: List<StickerWithTagsAndFile>,
         strategy: HandleImportedStickerStrategy,
     ): Int {
@@ -315,5 +317,5 @@ interface StickerDao {
 
     @Transaction
     @Query("DELETE FROM $STICKER_TABLE_NAME")
-    fun innerDeleteAllStickers()
+    suspend fun innerDeleteAllStickers()
 }
