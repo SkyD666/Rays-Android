@@ -130,6 +130,7 @@ class MainActivity : BaseComposeActivity() {
     private val dispatch = { intent: MainIntent ->
         intentChannel.trySend(intent).getOrThrow()
     }
+    private var needHandleIntent = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -160,22 +161,22 @@ class MainActivity : BaseComposeActivity() {
                 dispatch(MainIntent.UpdateThemeColor(stickerUuid))
             }
 
+            if (needHandleIntent) {
+                LaunchedEffect(Unit) {
+                    needHandleIntent = false
+                    navController.handleDeepLink(intent)
+                }
+            }
+            DisposableEffect(navController) {
+                val listener = Consumer<Intent> { newIntent ->
+                    navController.handleDeepLink(newIntent)
+                }
+                addOnNewIntentListener(listener)
+                onDispose { removeOnNewIntentListener(listener) }
+            }
+
             CompositionLocalProvider(LocalNavController provides navController) {
                 AppContent()
-                var needHandleIntent by rememberSaveable { mutableStateOf(true) }
-                if (needHandleIntent) {
-                    LaunchedEffect(Unit) {
-                        needHandleIntent = false
-                        navController.handleDeepLink(intent)
-                    }
-                }
-                DisposableEffect(navController) {
-                    val listener = Consumer<Intent> { newIntent ->
-                        navController.handleDeepLink(newIntent)/*initIntent(newIntent)*/
-                    }
-                    addOnNewIntentListener(listener)
-                    onDispose { removeOnNewIntentListener(listener) }
-                }
             }
         }
     }
