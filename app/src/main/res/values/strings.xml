@@ -374,4 +374,8 @@
     <string name="merge_stickers_screen_merge">Merge</string>
     <string name="merge_stickers_screen_max_count_limit">Up to 20 stickers can be merged, excess will not be processed</string>
     <string name="image_load_error">Image can\'t be displayed</string>
+    <string name="classification_model_screen_enable_on_add_screen">Enable on add screen</string>
+    <string name="classification_model_screen_enable_on_add_screen_description">Enable classification tag recommendations on the add screen</string>
+    <string name="text_recognize_model_screen_enable_on_add_screen">Enable on add screen</string>
+    <string name="text_recognize_screen_enable_on_add_screen_description">Enable text recognize on the add screen</string>
 </resources>

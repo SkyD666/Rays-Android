@@ -8,11 +8,11 @@ textRecognition = "16.0.1"
 kotlin = "2.0.21"
 
 [libraries]
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.10.0" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.10.1" }
 androidx-compose-ui-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "composeMaterial" }
 androidx-compose-ui-ui-tooling3 = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeMaterial" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version = "1.15.0" }
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.7" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.8" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version = "2.8.7" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "composeMaterial" }
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "composeMaterial" }
@@ -25,7 +25,7 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "composeMaterial" }
-androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.2" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.3" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version = "1.0.1" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version = "3.3.6" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version = "1.2.0" }
@@ -66,12 +66,12 @@ ai-edge-litert = { module = "com.google.ai.edge.litert:litert", version = "1.1.2
 junit = { module = "junit:junit", version = "4.13.2" }
 
 [plugins]
-android-application = { id = "com.android.application", version = "8.7.3" }
+android-application = { id = "com.android.application", version = "8.9.0" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version = "2.51.1" }
 ksp = { id = "com.google.devtools.ksp", version = "2.0.21-1.0.25" }
-android-library = { id = "com.android.library", version = "8.7.3" }
+android-library = { id = "com.android.library", version = "8.9.0" }
 objectbox = { id = "io.objectbox", version = "4.0.3" }

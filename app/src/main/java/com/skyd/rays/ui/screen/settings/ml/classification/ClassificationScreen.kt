@@ -17,13 +17,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.skyd.rays.R
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
+import com.skyd.rays.model.preference.ai.UseClassificationInAddPreference
 import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SliderSettingsItem
+import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.component.TipSettingsItem
 import com.skyd.rays.ui.local.LocalClassificationThreshold
 import com.skyd.rays.ui.local.LocalNavController
+import com.skyd.rays.ui.local.LocalUseClassificationInAdd
 import com.skyd.rays.ui.screen.settings.ml.classification.model.CLASSIFICATION_MODEL_SCREEN_ROUTE
 
 const val CLASSIFICATION_SCREEN_ROUTE = "classificationScreen"
@@ -32,6 +35,8 @@ const val CLASSIFICATION_SCREEN_ROUTE = "classificationScreen"
 fun ClassificationScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val navController = LocalNavController.current
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -59,6 +64,15 @@ fun ClassificationScreen() {
                 )
             }
             item { ClassificationThresholdSettingItem() }
+            item {
+                SwitchSettingsItem(
+                    imageVector = null,
+                    text = stringResource(R.string.classification_model_screen_enable_on_add_screen),
+                    description = stringResource(R.string.classification_model_screen_enable_on_add_screen_description),
+                    checked = LocalUseClassificationInAdd.current,
+                    onCheckedChange = { UseClassificationInAddPreference.put(context, scope, it) },
+                )
+            }
             item { TipSettingsItem(text = stringResource(R.string.classification_screen_threshold_description)) }
         }
     }

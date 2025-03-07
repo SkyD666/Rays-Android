@@ -10,6 +10,8 @@ import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.toSettings
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
+import com.skyd.rays.model.preference.ai.UseClassificationInAddPreference
+import com.skyd.rays.model.preference.ai.UseTextRecognizeInAddPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerKeywordsPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerRadiusPreference
@@ -61,7 +63,9 @@ import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalTextRecognizeThreshold
 import com.skyd.rays.ui.local.LocalThemeName
 import com.skyd.rays.ui.local.LocalUriStringShare
+import com.skyd.rays.ui.local.LocalUseClassificationInAdd
 import com.skyd.rays.ui.local.LocalUseRegexSearch
+import com.skyd.rays.ui.local.LocalUseTextRecognizeInAdd
 import com.skyd.rays.ui.local.LocalWebDavServer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
@@ -105,6 +109,8 @@ data class Settings(
     // Ai
     val classificationThreshold: Float = ClassificationThresholdPreference.default,
     val textRecognizeThreshold: Float = TextRecognizeThresholdPreference.default,
+    val useClassificationInAdd: Boolean = UseClassificationInAddPreference.default,
+    val useTextRecognizeInAdd: Boolean = UseTextRecognizeInAddPreference.default,
     // Privacy
     val disableScreenshot: Boolean = DisableScreenshotPreference.default,
     val blurSticker: Boolean = BlurStickerPreference.default,
@@ -161,6 +167,8 @@ fun SettingsProvider(
         // Ai
         LocalClassificationThreshold provides settings.classificationThreshold,
         LocalTextRecognizeThreshold provides settings.textRecognizeThreshold,
+        LocalUseClassificationInAdd provides settings.useClassificationInAdd,
+        LocalUseTextRecognizeInAdd provides settings.useTextRecognizeInAdd,
         // Privacy
         LocalDisableScreenshot provides settings.disableScreenshot,
         LocalBlurSticker provides settings.blurSticker,

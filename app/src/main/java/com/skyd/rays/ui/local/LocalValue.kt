@@ -16,6 +16,8 @@ import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
+import com.skyd.rays.model.preference.ai.UseClassificationInAddPreference
+import com.skyd.rays.model.preference.ai.UseTextRecognizeInAddPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerKeywordsPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerRadiusPreference
@@ -95,6 +97,8 @@ val LocalApiGrant = compositionLocalOf { ApiGrantPreference.default }
 // Ai
 val LocalClassificationThreshold = compositionLocalOf { ClassificationThresholdPreference.default }
 val LocalTextRecognizeThreshold = compositionLocalOf { TextRecognizeThresholdPreference.default }
+val LocalUseClassificationInAdd = compositionLocalOf { UseClassificationInAddPreference.default }
+val LocalUseTextRecognizeInAdd = compositionLocalOf { UseTextRecognizeInAddPreference.default }
 
 // Privacy
 val LocalDisableScreenshot = compositionLocalOf { DisableScreenshotPreference.default }

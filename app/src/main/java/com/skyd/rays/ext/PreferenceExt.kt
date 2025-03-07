@@ -15,6 +15,8 @@ import com.skyd.rays.model.preference.StickerScalePreference
 import com.skyd.rays.model.preference.WebDavServerPreference
 import com.skyd.rays.model.preference.ai.ClassificationThresholdPreference
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
+import com.skyd.rays.model.preference.ai.UseClassificationInAddPreference
+import com.skyd.rays.model.preference.ai.UseTextRecognizeInAddPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerKeywordsPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerRadiusPreference
@@ -87,6 +89,8 @@ fun Preferences.toSettings(): Settings {
         // Ai
         classificationThreshold = ClassificationThresholdPreference.fromPreferences(this),
         textRecognizeThreshold = TextRecognizeThresholdPreference.fromPreferences(this),
+        useClassificationInAdd = UseClassificationInAddPreference.fromPreferences(this),
+        useTextRecognizeInAdd = UseTextRecognizeInAddPreference.fromPreferences(this),
 
         // Privacy
         disableScreenshot = DisableScreenshotPreference.fromPreferences(this),

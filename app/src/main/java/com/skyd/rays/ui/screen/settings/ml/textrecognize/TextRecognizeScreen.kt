@@ -15,17 +15,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.skyd.rays.R
 import com.skyd.rays.model.preference.ai.TextRecognizeThresholdPreference
+import com.skyd.rays.model.preference.ai.UseTextRecognizeInAddPreference
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SliderSettingsItem
+import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.component.TipSettingsItem
 import com.skyd.rays.ui.local.LocalTextRecognizeThreshold
+import com.skyd.rays.ui.local.LocalUseTextRecognizeInAdd
 
 const val TEXT_RECOGNIZE_SCREEN_ROUTE = "textRecognizeScreen"
 
 @Composable
 fun TextRecognizeScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -43,6 +48,15 @@ fun TextRecognizeScreen() {
             contentPadding = paddingValues,
         ) {
             item { TextRecognizeThresholdSettingItem() }
+            item {
+                SwitchSettingsItem(
+                    imageVector = null,
+                    text = stringResource(R.string.text_recognize_model_screen_enable_on_add_screen),
+                    description = stringResource(R.string.text_recognize_screen_enable_on_add_screen_description),
+                    checked = LocalUseTextRecognizeInAdd.current,
+                    onCheckedChange = { UseTextRecognizeInAddPreference.put(context, scope, it) },
+                )
+            }
             item { TipSettingsItem(text = stringResource(R.string.text_recognize_screen_threshold_description)) }
         }
     }

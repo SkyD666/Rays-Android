@@ -380,4 +380,8 @@
     <string name="merge_stickers_screen_merge">合并</string>
     <string name="merge_stickers_screen_max_count_limit">最多支持同时合并 20 个表情包，超出的部分不会被处理</string>
     <string name="image_load_error">图片无法显示</string>
+    <string name="classification_model_screen_enable_on_add_screen">在添加页启用</string>
+    <string name="classification_model_screen_enable_on_add_screen_description">在添加页启用分类推荐</string>
+    <string name="text_recognize_model_screen_enable_on_add_screen">在添加页启用</string>
+    <string name="text_recognize_screen_enable_on_add_screen_description">在添加页启用文本识别</string>
 </resources>

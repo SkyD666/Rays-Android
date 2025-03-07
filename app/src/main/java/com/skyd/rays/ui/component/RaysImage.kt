@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil3.ComponentRegistry
 import coil3.EventListener
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
