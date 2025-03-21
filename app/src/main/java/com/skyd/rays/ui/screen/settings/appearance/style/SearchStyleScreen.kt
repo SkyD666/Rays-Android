@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ManageSearch
 import androidx.compose.material.icons.automirrored.outlined.ManageSearch
 import androidx.compose.material.icons.outlined.LocalOffer
 import androidx.compose.material3.Scaffold

@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.Configuration
 import android.net.Uri
-import androidx.fragment.app.FragmentActivity
 
 
 val Context.activity: Activity
@@ -19,11 +18,6 @@ val Context.activity: Activity
             ctx = ctx.baseContext
         }
         error("can't find activity: $this")
-    }
-
-val Context.fragmentActivity: FragmentActivity?
-    get() {
-        return this.activity as? FragmentActivity
     }
 
 val Context.screenIsLand: Boolean
@@ -39,6 +33,7 @@ fun Context.checkUriReadPermission(uri: Uri?): Boolean {
         contentResolver.query(uri, null, null, null, null).use { }
         true
     } catch (e: SecurityException) {
+        e.printStackTrace()
         false
     }
 }

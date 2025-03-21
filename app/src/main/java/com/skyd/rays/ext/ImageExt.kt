@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.ui.layout.ContentScale
+import androidx.core.graphics.get
 import com.skyd.rays.R
 import com.skyd.rays.appContext
 
@@ -33,7 +34,7 @@ fun Bitmap.cropTransparency(): Bitmap? {
     var maxY = -1
     for (y in 0 until height) {
         for (x in 0 until width) {
-            val alpha = getPixel(x, y) shr 24 and 255
+            val alpha = this[x, y] shr 24 and 255
             // pixel is not 100% transparent
             if (alpha > 0) {
                 minX = minOf(minX, x)

@@ -1,6 +1,6 @@
 package com.skyd.rays.model.respository
 
-import android.net.Uri
+import androidx.core.net.toUri
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.ext.dataStore
@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
@@ -21,33 +22,28 @@ class DetailRepository @Inject constructor(private val stickerDao: StickerDao) :
     fun requestStickerWithTagsDetail(
         stickerUuid: String,
         addClickCount: Int = 1,
-    ): Flow<StickerWithTags?> {
-        return flowOf(stickerUuid).filter { it.isNotBlank() }
-            .flatMapConcat { uuid ->
-                stickerDao.addClickCount(uuid = uuid, count = addClickCount)
-                stickerDao.getStickerWithTagsFlow(uuid)
-            }.flowOn(Dispatchers.IO)
-    }
+    ): Flow<StickerWithTags?> = flowOf(stickerUuid).filter {
+        it.isNotBlank()
+    }.flatMapConcat { uuid ->
+        stickerDao.addClickCount(uuid = uuid, count = addClickCount)
+        stickerDao.getStickerWithTagsFlow(uuid)
+    }.flowOn(Dispatchers.IO)
 
-    fun requestDeleteStickerWithTagsDetail(stickerUuid: String): Flow<Int> {
-        return flowOnIo {
-            emit(stickerDao.deleteStickerWithTags(listOf(stickerUuid)))
-        }
-    }
+    fun requestDeleteStickerWithTagsDetail(stickerUuid: String): Flow<Int> = flow {
+        emit(stickerDao.deleteStickerWithTags(listOf(stickerUuid)))
+    }.flowOn(Dispatchers.IO)
 
-    fun requestExportStickers(stickerUuid: String): Flow<Int> {
-        return flowOnIo {
-            val exportStickerDir = appContext.dataStore.getOrDefault(ExportStickerDirPreference)
-            check(exportStickerDir.isNotBlank()) { "exportStickerDir is null" }
-            var successCount = 0
-            runCatching {
-                exportSticker(uuid = stickerUuid, outputDir = Uri.parse(exportStickerDir))
-            }.onSuccess {
-                successCount++
-            }.onFailure {
-                it.printStackTrace()
-            }
-            emit(successCount)
+    fun requestExportStickers(stickerUuid: String): Flow<Int> = flow {
+        val exportStickerDir = appContext.dataStore.getOrDefault(ExportStickerDirPreference)
+        check(exportStickerDir.isNotBlank()) { "exportStickerDir is null" }
+        var successCount = 0
+        runCatching {
+            exportSticker(uuid = stickerUuid, outputDir = exportStickerDir.toUri())
+        }.onSuccess {
+            successCount++
+        }.onFailure {
+            it.printStackTrace()
         }
-    }
+        emit(successCount)
+    }.flowOn(Dispatchers.IO)
 }

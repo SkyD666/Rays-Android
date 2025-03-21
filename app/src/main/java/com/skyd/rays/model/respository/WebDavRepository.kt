@@ -14,8 +14,11 @@ import com.skyd.rays.util.md5
 import com.skyd.rays.util.stickerUuidToFile
 import com.thegrizzlylabs.sardineandroid.Sardine
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
@@ -37,241 +40,229 @@ class WebDavRepository @Inject constructor(
         website: String,
         username: String,
         password: String
-    ): Flow<List<BackupInfo>> {
-        return flowOnIo {
-            val sardine: Sardine = initWebDav(website, username, password)
-            val backupInfoMap: List<BackupInfo> = getMd5UuidKeyBackupInfoMap(sardine, website)
-                .filterValues { it.isDeleted }.values.toList()
-            emit(backupInfoMap)
-        }
-    }
+    ): Flow<List<BackupInfo>> = flow {
+        val sardine: Sardine = initWebDav(website, username, password)
+        val backupInfoMap: List<BackupInfo> = getMd5UuidKeyBackupInfoMap(sardine, website)
+            .filterValues { it.isDeleted }.values.toList()
+        emit(backupInfoMap)
+    }.flowOn(Dispatchers.IO)
 
     fun requestRestoreFromRemoteRecycleBin(
         website: String,
         username: String,
         password: String,
         uuid: String
-    ): Flow<Unit> {
-        return flowOnIo {
-            val sardine: Sardine = initWebDav(website, username, password)
-            val backupInfoMap = getMd5UuidKeyBackupInfoMap(sardine, website).values
-                .associateBy { it.uuid }.toMutableMap()
-            backupInfoMap[uuid]?.let {
-                backupInfoMap[uuid] = it.copy(isDeleted = false)
-            }
-            updateBackupInfo(sardine, website, backupInfoMap.values.toList())
-            emit(Unit)
+    ): Flow<Unit> = flow {
+        val sardine: Sardine = initWebDav(website, username, password)
+        val backupInfoMap = getMd5UuidKeyBackupInfoMap(sardine, website).values
+            .associateBy { it.uuid }.toMutableMap()
+        backupInfoMap[uuid]?.let {
+            backupInfoMap[uuid] = it.copy(isDeleted = false)
         }
-    }
+        updateBackupInfo(sardine, website, backupInfoMap.values.toList())
+        emit(Unit)
+    }.flowOn(Dispatchers.IO)
 
     fun requestDeleteFromRemoteRecycleBin(
         website: String,
         username: String,
         password: String,
         uuid: String
-    ): Flow<Unit> {
-        return flowOnIo {
-            val sardine: Sardine = initWebDav(website, username, password)
-            val backupInfoMap = getMd5UuidKeyBackupInfoMap(sardine, website).values
-                .associateBy { it.uuid }.toMutableMap()
-            backupInfoMap.remove(uuid)
-            updateBackupInfo(sardine, website, backupInfoMap.values.toList())
-            sardine.delete(website + APP_DIR + BACKUP_DATA_DIR + uuid)
-            sardine.delete(website + APP_DIR + BACKUP_STICKER_DIR + uuid)
-            emit(Unit)
-        }
-    }
+    ): Flow<Unit> = flow {
+        val sardine: Sardine = initWebDav(website, username, password)
+        val backupInfoMap = getMd5UuidKeyBackupInfoMap(sardine, website).values
+            .associateBy { it.uuid }.toMutableMap()
+        backupInfoMap.remove(uuid)
+        updateBackupInfo(sardine, website, backupInfoMap.values.toList())
+        sardine.delete(website + APP_DIR + BACKUP_DATA_DIR + uuid)
+        sardine.delete(website + APP_DIR + BACKUP_STICKER_DIR + uuid)
+        emit(Unit)
+    }.flowOn(Dispatchers.IO)
 
     fun requestClearRemoteRecycleBin(
         website: String,
         username: String,
         password: String,
-    ): Flow<Unit> {
-        return flowOnIo {
-            val sardine: Sardine = initWebDav(website, username, password)
-            val (willBeDeletedMap, othersMap) = getMd5UuidKeyBackupInfoMap(sardine, website).run {
-                filterValues { it.isDeleted } to filterValues { !it.isDeleted }
-            }
-            updateBackupInfo(sardine, website, othersMap.values.toList())
-            willBeDeletedMap.forEach { (_, u) ->
-                sardine.delete(website + APP_DIR + BACKUP_DATA_DIR + u.uuid)
-                sardine.delete(website + APP_DIR + BACKUP_STICKER_DIR + u.uuid)
-            }
-            emit(Unit)
+    ): Flow<Unit> = flow {
+        val sardine: Sardine = initWebDav(website, username, password)
+        val (willBeDeletedMap, othersMap) = getMd5UuidKeyBackupInfoMap(sardine, website).run {
+            filterValues { it.isDeleted } to filterValues { !it.isDeleted }
         }
-    }
+        updateBackupInfo(sardine, website, othersMap.values.toList())
+        willBeDeletedMap.forEach { (_, u) ->
+            sardine.delete(website + APP_DIR + BACKUP_DATA_DIR + u.uuid)
+            sardine.delete(website + APP_DIR + BACKUP_STICKER_DIR + u.uuid)
+        }
+        emit(Unit)
+    }.flowOn(Dispatchers.IO)
 
     fun requestDownload(
         website: String,
         username: String,
         password: String
-    ): Flow<WebDavInfo> {
-        return flowOnIo {
-            val startTime = System.currentTimeMillis()
-            val allStickerWithTagsList = stickerDao.getAllStickerWithTagsList()
-            val sardine: Sardine = initWebDav(website, username, password)
-            val backupInfoMap: MutableMap<String, BackupInfo> =
-                getMd5UuidKeyBackupInfoMap(sardine, website).toMutableMap()
-            val waitToAddList = mutableListOf<StickerWithTags>()
-            val (excludedMap, onlyBeanChangedMap, willBeDeletedList) =
-                excludeRemoteUnchanged(backupInfoMap, allStickerWithTagsList)
-            val totalCount = excludedMap.size + onlyBeanChangedMap.size + willBeDeletedList.size
-            var currentCount = 0
-            willBeDeletedList.forEach {
-                stickerDao.deleteStickerWithTags(stickerUuids = listOf(it))
-                emitProgressData(
-                    current = ++currentCount,
-                    total = totalCount,
-                    msg = appContext.getString(R.string.webdav_screen_progress_delete),
-                )
-            }
-            onlyBeanChangedMap.forEach { entry ->
-                sardine.get(website + APP_DIR + BACKUP_DATA_DIR + entry.value.uuid)
-                    .use { inputStream ->
-                        waitToAddList += json.decodeFromStream<StickerWithTags>(inputStream)
-                    }
-                if (waitToAddList.size > 10) {
-                    stickerDao.importDataFromExternal(waitToAddList)
-                    waitToAddList.clear()
-                }
-                emitProgressData(
-                    current = ++currentCount,
-                    total = totalCount,
-                    msg = appContext.getString(R.string.webdav_screen_progress_download_data),
-                )
-            }
-            excludedMap.forEach { entry ->
-                sardine.get(website + APP_DIR + BACKUP_DATA_DIR + entry.value.uuid)
-                    .use { inputStream ->
-                        waitToAddList += json.decodeFromStream<StickerWithTags>(inputStream)
-                    }
-                sardine.get(website + APP_DIR + BACKUP_STICKER_DIR + entry.value.uuid)
-                    .use { inputStream ->
-                        inputStream.saveTo(stickerUuidToFile(entry.value.uuid))
-                    }
-                if (waitToAddList.size > 10) {
-                    stickerDao.importDataFromExternal(waitToAddList)
-                    waitToAddList.clear()
-                }
-                emitProgressData(
-                    current = ++currentCount,
-                    total = totalCount,
-                    msg = appContext.getString(R.string.webdav_screen_progress_download_data_sticker),
-                )
-            }
-            stickerDao.importDataFromExternal(waitToAddList)
-            emit(
-                WebDavResultInfo(
-                    time = System.currentTimeMillis() - startTime,
-                    count = totalCount
-                )
+    ): Flow<WebDavInfo> = flow {
+        val startTime = System.currentTimeMillis()
+        val allStickerWithTagsList = stickerDao.getAllStickerWithTagsList()
+        val sardine: Sardine = initWebDav(website, username, password)
+        val backupInfoMap: MutableMap<String, BackupInfo> =
+            getMd5UuidKeyBackupInfoMap(sardine, website).toMutableMap()
+        val waitToAddList = mutableListOf<StickerWithTags>()
+        val (excludedMap, onlyBeanChangedMap, willBeDeletedList) =
+            excludeRemoteUnchanged(backupInfoMap, allStickerWithTagsList)
+        val totalCount = excludedMap.size + onlyBeanChangedMap.size + willBeDeletedList.size
+        var currentCount = 0
+        willBeDeletedList.forEach {
+            stickerDao.deleteStickerWithTags(stickerUuids = listOf(it))
+            emitProgressData(
+                current = ++currentCount,
+                total = totalCount,
+                msg = appContext.getString(R.string.webdav_screen_progress_delete),
             )
         }
-    }
+        onlyBeanChangedMap.forEach { entry ->
+            sardine.get(website + APP_DIR + BACKUP_DATA_DIR + entry.value.uuid)
+                .use { inputStream ->
+                    waitToAddList += json.decodeFromStream<StickerWithTags>(inputStream)
+                }
+            if (waitToAddList.size > 10) {
+                stickerDao.importDataFromExternal(waitToAddList)
+                waitToAddList.clear()
+            }
+            emitProgressData(
+                current = ++currentCount,
+                total = totalCount,
+                msg = appContext.getString(R.string.webdav_screen_progress_download_data),
+            )
+        }
+        excludedMap.forEach { entry ->
+            sardine.get(website + APP_DIR + BACKUP_DATA_DIR + entry.value.uuid)
+                .use { inputStream ->
+                    waitToAddList += json.decodeFromStream<StickerWithTags>(inputStream)
+                }
+            sardine.get(website + APP_DIR + BACKUP_STICKER_DIR + entry.value.uuid)
+                .use { inputStream ->
+                    inputStream.saveTo(stickerUuidToFile(entry.value.uuid))
+                }
+            if (waitToAddList.size > 10) {
+                stickerDao.importDataFromExternal(waitToAddList)
+                waitToAddList.clear()
+            }
+            emitProgressData(
+                current = ++currentCount,
+                total = totalCount,
+                msg = appContext.getString(R.string.webdav_screen_progress_download_data_sticker),
+            )
+        }
+        stickerDao.importDataFromExternal(waitToAddList)
+        emit(
+            WebDavResultInfo(
+                time = System.currentTimeMillis() - startTime,
+                count = totalCount
+            )
+        )
+    }.flowOn(Dispatchers.IO)
 
     fun requestUpload(
         website: String,
         username: String,
         password: String
-    ): Flow<WebDavInfo> {
-        return flowOnIo {
-            val startTime = System.currentTimeMillis()
-            val allStickerWithTagsList = stickerDao.getAllStickerWithTagsList()
-            val sardine: Sardine = initWebDav(website, username, password)
-            var backupInfoMap: MutableMap<String, BackupInfo> =
-                getMd5UuidKeyBackupInfoMap(sardine, website).toMutableMap()
-            val (excludedList, onlyBeanChanged, willBeDeletedMap) = excludeLocalUnchanged(
-                backupInfoMap,      // 这里需要md5+uuid map
-                allStickerWithTagsList
+    ): Flow<WebDavInfo> = flow {
+        val startTime = System.currentTimeMillis()
+        val allStickerWithTagsList = stickerDao.getAllStickerWithTagsList()
+        val sardine: Sardine = initWebDav(website, username, password)
+        var backupInfoMap: MutableMap<String, BackupInfo> =
+            getMd5UuidKeyBackupInfoMap(sardine, website).toMutableMap()
+        val (excludedList, onlyBeanChanged, willBeDeletedMap) = excludeLocalUnchanged(
+            backupInfoMap,      // 这里需要md5+uuid map
+            allStickerWithTagsList
+        )
+        backupInfoMap = backupInfoMap.values.associateBy { it.uuid }.toMutableMap()
+        val totalCount = excludedList.size + onlyBeanChanged.size + willBeDeletedMap.size
+        var currentCount = 0
+        willBeDeletedMap.forEach { (_, u) ->
+            backupInfoMap[/*u.contentMd5 + */u.uuid]?.isDeleted = true
+            emitProgressData(
+                current = ++currentCount,
+                total = totalCount,
+                msg = appContext.getString(R.string.webdav_screen_progress_logical_delete_remote),
             )
-            backupInfoMap = backupInfoMap.values.associateBy { it.uuid }.toMutableMap()
-            val totalCount = excludedList.size + onlyBeanChanged.size + willBeDeletedMap.size
-            var currentCount = 0
-            willBeDeletedMap.forEach { (_, u) ->
-                backupInfoMap[/*u.contentMd5 + */u.uuid]?.isDeleted = true
+            if (currentCount % 10 == 0) {
                 emitProgressData(
-                    current = ++currentCount,
+                    current = currentCount,
                     total = totalCount,
-                    msg = appContext.getString(R.string.webdav_screen_progress_logical_delete_remote),
+                    msg = appContext.getString(R.string.webdav_screen_progress_refresh_backup_info),
                 )
-                if (currentCount % 10 == 0) {
-                    emitProgressData(
-                        current = currentCount,
-                        total = totalCount,
-                        msg = appContext.getString(R.string.webdav_screen_progress_refresh_backup_info),
-                    )
-                    updateBackupInfo(sardine, website, backupInfoMap.values.toList())
-                }
+                updateBackupInfo(sardine, website, backupInfoMap.values.toList())
             }
-            onlyBeanChanged.forEach {
-                val file = toFile(it)
-                sardine.put(website + APP_DIR + BACKUP_DATA_DIR + file.name, file, "text/*")
-                file.deleteRecursively()
-                val md5 = it.md5()
-                val uuid = it.sticker.uuid
-                backupInfoMap[uuid] = BackupInfo(
-                    uuid = uuid,
-                    contentMd5 = md5,
-                    stickerMd5 = it.sticker.stickerMd5,
-                    modifiedTime = System.currentTimeMillis(),
-                    isDeleted = false
-                )
-                emitProgressData(
-                    current = ++currentCount,
-                    total = totalCount,
-                    msg = appContext.getString(R.string.webdav_screen_progress_upload_data),
-                )
-                if (currentCount % 10 == 0) {
-                    emitProgressData(
-                        current = currentCount,
-                        total = totalCount,
-                        msg = appContext.getString(R.string.webdav_screen_progress_refresh_backup_info),
-                    )
-                    updateBackupInfo(sardine, website, backupInfoMap.values.toList())
-                }
-            }
-            excludedList.forEach {
-                val file = toFile(it)
-                sardine.put(website + APP_DIR + BACKUP_DATA_DIR + file.name, file, "text/*")
-                file.deleteRecursively()
-                val stickerFile = stickerUuidToFile(it.sticker.uuid)
-                sardine.put(
-                    website + APP_DIR + BACKUP_STICKER_DIR + stickerFile.name,
-                    stickerFile,
-                    "image/*"
-                )
-                val md5 = it.md5()
-                val uuid = it.sticker.uuid
-                backupInfoMap[uuid] = BackupInfo(
-                    uuid = uuid,
-                    contentMd5 = md5,
-                    stickerMd5 = it.sticker.stickerMd5,
-                    modifiedTime = System.currentTimeMillis(),
-                    isDeleted = false
-                )
-                emitProgressData(
-                    current = ++currentCount,
-                    total = totalCount,
-                    msg = appContext.getString(R.string.webdav_screen_progress_upload_data_sticker),
-                )
-                if (currentCount % 10 == 0) {
-                    emitProgressData(
-                        current = currentCount,
-                        total = totalCount,
-                        msg = appContext.getString(R.string.webdav_screen_progress_refresh_backup_info),
-                    )
-                    updateBackupInfo(sardine, website, backupInfoMap.values.toList())
-                }
-            }
-            updateBackupInfo(sardine, website, backupInfoMap.values.toList())
-            emit(
-                WebDavResultInfo(
-                    time = System.currentTimeMillis() - startTime,
-                    count = totalCount
-                )
-            )
         }
-    }
+        onlyBeanChanged.forEach {
+            val file = toFile(it)
+            sardine.put(website + APP_DIR + BACKUP_DATA_DIR + file.name, file, "text/*")
+            file.deleteRecursively()
+            val md5 = it.md5()
+            val uuid = it.sticker.uuid
+            backupInfoMap[uuid] = BackupInfo(
+                uuid = uuid,
+                contentMd5 = md5,
+                stickerMd5 = it.sticker.stickerMd5,
+                modifiedTime = System.currentTimeMillis(),
+                isDeleted = false
+            )
+            emitProgressData(
+                current = ++currentCount,
+                total = totalCount,
+                msg = appContext.getString(R.string.webdav_screen_progress_upload_data),
+            )
+            if (currentCount % 10 == 0) {
+                emitProgressData(
+                    current = currentCount,
+                    total = totalCount,
+                    msg = appContext.getString(R.string.webdav_screen_progress_refresh_backup_info),
+                )
+                updateBackupInfo(sardine, website, backupInfoMap.values.toList())
+            }
+        }
+        excludedList.forEach {
+            val file = toFile(it)
+            sardine.put(website + APP_DIR + BACKUP_DATA_DIR + file.name, file, "text/*")
+            file.deleteRecursively()
+            val stickerFile = stickerUuidToFile(it.sticker.uuid)
+            sardine.put(
+                website + APP_DIR + BACKUP_STICKER_DIR + stickerFile.name,
+                stickerFile,
+                "image/*"
+            )
+            val md5 = it.md5()
+            val uuid = it.sticker.uuid
+            backupInfoMap[uuid] = BackupInfo(
+                uuid = uuid,
+                contentMd5 = md5,
+                stickerMd5 = it.sticker.stickerMd5,
+                modifiedTime = System.currentTimeMillis(),
+                isDeleted = false
+            )
+            emitProgressData(
+                current = ++currentCount,
+                total = totalCount,
+                msg = appContext.getString(R.string.webdav_screen_progress_upload_data_sticker),
+            )
+            if (currentCount % 10 == 0) {
+                emitProgressData(
+                    current = currentCount,
+                    total = totalCount,
+                    msg = appContext.getString(R.string.webdav_screen_progress_refresh_backup_info),
+                )
+                updateBackupInfo(sardine, website, backupInfoMap.values.toList())
+            }
+        }
+        updateBackupInfo(sardine, website, backupInfoMap.values.toList())
+        emit(
+            WebDavResultInfo(
+                time = System.currentTimeMillis() - startTime,
+                count = totalCount
+            )
+        )
+    }.flowOn(Dispatchers.IO)
 
     private fun excludeRemoteUnchanged(
         backupInfoMap: Map<String, BackupInfo>,

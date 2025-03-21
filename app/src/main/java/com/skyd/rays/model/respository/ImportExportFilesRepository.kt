@@ -50,68 +50,66 @@ class ImportExportFilesRepository @Inject constructor(
     fun requestImport(
         backupFileUri: Uri,
         handleImportedStickerStrategy: HandleImportedStickerStrategy,
-    ): Flow<ImportExportInfo> {
-        return flowOnIo {
-            val startTime = System.currentTimeMillis()
+    ): Flow<ImportExportInfo> = flow {
+        val startTime = System.currentTimeMillis()
 
-            // 清空导入所需的临时目录
-            appContext.IMPORT_FILES_DIR.deleteRecursively()
+        // 清空导入所需的临时目录
+        appContext.IMPORT_FILES_DIR.deleteRecursively()
 
-            // 检查文件最后四个字节是不是 0x0D000721
-            appContext.contentResolver.openFileDescriptor(backupFileUri, "r").use { descriptor ->
-                val fileDescriptor = descriptor?.fileDescriptor ?: return@use
-                FileInputStream(fileDescriptor).use { fis ->
-                    val lastTwoByte = ByteArray(4)
-                    fis.channel.use { channel ->
-                        channel.position(channel.size() - 4)
-                        fis.read(lastTwoByte)
-                        check(lastTwoByte.contentEquals(byteArrayOf(0x0D, 0x00, 0x07, 0x21))) {
-                            appContext.getString(R.string.import_export_files_repo_invalid_magic_number)
-                        }
+        // 检查文件最后四个字节是不是 0x0D000721
+        appContext.contentResolver.openFileDescriptor(backupFileUri, "r").use { descriptor ->
+            val fileDescriptor = descriptor?.fileDescriptor ?: return@use
+            FileInputStream(fileDescriptor).use { fis ->
+                val lastTwoByte = ByteArray(4)
+                fis.channel.use { channel ->
+                    channel.position(channel.size() - 4)
+                    fis.read(lastTwoByte)
+                    check(lastTwoByte.contentEquals(byteArrayOf(0x0D, 0x00, 0x07, 0x21))) {
+                        appContext.getString(R.string.import_export_files_repo_invalid_magic_number)
                     }
                 }
             }
-
-            // 解压文件
-            unzip(
-                context = appContext,
-                zipFile = backupFileUri,
-                location = appContext.IMPORT_FILES_DIR,
-                onEach = { index, file ->
-                    emitProgressData(
-                        current = index,
-                        msg = appContext.getString(
-                            R.string.import_files_screen_progress_unzipping, file.toString()
-                        ),
-                    )
-                }
-            )
-
-            // 检查文件格式
-            emitProgressData(
-                msg = appContext.getString(R.string.import_files_screen_progress_checking_backup_format),
-            )
-            val stickerWithTagsAndFileList = checkBackupUnzipFiles(appContext.IMPORT_FILES_DIR)
-
-            // 移动表情包文件并保存信息到数据库
-            emitProgressData(
-                msg = appContext.getString(R.string.import_files_screen_progress_saving_data),
-            )
-            val updatedCount = stickerDao.importDataFromExternal(
-                stickerWithTagsList = stickerWithTagsAndFileList,
-                strategy = handleImportedStickerStrategy,
-            )
-
-            // 完成操作
-            emit(
-                ImportExportResultInfo(
-                    time = System.currentTimeMillis() - startTime,
-                    count = updatedCount,
-                    backupFile = Uri.EMPTY,
-                )
-            )
         }
-    }
+
+        // 解压文件
+        unzip(
+            context = appContext,
+            zipFile = backupFileUri,
+            location = appContext.IMPORT_FILES_DIR,
+            onEach = { index, file ->
+                emitProgressData(
+                    current = index,
+                    msg = appContext.getString(
+                        R.string.import_files_screen_progress_unzipping, file.toString()
+                    ),
+                )
+            }
+        )
+
+        // 检查文件格式
+        emitProgressData(
+            msg = appContext.getString(R.string.import_files_screen_progress_checking_backup_format),
+        )
+        val stickerWithTagsAndFileList = checkBackupUnzipFiles(appContext.IMPORT_FILES_DIR)
+
+        // 移动表情包文件并保存信息到数据库
+        emitProgressData(
+            msg = appContext.getString(R.string.import_files_screen_progress_saving_data),
+        )
+        val updatedCount = stickerDao.importDataFromExternal(
+            stickerWithTagsList = stickerWithTagsAndFileList,
+            strategy = handleImportedStickerStrategy,
+        )
+
+        // 完成操作
+        emit(
+            ImportExportResultInfo(
+                time = System.currentTimeMillis() - startTime,
+                count = updatedCount,
+                backupFile = Uri.EMPTY,
+            )
+        )
+    }.flowOn(Dispatchers.IO)
 
     fun requestExport(
         dirUri: Uri,
@@ -120,85 +118,83 @@ class ImportExportFilesRepository @Inject constructor(
         excludeCreateTime: Boolean = false,
         excludeModifyTime: Boolean = false,
         exportStickers: List<String>? = null,
-    ): Flow<ImportExportInfo> {
-        return flow {
-            val startTime = System.currentTimeMillis()
-            val allStickerWithTagsList = if (exportStickers == null) {
-                stickerDao.getAllStickerWithTagsList()
-            } else {
-                // https://stackoverflow.com/questions/7106016/too-many-sql-variables-error-in-django-with-sqlite3
-                // SQLite: To prevent excessive memory allocations,
-                // the maximum value of a host parameter number is SQLITE_MAX_VARIABLE_NUMBER,
-                // which defaults to 999
-                mutableListOf<StickerWithTags>().apply {
-                    exportStickers.safeDbVariableNumber {
-                        runBlocking {
-                            addAll(stickerDao.getAllStickerWithTagsList(it).first())
-                        }
+    ): Flow<ImportExportInfo> = flow {
+        val startTime = System.currentTimeMillis()
+        val allStickerWithTagsList = if (exportStickers == null) {
+            stickerDao.getAllStickerWithTagsList()
+        } else {
+            // https://stackoverflow.com/questions/7106016/too-many-sql-variables-error-in-django-with-sqlite3
+            // SQLite: To prevent excessive memory allocations,
+            // the maximum value of a host parameter number is SQLITE_MAX_VARIABLE_NUMBER,
+            // which defaults to 999
+            mutableListOf<StickerWithTags>().apply {
+                exportStickers.safeDbVariableNumber {
+                    runBlocking {
+                        addAll(stickerDao.getAllStickerWithTagsList(it).first())
                     }
                 }
             }
-            val totalCount = allStickerWithTagsList.size
-            var currentCount = 0
-            appContext.EXPORT_FILES_DIR.deleteRecursively()
-            allStickerWithTagsList.forEach {
-                if (excludeClickCount) it.sticker.clickCount = 0L
-                if (excludeShareCount) it.sticker.shareCount = 0L
-                if (excludeCreateTime) it.sticker.createTime = 0L
-                if (excludeModifyTime) it.sticker.modifyTime = 0L
-                stickerWithTagsToJsonFile(it)
-                stickerUuidToFile(it.sticker.uuid)
-                    .copyTo(
-                        File(
-                            "${appContext.EXPORT_FILES_DIR}/$BACKUP_STICKER_DIR",
-                            it.sticker.uuid
-                        )
+        }
+        val totalCount = allStickerWithTagsList.size
+        var currentCount = 0
+        appContext.EXPORT_FILES_DIR.deleteRecursively()
+        allStickerWithTagsList.forEach {
+            if (excludeClickCount) it.sticker.clickCount = 0L
+            if (excludeShareCount) it.sticker.shareCount = 0L
+            if (excludeCreateTime) it.sticker.createTime = 0L
+            if (excludeModifyTime) it.sticker.modifyTime = 0L
+            stickerWithTagsToJsonFile(it)
+            stickerUuidToFile(it.sticker.uuid)
+                .copyTo(
+                    File(
+                        "${appContext.EXPORT_FILES_DIR}/$BACKUP_STICKER_DIR",
+                        it.sticker.uuid
                     )
+                )
+            emitProgressData(
+                current = ++currentCount,
+                total = totalCount,
+                msg = appContext.getString(R.string.export_files_screen_progress_exporting),
+            )
+        }
+        val documentFile = DocumentFile.fromTreeUri(appContext, dirUri)!!
+        val currentDate =
+            System.currentTimeMillis().toDateTimeString(pattern = "yyyyMMdd-HHmmss")
+        val zipFileUri: Uri = documentFile.createFile(
+            "application/zip",
+            "Rays_Backup_${currentDate}_${Random.nextInt(0, Int.MAX_VALUE)}"
+        )?.uri!!
+        zip(
+            context = appContext,
+            zipFile = zipFileUri,
+            files = appContext.EXPORT_FILES_DIR.listFiles().orEmpty().toList(),
+            onEach = { index, file ->
                 emitProgressData(
-                    current = ++currentCount,
-                    total = totalCount,
-                    msg = appContext.getString(R.string.export_files_screen_progress_exporting),
+                    current = index,
+                    msg = appContext.getString(
+                        R.string.export_files_screen_progress_zipping,
+                        file.toString()
+                    ),
                 )
-            }
-            val documentFile = DocumentFile.fromTreeUri(appContext, dirUri)!!
-            val currentDate =
-                System.currentTimeMillis().toDateTimeString(pattern = "yyyyMMdd-HHmmss")
-            val zipFileUri: Uri = documentFile.createFile(
-                "application/zip",
-                "Rays_Backup_${currentDate}_${Random.nextInt(0, Int.MAX_VALUE)}"
-            )?.uri!!
-            zip(
-                context = appContext,
-                zipFile = zipFileUri,
-                files = appContext.EXPORT_FILES_DIR.listFiles().orEmpty().toList(),
-                onEach = { index, file ->
-                    emitProgressData(
-                        current = index,
-                        msg = appContext.getString(
-                            R.string.export_files_screen_progress_zipping,
-                            file.toString()
-                        ),
-                    )
-                },
-            )
+            },
+        )
 
-            // 添加最后四个字节 0x0D000721
-            appContext.contentResolver.openOutputStream(zipFileUri, "wa").use { fos ->
-                check(fos != null) {
-                    appContext.getString(R.string.failed_info, "Zip file OutputStream is null!")
-                }
-                fos.write(byteArrayOf(0x0D, 0x00, 0x07, 0x21))
+        // 添加最后四个字节 0x0D000721
+        appContext.contentResolver.openOutputStream(zipFileUri, "wa").use { fos ->
+            check(fos != null) {
+                appContext.getString(R.string.failed_info, "Zip file OutputStream is null!")
             }
+            fos.write(byteArrayOf(0x0D, 0x00, 0x07, 0x21))
+        }
 
-            emit(
-                ImportExportResultInfo(
-                    time = System.currentTimeMillis() - startTime,
-                    count = totalCount,
-                    backupFile = zipFileUri,
-                )
+        emit(
+            ImportExportResultInfo(
+                time = System.currentTimeMillis() - startTime,
+                count = totalCount,
+                backupFile = zipFileUri,
             )
-        }.flowOn(Dispatchers.IO)
-    }
+        )
+    }.flowOn(Dispatchers.IO)
 
     private fun stickerWithTagsToJsonFile(stickerWithTags: StickerWithTags): File {
         val file =
@@ -274,7 +270,7 @@ class ImportExportFilesRepository @Inject constructor(
 
             val imageFile = stickersListFiles[index]
             // Check MD5
-            check(imageFile.md5() == stickerWithTags!!.sticker.stickerMd5)
+            check(imageFile.md5() == stickerWithTags.sticker.stickerMd5)
             // Check sticker's format
             imageFile.inputStream().use { inputStream ->
                 check(ImageFormatChecker.check(inputStream, stickerUuid) != ImageFormat.UNDEFINED) {
@@ -284,7 +280,7 @@ class ImportExportFilesRepository @Inject constructor(
                     )
                 }
                 stickerWithTagsAndFileList += StickerWithTagsAndFile(
-                    stickerWithTags = stickerWithTags!!,
+                    stickerWithTags = stickerWithTags,
                     stickerFile = stickersListFiles[index]
                 )
             }

@@ -4,10 +4,10 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.core.content.pm.PackageInfoCompat
+import androidx.core.net.toUri
 import com.skyd.rays.R
 import com.skyd.rays.appContext
 import com.skyd.rays.ui.component.showToast
@@ -15,8 +15,7 @@ import com.skyd.rays.ui.component.showToast
 object CommonUtil {
     fun openBrowser(url: String) {
         try {
-            val uri: Uri = Uri.parse(url)
-            val intent = Intent(Intent.ACTION_VIEW, uri)
+            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             appContext.startActivity(intent)
         } catch (e: ActivityNotFoundException) {

@@ -1,23 +1,16 @@
 package com.skyd.rays.model.preference
 
-import android.content.Context
 import androidx.compose.ui.layout.ContentScale
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.skyd.rays.R
 import com.skyd.rays.appContext
-import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.put
 import com.skyd.rays.ext.toDisplayName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 object StickerScalePreference : BasePreference<String> {
     private const val STICKER_SCALE = "stickerScale"
-    override val default = "FillWidth"
 
-    val key = stringPreferencesKey(STICKER_SCALE)
+    override val default = "FillWidth"
+    override val key = stringPreferencesKey(STICKER_SCALE)
 
     val scaleList = arrayOf(
         "Crop",
@@ -27,14 +20,6 @@ object StickerScalePreference : BasePreference<String> {
         "Fit",
         "FillBounds",
     )
-
-    fun put(context: Context, scope: CoroutineScope, value: String) {
-        scope.launch(Dispatchers.IO) {
-            context.dataStore.put(key, value)
-        }
-    }
-
-    override fun fromPreferences(preferences: Preferences): String = preferences[key] ?: default
 
     fun toName(scale: ContentScale): String = when (scale) {
         ContentScale.Crop -> "Crop"

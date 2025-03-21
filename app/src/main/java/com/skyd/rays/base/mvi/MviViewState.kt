@@ -2,9 +2,6 @@ package com.skyd.rays.base.mvi
 
 import android.os.Bundle
 
-/**
- * Immutable object which contains all the required information to render a [MviView].
- */
 interface MviViewState
 
 /**

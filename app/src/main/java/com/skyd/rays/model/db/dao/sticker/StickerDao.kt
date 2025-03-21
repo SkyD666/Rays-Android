@@ -43,7 +43,6 @@ import io.objectbox.query.QueryBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.util.UUID
 
@@ -182,7 +181,7 @@ interface StickerDao {
     suspend fun addShareCount(uuids: Collection<String>, count: Int = 1): Int
 
     @Transaction
-    suspend fun shareStickers(uuids: Collection<String>, count: Int = 1) = runBlocking {
+    suspend fun shareStickers(uuids: Collection<String>, count: Int = 1) {
         val hiltEntryPoint = EntryPointAccessors
             .fromApplication(appContext, StickerDaoEntryPoint::class.java)
         val currentTimeMillis = System.currentTimeMillis()

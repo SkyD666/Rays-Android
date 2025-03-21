@@ -55,7 +55,7 @@ class AddRepository @Inject constructor(
     fun requestAddStickerWithTags(
         stickerWithTags: StickerWithTags,
         uri: Uri
-    ): Flow<Any> = flowOnIo {
+    ): Flow<Any> = flow {
         var imageFormat: ImageFormat
         appContext.contentResolver.openInputStream(uri)!!.use {
             imageFormat = ImageFormatChecker.check(it)
@@ -85,14 +85,12 @@ class AddRepository @Inject constructor(
             ImageFormatChecker.saveMimeType(format = imageFormat, stickerUuid = uuid)
             emit(uuid)
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    suspend fun requestGetStickerWithTags(stickerUuid: String): Flow<StickerWithTags?> {
-        return flowOnIo {
-            val stickerWithTags = stickerDao.getStickerWithTags(stickerUuid)
-            emit(stickerWithTags)
-        }
-    }
+    fun requestGetStickerWithTags(stickerUuid: String): Flow<StickerWithTags?> = flow {
+        val stickerWithTags = stickerDao.getStickerWithTags(stickerUuid)
+        emit(stickerWithTags)
+    }.flowOn(Dispatchers.IO)
 
     fun requestSuggestTags(sticker: Uri): Flow<Set<String>> = flow {
         val image: InputImage = InputImage.fromFilePath(appContext, sticker)

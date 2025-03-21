@@ -13,17 +13,17 @@ import kotlinx.coroutines.flow.StateFlow
  * @param E Top class of the [MviSingleEvent] that the [MviViewModel] will be emitting.
  */
 interface MviViewModel<I : MviIntent, S : MviViewState, E : MviSingleEvent> {
-  val viewState: StateFlow<S>
+    val viewState: StateFlow<S>
 
-  val singleEvent: Flow<E>
+    val singleEvent: Flow<E>
 
-  /**
-   * Must be called in [kotlinx.coroutines.Dispatchers.Main.immediate],
-   * otherwise it will throw an exception.
-   *
-   * If you want to process an intent from other [kotlinx.coroutines.CoroutineDispatcher],
-   * use `withContext(Dispatchers.Main.immediate) { processIntent(intent) }`.
-   */
-  @MainThread
-  suspend fun processIntent(intent: I)
+    /**
+     * Must be called in [kotlinx.coroutines.MainCoroutineDispatcher.immediate],
+     * otherwise it will throw an exception.
+     *
+     * If you want to process an intent from other [kotlinx.coroutines.CoroutineDispatcher],
+     * use `withContext(Dispatchers.Main.immediate) { processIntent(intent) }`.
+     */
+    @MainThread
+    suspend fun processIntent(intent: I)
 }

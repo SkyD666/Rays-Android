@@ -1,7 +1,7 @@
 package com.skyd.rays.model.respository
 
 import android.database.DatabaseUtils
-import android.net.Uri
+import androidx.core.net.toUri
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.sqlite.db.SimpleSQLiteQuery
@@ -10,6 +10,7 @@ import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.allSearchDomain
 import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.dataStore
+import com.skyd.rays.ext.flowOf
 import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.ext.safeDbVariableNumber
 import com.skyd.rays.model.bean.STICKER_TABLE_NAME
@@ -55,33 +56,27 @@ class SearchRepository @Inject constructor(
         stickerDao.getStickerWithTagsList(genSql(k = keyword)).first()
     }
 
-    fun requestStickerUuidList(keyword: String): Flow<List<String>> {
-        return flow {
-            emit(
-                stickerDao.getStickerUuidList(
-                    genSql(k = keyword, field = StickerBean.UUID_COLUMN)
-                )
-            )
-        }.flowOn(Dispatchers.IO)
-    }
+    fun requestStickerUuidList(keyword: String): Flow<List<String>> = flow {
+        emit(stickerDao.getStickerUuidList(genSql(k = keyword, field = StickerBean.UUID_COLUMN)))
+    }.flowOn(Dispatchers.IO)
 
-    fun requestStickerWithTagsListFlow(keyword: String): Flow<List<StickerWithTags>> {
-        return flow { emit(genSql(keyword)) }
-            .flowOn(Dispatchers.IO)
-            .flatMapConcat {
-                stickerDao.getStickerWithTagsList(it)
-                    .flowOn(Dispatchers.IO)
-                    .distinctUntilChanged()
-            }
-            .catchMap { emptyList() }
-    }
+    fun requestStickerWithTagsListFlow(
+        keyword: String,
+    ): Flow<List<StickerWithTags>> = flow { emit(genSql(keyword)) }
+        .flatMapConcat {
+            stickerDao.getStickerWithTagsList(it)
+                .flowOn(Dispatchers.IO)
+                .distinctUntilChanged()
+        }
+        .catchMap { emptyList() }
+        .flowOn(Dispatchers.IO)
 
-    fun requestStickerWithTagsListWithAllSearchDomain(keyword: String): Flow<Pager<Int, StickerWithTags>> {
-        return flow {
-            val sql = genSql(k = keyword, useSearchDomain = { _, _ -> true })
-            emit(Pager(pagingConfig) { stickerDao.getStickerWithTagsPaging(sql) })
-        }.flowOn(Dispatchers.IO)
-    }
+    fun requestStickerWithTagsListWithAllSearchDomain(
+        keyword: String,
+    ): Flow<Pager<Int, StickerWithTags>> = flow {
+        val sql = genSql(k = keyword, useSearchDomain = { _, _ -> true })
+        emit(Pager(pagingConfig) { stickerDao.getStickerWithTagsPaging(sql) })
+    }.flowOn(Dispatchers.IO)
 
     data class SearchResult(
         val stickerWithTagsList: List<StickerWithTags>?,
@@ -89,118 +84,96 @@ class SearchRepository @Inject constructor(
         val isRegexInvalid: SearchRegexInvalidException? = null,
     )
 
-    fun requestStickerWithTagsList(): Flow<SearchResult> {
-        return appContext.dataStore.data
-            .debounce(70)
-            .map {
-                Triple(
-                    it[QueryPreference.key] ?: QueryPreference.default,
-                    it[SearchResultSortPreference.key] ?: SearchResultSortPreference.default,
-                    it[SearchResultReversePreference.key] ?: SearchResultReversePreference.default,
-                )
-            }
-            .distinctUntilChanged()
-            .flatMapLatest { (query, _, _) ->
-                var msg: String? = null
-                var isRegexInvalid: SearchRegexInvalidException? = null
-                val sql = runCatching { genSql(query) }.getOrElse {
-                    if (it is SearchRegexInvalidException) isRegexInvalid = it
-                    msg = it.message.toString()
-                    null
-                }
-                if (sql == null) {
-                    flowOf(
-                        SearchResult(
-                            stickerWithTagsList = null,
-                            msg = msg,
-                            isRegexInvalid = isRegexInvalid
-                        )
-                    )
-                } else {
-                    stickerDao.getStickerWithTagsList(sql).map { list ->
-                        SearchResult(stickerWithTagsList = sortSearchResultList(list))
-                    }.flowOn(Dispatchers.IO)
-                }
-            }
-            .flowOn(Dispatchers.IO)
-    }
-
-    fun requestDeleteStickerWithTagsDetail(stickerUuids: Collection<String>): Flow<Collection<String>> {
-        return flowOnIo {
-            stickerUuids.distinct().safeDbVariableNumber {
-                stickerDao.deleteStickerWithTags(it)
-                stickerShareTimeDao.deleteShareTimeByUuids(it)
-            }
-            emit(stickerUuids)
+    fun requestStickerWithTagsList(): Flow<SearchResult> = appContext.dataStore.flowOf(
+        QueryPreference, SearchResultSortPreference, SearchResultReversePreference
+    ).debounce(70).flatMapLatest { (query, _, _) ->
+        var msg: String? = null
+        var isRegexInvalid: SearchRegexInvalidException? = null
+        val sql = runCatching { genSql(query) }.getOrElse {
+            if (it is SearchRegexInvalidException) isRegexInvalid = it
+            msg = it.message.toString()
+            null
         }
-    }
+        if (sql == null) {
+            flowOf(
+                SearchResult(
+                    stickerWithTagsList = null,
+                    msg = msg,
+                    isRegexInvalid = isRegexInvalid
+                )
+            )
+        } else {
+            stickerDao.getStickerWithTagsList(sql).map { list ->
+                SearchResult(stickerWithTagsList = sortSearchResultList(list))
+            }.flowOn(Dispatchers.IO)
+        }
+    }.flowOn(Dispatchers.IO)
+
+    fun requestDeleteStickerWithTagsDetail(
+        stickerUuids: Collection<String>,
+    ): Flow<Collection<String>> = flow {
+        stickerUuids.distinct().safeDbVariableNumber {
+            stickerDao.deleteStickerWithTags(it)
+            stickerShareTimeDao.deleteShareTimeByUuids(it)
+        }
+        emit(stickerUuids)
+    }.flowOn(Dispatchers.IO)
 
     fun requestStickersNotIn(
         keyword: String,
         selectedStickerUuids: Collection<String>,
-    ): Flow<List<String>> {
-        return flowOnIo {
-            emit(requestStickerUuidList(keyword).first()
-                .filter { it !in selectedStickerUuids })
-        }
-    }
+    ): Flow<List<String>> = flow {
+        emit(requestStickerUuidList(keyword).first().filter { it !in selectedStickerUuids })
+    }.flowOn(Dispatchers.IO)
 
-    fun requestSearchBarPopularTags(count: Int): Flow<List<String>> {
-        return combine(
-            stickerDao.getRecentSharedStickers(count = count shr 1),
-            stickerDao.getPopularStickersList(count = count shr 1),
-        ) { recentSharedStickers, popularStickers ->
-            recentSharedStickers.toMutableSet().apply {
-                addAll(popularStickers)
-            }.map {
-                it to stickerShareTimeDao.getShareTimeByUuid(it.sticker.uuid)
+    fun requestSearchBarPopularTags(count: Int): Flow<List<String>> = combine(
+        stickerDao.getRecentSharedStickers(count = count shr 1),
+        stickerDao.getPopularStickersList(count = count shr 1),
+    ) { recentSharedStickers, popularStickers ->
+        recentSharedStickers.toMutableSet().apply { addAll(popularStickers) }.map {
+            it to stickerShareTimeDao.getShareTimeByUuid(it.sticker.uuid)
+        }
+    }.distinctUntilChanged().map { stickersList ->
+        // Step 2: Sort the list
+        val sortedDataList = stickersList.sortedWith(
+            compareByDescending<Pair<StickerWithTags, List<Long>>> {
+                it.second.sum()
+            }.thenByDescending { it.first.sticker.shareCount },
+        )
+
+        // Step 3: Count tag frequencies and add weights
+        val tagFrequency = mutableMapOf<String, Double>()
+        for ((index, data) in sortedDataList.withIndex()) {
+            val weight = (sortedDataList.size - index).toDouble().pow(4)  // weight factor
+            for (tag in data.first.tags) {
+                // As the number of times a tag appears increases,
+                // reduce its new weight to avoid the first few tags being difficult to change
+                val newWeight = weight *
+                        (1f / tagFrequency.getOrDefault(tag.tag, 1.0)
+                            .coerceAtLeast(1.0)).pow(4)
+                tagFrequency[tag.tag] = tagFrequency.getOrDefault(tag.tag, 0.0) + newWeight
             }
         }
-            .distinctUntilChanged()
-            .map { stickersList ->
-                // Step 2: Sort the list
-                val sortedDataList = stickersList.sortedWith(
-                    compareByDescending<Pair<StickerWithTags, List<Long>>> {
-                        it.second.sum()
-                    }.thenByDescending { it.first.sticker.shareCount },
-                )
 
-                // Step 3: Count tag frequencies and add weights
-                val tagFrequency = mutableMapOf<String, Double>()
-                for ((index, data) in sortedDataList.withIndex()) {
-                    val weight = (sortedDataList.size - index).toDouble().pow(4)  // weight factor
-                    for (tag in data.first.tags) {
-                        // As the number of times a tag appears increases,
-                        // reduce its new weight to avoid the first few tags being difficult to change
-                        val newWeight = weight *
-                                (1f / tagFrequency.getOrDefault(tag.tag, 1.0)
-                                    .coerceAtLeast(1.0)).pow(4)
-                        tagFrequency[tag.tag] = tagFrequency.getOrDefault(tag.tag, 0.0) + newWeight
-                    }
-                }
+        // Step 4: Sort tags by their frequencies
+        tagFrequency.entries.sortedByDescending { it.value }.map { it.key }
+    }.flowOn(Dispatchers.IO)
 
-                // Step 4: Sort tags by their frequencies
-                tagFrequency.entries.sortedByDescending { it.value }.map { it.key }
-            }.flowOn(Dispatchers.IO)
-    }
-
-    fun requestExportStickers(stickerUuids: Collection<String>): Flow<Int> {
-        return flowOnIo {
-            val exportStickerDir = appContext.dataStore.getOrDefault(ExportStickerDirPreference)
-            check(exportStickerDir.isNotBlank()) { "exportStickerDir is null" }
-            var successCount = 0
-            stickerUuids.forEach {
-                runCatching {
-                    exportSticker(uuid = it, outputDir = Uri.parse(exportStickerDir))
-                }.onSuccess {
-                    successCount++
-                }.onFailure {
-                    it.printStackTrace()
-                }
+    fun requestExportStickers(stickerUuids: Collection<String>): Flow<Int> = flow {
+        val exportStickerDir = appContext.dataStore.getOrDefault(ExportStickerDirPreference)
+        check(exportStickerDir.isNotBlank()) { "exportStickerDir is null" }
+        var successCount = 0
+        stickerUuids.forEach {
+            runCatching {
+                exportSticker(uuid = it, outputDir = exportStickerDir.toUri())
+            }.onSuccess {
+                successCount++
+            }.onFailure {
+                it.printStackTrace()
             }
-            emit(successCount)
         }
-    }
+        emit(successCount)
+    }.flowOn(Dispatchers.IO)
 
     private fun sortSearchResultList(
         unsortedUnreversedData: List<StickerWithTags>,

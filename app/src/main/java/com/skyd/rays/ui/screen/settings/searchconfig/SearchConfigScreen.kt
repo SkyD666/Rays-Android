@@ -217,17 +217,17 @@ fun SearchDomainItem(
             ) {
                 repeat(columns.size) { columnIndex ->
                     val (columnName, columnDisplayName) = columns[columnIndex]
-                    selected[columnIndex] = searchDomain["${tableName}/${columnName}"] ?: false
+                    selected[columnIndex] = searchDomain["${tableName}/${columnName}"] == true
 
                     FilterChip(
-                        selected = selected[columnIndex] ?: false,
+                        selected = selected[columnIndex] == true,
                         onClick = {
-                            selected[columnIndex] = !(selected[columnIndex] ?: false)
+                            selected[columnIndex] = selected[columnIndex] != true
                             onSetSearchDomain(
                                 SearchDomainBean(
                                     tableName = tableName,
                                     columnName = columnName,
-                                    search = selected[columnIndex] ?: false
+                                    search = selected[columnIndex] == true
                                 )
                             )
                         },

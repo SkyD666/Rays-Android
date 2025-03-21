@@ -1,7 +1,6 @@
 package com.skyd.rays.model.preference.theme
 
 import android.content.Context
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.skyd.rays.ext.dataStore
@@ -12,11 +11,11 @@ import kotlinx.coroutines.launch
 
 object StickerColorThemePreference : BasePreference<Boolean> {
     private const val STICKER_COLOR_THEME = "stickerColorTheme"
+
     override val default = false
+    override val key = booleanPreferencesKey(STICKER_COLOR_THEME)
 
-    val key = booleanPreferencesKey(STICKER_COLOR_THEME)
-
-    fun put(context: Context, scope: CoroutineScope, value: Boolean) {
+    override fun put(context: Context, scope: CoroutineScope, value: Boolean) {
         scope.launch(Dispatchers.IO) {
             context.dataStore.edit { pref ->
                 pref[key] = value
@@ -24,6 +23,4 @@ object StickerColorThemePreference : BasePreference<Boolean> {
             }
         }
     }
-
-    override fun fromPreferences(preferences: Preferences): Boolean = preferences[key] ?: default
 }

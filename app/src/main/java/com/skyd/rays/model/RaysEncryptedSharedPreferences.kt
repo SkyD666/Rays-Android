@@ -76,7 +76,7 @@ class RaysEncryptedSharedPreferences(
 
     override fun contains(key: String?): Boolean = safeBlock {
         encryptedSharedPreferences.contains(key)
-    } ?: false
+    } == true
 
     override fun edit(): SharedPreferences.Editor = encryptedSharedPreferences.edit()
 

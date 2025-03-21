@@ -46,12 +46,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.edit
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.editor
 import com.skyd.rays.ext.secretSharedPreferences
 import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.bean.BackupInfo
@@ -166,10 +166,10 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                         openInputDialog = false
                         if (it.isBlank()) {
                             account = ""
-                            secretSharedPreferences().editor { remove(WEBDAV_ACCOUNT_KEY) }
+                            secretSharedPreferences().edit { remove(WEBDAV_ACCOUNT_KEY) }
                         } else {
                             account = it
-                            secretSharedPreferences().editor { putString(WEBDAV_ACCOUNT_KEY, it) }
+                            secretSharedPreferences().edit { putString(WEBDAV_ACCOUNT_KEY, it) }
                         }
                     }
                     inputDialogIsPassword = false
@@ -182,10 +182,10 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                         openInputDialog = false
                         if (it.isBlank()) {
                             password = ""
-                            secretSharedPreferences().editor { remove(WEBDAV_PASSWORD_KEY) }
+                            secretSharedPreferences().edit { remove(WEBDAV_PASSWORD_KEY) }
                         } else {
                             password = it
-                            secretSharedPreferences().editor { putString(WEBDAV_PASSWORD_KEY, it) }
+                            secretSharedPreferences().edit { putString(WEBDAV_PASSWORD_KEY, it) }
                         }
                     }
                     inputDialogIsPassword = true

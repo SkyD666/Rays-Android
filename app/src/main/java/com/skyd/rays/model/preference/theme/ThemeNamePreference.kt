@@ -2,11 +2,9 @@ package com.skyd.rays.model.preference.theme
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.skyd.rays.ext.dataStore
-import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.preference.BasePreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,10 +38,9 @@ object ThemeNamePreference : BasePreference<String> {
     )
 
     override val default = values[0].name
+    override val key = stringPreferencesKey(THEME_NAME)
 
-    val key = stringPreferencesKey(THEME_NAME)
-
-    fun put(context: Context, scope: CoroutineScope, value: String) {
+    override fun put(context: Context, scope: CoroutineScope, value: String) {
         scope.launch(Dispatchers.IO) {
             context.dataStore.edit { pref ->
                 pref[key] = value
@@ -52,14 +49,7 @@ object ThemeNamePreference : BasePreference<String> {
         }
     }
 
-    override fun fromPreferences(preferences: Preferences) = preferences[key] ?: default
-
     fun isCustom(v: String): Boolean = v == CUSTOM_THEME_NAME
-
-    fun isCustom(
-        context: Context,
-        v: String = context.dataStore.getOrDefault(this)
-    ): Boolean = v == CUSTOM_THEME_NAME
 
     data class ThemeItem(val name: String, val keyColor: Color)
 }

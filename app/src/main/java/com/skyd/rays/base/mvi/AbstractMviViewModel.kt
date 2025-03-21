@@ -87,7 +87,7 @@ abstract class AbstractMviViewModel<I : MviIntent, S : MviViewState, E : MviSing
     // Send event and access intent flow.
 
     /**
-     * Must be called in [kotlinx.coroutines.Dispatchers.Main.immediate],
+     * Must be called in [kotlinx.coroutines.MainCoroutineDispatcher.immediate],
      * otherwise it will throw an exception.
      *
      * If you want to send an event from other [kotlinx.coroutines.CoroutineDispatcher],

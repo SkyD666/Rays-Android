@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.net.Uri
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
+import androidx.core.graphics.createBitmap
 import androidx.core.graphics.get
 import androidx.core.graphics.set
 import com.google.mlkit.vision.common.InputImage
@@ -18,6 +19,7 @@ import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.ext.cropTransparency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -35,98 +37,93 @@ class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
         foregroundRotation: Float,
         foregroundSize: IntSize,
         borderSize: IntSize,
-    ): Flow<Bitmap> {
-        return flowOnIo {
-            // 在Compose里显示的大小和真实Bitmap大小的比率
-            val foregroundRatio = foregroundSize.width.toFloat() / foregroundBitmap.width
-            val backgroundRatio: Float
+    ): Flow<Bitmap> = flow {
+        // 在Compose里显示的大小和真实Bitmap大小的比率
+        val foregroundRatio = foregroundSize.width.toFloat() / foregroundBitmap.width
+        val backgroundRatio: Float
 
-            val underlayBitmap = if (backgroundUri != null) {
-                appContext.contentResolver.openInputStream(backgroundUri)!!.use {
-                    val origin = BitmapFactory.decodeStream(it)
-                    origin.copy(origin.config!!, true).apply {
-                        setHasAlpha(true)
-                        origin.recycle()
-                    }
-                }.also { backgroundRatio = backgroundSize.width.toFloat() / it.width }
-            } else {
-                Bitmap.createBitmap(
-                    borderSize.width,
-                    borderSize.height,
-                    Bitmap.Config.ARGB_8888,
-                ).also {/* 没有背景时用透明图像，比率是1 */ backgroundRatio = 1f }
+        val underlayBitmap = if (backgroundUri != null) {
+            appContext.contentResolver.openInputStream(backgroundUri)!!.use {
+                val origin = BitmapFactory.decodeStream(it)
+                origin.copy(origin.config!!, true).apply {
+                    setHasAlpha(true)
+                    origin.recycle()
+                }
+            }.also { backgroundRatio = backgroundSize.width.toFloat() / it.width }
+        } else {
+            createBitmap(borderSize.width, borderSize.height).also {
+                /* 没有背景时用透明图像，比率是1 */
+                backgroundRatio = 1f
             }
-
-            val matrix = Matrix()
-            with(matrix) {
-                // 计算上述两个比率的差异
-                val scale1 = foregroundRatio / backgroundRatio
-                // 水平竖直移动
-                val dx = foregroundOffset.x / scale1 / backgroundRatio
-                val dy = foregroundOffset.y / scale1 / backgroundRatio
-                setTranslate(dx, dy)
-
-                // 是调整编辑页面和实际位图的大小差异用的
-                postScale(scale1, scale1)
-
-                // 计算“调整编辑页面和实际位图的大小差异”后的中心点
-                val centerX = ((foregroundBitmap.width + 2 * dx) / 2f) * scale1
-                val centerY = ((foregroundBitmap.height + 2 * dy) / 2f) * scale1
-                // 是用户主动缩放的大小
-                postScale(foregroundScale, foregroundScale, centerX, centerY)
-
-                // 由于上一行就是在中心点进行缩放的，因此缩放后，图像的中心点没变，下面旋转继续用这个中心点
-                postRotate(foregroundRotation, centerX, centerY)
-            }
-            Canvas(underlayBitmap).drawBitmap(
-                foregroundBitmap,
-                matrix,
-                Paint(Paint.FILTER_BITMAP_FLAG).apply { isAntiAlias = true }
-            )
-            emit(underlayBitmap)
         }
-    }
 
-    suspend fun requestSelfieSegment(foregroundUri: Uri): Flow<Bitmap> {
-        return flowOnIo {
-            emit(suspendCancellableCoroutine { cont ->
-                val options = SelfieSegmenterOptions.Builder()
-                    .setDetectorMode(SelfieSegmenterOptions.SINGLE_IMAGE_MODE)
-                    .build()
-                val image: InputImage = InputImage.fromFilePath(appContext, foregroundUri)
-                Segmentation.getClient(options).process(image)
-                    .addOnSuccessListener { segmentationMask ->
-                        cont.resume(value = segmentationMask, onCancellation = null)
-                    }.addOnFailureListener { e -> cont.resumeWithException(e) }
-            })
-        }.map { segmentationMask ->
-            val foregroundBitmap =
-                appContext.contentResolver.openInputStream(foregroundUri)!!.use {
-                    val origin = BitmapFactory.decodeStream(it)
-                    origin.copy(origin.config!!, true).apply {
-                        setHasAlpha(true)
-                        origin.recycle()
-                    }
-                }
+        val matrix = Matrix()
+        with(matrix) {
+            // 计算上述两个比率的差异
+            val scale1 = foregroundRatio / backgroundRatio
+            // 水平竖直移动
+            val dx = foregroundOffset.x / scale1 / backgroundRatio
+            val dy = foregroundOffset.y / scale1 / backgroundRatio
+            setTranslate(dx, dy)
 
-            val mask = segmentationMask.buffer
-            val maskWidth = segmentationMask.width
-            val maskHeight = segmentationMask.height
+            // 是调整编辑页面和实际位图的大小差异用的
+            postScale(scale1, scale1)
 
-            for (y in 0 until maskHeight) {
-                for (x in 0 until maskWidth) {
-                    val confidence = mask.float
-                    if (confidence in 0.0f..<0.6f) {
-                        foregroundBitmap[x, y] = 0x00000000
-                    } else if (confidence in 0.6f..<0.9f) {
-                        val color = foregroundBitmap[x, y]
-                        val alpha = (color ushr 24) * (confidence - 0.6f) * 3.333f
-                        foregroundBitmap[x, y] =
-                            (color and 0x00FFFFFF) + (alpha.toInt() shl 24)
-                    }
+            // 计算“调整编辑页面和实际位图的大小差异”后的中心点
+            val centerX = ((foregroundBitmap.width + 2 * dx) / 2f) * scale1
+            val centerY = ((foregroundBitmap.height + 2 * dy) / 2f) * scale1
+            // 是用户主动缩放的大小
+            postScale(foregroundScale, foregroundScale, centerX, centerY)
+
+            // 由于上一行就是在中心点进行缩放的，因此缩放后，图像的中心点没变，下面旋转继续用这个中心点
+            postRotate(foregroundRotation, centerX, centerY)
+        }
+        Canvas(underlayBitmap).drawBitmap(
+            foregroundBitmap,
+            matrix,
+            Paint(Paint.FILTER_BITMAP_FLAG).apply { isAntiAlias = true }
+        )
+        emit(underlayBitmap)
+    }.flowOn(Dispatchers.IO)
+
+    fun requestSelfieSegment(foregroundUri: Uri): Flow<Bitmap> = flow {
+        emit(suspendCancellableCoroutine { cont ->
+            val options = SelfieSegmenterOptions.Builder()
+                .setDetectorMode(SelfieSegmenterOptions.SINGLE_IMAGE_MODE)
+                .build()
+            val image: InputImage = InputImage.fromFilePath(appContext, foregroundUri)
+            Segmentation.getClient(options).process(image)
+                .addOnSuccessListener { segmentationMask ->
+                    cont.resume(value = segmentationMask, onCancellation = null)
+                }.addOnFailureListener { e -> cont.resumeWithException(e) }
+        })
+    }.map { segmentationMask ->
+        val foregroundBitmap =
+            appContext.contentResolver.openInputStream(foregroundUri)!!.use {
+                val origin = BitmapFactory.decodeStream(it)
+                origin.copy(origin.config!!, true).apply {
+                    setHasAlpha(true)
+                    origin.recycle()
                 }
             }
-            foregroundBitmap.cropTransparency() ?: foregroundBitmap
-        }.flowOn(Dispatchers.IO)
-    }
+
+        val mask = segmentationMask.buffer
+        val maskWidth = segmentationMask.width
+        val maskHeight = segmentationMask.height
+
+        for (y in 0 until maskHeight) {
+            for (x in 0 until maskWidth) {
+                val confidence = mask.float
+                if (confidence in 0.0f..<0.6f) {
+                    foregroundBitmap[x, y] = 0x00000000
+                } else if (confidence in 0.6f..<0.9f) {
+                    val color = foregroundBitmap[x, y]
+                    val alpha = (color ushr 24) * (confidence - 0.6f) * 3.333f
+                    foregroundBitmap[x, y] =
+                        (color and 0x00FFFFFF) + (alpha.toInt() shl 24)
+                }
+            }
+        }
+        foregroundBitmap.cropTransparency() ?: foregroundBitmap
+    }.flowOn(Dispatchers.IO)
 }

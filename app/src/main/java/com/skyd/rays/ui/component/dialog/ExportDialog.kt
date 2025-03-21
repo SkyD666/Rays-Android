@@ -1,7 +1,6 @@
 package com.skyd.rays.ui.component.dialog
 
 import android.content.Intent
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Row
@@ -15,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.net.toUri
 import com.skyd.rays.R
 import com.skyd.rays.ext.safeLaunch
 import com.skyd.rays.model.preference.ExportStickerDirPreference
@@ -59,7 +59,7 @@ fun ExportDialog(
                 )
                 RaysIconButton(
                     onClick = {
-                        pickExportDirLauncher.safeLaunch(Uri.parse(exportStickerDir))
+                        pickExportDirLauncher.safeLaunch(exportStickerDir.toUri())
                     },
                     imageVector = Icons.Outlined.Folder,
                     contentDescription = stringResource(R.string.home_screen_select_export_folder)

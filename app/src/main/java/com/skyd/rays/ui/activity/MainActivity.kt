@@ -252,7 +252,7 @@ class MainActivity : BaseComposeActivity() {
                                 bundle, "stickers", UriWithStickerUuidBean::class.java,
                             )
                         } ?: mutableListOf(),
-                        isEdit = it.arguments?.getBoolean("isEdit") ?: false,
+                        isEdit = it.arguments?.getBoolean("isEdit") == true,
                     )
                 }
             }
