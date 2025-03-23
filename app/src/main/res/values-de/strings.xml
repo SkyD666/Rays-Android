@@ -38,4 +38,9 @@
     <string name="dialog_warning">Warnung</string>
     <string name="about_screen_goto_github_repo">GitHub repository</string>
     <string name="about_screen_join_discord">Discord Server</string>
+    <string name="search_config_screen_common_category">Allgemein</string>
+    <string name="search_config_screen_use_regex">Regulärer Ausdruck</string>
+    <string name="dialog_exit">Beenden</string>
+    <string name="failed_info">Fehlgeschlagen: %s</string>
+    <string name="add_screen_global_tags">Globale Schlagwörter</string>
 </resources>
