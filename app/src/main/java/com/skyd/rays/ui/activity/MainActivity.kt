@@ -31,87 +31,89 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import androidx.navigation.toRoute
 import com.skyd.rays.base.BaseComposeActivity
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
+import com.skyd.rays.ext.listType
+import com.skyd.rays.ext.serializableType
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.screen.about.ABOUT_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.about.AboutRoute
 import com.skyd.rays.ui.screen.about.AboutScreen
-import com.skyd.rays.ui.screen.about.license.LICENSE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.about.license.LicenseRoute
 import com.skyd.rays.ui.screen.about.license.LicenseScreen
 import com.skyd.rays.ui.screen.about.update.UpdateDialog
-import com.skyd.rays.ui.screen.add.ADD_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.add.AddDeepLinkRoute
+import com.skyd.rays.ui.screen.add.AddRoute
 import com.skyd.rays.ui.screen.add.AddScreen
-import com.skyd.rays.ui.screen.detail.DETAIL_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.detail.DetailRoute
 import com.skyd.rays.ui.screen.detail.DetailScreen
-import com.skyd.rays.ui.screen.fullimage.FULL_IMAGE_SCREEN_IMAGE_KEY
-import com.skyd.rays.ui.screen.fullimage.FULL_IMAGE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.fullimage.FullImageRoute
 import com.skyd.rays.ui.screen.fullimage.FullImageScreen
-import com.skyd.rays.ui.screen.main.MAIN_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.fullimage.WrappedUri
+import com.skyd.rays.ui.screen.fullimage.WrappedUriNullable
+import com.skyd.rays.ui.screen.main.MainRoute
 import com.skyd.rays.ui.screen.main.MainScreen
-import com.skyd.rays.ui.screen.mergestickers.MERGE_STICKERS_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.mergestickers.MERGE_STICKERS_SCREEN_STICKER_UUIDS_KEY
+import com.skyd.rays.ui.screen.mergestickers.MergeStickersRoute
 import com.skyd.rays.ui.screen.mergestickers.MergeStickersScreenRoute
-import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SELFIE_SEGMENTATION_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SelfieSegmentationRoute
 import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SelfieSegmentationScreen
-import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.minitool.styletransfer.StyleTransferRoute
 import com.skyd.rays.ui.screen.minitool.styletransfer.StyleTransferScreen
-import com.skyd.rays.ui.screen.search.SEARCH_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.search.SearchRoute
 import com.skyd.rays.ui.screen.search.SearchScreen
-import com.skyd.rays.ui.screen.search.imagesearch.BASE_IMAGE_KEY
-import com.skyd.rays.ui.screen.search.imagesearch.IMAGE_SEARCH_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.search.imagesearch.ImageSearchRoute
 import com.skyd.rays.ui.screen.search.imagesearch.ImageSearchScreen
-import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.SettingsRoute
 import com.skyd.rays.ui.screen.settings.SettingsScreen
-import com.skyd.rays.ui.screen.settings.api.API_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.api.ApiRoute
 import com.skyd.rays.ui.screen.settings.api.ApiScreen
-import com.skyd.rays.ui.screen.settings.api.apigrant.API_GRANT_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.api.apigrant.ApiGrantRoute
 import com.skyd.rays.ui.screen.settings.api.apigrant.ApiGrantScreen
-import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.appearance.AppearanceRoute
 import com.skyd.rays.ui.screen.settings.appearance.AppearanceScreen
-import com.skyd.rays.ui.screen.settings.appearance.style.SEARCH_STYLE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.appearance.style.SearchStyleRoute
 import com.skyd.rays.ui.screen.settings.appearance.style.SearchStyleScreen
-import com.skyd.rays.ui.screen.settings.data.DATA_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.data.DataRoute
 import com.skyd.rays.ui.screen.settings.data.DataScreen
-import com.skyd.rays.ui.screen.settings.data.cache.CACHE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.data.cache.CacheRoute
 import com.skyd.rays.ui.screen.settings.data.cache.CacheScreen
-import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.data.importexport.ImportExportRoute
 import com.skyd.rays.ui.screen.settings.data.importexport.ImportExportScreen
-import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WEBDAV_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WebDavRoute
 import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WebDavScreen
-import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.EXPORT_FILES_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.ExportFilesRoute
 import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.ExportFilesScreen
-import com.skyd.rays.ui.screen.settings.data.importexport.file.importfiles.IMPORT_FILES_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.data.importexport.file.importfiles.ImportFilesRoute
 import com.skyd.rays.ui.screen.settings.data.importexport.file.importfiles.ImportFilesScreen
-import com.skyd.rays.ui.screen.settings.imagesource.IMAGE_SOURCE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.imagesource.ImageSourceRoute
 import com.skyd.rays.ui.screen.settings.imagesource.ImageSourceScreen
-import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.MlRoute
 import com.skyd.rays.ui.screen.settings.ml.MlScreen
-import com.skyd.rays.ui.screen.settings.ml.classification.CLASSIFICATION_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.classification.ClassificationRoute
 import com.skyd.rays.ui.screen.settings.ml.classification.ClassificationScreen
-import com.skyd.rays.ui.screen.settings.ml.classification.model.CLASSIFICATION_MODEL_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.classification.model.ClassificationModelRoute
 import com.skyd.rays.ui.screen.settings.ml.classification.model.ClassificationModelScreen
-import com.skyd.rays.ui.screen.settings.ml.textrecognize.TEXT_RECOGNIZE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.textrecognize.TextRecognizeRoute
 import com.skyd.rays.ui.screen.settings.ml.textrecognize.TextRecognizeScreen
-import com.skyd.rays.ui.screen.settings.privacy.PRIVACY_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.privacy.PrivacyRoute
 import com.skyd.rays.ui.screen.settings.privacy.PrivacyScreen
-import com.skyd.rays.ui.screen.settings.privacy.blurstickers.BLUR_STICKERS_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.privacy.blurstickers.BlurStickersRoute
 import com.skyd.rays.ui.screen.settings.privacy.blurstickers.BlurStickersScreen
-import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.searchconfig.SearchConfigRoute
 import com.skyd.rays.ui.screen.settings.searchconfig.SearchConfigScreen
-import com.skyd.rays.ui.screen.settings.shareconfig.SHARE_CONFIG_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.shareconfig.ShareConfigRoute
 import com.skyd.rays.ui.screen.settings.shareconfig.ShareConfigScreen
-import com.skyd.rays.ui.screen.settings.shareconfig.autoshare.AUTO_SHARE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.shareconfig.autoshare.AutoShareRoute
 import com.skyd.rays.ui.screen.settings.shareconfig.autoshare.AutoShareScreen
-import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.URI_STRING_SHARE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.UriStringShareRoute
 import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.UriStringShareScreen
-import com.skyd.rays.ui.screen.stickerslist.STICKERS_LIST_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.stickerslist.StickersListRoute
 import com.skyd.rays.ui.screen.stickerslist.StickersListScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -120,6 +122,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlin.reflect.typeOf
 
 
 @AndroidEntryPoint
@@ -188,7 +191,7 @@ class MainActivity : BaseComposeActivity() {
         NavHost(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             navController = navController,
-            startDestination = MAIN_SCREEN_ROUTE,
+            startDestination = MainRoute,
             enterTransition = {
                 fadeIn(animationSpec = tween(220, delayMillis = 30)) + scaleIn(
                     animationSpec = tween(220, delayMillis = 30),
@@ -209,157 +212,81 @@ class MainActivity : BaseComposeActivity() {
                 )
             },
         ) {
-            composable(route = MAIN_SCREEN_ROUTE) {
-                MainScreen()
-            }
-            composable(
-                route = "$ADD_SCREEN_ROUTE?isEdit={isEdit}",
-                arguments = listOf(navArgument("isEdit") { defaultValue = false }),
-                deepLinks = listOf(
-                    navDeepLink {
-                        action = Intent.ACTION_SEND
-                        mimeType = "image/*"
-                    },
-                    navDeepLink {
-                        action = Intent.ACTION_SEND_MULTIPLE
-                        mimeType = "image/*"
-                    },
-                )
+            composable<MainRoute> { MainScreen() }
+            composable<AddRoute>(
+                typeMap = mapOf(typeOf<List<UriWithStickerUuidBean>>() to listType<UriWithStickerUuidBean>())
             ) {
-                val arguments = it.arguments
-                val externalUris: MutableList<UriWithStickerUuidBean> = if (arguments != null) {
-                    // stickers from external
-                    initIntent(
-                        BundleCompat.getParcelable(
-                            arguments,
-                            NavController.KEY_DEEP_LINK_INTENT,
-                            Intent::class.java,
-                        )
-                    )
-                } else mutableListOf()
-
-                if (externalUris.isNotEmpty()) {
-                    // stickers from external
-                    AddScreen(
-                        initStickers = externalUris,
-                        isEdit = false,
-                    )
-                } else {
-                    // stickers from self
-                    AddScreen(
-                        initStickers = arguments?.let { bundle ->
-                            BundleCompat.getParcelableArrayList(
-                                bundle, "stickers", UriWithStickerUuidBean::class.java,
+                val route = it.toRoute<AddRoute>()
+                AddScreen(
+                    initStickers = route.stickers.toMutableList(),
+                    isEdit = route.isEdit,
+                )
+            }
+            composable<AddDeepLinkRoute>(
+                deepLinks = listOf(Intent.ACTION_SEND, Intent.ACTION_SEND_MULTIPLE).map {
+                    navDeepLink {
+                        action = it
+                        mimeType = "image/*"
+                    }
+                },
+            ) {
+                AddScreen(
+                    initStickers = it.arguments?.let { arguments ->
+                        initIntent(
+                            BundleCompat.getParcelable(
+                                arguments,
+                                NavController.KEY_DEEP_LINK_INTENT,
+                                Intent::class.java,
                             )
-                        } ?: mutableListOf(),
-                        isEdit = it.arguments?.getBoolean("isEdit") == true,
-                    )
-                }
-            }
-            composable(route = SETTINGS_SCREEN_ROUTE) {
-                SettingsScreen()
-            }
-            composable(route = ML_SCREEN_ROUTE) {
-                MlScreen()
-            }
-            composable(route = CLASSIFICATION_SCREEN_ROUTE) {
-                ClassificationScreen()
-            }
-            composable(route = CLASSIFICATION_MODEL_SCREEN_ROUTE) {
-                ClassificationModelScreen()
-            }
-            composable(route = TEXT_RECOGNIZE_SCREEN_ROUTE) {
-                TextRecognizeScreen()
-            }
-            composable(route = SEARCH_CONFIG_SCREEN_ROUTE) {
-                SearchConfigScreen()
-            }
-            composable(route = APPEARANCE_SCREEN_ROUTE) {
-                AppearanceScreen()
-            }
-            composable(route = SEARCH_STYLE_SCREEN_ROUTE) {
-                SearchStyleScreen()
-            }
-            composable(route = ABOUT_SCREEN_ROUTE) {
-                AboutScreen()
-            }
-            composable(route = LICENSE_SCREEN_ROUTE) {
-                LicenseScreen()
-            }
-            composable(route = IMPORT_EXPORT_SCREEN_ROUTE) {
-                ImportExportScreen()
-            }
-            composable(route = WEBDAV_SCREEN_ROUTE) {
-                WebDavScreen()
-            }
-            composable(route = EXPORT_FILES_SCREEN_ROUTE) {
-                ExportFilesScreen(
-                    exportStickers = it.arguments?.getStringArrayList("exportStickers")
+                        )
+                    } ?: mutableListOf(),
+                    isEdit = false,
                 )
             }
-            composable(route = MERGE_STICKERS_SCREEN_ROUTE) {
-                MergeStickersScreenRoute(
-                    stickerUuids = it.arguments?.getStringArrayList(
-                        MERGE_STICKERS_SCREEN_STICKER_UUIDS_KEY
-                    )
-                )
+            composable<SettingsRoute> { SettingsScreen() }
+            composable<MlRoute> { MlScreen() }
+            composable<ClassificationRoute> { ClassificationScreen() }
+            composable<ClassificationModelRoute> { ClassificationModelScreen() }
+            composable<TextRecognizeRoute> { TextRecognizeScreen() }
+            composable<SearchConfigRoute> { SearchConfigScreen() }
+            composable<AppearanceRoute> { AppearanceScreen() }
+            composable<SearchStyleRoute> { SearchStyleScreen() }
+            composable<AboutRoute> { AboutScreen() }
+            composable<LicenseRoute> { LicenseScreen() }
+            composable<ImportExportRoute> { ImportExportScreen() }
+            composable<WebDavRoute> { WebDavScreen() }
+            composable<ExportFilesRoute> {
+                ExportFilesScreen(exportStickers = it.toRoute<ExportFilesRoute>().exportStickers)
             }
-            composable(route = IMPORT_FILES_SCREEN_ROUTE) {
-                ImportFilesScreen()
+            composable<MergeStickersRoute> {
+                MergeStickersScreenRoute(stickerUuids = it.toRoute<MergeStickersRoute>().stickerUuids)
             }
-            composable(route = DATA_SCREEN_ROUTE) {
-                DataScreen()
+            composable<ImportFilesRoute> { ImportFilesScreen() }
+            composable<DataRoute> { DataScreen() }
+            composable<ShareConfigRoute> { ShareConfigScreen() }
+            composable<UriStringShareRoute> { UriStringShareScreen() }
+            composable<StyleTransferRoute> { StyleTransferScreen() }
+            composable<SelfieSegmentationRoute> { SelfieSegmentationScreen() }
+            composable<ApiRoute> { ApiScreen() }
+            composable<ApiGrantRoute> { ApiGrantScreen() }
+            composable<AutoShareRoute> { AutoShareScreen() }
+            composable<PrivacyRoute> { PrivacyScreen() }
+            composable<DetailRoute> { DetailScreen(stickerUuid = it.toRoute<DetailRoute>().stickerUuid) }
+            composable<FullImageRoute>(
+                typeMap = mapOf(typeOf<WrappedUri>() to serializableType<WrappedUri>())
+            ) {
+                FullImageScreen(image = it.toRoute<FullImageRoute>().uri.image)
             }
-            composable(route = SHARE_CONFIG_SCREEN_ROUTE) {
-                ShareConfigScreen()
+            composable<StickersListRoute> { StickersListScreen(query = it.toRoute<StickersListRoute>().query) }
+            composable<SearchRoute> { SearchScreen() }
+            composable<ImageSearchRoute>(
+                typeMap = mapOf(typeOf<WrappedUriNullable>() to serializableType<WrappedUriNullable>())
+            ) {
+                ImageSearchScreen(baseImage = it.toRoute<ImageSearchRoute>().uri.image)
             }
-            composable(route = URI_STRING_SHARE_SCREEN_ROUTE) {
-                UriStringShareScreen()
-            }
-            composable(route = STYLE_TRANSFER_SCREEN_ROUTE) {
-                StyleTransferScreen()
-            }
-            composable(route = SELFIE_SEGMENTATION_SCREEN_ROUTE) {
-                SelfieSegmentationScreen()
-            }
-            composable(route = API_SCREEN_ROUTE) {
-                ApiScreen()
-            }
-            composable(route = API_GRANT_SCREEN_ROUTE) {
-                ApiGrantScreen()
-            }
-            composable(route = AUTO_SHARE_SCREEN_ROUTE) {
-                AutoShareScreen()
-            }
-            composable(route = PRIVACY_SCREEN_ROUTE) {
-                PrivacyScreen()
-            }
-            composable(route = "$DETAIL_SCREEN_ROUTE?stickerUuid={stickerUuid}") {
-                DetailScreen(stickerUuid = it.arguments?.getString("stickerUuid").orEmpty())
-            }
-            composable(route = "$FULL_IMAGE_SCREEN_ROUTE?$FULL_IMAGE_SCREEN_IMAGE_KEY={$FULL_IMAGE_SCREEN_IMAGE_KEY}") {
-                FullImageScreen(image = it.arguments?.getParcelable(FULL_IMAGE_SCREEN_IMAGE_KEY)!!)
-            }
-            composable(route = "$STICKERS_LIST_SCREEN_ROUTE?query={query}") {
-                StickersListScreen(query = it.arguments?.getString("query").orEmpty())
-            }
-            composable(route = SEARCH_SCREEN_ROUTE) {
-                SearchScreen()
-            }
-            composable(route = IMAGE_SEARCH_SCREEN_ROUTE) {
-                ImageSearchScreen(
-                    baseImage = it.arguments?.getParcelable(BASE_IMAGE_KEY)
-                )
-            }
-            composable(route = IMAGE_SOURCE_SCREEN_ROUTE) {
-                ImageSourceScreen()
-            }
-            composable(route = BLUR_STICKERS_SCREEN_ROUTE) {
-                BlurStickersScreen()
-            }
-            composable(route = CACHE_SCREEN_ROUTE) {
-                CacheScreen()
-            }
+            composable<ImageSourceRoute> { ImageSourceScreen() }
+            composable<BlurStickersRoute> { BlurStickersScreen() }
+            composable<CacheRoute> { CacheScreen() }
         }
 
         if (openUpdateDialog) {

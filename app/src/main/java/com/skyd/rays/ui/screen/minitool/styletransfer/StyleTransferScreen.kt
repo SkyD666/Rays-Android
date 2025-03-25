@@ -50,8 +50,11 @@ import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
 import com.skyd.rays.util.sendSticker
+import kotlinx.serialization.Serializable
 
-const val STYLE_TRANSFER_SCREEN_ROUTE = "styleTransferScreen"
+
+@Serializable
+data object StyleTransferRoute
 
 @Composable
 fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {

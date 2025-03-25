@@ -1,6 +1,7 @@
 package com.skyd.rays.ext
 
 import android.graphics.Typeface
+import android.net.Uri
 import android.text.Html
 import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
@@ -24,6 +25,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.em
+
+fun String.toEncodedUrl(allow: String? = ":/-![].,%?&="): String {
+    return Uri.encode(this, allow)
+}
+
+fun String.toDecodedUrl(): String {
+    return Uri.decode(this)
+}
 
 fun CharSequence.startWithBlank(): Boolean = matches("^\\s+.*".toRegex())
 

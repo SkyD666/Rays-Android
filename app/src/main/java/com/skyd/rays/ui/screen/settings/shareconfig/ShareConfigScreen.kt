@@ -27,12 +27,14 @@ import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.local.LocalCopyStickerToClipboardWhenSharing
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerExtName
-import com.skyd.rays.ui.screen.settings.shareconfig.autoshare.AUTO_SHARE_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.URI_STRING_SHARE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.shareconfig.autoshare.AutoShareRoute
+import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.UriStringShareRoute
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
 
-const val SHARE_CONFIG_SCREEN_ROUTE = "shareConfigScreen"
+@Serializable
+data object ShareConfigRoute
 
 @Composable
 fun ShareConfigScreen() {
@@ -93,7 +95,7 @@ fun ShareConfigScreen() {
                     painter = rememberVectorPainter(image = Icons.Outlined.Link),
                     text = stringResource(id = R.string.uri_string_share_screen_name),
                     descriptionText = stringResource(id = R.string.uri_string_share_screen_description),
-                    onClick = { navController.navigate(URI_STRING_SHARE_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(UriStringShareRoute) }
                 )
             }
             item {
@@ -101,7 +103,7 @@ fun ShareConfigScreen() {
                     painter = rememberVectorPainter(image = Icons.Outlined.MoveDown),
                     text = stringResource(id = R.string.auto_share_screen_name),
                     descriptionText = stringResource(id = R.string.auto_share_screen_description),
-                    onClick = { navController.navigate(AUTO_SHARE_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(AutoShareRoute) }
                 )
             }
         }

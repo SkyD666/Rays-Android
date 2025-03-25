@@ -45,9 +45,11 @@ import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.local.LocalApiGrant
+import kotlinx.serialization.Serializable
 
 
-const val API_GRANT_SCREEN_ROUTE = "apiGrantScreen"
+@Serializable
+data object ApiGrantRoute
 
 @Composable
 fun ApiGrantScreen(viewModel: ApiGrantViewModel = hiltViewModel()) {

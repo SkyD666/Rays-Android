@@ -27,9 +27,12 @@ import com.skyd.rays.ui.component.TipSettingsItem
 import com.skyd.rays.ui.local.LocalClassificationThreshold
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalUseClassificationInAdd
-import com.skyd.rays.ui.screen.settings.ml.classification.model.CLASSIFICATION_MODEL_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.classification.model.ClassificationModelRoute
+import kotlinx.serialization.Serializable
 
-const val CLASSIFICATION_SCREEN_ROUTE = "classificationScreen"
+
+@Serializable
+data object ClassificationRoute
 
 @Composable
 fun ClassificationScreen() {
@@ -60,7 +63,7 @@ fun ClassificationScreen() {
                     descriptionText = stringResource(
                         R.string.classification_model_screen_description,
                     ),
-                    onClick = { navController.navigate(CLASSIFICATION_MODEL_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(ClassificationModelRoute) }
                 )
             }
             item { ClassificationThresholdSettingItem() }

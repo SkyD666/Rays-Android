@@ -46,9 +46,11 @@ import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.local.LocalBlurSticker
 import com.skyd.rays.ui.local.LocalBlurStickerKeywords
 import com.skyd.rays.ui.local.LocalBlurStickerRadius
+import kotlinx.serialization.Serializable
 
 
-const val BLUR_STICKERS_SCREEN_ROUTE = "blurStickersScreen"
+@Serializable
+data object BlurStickersRoute
 
 @Composable
 fun BlurStickersScreen() {

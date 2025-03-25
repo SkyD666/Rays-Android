@@ -66,9 +66,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.skyd.rays.R
-import com.skyd.rays.config.PODAURA_URL
 import com.skyd.rays.config.GITHUB_REPO
 import com.skyd.rays.config.NIGHT_SCREEN_URL
+import com.skyd.rays.config.PODAURA_URL
 import com.skyd.rays.config.RACA_ANDROID_URL
 import com.skyd.rays.config.WEBLATE_URL
 import com.skyd.rays.ext.isCompact
@@ -84,14 +84,17 @@ import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.component.shape.SquircleShape
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.about.license.LICENSE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.about.license.LicenseRoute
 import com.skyd.rays.ui.screen.about.update.UpdateDialog
 import com.skyd.rays.util.CommonUtil
 import com.skyd.rays.util.CommonUtil.openBrowser
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import java.util.Calendar
 
-const val ABOUT_SCREEN_ROUTE = "aboutScreen"
+
+@Serializable
+data object AboutRoute
 
 @Composable
 fun AboutScreen() {
@@ -114,7 +117,7 @@ fun AboutScreen() {
                     RaysIconButton(
                         imageVector = Icons.Outlined.Balance,
                         contentDescription = stringResource(id = R.string.license_screen_name),
-                        onClick = { navController.navigate(LICENSE_SCREEN_ROUTE) }
+                        onClick = { navController.navigate(LicenseRoute) }
                     )
                     RaysIconButton(
                         onClick = { openUpdateDialog = true },

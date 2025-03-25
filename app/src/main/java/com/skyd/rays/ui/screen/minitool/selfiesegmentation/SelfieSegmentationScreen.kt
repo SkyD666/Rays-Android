@@ -65,8 +65,11 @@ import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
 import com.skyd.rays.util.sendSticker
+import kotlinx.serialization.Serializable
 
-const val SELFIE_SEGMENTATION_SCREEN_ROUTE = "selfieSegmentationScreen"
+
+@Serializable
+data object SelfieSegmentationRoute
 
 @Composable
 fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewModel()) {

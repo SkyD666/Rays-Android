@@ -39,10 +39,10 @@ import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.component.showToast
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.add.openAddScreen
-import com.skyd.rays.ui.screen.mergestickers.openMergeStickersScreen
-import com.skyd.rays.ui.screen.search.imagesearch.openImageSearchScreen
-import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.openExportFilesScreen
+import com.skyd.rays.ui.screen.add.AddRoute
+import com.skyd.rays.ui.screen.mergestickers.MergeStickersRoute
+import com.skyd.rays.ui.screen.search.imagesearch.ImageSearchRoute
+import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.ExportFilesRoute
 import com.skyd.rays.util.stickerUuidToUri
 
 @Composable
@@ -79,15 +79,16 @@ fun MultiSelectActionBar(
             @Composable {
                 RaysIconButton(
                     onClick = {
-                        openAddScreen(
-                            navController = navController,
-                            stickers = currentSelectedStickers.map {
-                                UriWithStickerUuidBean(
-                                    uri = stickerUuidToUri(it),
-                                    stickerUuid = it,
-                                )
-                            },
-                            isEdit = true
+                        navController.navigate(
+                            AddRoute(
+                                stickers = currentSelectedStickers.map {
+                                    UriWithStickerUuidBean(
+                                        uri = stickerUuidToUri(it),
+                                        stickerUuid = it,
+                                    )
+                                },
+                                isEdit = true,
+                            )
                         )
                         onRemoveSelectedStickers(currentSelectedStickers)
                     },
@@ -107,10 +108,7 @@ fun MultiSelectActionBar(
             @Composable {
                 RaysIconButton(
                     onClick = {
-                        openExportFilesScreen(
-                            navController = navController,
-                            exportStickers = currentSelectedStickers,
-                        )
+                        navController.navigate(ExportFilesRoute(exportStickers = currentSelectedStickers.toList()))
                         onRemoveSelectedStickers(currentSelectedStickers)
                     },
                     enabled = currentSelectedStickers.isNotEmpty(),
@@ -130,7 +128,7 @@ fun MultiSelectActionBar(
                 RaysIconButton(
                     onClick = {
                         currentSelectedStickers.firstOrNull()?.let {
-                            openImageSearchScreen(navController, stickerUuidToUri(it))
+                            navController.navigate(ImageSearchRoute(baseImage = stickerUuidToUri(it)))
                         }
                         onRemoveSelectedStickers(currentSelectedStickers)
                     },
@@ -142,10 +140,7 @@ fun MultiSelectActionBar(
             @Composable {
                 RaysIconButton(
                     onClick = {
-                        openMergeStickersScreen(
-                            navController = navController,
-                            stickerUuids = currentSelectedStickers
-                        )
+                        navController.navigate(MergeStickersRoute(stickerUuids = currentSelectedStickers.toList()))
                         onRemoveSelectedStickers(currentSelectedStickers)
                     },
                     enabled = currentSelectedStickers.size > 1,

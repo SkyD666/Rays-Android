@@ -54,11 +54,14 @@ import com.skyd.rays.ui.component.shape.CloverShape
 import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.component.shape.SquircleShape
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.screen.about.ABOUT_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.SETTINGS_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.about.AboutRoute
+import com.skyd.rays.ui.screen.settings.SettingsRoute
+import com.skyd.rays.ui.screen.settings.data.importexport.ImportExportRoute
+import kotlinx.serialization.Serializable
 
-const val MORE_SCREEN_ROUTE = "moreScreen"
+
+@Serializable
+data object MoreRoute
 
 @Composable
 fun MoreScreen() {
@@ -174,7 +177,7 @@ private fun getMoreList(
             iconTint = colorScheme.onPrimary,
             shape = SquircleShape,
             shapeColor = colorScheme.primary,
-            action = { navController.navigate(IMPORT_EXPORT_SCREEN_ROUTE) }
+            action = { navController.navigate(ImportExportRoute) }
         ),
         More1Bean(
             title = context.getString(R.string.settings),
@@ -182,7 +185,7 @@ private fun getMoreList(
             iconTint = colorScheme.onSecondary,
             shape = CloverShape,
             shapeColor = colorScheme.secondary,
-            action = { navController.navigate(SETTINGS_SCREEN_ROUTE) }
+            action = { navController.navigate(SettingsRoute) }
         ),
         More1Bean(
             title = context.getString(R.string.about),
@@ -190,7 +193,7 @@ private fun getMoreList(
             iconTint = colorScheme.onTertiary,
             shape = CurlyCornerShape(amp = with(density) { 2.dp.toPx() }, count = 10),
             shapeColor = colorScheme.tertiary,
-            action = { navController.navigate(ABOUT_SCREEN_ROUTE) }
+            action = { navController.navigate(AboutRoute) }
         )
     )
 }

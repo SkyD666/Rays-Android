@@ -41,14 +41,17 @@ import androidx.navigation.compose.rememberNavController
 import com.skyd.rays.R
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.home.HOME_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.home.HomeRoute
 import com.skyd.rays.ui.screen.home.HomeScreen
-import com.skyd.rays.ui.screen.minitool.MINI_TOOL_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.minitool.MiniToolRoute
 import com.skyd.rays.ui.screen.minitool.MiniToolScreen
-import com.skyd.rays.ui.screen.more.MORE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.more.MoreRoute
 import com.skyd.rays.ui.screen.more.MoreScreen
+import kotlinx.serialization.Serializable
 
-const val MAIN_SCREEN_ROUTE = "mainScreen"
+
+@Serializable
+data object MainRoute
 
 @Composable
 fun MainScreen() {
@@ -83,16 +86,16 @@ fun MainScreen() {
             }
             NavHost(
                 navController = mainNavController,
-                startDestination = HOME_SCREEN_ROUTE,
+                startDestination = HomeRoute,
                 modifier = Modifier.weight(1f),
                 enterTransition = { fadeIn(animationSpec = tween(170)) },
                 exitTransition = { fadeOut(animationSpec = tween(170)) },
                 popEnterTransition = { fadeIn(animationSpec = tween(170)) },
                 popExitTransition = { fadeOut(animationSpec = tween(170)) },
             ) {
-                composable(HOME_SCREEN_ROUTE) { HomeScreen() }
-                composable(MINI_TOOL_SCREEN_ROUTE) { MiniToolScreen() }
-                composable(MORE_SCREEN_ROUTE) { MoreScreen() }
+                composable<HomeRoute> { HomeScreen() }
+                composable<MiniToolRoute> { MiniToolScreen() }
+                composable<MoreRoute> { MoreScreen() }
             }
         }
     }
@@ -101,9 +104,9 @@ fun MainScreen() {
 @Composable
 private fun NavigationBarOrRail(navController: NavController) {
     val items = listOf(
-        stringResource(R.string.home_screen_name) to HOME_SCREEN_ROUTE,
-        stringResource(R.string.mini_tool_screen_name) to MINI_TOOL_SCREEN_ROUTE,
-        stringResource(R.string.more_screen_name) to MORE_SCREEN_ROUTE
+        stringResource(R.string.home_screen_name) to HomeRoute,
+        stringResource(R.string.mini_tool_screen_name) to MiniToolRoute,
+        stringResource(R.string.more_screen_name) to MoreRoute
     )
     val icons = remember {
         mapOf(

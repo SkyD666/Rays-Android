@@ -1,6 +1,5 @@
 package com.skyd.rays.ui.screen.mergestickers
 
-import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -54,11 +53,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
@@ -71,27 +68,17 @@ import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.screen.fullimage.openFullImageScreen
+import com.skyd.rays.ui.screen.fullimage.FullImageRoute
 import com.skyd.rays.util.stickerUuidToUri
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
-const val MERGE_STICKERS_SCREEN_ROUTE = "mergeStickersScreen"
-const val MERGE_STICKERS_SCREEN_STICKER_UUIDS_KEY = "stickerUuids"
 
-fun openMergeStickersScreen(
-    navController: NavHostController,
-    stickerUuids: Collection<String>,
-) {
-    navController.navigate(
-        MERGE_STICKERS_SCREEN_ROUTE,
-        Bundle().apply {
-            putStringArrayList(MERGE_STICKERS_SCREEN_STICKER_UUIDS_KEY, ArrayList(stickerUuids))
-        }
-    )
-}
+@Serializable
+data class MergeStickersRoute(val stickerUuids: List<String>)
 
 @Composable
-fun MergeStickersScreenRoute(stickerUuids: List<String>?) {
+fun MergeStickersScreenRoute(stickerUuids: List<String>) {
     val context = LocalContext.current
     val navController = LocalNavController.current
     var dialogOpened by rememberSaveable { mutableStateOf(false) }
@@ -99,7 +86,7 @@ fun MergeStickersScreenRoute(stickerUuids: List<String>?) {
     var onDismiss = {}
     LaunchedEffect(Unit) {
         if (dialogOpened) return@LaunchedEffect
-        if (stickerUuids.isNullOrEmpty()) {
+        if (stickerUuids.isEmpty()) {
             openDialog = context.getString(R.string.merge_stickers_screen_empty_sticker_list)
             onDismiss = { navController.popBackStackWithLifecycle() }
         } else if (stickerUuids.size > 20) {
@@ -107,7 +94,7 @@ fun MergeStickersScreenRoute(stickerUuids: List<String>?) {
         }
         dialogOpened = true
     }
-    if (!stickerUuids.isNullOrEmpty()) {
+    if (stickerUuids.isNotEmpty()) {
         if (stickerUuids.size > 20) {
             MergeStickersScreen(stickerUuids.subList(0, 20))
         } else {
@@ -340,10 +327,7 @@ fun StickerImages(
                         RaysIconButton(
                             modifier = Modifier.align(Alignment.TopEnd),
                             onClick = {
-                                openFullImageScreen(
-                                    navController = navController,
-                                    image = stickerUuidToUri(item.sticker.uuid),
-                                )
+                                navController.navigate(FullImageRoute(image = stickerUuidToUri(item.sticker.uuid)))
                             },
                             imageVector = Icons.Outlined.ZoomOutMap,
                         )

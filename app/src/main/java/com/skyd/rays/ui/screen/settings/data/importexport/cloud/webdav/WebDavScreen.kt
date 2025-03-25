@@ -70,8 +70,11 @@ import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalWebDavServer
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
-const val WEBDAV_SCREEN_ROUTE = "webDavScreen"
+
+@Serializable
+data object WebDavRoute
 
 private const val WEBDAV_ACCOUNT_KEY = "webDavAccount"
 private const val WEBDAV_PASSWORD_KEY = "webDavPassword"

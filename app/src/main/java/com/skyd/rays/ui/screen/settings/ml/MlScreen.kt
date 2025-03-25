@@ -18,11 +18,13 @@ import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.screen.settings.ml.classification.CLASSIFICATION_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.ml.textrecognize.TEXT_RECOGNIZE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.ml.classification.ClassificationRoute
+import com.skyd.rays.ui.screen.settings.ml.textrecognize.TextRecognizeRoute
+import kotlinx.serialization.Serializable
 
 
-const val ML_SCREEN_ROUTE = "mlScreen"
+@Serializable
+data object MlRoute
 
 @Composable
 fun MlScreen() {
@@ -49,7 +51,7 @@ fun MlScreen() {
                     painter = rememberVectorPainter(image = Icons.Outlined.Sell),
                     text = stringResource(id = R.string.classification_screen_name),
                     descriptionText = stringResource(R.string.classification_screen_description),
-                    onClick = { navController.navigate(CLASSIFICATION_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(ClassificationRoute) }
                 )
             }
             item {
@@ -57,7 +59,7 @@ fun MlScreen() {
                     painter = rememberVectorPainter(image = Icons.Outlined.TextFields),
                     text = stringResource(id = R.string.text_recognize_screen_name),
                     descriptionText = stringResource(R.string.text_recognize_screen_description),
-                    onClick = { navController.navigate(TEXT_RECOGNIZE_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(TextRecognizeRoute) }
                 )
             }
         }

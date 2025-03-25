@@ -1,6 +1,5 @@
 package com.skyd.rays.ui.screen.detail
 
-import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -64,12 +63,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ext.toDateTimeString
@@ -91,29 +88,20 @@ import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.add.openAddScreen
-import com.skyd.rays.ui.screen.fullimage.openFullImageScreen
-import com.skyd.rays.ui.screen.search.imagesearch.openImageSearchScreen
-import com.skyd.rays.ui.screen.stickerslist.openStickersListScreen
+import com.skyd.rays.ui.screen.add.AddRoute
+import com.skyd.rays.ui.screen.fullimage.FullImageRoute
+import com.skyd.rays.ui.screen.search.imagesearch.ImageSearchRoute
+import com.skyd.rays.ui.screen.stickerslist.StickersListRoute
 import com.skyd.rays.util.copyStickerToClipboard
 import com.skyd.rays.util.sendStickerByUuid
 import com.skyd.rays.util.stickerUuidToUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
-const val DETAIL_SCREEN_ROUTE = "detailScreen"
 
-fun openDetailScreen(
-    navController: NavHostController,
-    stickerUuid: String
-) {
-    navController.navigate(
-        DETAIL_SCREEN_ROUTE,
-        Bundle().apply {
-            putString("stickerUuid", stickerUuid)
-        }
-    )
-}
+@Serializable
+data class DetailRoute(val stickerUuid: String)
 
 @Composable
 fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel()) {
@@ -141,15 +129,16 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
         floatingActionButton = {
             DetailScreenFloatingActionButton(
                 onClick = {
-                    openAddScreen(
-                        navController = navController,
-                        stickers = listOf(
-                            UriWithStickerUuidBean(
-                                uri = stickerUuidToUri(stickerUuid),
-                                stickerUuid = stickerUuid,
-                            )
-                        ),
-                        isEdit = true
+                    navController.navigate(
+                        AddRoute(
+                            stickers = listOf(
+                                UriWithStickerUuidBean(
+                                    uri = stickerUuidToUri(stickerUuid),
+                                    stickerUuid = stickerUuid,
+                                )
+                            ),
+                            isEdit = true,
+                        )
                     )
                 },
                 visible = uiState.stickerDetailState is StickerDetailState.Success,
@@ -216,17 +205,19 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                         onFullImageClick = {
                             val state = uiState.stickerDetailState as? StickerDetailState.Success
                                 ?: return@DetailMenu
-                            openFullImageScreen(
-                                navController = navController,
-                                image = stickerUuidToUri(state.stickerWithTags.sticker.uuid)
+                            navController.navigate(
+                                FullImageRoute(image = stickerUuidToUri(state.stickerWithTags.sticker.uuid))
                             )
                         },
                         onStickerSearchClick = {
                             val state = uiState.stickerDetailState as? StickerDetailState.Success
                                 ?: return@DetailMenu
-                            openImageSearchScreen(
-                                navController = navController,
-                                baseImage = stickerUuidToUri(state.stickerWithTags.sticker.uuid),
+                            navController.navigate(
+                                ImageSearchRoute(
+                                    baseImage = stickerUuidToUri(
+                                        state.stickerWithTags.sticker.uuid
+                                    )
+                                )
                             )
                         },
                         onStickerScaleClick = { openStickerScaleSheet = true },
@@ -351,22 +342,22 @@ fun MainCard(
                         )
                     },
                     onDoubleClick = {
-                        openAddScreen(
-                            navController = navController,
-                            stickers = listOf(
-                                UriWithStickerUuidBean(
-                                    uri = stickerUuidToUri(stickerBean.uuid),
-                                    stickerUuid = stickerBean.uuid,
-                                )
-                            ),
-                            isEdit = true,
+                        navController.navigate(
+                            AddRoute(
+                                stickers = listOf(
+                                    UriWithStickerUuidBean(
+                                        uri = stickerUuidToUri(stickerBean.uuid),
+                                        stickerUuid = stickerBean.uuid,
+                                    )
+                                ),
+                                isEdit = true,
+                            )
                         )
                     },
                     onClick = {
                         if (blur) blur = false else {
-                            openFullImageScreen(
-                                navController = navController,
-                                image = stickerUuidToUri(stickerBean.uuid)
+                            navController.navigate(
+                                FullImageRoute(image = stickerUuidToUri(stickerBean.uuid))
                             )
                         }
                     }
@@ -408,10 +399,7 @@ fun MainCard(
                         val interactionSource = remember { MutableInteractionSource() }
                         AssistChip(
                             onClick = {
-                                openStickersListScreen(
-                                    navController = navController,
-                                    query = tags[index].tag,
-                                )
+                                navController.navigate(StickersListRoute(query = tags[index].tag))
                             },
                             label = { Text(tags[index].tag) },
                             interactionSource = interactionSource,

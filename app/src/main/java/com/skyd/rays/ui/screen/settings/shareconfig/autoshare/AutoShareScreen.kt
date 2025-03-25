@@ -39,8 +39,11 @@ import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.local.LocalAutoShareIgnoreStrategy
 import com.skyd.rays.ui.service.isAccessibilityServiceRunning
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
-const val AUTO_SHARE_SCREEN_ROUTE = "autoShareScreen"
+
+@Serializable
+data object AutoShareRoute
 
 @Composable
 fun AutoShareScreen() {

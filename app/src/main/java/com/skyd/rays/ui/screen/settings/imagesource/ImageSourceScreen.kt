@@ -31,9 +31,11 @@ import com.skyd.rays.ui.component.RadioTextItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalPickImageMethod
+import kotlinx.serialization.Serializable
 
 
-const val IMAGE_SOURCE_SCREEN_ROUTE = "imageSourceScreen"
+@Serializable
+data object ImageSourceRoute
 
 @Composable
 fun ImageSourceScreen() {

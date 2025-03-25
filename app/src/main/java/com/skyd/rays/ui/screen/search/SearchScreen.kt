@@ -89,12 +89,15 @@ import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.detail.openDetailScreen
+import com.skyd.rays.ui.screen.detail.DetailRoute
 import com.skyd.rays.ui.screen.search.multiselect.MultiSelectActionBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
-const val SEARCH_SCREEN_ROUTE = "searchScreen"
+
+@Serializable
+data object SearchRoute
 
 @Composable
 fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
@@ -208,12 +211,7 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                                 dispatch(SearchIntent.RemoveSelectedStickers(listOf(data.sticker.uuid)))
                             }
                         },
-                        onClick = { data ->
-                            openDetailScreen(
-                                navController = navController,
-                                stickerUuid = data.sticker.uuid
-                            )
-                        },
+                        onClick = { navController.navigate(DetailRoute(stickerUuid = it.sticker.uuid)) },
                         multiSelect = multiSelect,
                         onMultiSelectChanged = {
                             multiSelect = it

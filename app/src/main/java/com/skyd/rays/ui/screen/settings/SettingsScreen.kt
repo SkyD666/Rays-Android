@@ -23,15 +23,18 @@ import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.screen.settings.api.API_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.appearance.APPEARANCE_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.data.DATA_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.ml.ML_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.privacy.PRIVACY_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.searchconfig.SEARCH_CONFIG_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.shareconfig.SHARE_CONFIG_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.api.ApiRoute
+import com.skyd.rays.ui.screen.settings.appearance.AppearanceRoute
+import com.skyd.rays.ui.screen.settings.data.DataRoute
+import com.skyd.rays.ui.screen.settings.ml.MlRoute
+import com.skyd.rays.ui.screen.settings.privacy.PrivacyRoute
+import com.skyd.rays.ui.screen.settings.searchconfig.SearchConfigRoute
+import com.skyd.rays.ui.screen.settings.shareconfig.ShareConfigRoute
+import kotlinx.serialization.Serializable
 
-const val SETTINGS_SCREEN_ROUTE = "settingsScreen"
+
+@Serializable
+data object SettingsRoute
 
 @Composable
 fun SettingsScreen() {
@@ -57,7 +60,7 @@ fun SettingsScreen() {
                     painter = rememberVectorPainter(Icons.Outlined.Palette),
                     text = stringResource(id = R.string.appearance_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_appearance_description),
-                    onClick = { navController.navigate(APPEARANCE_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(AppearanceRoute) }
                 )
             }
             item {
@@ -65,7 +68,7 @@ fun SettingsScreen() {
                     painter = rememberVectorPainter(Icons.AutoMirrored.Outlined.ManageSearch),
                     text = stringResource(id = R.string.search_config_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_search_description),
-                    onClick = { navController.navigate(SEARCH_CONFIG_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(SearchConfigRoute) }
                 )
             }
             item {
@@ -73,7 +76,7 @@ fun SettingsScreen() {
                     painter = rememberVectorPainter(Icons.Outlined.Share),
                     text = stringResource(id = R.string.share_config_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_share_config_description),
-                    onClick = { navController.navigate(SHARE_CONFIG_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(ShareConfigRoute) }
                 )
             }
             item {
@@ -81,7 +84,7 @@ fun SettingsScreen() {
                     painter = rememberVectorPainter(Icons.Outlined.Dataset),
                     text = stringResource(id = R.string.data_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_data_description),
-                    onClick = { navController.navigate(DATA_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(DataRoute) }
                 )
             }
             item {
@@ -89,7 +92,7 @@ fun SettingsScreen() {
                     painter = rememberVectorPainter(Icons.Outlined.SmartToy),
                     text = stringResource(id = R.string.ml_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_ml_description),
-                    onClick = { navController.navigate(ML_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(MlRoute) }
                 )
             }
             item {
@@ -97,7 +100,7 @@ fun SettingsScreen() {
                     painter = rememberVectorPainter(Icons.Outlined.AdminPanelSettings),
                     text = stringResource(id = R.string.privacy_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_privacy_description),
-                    onClick = { navController.navigate(PRIVACY_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(PrivacyRoute) }
                 )
             }
             item {
@@ -105,7 +108,7 @@ fun SettingsScreen() {
                     painter = rememberVectorPainter(Icons.Outlined.Api),
                     text = stringResource(id = R.string.api_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_api_description),
-                    onClick = { navController.navigate(API_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(ApiRoute) }
                 )
             }
         }

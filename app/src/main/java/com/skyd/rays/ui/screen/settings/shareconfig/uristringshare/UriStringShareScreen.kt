@@ -45,9 +45,11 @@ import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.local.LocalUriStringShare
+import kotlinx.serialization.Serializable
 
 
-const val URI_STRING_SHARE_SCREEN_ROUTE = "uriStringShareScreen"
+@Serializable
+data object UriStringShareRoute
 
 @Composable
 fun UriStringShareScreen(viewModel: UriStringShareViewModel = hiltViewModel()) {

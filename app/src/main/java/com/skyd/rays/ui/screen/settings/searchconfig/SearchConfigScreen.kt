@@ -58,8 +58,11 @@ import com.skyd.rays.ui.local.LocalAddScreenImageSearch
 import com.skyd.rays.ui.local.LocalImageSearchMaxResultCount
 import com.skyd.rays.ui.local.LocalIntersectSearchBySpace
 import com.skyd.rays.ui.local.LocalUseRegexSearch
+import kotlinx.serialization.Serializable
 
-const val SEARCH_CONFIG_SCREEN_ROUTE = "searchConfigScreen"
+
+@Serializable
+data object SearchConfigRoute
 
 @Composable
 fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {

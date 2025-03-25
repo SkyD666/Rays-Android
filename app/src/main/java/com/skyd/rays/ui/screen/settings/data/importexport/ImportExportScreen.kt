@@ -20,11 +20,14 @@ import com.skyd.rays.ui.component.CategorySettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WEBDAV_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.openExportFilesScreen
-import com.skyd.rays.ui.screen.settings.data.importexport.file.importfiles.IMPORT_FILES_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WebDavRoute
+import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.ExportFilesRoute
+import com.skyd.rays.ui.screen.settings.data.importexport.file.importfiles.ImportFilesRoute
+import kotlinx.serialization.Serializable
 
-const val IMPORT_EXPORT_SCREEN_ROUTE = "importExportScreen"
+
+@Serializable
+data object ImportExportRoute
 
 @Composable
 fun ImportExportScreen() {
@@ -56,7 +59,7 @@ fun ImportExportScreen() {
                     painter = rememberVectorPainter(image = Icons.Outlined.CloudSync),
                     text = stringResource(id = R.string.webdav_screen_name),
                     descriptionText = stringResource(id = R.string.import_export_screen_webdav_description),
-                    onClick = { navController.navigate(WEBDAV_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(WebDavRoute) }
                 )
             }
             item {
@@ -69,7 +72,7 @@ fun ImportExportScreen() {
                     painter = rememberVectorPainter(image = Icons.Outlined.Download),
                     text = stringResource(id = R.string.import_files_screen_name),
                     descriptionText = stringResource(id = R.string.import_files_screen_description),
-                    onClick = { navController.navigate(IMPORT_FILES_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(ImportFilesRoute) }
                 )
             }
             item {
@@ -77,7 +80,7 @@ fun ImportExportScreen() {
                     painter = rememberVectorPainter(image = Icons.Outlined.Upload),
                     text = stringResource(id = R.string.export_files_screen_name),
                     descriptionText = stringResource(id = R.string.export_files_screen_description),
-                    onClick = { openExportFilesScreen(navController = navController) }
+                    onClick = { navController.navigate(ExportFilesRoute(exportStickers = null)) }
                 )
             }
         }

@@ -1,7 +1,6 @@
 package com.skyd.rays.ui.screen.search.imagesearch
 
 import android.net.Uri
-import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
@@ -45,12 +44,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
 import com.skyd.rays.model.preference.search.imagesearch.ImageSearchMaxResultCountPreference
 import com.skyd.rays.ui.component.ImageInput
@@ -62,22 +59,18 @@ import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.local.LocalImageSearchMaxResultCount
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.detail.openDetailScreen
+import com.skyd.rays.ui.screen.detail.DetailRoute
+import com.skyd.rays.ui.screen.fullimage.WrappedUriNullable
 import com.skyd.rays.ui.screen.search.multiselect.MultiSelectActionBar
 import com.skyd.rays.ui.screen.stickerslist.StickerList
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
+import kotlinx.serialization.Serializable
 
-const val IMAGE_SEARCH_SCREEN_ROUTE = "imageSearchScreen"
-const val BASE_IMAGE_KEY = "baseImage"
 
-fun openImageSearchScreen(navController: NavHostController, baseImage: Uri?) {
-    navController.navigate(
-        IMAGE_SEARCH_SCREEN_ROUTE,
-        Bundle().apply {
-            putParcelable(BASE_IMAGE_KEY, baseImage)
-        }
-    )
+@Serializable
+data class ImageSearchRoute(val uri: WrappedUriNullable) {
+    constructor(baseImage: Uri?) : this(WrappedUriNullable(image = baseImage))
 }
 
 @Composable
@@ -169,12 +162,7 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
                             dispatch(ImageSearchIntent.RemoveSelectedStickers(listOf(data.sticker.uuid)))
                         }
                     },
-                    onClick = { data ->
-                        openDetailScreen(
-                            navController = navController,
-                            stickerUuid = data.sticker.uuid
-                        )
-                    },
+                    onClick = { navController.navigate(DetailRoute(stickerUuid = it.sticker.uuid)) },
                 )
             }
         }

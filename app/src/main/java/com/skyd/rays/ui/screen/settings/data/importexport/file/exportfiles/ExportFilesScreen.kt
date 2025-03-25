@@ -2,7 +2,6 @@ package com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,11 +35,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.safeLaunch
 import com.skyd.rays.ext.showSnackbar
@@ -53,23 +50,11 @@ import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.dialog.MultiChoiceDialog
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
+import kotlinx.serialization.Serializable
 
 
-const val EXPORT_FILES_SCREEN_ROUTE = "exportFilesScreen"
-
-fun openExportFilesScreen(
-    navController: NavHostController,
-    exportStickers: Collection<String>? = null,
-) {
-    navController.navigate(
-        EXPORT_FILES_SCREEN_ROUTE,
-        Bundle().apply {
-            if (exportStickers != null) {
-                putStringArrayList("exportStickers", ArrayList(exportStickers))
-            }
-        }
-    )
-}
+@Serializable
+data class ExportFilesRoute(val exportStickers: List<String>?)
 
 @Composable
 fun ExportFilesScreen(

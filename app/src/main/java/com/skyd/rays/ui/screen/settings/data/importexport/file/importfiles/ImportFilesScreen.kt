@@ -53,8 +53,11 @@ import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.TipSettingsItem
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
+import kotlinx.serialization.Serializable
 
-const val IMPORT_FILES_SCREEN_ROUTE = "importFilesScreen"
+
+@Serializable
+data object ImportFilesRoute
 
 @Composable
 fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {

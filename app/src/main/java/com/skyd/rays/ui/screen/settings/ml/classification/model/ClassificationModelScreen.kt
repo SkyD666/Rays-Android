@@ -49,9 +49,11 @@ import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalStickerClassificationModel
+import kotlinx.serialization.Serializable
 
 
-const val CLASSIFICATION_MODEL_SCREEN_ROUTE = "classificationModelScreen"
+@Serializable
+data object ClassificationModelRoute
 
 @Composable
 fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltViewModel()) {

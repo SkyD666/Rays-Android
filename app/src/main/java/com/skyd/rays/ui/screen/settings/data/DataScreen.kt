@@ -36,11 +36,14 @@ import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.screen.settings.data.cache.CACHE_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.data.importexport.IMPORT_EXPORT_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.settings.imagesource.IMAGE_SOURCE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.data.cache.CacheRoute
+import com.skyd.rays.ui.screen.settings.data.importexport.ImportExportRoute
+import com.skyd.rays.ui.screen.settings.imagesource.ImageSourceRoute
+import kotlinx.serialization.Serializable
 
-const val DATA_SCREEN_ROUTE = "dataScreen"
+
+@Serializable
+data object DataRoute
 
 @Composable
 fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
@@ -74,7 +77,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                     painter = rememberVectorPainter(Icons.Outlined.Source),
                     text = stringResource(id = R.string.image_source_screen_name),
                     descriptionText = stringResource(id = R.string.setting_screen_image_source_description),
-                    onClick = { navController.navigate(IMAGE_SOURCE_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(ImageSourceRoute) }
                 )
             }
             item {
@@ -82,7 +85,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                     painter = rememberVectorPainter(image = Icons.Outlined.ImportExport),
                     text = stringResource(id = R.string.import_export_screen_name),
                     descriptionText = stringResource(id = R.string.data_screen_import_export_description),
-                    onClick = { navController.navigate(IMPORT_EXPORT_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(ImportExportRoute) }
                 )
             }
             item {
@@ -90,7 +93,7 @@ fun DataScreen(viewModel: DataViewModel = hiltViewModel()) {
                     painter = rememberVectorPainter(image = Icons.Outlined.Cached),
                     text = stringResource(id = R.string.cache_screen_name),
                     descriptionText = stringResource(id = R.string.cache_screen_description),
-                    onClick = { navController.navigate(CACHE_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(CacheRoute) }
                 )
             }
             item {

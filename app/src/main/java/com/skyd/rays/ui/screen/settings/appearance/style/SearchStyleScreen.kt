@@ -29,8 +29,11 @@ import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.local.LocalShowLastQuery
 import com.skyd.rays.ui.local.LocalShowPopularTags
+import kotlinx.serialization.Serializable
 
-const val SEARCH_STYLE_SCREEN_ROUTE = "searchStyleScreen"
+
+@Serializable
+data object SearchStyleRoute
 
 @Composable
 fun SearchStyleScreen() {

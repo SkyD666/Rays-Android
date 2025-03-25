@@ -27,8 +27,11 @@ import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.dialog.WaitingDialog
+import kotlinx.serialization.Serializable
 
-const val CACHE_SCREEN_ROUTE = "cacheScreen"
+
+@Serializable
+data object CacheRoute
 
 @Composable
 fun CacheScreen(viewModel: CacheViewModel = hiltViewModel()) {

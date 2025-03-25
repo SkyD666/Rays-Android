@@ -17,9 +17,12 @@ import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.screen.settings.api.apigrant.API_GRANT_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.api.apigrant.ApiGrantRoute
+import kotlinx.serialization.Serializable
 
-const val API_SCREEN_ROUTE = "apiScreen"
+
+@Serializable
+data object ApiRoute
 
 @Composable
 fun ApiScreen() {
@@ -45,7 +48,7 @@ fun ApiScreen() {
                     painter = rememberVectorPainter(Icons.Outlined.Visibility),
                     text = stringResource(id = R.string.api_grant_screen_name),
                     descriptionText = stringResource(id = R.string.api_grant_screen_description),
-                    onClick = { navController.navigate(API_GRANT_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(ApiGrantRoute) }
                 )
             }
         }

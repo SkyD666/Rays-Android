@@ -72,15 +72,17 @@ import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.add.openAddScreen
-import com.skyd.rays.ui.screen.detail.openDetailScreen
-import com.skyd.rays.ui.screen.search.SEARCH_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.search.imagesearch.openImageSearchScreen
-import com.skyd.rays.ui.screen.stickerslist.openStickersListScreen
+import com.skyd.rays.ui.screen.add.AddRoute
+import com.skyd.rays.ui.screen.detail.DetailRoute
+import com.skyd.rays.ui.screen.search.SearchRoute
+import com.skyd.rays.ui.screen.search.imagesearch.ImageSearchRoute
+import com.skyd.rays.ui.screen.stickerslist.StickersListRoute
 import com.skyd.rays.util.sendStickerByUuid
+import kotlinx.serialization.Serializable
 
 
-const val HOME_SCREEN_ROUTE = "homeScreen"
+@Serializable
+data object HomeRoute
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
@@ -117,7 +119,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 colors = ButtonDefaults.filledTonalButtonColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
-                onClick = { navController.navigate(SEARCH_SCREEN_ROUTE) },
+                onClick = { navController.navigate(SearchRoute) },
                 contentPadding = ButtonDefaults.ContentPadding - PaddingValues(
                     end = ButtonDefaults.ContentPadding.calculateEndPadding(
                         LocalLayoutDirection.current
@@ -140,7 +142,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     overflow = TextOverflow.Ellipsis,
                 )
                 RaysIconButton(
-                    onClick = { openImageSearchScreen(navController, baseImage = null) },
+                    onClick = { navController.navigate(ImageSearchRoute(baseImage = null)) },
                     imageVector = Icons.Outlined.ImageSearch,
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = stringResource(R.string.image_search_screen_name)
@@ -169,9 +171,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                     )
                                 },
                                 onItemClick = {
-                                    openDetailScreen(
-                                        navController = navController,
-                                        stickerUuid = mostSharedStickersList[it].sticker.uuid
+                                    navController.navigate(
+                                        DetailRoute(stickerUuid = mostSharedStickersList[it].sticker.uuid)
                                     )
                                 },
                                 itemShouldBlur = { index ->
@@ -199,9 +200,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                     )
                                 },
                                 onItemClick = {
-                                    openDetailScreen(
-                                        navController = navController,
-                                        stickerUuid = recentSharedStickersList[it].sticker.uuid
+                                    navController.navigate(
+                                        DetailRoute(stickerUuid = recentSharedStickersList[it].sticker.uuid)
                                     )
                                 },
                                 itemShouldBlur = { index ->
@@ -229,9 +229,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                     )
                                 },
                                 onItemClick = {
-                                    openDetailScreen(
-                                        navController = navController,
-                                        stickerUuid = recentCreatedStickersList[it].sticker.uuid
+                                    navController.navigate(
+                                        DetailRoute(stickerUuid = recentCreatedStickersList[it].sticker.uuid)
                                     )
                                 },
                                 itemShouldBlur = { index ->
@@ -270,9 +269,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                                 itemImage = { randomTagsList[it].stickerUuid },
                                 itemTitle = { randomTagsList[it].tag },
                                 onItemClick = {
-                                    openStickersListScreen(
-                                        navController = navController,
-                                        query = randomTagsList[it].tag,
+                                    navController.navigate(
+                                        StickersListRoute(query = randomTagsList[it].tag)
                                     )
                                 },
                                 itemShouldBlur = { index ->
@@ -466,11 +464,7 @@ private fun HomeScreenFloatingActionButton(
     }
     val onClick = remember {
         {
-            openAddScreen(
-                navController = navController,
-                stickers = listOf(),
-                isEdit = false,
-            )
+            navController.navigate(AddRoute(stickers = emptyList(), isEdit = false))
         }
     }
 

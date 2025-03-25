@@ -1,6 +1,5 @@
 package com.skyd.rays.ui.screen.stickerslist
 
-import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
@@ -41,7 +40,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
@@ -49,7 +47,6 @@ import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.navigate
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.ui.component.PagingRefreshStateIndicator
 import com.skyd.rays.ui.component.RaysIconButton
@@ -59,24 +56,15 @@ import com.skyd.rays.ui.component.ScalableLazyVerticalStaggeredGrid
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
-import com.skyd.rays.ui.screen.detail.openDetailScreen
+import com.skyd.rays.ui.screen.detail.DetailRoute
 import com.skyd.rays.ui.screen.search.SearchResultItem
 import com.skyd.rays.ui.screen.search.SearchResultItemPlaceholder
 import com.skyd.rays.ui.screen.search.multiselect.MultiSelectActionBar
+import kotlinx.serialization.Serializable
 
-const val STICKERS_LIST_SCREEN_ROUTE = "stickersListScreen"
 
-fun openStickersListScreen(
-    navController: NavHostController,
-    query: String
-) {
-    navController.navigate(
-        STICKERS_LIST_SCREEN_ROUTE,
-        Bundle().apply {
-            putString("query", query)
-        }
-    )
-}
+@Serializable
+data class StickersListRoute(val query: String)
 
 @Composable
 fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltViewModel()) {
@@ -209,7 +197,7 @@ private fun SuccessContent(
                 selected = { it.sticker.uuid in selectedStickers },
                 contentPadding = PaddingValues(16.dp),
                 onSelectChanged = onSelectChanged,
-                onClick = { openDetailScreen(navController, it.sticker.uuid) },
+                onClick = { navController.navigate(DetailRoute(stickerUuid = it.sticker.uuid)) },
             )
         }
 

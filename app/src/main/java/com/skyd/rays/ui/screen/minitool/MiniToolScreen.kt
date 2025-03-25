@@ -45,10 +45,13 @@ import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SELFIE_SEGMENTATION_SCREEN_ROUTE
-import com.skyd.rays.ui.screen.minitool.styletransfer.STYLE_TRANSFER_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SelfieSegmentationRoute
+import com.skyd.rays.ui.screen.minitool.styletransfer.StyleTransferRoute
+import kotlinx.serialization.Serializable
 
-const val MINI_TOOL_SCREEN_ROUTE = "miniToolScreen"
+
+@Serializable
+data object MiniToolRoute
 
 @Composable
 fun MiniToolScreen() {
@@ -160,11 +163,11 @@ private fun getMiniToolLost(
     MiniTool1Bean(
         title = context.getString(R.string.style_transfer_screen_name),
         icon = Icons.Outlined.Style,
-        action = { navController.navigate(STYLE_TRANSFER_SCREEN_ROUTE) }
+        action = { navController.navigate(StyleTransferRoute) }
     ),
     MiniTool1Bean(
         title = context.getString(R.string.selfie_segmentation_screen_name),
         icon = Icons.Outlined.PeopleAlt,
-        action = { navController.navigate(SELFIE_SEGMENTATION_SCREEN_ROUTE) }
+        action = { navController.navigate(SelfieSegmentationRoute) }
     ),
 )

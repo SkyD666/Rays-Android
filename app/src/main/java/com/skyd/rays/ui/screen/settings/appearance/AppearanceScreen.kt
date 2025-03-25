@@ -88,12 +88,15 @@ import com.skyd.rays.ui.local.LocalDarkMode
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerColorTheme
 import com.skyd.rays.ui.local.LocalThemeName
-import com.skyd.rays.ui.screen.settings.appearance.style.SEARCH_STYLE_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.appearance.style.SearchStyleRoute
 import com.skyd.rays.ui.theme.extractColors
 import com.skyd.rays.ui.theme.extractColorsFromWallpaper
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
-const val APPEARANCE_SCREEN_ROUTE = "appearanceScreen"
+
+@Serializable
+data object AppearanceRoute
 
 @Composable
 fun AppearanceScreen() {
@@ -192,7 +195,7 @@ fun AppearanceScreen() {
                     painter = rememberVectorPainter(image = Icons.Outlined.Search),
                     text = stringResource(id = R.string.search_style_screen_name),
                     descriptionText = null,
-                    onClick = { navController.navigate(SEARCH_STYLE_SCREEN_ROUTE) }
+                    onClick = { navController.navigate(SearchStyleRoute) }
                 )
             }
         }

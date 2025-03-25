@@ -2,7 +2,6 @@ package com.skyd.rays.ui.screen.fullimage
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -23,9 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavHostController
-import com.skyd.rays.ext.navigate
+import com.skyd.rays.model.serializer.UriSerializer
 import com.skyd.rays.ui.component.RaysTopBar
+import kotlinx.serialization.Serializable
 import me.saket.telephoto.subsamplingimage.SubSamplingImage
 import me.saket.telephoto.subsamplingimage.SubSamplingImageSource
 import me.saket.telephoto.subsamplingimage.rememberSubSamplingImageState
@@ -33,19 +32,17 @@ import me.saket.telephoto.zoomable.ZoomSpec
 import me.saket.telephoto.zoomable.rememberZoomableState
 import me.saket.telephoto.zoomable.zoomable
 
-const val FULL_IMAGE_SCREEN_ROUTE = "fullImageScreen"
-const val FULL_IMAGE_SCREEN_IMAGE_KEY = "image"
+// https://issuetracker.google.com/issues/348468840
+// https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:navigation/navigation-compose/samples/src/main/java/androidx/navigation/compose/samples/NavigationSamples.kt;l=321;bpv=1;bpt=1?q=ThirdPartySerializableType
+@Serializable
+class WrappedUri(@Serializable(with = UriSerializer::class) val image: Uri)
 
-fun openFullImageScreen(
-    navController: NavHostController,
-    image: Uri
-) {
-    navController.navigate(
-        FULL_IMAGE_SCREEN_ROUTE,
-        Bundle().apply {
-            putParcelable(FULL_IMAGE_SCREEN_IMAGE_KEY, image)
-        }
-    )
+@Serializable
+class WrappedUriNullable(@Serializable(with = UriSerializer::class) val image: Uri?)
+
+@Serializable
+data class FullImageRoute(val uri: WrappedUri) {
+    constructor(image: Uri) : this(WrappedUri(image = image))
 }
 
 @Composable

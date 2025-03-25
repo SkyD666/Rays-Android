@@ -23,8 +23,11 @@ import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.component.TipSettingsItem
 import com.skyd.rays.ui.local.LocalTextRecognizeThreshold
 import com.skyd.rays.ui.local.LocalUseTextRecognizeInAdd
+import kotlinx.serialization.Serializable
 
-const val TEXT_RECOGNIZE_SCREEN_ROUTE = "textRecognizeScreen"
+
+@Serializable
+data object TextRecognizeRoute
 
 @Composable
 fun TextRecognizeScreen() {

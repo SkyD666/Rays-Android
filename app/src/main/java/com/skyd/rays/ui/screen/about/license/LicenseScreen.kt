@@ -28,8 +28,11 @@ import com.skyd.rays.model.bean.LicenseBean
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.util.CommonUtil.openBrowser
+import kotlinx.serialization.Serializable
 
-const val LICENSE_SCREEN_ROUTE = "licenseScreen"
+
+@Serializable
+data object LicenseRoute
 
 @Composable
 fun LicenseScreen() {

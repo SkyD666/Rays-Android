@@ -1,6 +1,5 @@
 package com.skyd.rays.ui.screen.add
 
-import android.os.Bundle
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -95,12 +94,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.navigate
 import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
@@ -114,31 +110,24 @@ import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.screen.detail.openDetailScreen
-import com.skyd.rays.ui.screen.fullimage.openFullImageScreen
+import com.skyd.rays.ui.screen.detail.DetailRoute
+import com.skyd.rays.ui.screen.fullimage.FullImageRoute
 import com.skyd.rays.ui.screen.search.SearchResultItem
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
-const val ADD_SCREEN_ROUTE = "addScreen"
 
-fun openAddScreen(
-    navController: NavHostController,
-    stickers: List<UriWithStickerUuidBean>,
-    isEdit: Boolean,
-    navOptions: NavOptions? = null,
-) {
-    navController.navigate(
-        ADD_SCREEN_ROUTE,
-        Bundle().apply {
-            putBoolean("isEdit", isEdit)
-            putParcelableArrayList("stickers", ArrayList(stickers))
-        },
-        navOptions = navOptions,
-    )
-}
+@Serializable
+data class AddRoute(
+    val stickers: List<UriWithStickerUuidBean>,
+    val isEdit: Boolean,
+)
+
+@Serializable
+data object AddDeepLinkRoute
 
 @Composable
 fun AddScreen(
@@ -614,10 +603,7 @@ private fun WaitingRow(
                         val navController = LocalNavController.current
                         Box(
                             modifier = Modifier.clickable {
-                                openFullImageScreen(
-                                    navController = navController,
-                                    image = uri.uri!!
-                                )
+                                navController.navigate(FullImageRoute(image = uri.uri!!))
                             },
                             contentAlignment = Alignment.TopEnd,
                         ) {
@@ -755,12 +741,7 @@ private fun SimilarStickers(similarStickers: List<StickerWithTags>) {
                         selected = false,
                         contentScale = ContentScale.FillHeight,
                         imageAspectRatio = null,
-                        onClick = {
-                            openDetailScreen(
-                                navController = navController,
-                                stickerUuid = it.sticker.uuid
-                            )
-                        }
+                        onClick = { navController.navigate(DetailRoute(stickerUuid = it.sticker.uuid)) }
                     )
                 }
             }

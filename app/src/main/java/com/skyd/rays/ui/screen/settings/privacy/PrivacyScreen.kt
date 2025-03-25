@@ -24,10 +24,12 @@ import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.local.LocalDisableScreenshot
 import com.skyd.rays.ui.local.LocalNavController
-import com.skyd.rays.ui.screen.settings.privacy.blurstickers.BLUR_STICKERS_SCREEN_ROUTE
+import com.skyd.rays.ui.screen.settings.privacy.blurstickers.BlurStickersRoute
+import kotlinx.serialization.Serializable
 
 
-const val PRIVACY_SCREEN_ROUTE = "privacyScreen"
+@Serializable
+data object PrivacyRoute
 
 @Composable
 fun PrivacyScreen() {
@@ -72,7 +74,7 @@ fun PrivacyScreen() {
                     painter = rememberVectorPainter(Icons.Outlined.BlurOn),
                     text = stringResource(R.string.blur_stickers_screen_name),
                     descriptionText = stringResource(R.string.blur_stickers_screen_description),
-                    onClick = { navController.navigate(BLUR_STICKERS_SCREEN_ROUTE) },
+                    onClick = { navController.navigate(BlurStickersRoute) },
                 )
             }
         }
