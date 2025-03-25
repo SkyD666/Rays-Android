@@ -31,7 +31,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -48,6 +50,7 @@ import com.skyd.rays.ui.screen.minitool.MiniToolScreen
 import com.skyd.rays.ui.screen.more.MoreRoute
 import com.skyd.rays.ui.screen.more.MoreScreen
 import kotlinx.serialization.Serializable
+import kotlin.reflect.KClass
 
 
 @Serializable
@@ -101,6 +104,9 @@ fun MainScreen() {
     }
 }
 
+private fun <T : Any> NavBackStackEntry?.selected(route: KClass<T>) =
+    this?.destination?.hierarchy?.any { it.hasRoute(route) } == true
+
 @Composable
 private fun NavigationBarOrRail(navController: NavController) {
     val items = listOf(
@@ -116,7 +122,6 @@ private fun NavigationBarOrRail(navController: NavController) {
     }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDest = navBackStackEntry?.destination
 
     val onClick: (Int) -> Unit = { index ->
         navController.navigate(items[index].second) {
@@ -139,7 +144,7 @@ private fun NavigationBarOrRail(navController: NavController) {
     if (LocalWindowSizeClass.current.isCompact) {
         NavigationBar {
             items.forEachIndexed { index, item ->
-                val selected = currentDest?.hierarchy?.any { it.route == item.second } == true
+                val selected = navBackStackEntry.selected(item.second::class)
                 NavigationBarItem(
                     icon = { Icon(icons[selected]!![index], contentDescription = item.first) },
                     label = { Text(item.first) },
@@ -151,7 +156,7 @@ private fun NavigationBarOrRail(navController: NavController) {
     } else {
         NavigationRail {
             items.forEachIndexed { index, item ->
-                val selected = currentDest?.hierarchy?.any { it.route == item.second } == true
+                val selected = navBackStackEntry.selected(item.second::class)
                 NavigationRailItem(
                     icon = { Icon(icons[selected]!![index], contentDescription = item.first) },
                     label = { Text(item.first) },
