@@ -33,7 +33,7 @@ fun BlockButton(
     containerColor: Color = MaterialTheme.colorScheme.inverseOnSurface,
     selectedContainerColor: Color = MaterialTheme.colorScheme.primaryContainer alwaysLight true,
     contentColor: Color = MaterialTheme.colorScheme.inverseSurface,
-    selectedContentColor: Color = MaterialTheme.colorScheme.onSurface alwaysLight true,
+    selectedContentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer alwaysLight true,
     onClick: () -> Unit = {},
 ) {
     Column(

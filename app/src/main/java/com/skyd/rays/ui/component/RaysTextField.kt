@@ -23,10 +23,21 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.WindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.skyd.rays.R
+
+
+// https://issuetracker.google.com/issues/204502668#comment15
+suspend fun FocusRequester.safeRequestFocus(windowInfo: WindowInfo) {
+    snapshotFlow { windowInfo.isWindowFocused }.collect { isWindowFocused ->
+        if (isWindowFocused) {
+            requestFocus()
+        }
+    }
+}
 
 @Composable
 fun RaysTextField(
@@ -46,14 +57,9 @@ fun RaysTextField(
     val focusRequester = remember { FocusRequester() }
     var showPassword by rememberSaveable { mutableStateOf(false) }
 
-    // https://issuetracker.google.com/issues/204502668#comment15
     val windowInfo = LocalWindowInfo.current
     LaunchedEffect(windowInfo) {
-        snapshotFlow { windowInfo.isWindowFocused }.collect { isWindowFocused ->
-            if (isWindowFocused) {
-                focusRequester.requestFocus()
-            }
-        }
+        focusRequester.safeRequestFocus(windowInfo)
     }
 
     TextField(

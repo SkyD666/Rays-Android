@@ -2,13 +2,10 @@ package com.skyd.rays.ui.screen.settings.appearance
 
 import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -28,13 +25,11 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Contrast
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -61,6 +56,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.edit
 import com.materialkolor.ktx.from
+import com.materialkolor.ktx.toneColor
 import com.materialkolor.palettes.CorePalette
 import com.materialkolor.palettes.TonalPalette
 import com.skyd.rays.R
@@ -332,67 +328,75 @@ fun Palettes(
 
 @Composable
 fun SelectableMiniPalette(
-    modifier: Modifier = Modifier,
     selected: Boolean,
     isCustom: Boolean = false,
     onClick: () -> Unit,
     accents: List<TonalPalette>,
 ) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        color = if (isCustom) {
-            MaterialTheme.colorScheme.primaryContainer
-                .copy(0.5f) onDark MaterialTheme.colorScheme.onPrimaryContainer.copy(0.3f)
-        } else {
-            MaterialTheme.colorScheme.inverseOnSurface
-        },
+    Box(
+        modifier = Modifier
+            .size(74.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick),
     ) {
-        Surface(
+        Box(
             modifier = Modifier
-                .clickable { onClick() }
-                .padding(12.dp)
-                .size(50.dp),
-            shape = CircleShape,
-            color = Color(accents[0].tone(60)),
+                .background(
+                    if (isCustom) {
+                        MaterialTheme.colorScheme.primaryContainer.copy(0.5f) onDark
+                                MaterialTheme.colorScheme.onPrimaryContainer.copy(0.3f)
+                    } else {
+                        MaterialTheme.colorScheme.inverseOnSurface
+                    },
+                )
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center,
         ) {
-            Box {
-                Surface(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .offset((-25).dp, 25.dp),
-                    color = Color(accents[1].tone(85)),
-                ) {}
-                Surface(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .offset(25.dp, 25.dp),
-                    color = Color(accents[2].tone(75)),
-                ) {}
-                val animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium)
-                AnimatedVisibility(
-                    visible = selected,
-                    enter = scaleIn(animationSpec) + fadeIn(animationSpec),
-                    exit = scaleOut(animationSpec) + fadeOut(animationSpec),
-                ) {
-                    Box(
+            Surface(
+                modifier = Modifier.size(50.dp),
+                shape = CircleShape,
+                color = accents[0].toneColor(36),
+            ) {
+                Box {
+                    Surface(
                         modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxSize()
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Check,
-                            contentDescription = "Checked",
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .size(16.dp),
-                            tint = MaterialTheme.colorScheme.surface
-                        )
-                    }
+                            .size(50.dp)
+                            .offset((-25).dp, 25.dp),
+                        color = accents[1].toneColor(80),
+                    ) {}
+                    Surface(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .offset(25.dp, 25.dp),
+                        color = accents[2].toneColor(65),
+                    ) {}
                 }
+            }
+        }
+        AnimatedVisibility(
+            visible = selected,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .border(
+                        width = 2.dp,
+                        color = accents[0].toneColor(50),
+                        shape = RoundedCornerShape(16.dp),
+                    )
+                    .padding(2.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .border(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(15.dp),
+                        ),
+                )
             }
         }
     }

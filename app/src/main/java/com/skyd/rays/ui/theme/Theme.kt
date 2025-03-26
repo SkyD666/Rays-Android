@@ -1,21 +1,21 @@
 package com.skyd.rays.ui.theme
 
+import android.app.UiModeManager
 import android.app.WallpaperManager
+import android.content.Context
 import android.os.Build
-import android.view.View
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat
+import com.materialkolor.Contrast
 import com.materialkolor.dynamicColorScheme
 import com.materialkolor.rememberDynamicColorScheme
-import com.skyd.rays.ext.activity
 import com.skyd.rays.ext.toColorOrNull
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
@@ -40,13 +40,7 @@ fun RaysTheme(
     wallpaperColors: Map<String, ColorScheme> = extractAllColors(darkTheme),
     content: @Composable () -> Unit
 ) {
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            setSystemBarsColor(view, darkTheme)
-        }
-    }
-
+    val context = LocalContext.current
     val themeName = LocalThemeName.current
     val amoledDarkMode = LocalAmoledDarkMode.current
 
@@ -57,6 +51,7 @@ fun RaysTheme(
                     seedColor = ThemeNamePreference.values[0].keyColor,
                     isDark = darkTheme,
                     isAmoled = amoledDarkMode,
+                    contrastLevel = context.contrastLevel,
                 )
             }
         },
@@ -65,35 +60,30 @@ fun RaysTheme(
     )
 }
 
-private fun setSystemBarsColor(view: View, darkMode: Boolean) {
-    val window = view.context.activity.window
-    WindowCompat.setDecorFitsSystemWindows(window, false)
-    window.apply {
-        statusBarColor = android.graphics.Color.TRANSPARENT
-        navigationBarColor = android.graphics.Color.TRANSPARENT
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            navigationBarDividerColor = android.graphics.Color.TRANSPARENT
+private val Context.contrastLevel: Double
+    get() {
+        var contrastLevel: Double = Contrast.Default.value
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+            contrastLevel = uiModeManager.contrast.toDouble()
         }
-        // 状态栏和导航栏字体颜色
-        WindowInsetsControllerCompat(this, view).apply {
-            isAppearanceLightStatusBars = !darkMode
-            isAppearanceLightNavigationBars = !darkMode
-        }
+        return contrastLevel
     }
-}
 
 @Composable
 fun extractAllColors(darkTheme: Boolean): Map<String, ColorScheme> {
-    return extractColors(darkTheme) + extractColorsFromWallpaper(darkTheme)
+    return extractColorsFromWallpaper(darkTheme) + extractColors(darkTheme)
 }
 
 @Composable
 fun extractColors(darkTheme: Boolean): Map<String, ColorScheme> {
+    val context = LocalContext.current
     return ThemeNamePreference.values.associate {
         it.name to rememberDynamicColorScheme(
             primary = it.keyColor,
             isDark = darkTheme,
             isAmoled = LocalAmoledDarkMode.current,
+            contrastLevel = context.contrastLevel,
         )
     }.toMutableMap().also { map ->
         val customPrimaryColor =
@@ -102,6 +92,7 @@ fun extractColors(darkTheme: Boolean): Map<String, ColorScheme> {
             primary = customPrimaryColor,
             isDark = darkTheme,
             isAmoled = LocalAmoledDarkMode.current,
+            contrastLevel = context.contrastLevel,
         )
     }
 }
@@ -118,13 +109,15 @@ fun extractColorsFromWallpaper(darkTheme: Boolean): Map<String, ColorScheme> {
         val secondary = colors?.secondaryColor?.toArgb()
         val tertiary = colors?.tertiaryColor?.toArgb()
         if (primary != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                preset["WallpaperPrimary"] = rememberSystemDynamicColorScheme(isDark = darkTheme)
+            preset["WallpaperPrimary"] = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (darkTheme) dynamicDarkColorScheme(context)
+                else dynamicLightColorScheme(context)
             } else {
-                preset["WallpaperPrimary"] = rememberDynamicColorScheme(
+                rememberDynamicColorScheme(
                     primary = Color(primary),
                     isDark = darkTheme,
                     isAmoled = LocalAmoledDarkMode.current,
+                    contrastLevel = context.contrastLevel,
                 )
             }
         }
@@ -133,6 +126,7 @@ fun extractColorsFromWallpaper(darkTheme: Boolean): Map<String, ColorScheme> {
                 primary = Color(secondary),
                 isDark = darkTheme,
                 isAmoled = LocalAmoledDarkMode.current,
+                contrastLevel = context.contrastLevel,
             )
         }
         if (tertiary != null) {
@@ -140,6 +134,7 @@ fun extractColorsFromWallpaper(darkTheme: Boolean): Map<String, ColorScheme> {
                 primary = Color(tertiary),
                 isDark = darkTheme,
                 isAmoled = LocalAmoledDarkMode.current,
+                contrastLevel = context.contrastLevel,
             )
         }
     }

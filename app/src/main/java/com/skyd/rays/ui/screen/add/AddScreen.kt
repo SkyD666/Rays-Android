@@ -88,6 +88,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -109,6 +110,7 @@ import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.RaysDialog
 import com.skyd.rays.ui.component.dialog.WaitingDialog
+import com.skyd.rays.ui.component.safeRequestFocus
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.detail.DetailRoute
 import com.skyd.rays.ui.screen.fullimage.FullImageRoute
@@ -411,8 +413,9 @@ private fun LazyListScope.titleInputFieldItem(
             })
         )
 
-        LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
+        val windowInfo = LocalWindowInfo.current
+        LaunchedEffect(windowInfo) {
+            focusRequester.safeRequestFocus(windowInfo)
         }
     }
 }

@@ -66,6 +66,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
@@ -86,6 +87,7 @@ import com.skyd.rays.ui.component.BackIcon
 import com.skyd.rays.ui.component.RaysFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.dialog.WaitingDialog
+import com.skyd.rays.ui.component.safeRequestFocus
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
@@ -407,7 +409,8 @@ private fun SearchBarInputField(
         shape = RectangleShape,
     )
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+    val windowInfo = LocalWindowInfo.current
+    LaunchedEffect(windowInfo) {
+        focusRequester.safeRequestFocus(windowInfo)
     }
 }
