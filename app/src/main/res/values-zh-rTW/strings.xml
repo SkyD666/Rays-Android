@@ -33,7 +33,7 @@
         <item quantity="other">已匯出 %d 張表情包</item>
     </plurals>
     <string name="import_files_screen_on_conflict">有衝突時</string>
-    <string name="license_screen_name">開源許可證</string>
+    <string name="license_screen_name">開源授權條款</string>
     <string name="webdav_screen_restore">還原</string>
     <string name="webdav_screen_password_description">請輸入 WebDAV 密碼</string>
     <string name="about_screen_description_3">Rays 使用 MVI 架構，完全採用 Material You 設計風格。所有頁面都使用 Jetpack Compose 開發。</string>
@@ -42,17 +42,17 @@
     <plurals name="import_files_screen_successful_desc">
         <item quantity="other">共更新 %1$d 張表情包，耗時 %2$.2f 秒</item>
     </plurals>
-    <string name="auto_share_screen_ignore_regex_format_error">正則表達式格式無效</string>
+    <string name="auto_share_screen_ignore_regex_format_error">正規表示式格式無效</string>
     <string name="appearance_screen_sticker_color_theme">表情包顏色主題</string>
     <string name="webdav_screen_password">密碼</string>
-    <string name="data_screen_delete_all_description">刪除 Rays 管理的所有本地資料，包括圖片、標題、標籤等。此操作無法撤銷</string>
+    <string name="data_screen_delete_all_description">刪除 Rays 管理的所有本機資料，包括圖片、標題、標籤等。此操作無法復原</string>
     <string name="classification_screen_description">選擇表情包分類模型，設定置信閾值等</string>
     <string name="home_screen_delete_warning">刪除？此操作無法還原！</string>
     <string name="webdav_screen_password_entered">密碼已輸入</string>
     <string name="selfie_segmentation_screen_name">自拍分割</string>
-    <string name="data_screen_delete_all">刪除所有本地表情包</string>
+    <string name="data_screen_delete_all">刪除所有本機表情包</string>
     <string name="multi_select">多選</string>
-    <string name="webdav_screen_download_tip">從遠端拉取資料時，如果存在衝突，本地內容將被覆蓋。如果一個表情包既在本地又在遠端回收站中，則將刪除本地表情包。如果一個表情包在本地而不在遠端，則該表情包不會被修改。</string>
+    <string name="webdav_screen_download_tip">從遠端拉取資料時，如果存在衝突，本機內容將被覆蓋。如果一個表情包既在本機又在遠端回收站中，則將刪除本機表情包。如果一個表情包在本機而不在遠端，則該表情包不會被修改。</string>
     <string name="classification_model_screen_default">預設</string>
     <string name="default_tag">%s（預設）</string>
     <string name="uri_string_share_screen_add_app_package">新增包名</string>
@@ -77,7 +77,7 @@
     <string name="dark_mode_follow_system">跟隨系統</string>
     <string name="auto_share_screen_supported_app">自動分享功能可將表情包直接分享到上一個頁面對應的應用程式。
 \n
-\n此功能需要無障礙許可權。在結束 Rays 程序、升級或重新安裝 Rays 後，自動分享可能會被禁用，需要手動開啟無障礙許可權才能再次啟用。
+\n此功能需要無障礙許可權。在結束 Rays 程式、升級或重新安裝 Rays 後，自動分享可能會被停用，需要手動開啟無障礙許可權才能再次啟用。
 \n
 \n建議允許 Rays 在啟動時啟動、由其他應用啟動、在背景中持續執行。
 \n
@@ -94,7 +94,7 @@
     <string name="webdav_screen_name">WebDAV</string>
     <string name="uri_string_share_screen_description">分享時複製表情包 URI 字串</string>
     <string name="dark_mode_invalid">無效值</string>
-    <string name="webdav_screen_upload_description">將本地資料推送到遠端</string>
+    <string name="webdav_screen_upload_description">將本機資料推送到遠端</string>
     <string name="uri_string_share_repo_no_package">此包名不可用：%s</string>
     <string name="share_config_screen_file_extension">檔案副檔名</string>
     <string name="add_screen_add_tag">新增</string>
@@ -111,10 +111,10 @@
     <plurals name="webdav_screen_download_success">
         <item quantity="other">拉取成功，花費 %1$.2f 秒，更新 %2$d 張表情包</item>
     </plurals>
-    <string name="export_files_screen_description">匯出表情包、標籤等至本地檔案</string>
+    <string name="export_files_screen_description">匯出表情包、標籤等至本機檔案</string>
     <string name="import_export_screen_name">匯入與匯出</string>
     <string name="appearance_screen_dark_mode">深色模式</string>
-    <string name="search_config_screen_use_regex">正則表示式</string>
+    <string name="search_config_screen_use_regex">正規表示式</string>
     <string name="classification_screen_threshold_description">只有置信度高於此門檻值的標籤才會被建議，建議設定在 0.5 左右。</string>
     <string name="webdav_screen_server">伺服器</string>
     <string name="about_screen_join_discord">加入 Discord 伺服器</string>
@@ -130,7 +130,7 @@
     <string name="export_files_screen_successful">匯出成功</string>
     <string name="about_screen_description_1">一個用於在手機上記錄、搜尋和管理表情包的工具。</string>
     <string name="appearance_screen_dark_mode_description">設定深色模式策略</string>
-    <string name="import_files_screen_description">從本地檔案匯入表情包、標籤等</string>
+    <string name="import_files_screen_description">從本機檔案匯入表情包、標籤等</string>
     <string name="appearance_screen_name">外觀和風格</string>
     <string name="webdav_screen_clear_remote_recycle_bin">清空回收站</string>
     <string name="home_screen_select_export_folder_tip">請選擇一個匯出資料夾</string>
@@ -138,7 +138,7 @@
     <string name="import_export_screen_using_cloud_category">透過雲端</string>
     <string name="style_transfer_screen_select_style_image">選擇風格圖片</string>
     <string name="auto_share_screen_accessibility_granted">現在已經授予無障礙許可權</string>
-    <string name="webdav_screen_progress_download_data_sticker">更新本地資料 + 表情包</string>
+    <string name="webdav_screen_progress_download_data_sticker">更新本機資料 + 表情包</string>
     <string name="webdav_screen_last_modified_time">上次修改時間：%s</string>
     <string name="data_screen_delete_all_success">所有表情包資料已清除，花費 %.2f 秒</string>
     <string name="data_screen_delete_sticker_share_time_success">所有表情包分享資料已清空，花費 %.2f 秒</string>
@@ -151,7 +151,7 @@
     <string name="import_export_screen_using_file_category">透過檔案</string>
     <string name="ml_screen_name">AI</string>
     <string name="style_transfer_screen_content">內容</string>
-    <string name="selfie_segmentation_screen_reset_selfie_transformations">重置自拍照</string>
+    <string name="selfie_segmentation_screen_reset_selfie_transformations">重設自拍照</string>
     <string name="update_newer_text">新版本：%1$s
 \n發布日期：%2$s
 \n下載次數：%3$s
@@ -168,12 +168,12 @@
     <string name="setting_screen_ml_description">配置 AI 模型等</string>
     <string name="auto_share_screen_description">自動分享表情包到上一個頁面</string>
     <string name="privacy_screen_disable_screenshot">停用螢幕截圖</string>
-    <string name="appearance_screen_wallpaper_colors">牆紙顏色</string>
+    <string name="appearance_screen_wallpaper_colors">桌布顏色</string>
     <string name="about_screen_other_works">其他作品</string>
     <string name="style_transfer_screen_image_not_selected">在轉移前請選擇目標風格圖片和內容圖片</string>
     <string name="db_sticker_table_title">標題</string>
     <string name="api_grant_screen_name">API 授權</string>
-    <string name="webdav_screen_remote_recycle_bin_tip">遠端回收站中的內容是邏輯上已刪除的表情包。對遠端回收站的操作僅會影響遠端內容，不會修改本地內容。</string>
+    <string name="webdav_screen_remote_recycle_bin_tip">遠端回收站中的內容是邏輯上已刪除的表情包。對遠端回收站的操作僅會影響遠端內容，不會修改本機內容。</string>
     <string name="classification_model_screen_name">分類模型</string>
     <string name="paste">貼上</string>
     <string name="invert_selection">反選</string>
@@ -201,11 +201,11 @@
         <item quantity="other">共匯出 %1$d 張表情包，耗時 %2$.2f 秒</item>
     </plurals>
     <string name="export_files_screen_no_stickers_to_export">沒有可匯出的表情包</string>
-    <string name="webdav_screen_upload_tip">在將本地資料推送到遠端時，如果存在衝突，本地表情包將覆蓋遠端內容。如果本地不存在但在遠端存在的表情包，將被移動到遠端回收站。</string>
+    <string name="webdav_screen_upload_tip">在將本機資料推送到遠端時，如果存在衝突，本機表情包將覆蓋遠端內容。如果本機不存在但在遠端存在的表情包，將被移動到遠端回收站。</string>
     <string name="webdav_screen_sync_category">同步</string>
     <string name="home_screen_close_search">關閉</string>
     <string name="sponsor_afadian">愛發電</string>
-    <string name="auto_share_screen_ignore_input_dialog_title">忽略策略正則表示式</string>
+    <string name="auto_share_screen_ignore_input_dialog_title">忽略策略正規表示式</string>
     <string name="image_scale_fit">適應</string>
     <string name="import_files_screen_progress_unzipping">解壓縮中：%s</string>
     <string name="cancel">取消</string>
@@ -239,7 +239,7 @@
     <string name="blur_stickers_screen_description">模糊顯示指定的表情包，僅在詳細頁面點選表情包時方可對該表情包取消模糊</string>
     <string name="update_newer">發現新版本</string>
     <string name="image_scale_fill_bounds">填滿邊界</string>
-    <string name="handle_imported_sticker_proxy_replace">替換原有</string>
+    <string name="handle_imported_sticker_proxy_replace">取代原有</string>
     <string name="mini_tool_screen_name">小工具</string>
     <string name="export_files_screen_select_dir">選擇匯出目錄</string>
     <string name="export_files_screen_exclude_field">排除</string>
@@ -253,14 +253,14 @@
     <string name="share_config_screen_copy_sticker_to_clipboard_description">在分享時將表情包複製到剪貼簿</string>
     <string name="home_screen_clear_search_text">清除查詢</string>
     <string name="expand">展開</string>
-    <string name="about_screen_other_works_raca_description">一個在本地記錄、查詢抽象段落/評論區小作文的工具。🤗 您還在為記不住小作文內容，面臨前面、中間、後面都忘了的尷尬處境嗎？使用這款工具將幫助您記錄您所遇到的小作文，再也不因為忘記而煩惱！😋</string>
+    <string name="about_screen_other_works_raca_description">一個在本機記錄、查詢抽象段落/評論區小作文的工具。🤗 您還在為記不住小作文內容，面臨前面、中間、後面都忘了的尷尬處境嗎？使用這款工具將幫助您記錄您所遇到的小作文，再也不因為忘記而煩惱！😋</string>
     <string name="search_result_sort_title">標題</string>
     <string name="webdav_screen_progress_refresh_backup_info">更新備份資訊</string>
     <string name="style_transfer_screen_select_content_image">選擇內容圖片</string>
     <string name="webdav_screen_info_incomplete">WebDAV 資訊不完整！</string>
     <string name="home_style_screen_show_popular_tags">顯示常用標籤</string>
     <string name="webdav_screen_progress_upload_data">更新遠端資料</string>
-    <string name="webdav_screen_progress_download_data">更新本地資料</string>
+    <string name="webdav_screen_progress_download_data">更新本機資料</string>
     <string name="search_config_screen_name">搜尋</string>
     <string name="settings">設定</string>
     <string name="appearance_screen_style_category">風格</string>
@@ -285,16 +285,16 @@
     <string name="dialog_close">關閉</string>
     <string name="import_files_screen_progress_checking_backup_format">檢查備份檔案格式中…</string>
     <string name="webdav_screen_delete">刪除</string>
-    <string name="update_no_update">當前已是最新版！</string>
+    <string name="update_no_update">目前已是最新版！</string>
     <string name="setting_screen_data_description">備份、同步、刪除表情包資料等</string>
     <string name="search_config_screen_use_regex_description">將搜尋關鍵字視為正規表示式</string>
-    <string name="webdav_screen_progress_delete">刪除本地資料 + 表情包</string>
+    <string name="webdav_screen_progress_delete">刪除本機資料 + 表情包</string>
     <string name="api_grant_repo_no_package">沒有軟體包可用：%s</string>
     <string name="add_screen_suggest_tag">建議的標籤</string>
     <string name="sticker_modify_time">修改時間</string>
     <string name="image_scale_inside">內部</string>
     <string name="db_tag_table">標籤表</string>
-    <string name="import_files_screen_on_conflict_desc">「衝突」指的是您當前正在匯入的表情包的 UUID 與現有表情包的 UUID 相同，與這兩個表情包的內容是否相同無關。</string>
+    <string name="import_files_screen_on_conflict_desc">「衝突」指的是您目前正在匯入的表情包的 UUID 與現有表情包的 UUID 相同，與這兩個表情包的內容是否相同無關。</string>
     <string name="theme_no_palettes">沒有調色盤</string>
     <string name="sticker_click_count">點選次數</string>
     <string name="search_style_screen_name">搜尋頁風格</string>
