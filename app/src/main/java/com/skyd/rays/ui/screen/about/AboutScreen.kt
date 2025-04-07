@@ -37,6 +37,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -44,6 +45,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,7 +60,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -79,9 +80,6 @@ import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.component.dialog.RaysDialog
-import com.skyd.rays.ui.component.shape.CloverShape
-import com.skyd.rays.ui.component.shape.CurlyCornerShape
-import com.skyd.rays.ui.component.shape.SquircleShape
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.about.license.LicenseRoute
@@ -385,10 +383,7 @@ private fun ButtonArea() {
         Box(
             modifier = boxModifier.background(
                 color = MaterialTheme.colorScheme.primaryContainer,
-                shape = CurlyCornerShape(
-                    amp = with(LocalDensity.current) { 1.5.dp.toPx() },
-                    count = 10
-                ),
+                shape = MaterialShapes.Cookie9Sided.toShape(),
             ),
             contentAlignment = Alignment.Center
         ) {
@@ -401,7 +396,7 @@ private fun ButtonArea() {
         Box(
             modifier = boxModifier.background(
                 color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = SquircleShape,
+                shape = MaterialShapes.Pill.toShape(),
             ),
             contentAlignment = Alignment.Center
         ) {
@@ -414,7 +409,7 @@ private fun ButtonArea() {
         Box(
             modifier = boxModifier.background(
                 color = MaterialTheme.colorScheme.tertiaryContainer,
-                shape = CloverShape,
+                shape = MaterialShapes.Clover4Leaf.toShape(),
             ),
             contentAlignment = Alignment.Center
         ) {

@@ -36,11 +36,9 @@
         Rays utilizes the <b><a href="https://developer.android.com/topic/architecture#recommended-app-arch">MVI</a></b> architecture and fully adopts the <b><a href="https://m3.material.io/">Material You</a></b> design style. All pages are developed using <b> <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a></b>.
     </p>
     <p>
-        <b><a href="doc/README/README-zh-rCN.md">中文</a></b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
         <b><a href="https://hosted.weblate.org/engage/rays/">Help us translate</a></b>
     </p>
 </div>
-
 
 ## 💡 Features
 

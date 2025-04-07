@@ -22,10 +22,12 @@ import androidx.compose.material.icons.outlined.ContentCut
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -59,8 +61,6 @@ import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.WaitingDialog
-import com.skyd.rays.ui.component.shape.CloverShape
-import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
@@ -330,7 +330,7 @@ private fun InputArea(
                 modifier = Modifier.weight(0.5f),
                 title = stringResource(R.string.selfie_segmentation_screen_selfie),
                 hintText = stringResource(R.string.selfie_segmentation_screen_select_selfie_image),
-                shape = CurlyCornerShape(amp = 5f, count = 12),
+                shape = MaterialShapes.Cookie12Sided.toShape(),
                 imageUri = selfieUri,
                 onSelectImage = onSelectSelfieImage,
             )
@@ -343,7 +343,7 @@ private fun InputArea(
                 modifier = Modifier.weight(0.5f),
                 title = stringResource(R.string.selfie_segmentation_screen_background),
                 hintText = stringResource(R.string.selfie_segmentation_screen_select_background_image),
-                shape = CloverShape,
+                shape = MaterialShapes.Clover4Leaf.toShape(),
                 imageUri = backgroundUri,
                 onRemoveClick = onRemoveBackgroundImage,
                 onSelectImage = onSelectBackgroundImage,

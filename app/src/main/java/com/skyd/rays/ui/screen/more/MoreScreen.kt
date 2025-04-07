@@ -23,6 +23,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Widgets
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
@@ -30,6 +31,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,10 +39,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.skyd.rays.R
@@ -50,9 +50,6 @@ import com.skyd.rays.model.bean.More1Bean
 import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.shape.CloverShape
-import com.skyd.rays.ui.component.shape.CurlyCornerShape
-import com.skyd.rays.ui.component.shape.SquircleShape
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.about.AboutRoute
 import com.skyd.rays.ui.screen.settings.SettingsRoute
@@ -70,7 +67,6 @@ fun MoreScreen() {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val density = LocalDensity.current
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -95,8 +91,8 @@ fun MoreScreen() {
         },
     ) {
         val colorScheme: ColorScheme = MaterialTheme.colorScheme
-        val dataList = remember(context, colorScheme, density, navController) {
-            getMoreList(context, colorScheme, density, navController)
+        val dataList = remember(context, colorScheme, navController) {
+            getMoreList(context, colorScheme, navController)
         }
         LazyVerticalGrid(
             modifier = Modifier
@@ -139,7 +135,7 @@ private fun More1Item(
                     .padding(5.dp)
                     .background(
                         color = data.shapeColor,
-                        shape = data.shape
+                        shape = data.shape.toShape(),
                     )
                     .padding(16.dp)
             ) {
@@ -167,7 +163,6 @@ private fun More1Item(
 private fun getMoreList(
     context: Context,
     colorScheme: ColorScheme,
-    density: Density,
     navController: NavController,
 ): List<More1Bean> {
     return listOf(
@@ -175,7 +170,7 @@ private fun getMoreList(
             title = context.getString(R.string.import_export_screen_name),
             icon = Icons.Outlined.ImportExport,
             iconTint = colorScheme.onPrimary,
-            shape = SquircleShape,
+            shape = MaterialShapes.Pill,
             shapeColor = colorScheme.primary,
             action = { navController.navigate(ImportExportRoute) }
         ),
@@ -183,7 +178,7 @@ private fun getMoreList(
             title = context.getString(R.string.settings),
             icon = Icons.Outlined.Settings,
             iconTint = colorScheme.onSecondary,
-            shape = CloverShape,
+            shape = MaterialShapes.Clover4Leaf,
             shapeColor = colorScheme.secondary,
             action = { navController.navigate(SettingsRoute) }
         ),
@@ -191,7 +186,7 @@ private fun getMoreList(
             title = context.getString(R.string.about),
             icon = Icons.Outlined.Info,
             iconTint = colorScheme.onTertiary,
-            shape = CurlyCornerShape(amp = with(density) { 2.dp.toPx() }, count = 10),
+            shape = MaterialShapes.Cookie12Sided,
             shapeColor = colorScheme.tertiary,
             action = { navController.navigate(AboutRoute) }
         )

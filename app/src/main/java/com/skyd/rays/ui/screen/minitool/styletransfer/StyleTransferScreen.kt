@@ -15,10 +15,12 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Transform
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,8 +46,6 @@ import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysImage
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.WaitingDialog
-import com.skyd.rays.ui.component.shape.CloverShape
-import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
@@ -170,7 +170,7 @@ private fun InputArea(
                 modifier = Modifier.weight(0.5f),
                 title = stringResource(R.string.style_transfer_screen_style),
                 hintText = stringResource(R.string.style_transfer_screen_select_style_image),
-                shape = CurlyCornerShape(amp = 5f, count = 12),
+                shape = MaterialShapes.Cookie12Sided.toShape(),
                 imageUri = styleUri,
                 contentScale = ContentScale.FillWidth,
                 onSelectImage = onSelectStyleImage,
@@ -184,7 +184,7 @@ private fun InputArea(
                 modifier = Modifier.weight(0.5f),
                 title = stringResource(R.string.style_transfer_screen_content),
                 hintText = stringResource(R.string.style_transfer_screen_select_content_image),
-                shape = CloverShape,
+                shape = MaterialShapes.Clover4Leaf.toShape(),
                 imageUri = contentUri,
                 onSelectImage = onSelectContentImage,
             )

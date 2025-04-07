@@ -23,12 +23,14 @@ import androidx.compose.material.icons.outlined.Deselect
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.SelectAll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -55,7 +57,6 @@ import com.skyd.rays.ui.component.RaysFloatingActionButton
 import com.skyd.rays.ui.component.RaysIconToggleButton
 import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.dialog.WaitingDialog
-import com.skyd.rays.ui.component.shape.CurlyCornerShape
 import com.skyd.rays.ui.local.LocalImageSearchMaxResultCount
 import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
@@ -137,7 +138,7 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
                     modifier = Modifier.sizeIn(maxWidth = 120.dp),
                     title = stringResource(R.string.image_search_screen_source_image),
                     hintText = stringResource(R.string.image_search_screen_source_image_hint),
-                    shape = CurlyCornerShape(amp = 5f, count = 12),
+                    shape = MaterialShapes.Cookie12Sided.toShape(),
                     imageUri = currentBaseImage,
                     maxImageHeight = 150.dp,
                     onSelectImage = { imagePickLauncher.launchImagePicker() },
