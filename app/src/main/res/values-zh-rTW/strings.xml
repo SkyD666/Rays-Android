@@ -336,41 +336,4 @@
     <string name="copied">已複製</string>
     <string name="crash_screen_crash_log">日誌</string>
     <string name="crash_screen_copy_crash_log">複製日誌</string>
-    <string name="classification_model_screen_default_name" translatable="false"></string>
-    <string name="accessibility_service_label" translatable="false"></string>
-    <string name="merge_stickers_screen_max_count_limit"></string>
-    <string name="home_screen_image_search"></string>
-    <string name="db_sticker_table_md5" translatable="false"></string>
-    <string name="image_search_screen_max_result_count"></string>
-    <string name="appearance_screen_amoled_dark"></string>
-    <string name="image_search_screen_threshold"></string>
-    <string name="image_search_screen_name"></string>
-    <string name="detail_screen_full_image"></string>
-    <string name="merge_stickers_screen_name"></string>
-    <string name="about_screen_app_full_name" translatable="false"></string>
-    <string name="about_screen_other_works_raca_name" translatable="false"></string>
-    <string name="about_screen_other_works_night_screen_name" translatable="false"></string>
-    <string name="sponsor_buy_me_a_coffee" translatable="false"></string>
-    <string name="image_search_screen_search"></string>
-    <string name="search_config_screen_enable_add_screen_image_search_description"></string>
-    <string name="search_config_screen_image_search_max_result_count"></string>
-    <string name="image_search_screen_source_image"></string>
-    <string name="image_search_screen_source_image_hint"></string>
-    <string name="image_search_screen_long_time_tip"></string>
-    <string name="about_screen_other_works_podaura_name" translatable="false"></string>
-    <string name="data_screen_delete_vector_db_description"></string>
-    <string name="data_screen_delete_vector_db"></string>
-    <string name="add_screen_similar_stickers"></string>
-    <string name="merge_stickers_screen_merge"></string>
-    <string name="merge_stickers_screen_merge_successful"></string>
-    <string name="merge_stickers_screen_empty_sticker_list"></string>
-    <string name="merge_stickers_screen_candidate_titles"></string>
-    <string name="image_load_error"></string>
-    <string name="merge_stickers_screen_candidate_images"></string>
-    <string name="merge_stickers_screen_candidate_tags"></string>
-    <string name="search_config_screen_enable_add_screen_image_search"></string>
-    <string name="text_recognize_screen_enable_on_add_screen_description"></string>
-    <string name="classification_model_screen_enable_on_add_screen_description"></string>
-    <string name="text_recognize_model_screen_enable_on_add_screen"></string>
-    <string name="classification_model_screen_enable_on_add_screen"></string>
 </resources>
