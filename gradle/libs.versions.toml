@@ -16,7 +16,7 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version = "2.9.1" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "composeMaterial" }
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "composeMaterial" }
-androidx-compose-icons = { module = "androidx.compose.material:material-icons-extended", version = "1.7.3" }
+androidx-compose-icons = { module = "androidx.compose.material:material-icons-extended", version = "1.7.8" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "composeMaterial3" }
 androidx-compose-window-size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "composeMaterial3" }
 androidx-palette-ktx = { module = "androidx.palette:palette-ktx", version = "1.0.0" }
@@ -28,7 +28,6 @@ androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.7" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version = "1.0.1" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version = "3.3.6" }
-androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version = "1.2.0" }
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version = "1.4.1" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version = "1.1.0-beta01" }
 

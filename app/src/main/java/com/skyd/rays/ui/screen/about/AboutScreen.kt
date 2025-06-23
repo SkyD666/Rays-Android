@@ -20,9 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Balance
 import androidx.compose.material.icons.outlined.Coffee
@@ -337,7 +335,7 @@ private fun SponsorDialog(visible: Boolean, onClose: () -> Unit) {
         title = { Text(text = stringResource(id = R.string.sponsor)) },
         selectable = false,
         text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            Column {
                 Text(text = stringResource(id = R.string.sponsor_description))
                 Spacer(modifier = Modifier.height(6.dp))
                 ListItem(

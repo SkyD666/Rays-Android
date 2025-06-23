@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -129,11 +127,7 @@ private fun NewerDialog(
         selectable = false,
         text = {
             Column {
-                Column(
-                    modifier = Modifier
-                        .weight(weight = 1f, fill = false)
-                        .verticalScroll(rememberScrollState())
-                ) {
+                Column(modifier = Modifier.weight(weight = 1f, fill = false)) {
                     SelectionContainer {
                         Text(
                             text = stringResource(
