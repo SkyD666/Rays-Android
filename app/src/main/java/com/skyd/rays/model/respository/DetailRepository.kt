@@ -16,9 +16,8 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
 
-class DetailRepository @Inject constructor(private val stickerDao: StickerDao) : BaseRepository() {
+class DetailRepository(private val stickerDao: StickerDao) : BaseRepository() {
     fun requestStickerWithTagsDetail(
         stickerUuid: String,
         addClickCount: Int = 1,

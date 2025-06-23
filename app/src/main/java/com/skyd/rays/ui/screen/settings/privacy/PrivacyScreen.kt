@@ -1,7 +1,6 @@
 package com.skyd.rays.ui.screen.settings.privacy
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.BlurOn
 import androidx.compose.material.icons.outlined.Screenshot
@@ -15,16 +14,17 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
 import com.skyd.rays.ext.activity
 import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
-import com.skyd.rays.ui.component.BaseSettingsItem
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.local.LocalDisableScreenshot
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.settings.privacy.blurstickers.BlurStickersRoute
+import com.skyd.settings.BaseSettingsItem
+import com.skyd.settings.SettingsLazyColumn
+import com.skyd.settings.SwitchSettingsItem
 import kotlinx.serialization.Serializable
 
 
@@ -40,42 +40,40 @@ fun PrivacyScreen() {
 
     Scaffold(
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.privacy_screen_name)) },
             )
         }
     ) { paddingValues ->
-        LazyColumn(
+        SettingsLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = paddingValues,
         ) {
-            item {
-                SwitchSettingsItem(
-                    imageVector = Icons.Outlined.Screenshot,
-                    checked = LocalDisableScreenshot.current,
-                    text = stringResource(R.string.privacy_screen_disable_screenshot),
-                    description = stringResource(R.string.privacy_screen_disable_screenshot_description),
-                    onCheckedChange = {
-                        DisableScreenshotPreference.put(
-                            context = context,
-                            scope = scope,
-                            value = it
-                        )
-                        context.activity.recreate()
-                    }
-                )
-            }
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(Icons.Outlined.BlurOn),
-                    text = stringResource(R.string.blur_stickers_screen_name),
-                    descriptionText = stringResource(R.string.blur_stickers_screen_description),
-                    onClick = { navController.navigate(BlurStickersRoute) },
-                )
+            group {
+                item {
+                    SwitchSettingsItem(
+                        imageVector = Icons.Outlined.Screenshot,
+                        checked = LocalDisableScreenshot.current,
+                        text = stringResource(R.string.privacy_screen_disable_screenshot),
+                        description = stringResource(R.string.privacy_screen_disable_screenshot_description),
+                        onCheckedChange = {
+                            DisableScreenshotPreference.put(context, scope, it)
+                            context.activity.recreate()
+                        }
+                    )
+                }
+                item {
+                    BaseSettingsItem(
+                        icon = rememberVectorPainter(Icons.Outlined.BlurOn),
+                        text = stringResource(R.string.blur_stickers_screen_name),
+                        descriptionText = stringResource(R.string.blur_stickers_screen_description),
+                        onClick = { navController.navigate(BlurStickersRoute) },
+                    )
+                }
             }
         }
     }

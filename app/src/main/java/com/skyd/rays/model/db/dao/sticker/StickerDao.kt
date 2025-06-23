@@ -12,6 +12,7 @@ import androidx.room.Transaction
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.skyd.rays.appContext
 import com.skyd.rays.config.STICKER_DIR
+import com.skyd.rays.di.get
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.ext.safeDbVariableNumber
@@ -34,10 +35,6 @@ import com.skyd.rays.model.db.objectbox.entity.StickerEmbedding
 import com.skyd.rays.model.db.objectbox.entity.StickerEmbedding_
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.util.stickerUuidToFile
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 import io.objectbox.BoxStore
 import io.objectbox.query.QueryBuilder
 import kotlinx.coroutines.CoroutineScope
@@ -48,14 +45,6 @@ import java.util.UUID
 
 @Dao
 interface StickerDao {
-    @EntryPoint
-    @InstallIn(SingletonComponent::class)
-    interface StickerDaoEntryPoint {
-        val tagDao: TagDao
-        val stickerShareTimeDao: StickerShareTimeDao
-        val boxStore: BoxStore
-    }
-
     @Transaction
     @RawQuery(observedEntities = [StickerBean::class, TagBean::class])
     fun getStickerWithTagsList(sql: SupportSQLiteQuery): Flow<List<StickerWithTags>>
@@ -182,11 +171,9 @@ interface StickerDao {
 
     @Transaction
     suspend fun shareStickers(uuids: Collection<String>, count: Int = 1) {
-        val hiltEntryPoint = EntryPointAccessors
-            .fromApplication(appContext, StickerDaoEntryPoint::class.java)
         val currentTimeMillis = System.currentTimeMillis()
         uuids.toList().safeDbVariableNumber { addShareCount(it, count) }
-        hiltEntryPoint.stickerShareTimeDao.updateShareTime(uuids.map { stickerUuid ->
+        get<StickerShareTimeDao>().updateShareTime(uuids.map { stickerUuid ->
             StickerShareTimeBean(stickerUuid, currentTimeMillis)
         })
     }
@@ -204,8 +191,6 @@ interface StickerDao {
         if (updateModifyTime) {
             stickerWithTags.sticker.modifyTime = System.currentTimeMillis()
         }
-        val hiltEntryPoint = EntryPointAccessors
-            .fromApplication(appContext, StickerDaoEntryPoint::class.java)
         var stickerUuid = stickerWithTags.sticker.uuid
         runCatching {
             UUID.fromString(stickerUuid)
@@ -217,7 +202,7 @@ interface StickerDao {
         stickerWithTags.tags.forEach {
             it.stickerUuid = stickerUuid
         }
-        hiltEntryPoint.tagDao.apply {
+        get<TagDao>().apply {
             deleteTags(stickerUuid)
             addTags(stickerWithTags.tags)
         }
@@ -225,17 +210,16 @@ interface StickerDao {
     }
 
     suspend fun addSticker(stickerBean: StickerBean) {
-        EntryPointAccessors.fromApplication(appContext, StickerDaoEntryPoint::class.java)
-            .boxStore.boxFor(StickerEmbedding::class.java).apply {
-                val oldEmbedding = query().equal(
-                    StickerEmbedding_.uuid,
-                    stickerBean.uuid,
-                    QueryBuilder.StringOrder.CASE_SENSITIVE
-                ).build().findUnique()
-                if (oldEmbedding != null) {
-                    remove(oldEmbedding)
-                }
+        get<BoxStore>().boxFor(StickerEmbedding::class.java).apply {
+            val oldEmbedding = query().equal(
+                StickerEmbedding_.uuid,
+                stickerBean.uuid,
+                QueryBuilder.StringOrder.CASE_SENSITIVE
+            ).build().findUnique()
+            if (oldEmbedding != null) {
+                remove(oldEmbedding)
             }
+        }
         _innerAddSticker(stickerBean)
     }
 
@@ -290,8 +274,6 @@ interface StickerDao {
         stickerWithTagsList: List<StickerWithTagsAndFile>,
         strategy: HandleImportedStickerStrategy,
     ): Int {
-        val hiltEntryPoint = EntryPointAccessors
-            .fromApplication(appContext, StickerDaoEntryPoint::class.java)
         var updatedCount = 0
         stickerWithTagsList.forEach {
             val currentTimeMillis = System.currentTimeMillis()
@@ -305,7 +287,7 @@ interface StickerDao {
             }
             val updated = strategy.handle(
                 stickerDao = this,
-                tagDao = hiltEntryPoint.tagDao,
+                tagDao = get<TagDao>(),
                 importedStickerWithTags = it.stickerWithTags,
                 stickerFile = it.stickerFile,
             )

@@ -66,6 +66,12 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.component.dialog.ComponeDialog
+import com.skyd.compone.ext.plus
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
 import com.skyd.rays.config.GITHUB_REPO
 import com.skyd.rays.config.NIGHT_SCREEN_URL
@@ -73,14 +79,8 @@ import com.skyd.rays.config.PODAURA_URL
 import com.skyd.rays.config.RACA_ANDROID_URL
 import com.skyd.rays.config.WEBLATE_URL
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.plus
 import com.skyd.rays.model.bean.OtherWorksBean
-import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.dialog.RaysDialog
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.about.license.LicenseRoute
 import com.skyd.rays.ui.screen.about.update.UpdateDialog
@@ -107,17 +107,17 @@ fun AboutScreen() {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.about)) },
                 actions = {
-                    RaysIconButton(
+                    ComponeIconButton(
                         imageVector = Icons.Outlined.Balance,
                         contentDescription = stringResource(id = R.string.license_screen_name),
                         onClick = { navController.navigate(LicenseRoute) }
                     )
-                    RaysIconButton(
+                    ComponeIconButton(
                         onClick = { openUpdateDialog = true },
                         imageVector = Icons.Outlined.Update,
                         contentDescription = stringResource(id = R.string.update_check)
@@ -330,7 +330,7 @@ private fun HelpArea(
 
 @Composable
 private fun SponsorDialog(visible: Boolean, onClose: () -> Unit) {
-    RaysDialog(
+    ComponeDialog(
         visible = visible,
         onDismissRequest = onClose,
         icon = { Icon(imageVector = Icons.Outlined.Coffee, contentDescription = null) },
@@ -387,7 +387,7 @@ private fun ButtonArea() {
             ),
             contentAlignment = Alignment.Center
         ) {
-            RaysIconButton(
+            ComponeIconButton(
                 painter = painterResource(id = R.drawable.ic_github_24),
                 contentDescription = stringResource(id = R.string.about_screen_goto_github_repo),
                 onClick = { openBrowser(GITHUB_REPO) }
@@ -400,7 +400,7 @@ private fun ButtonArea() {
             ),
             contentAlignment = Alignment.Center
         ) {
-            RaysIconButton(
+            ComponeIconButton(
                 painter = painterResource(id = R.drawable.ic_telegram_24),
                 contentDescription = stringResource(id = R.string.about_screen_join_telegram),
                 onClick = { openBrowser("https://t.me/SkyD666Chat") }
@@ -413,7 +413,7 @@ private fun ButtonArea() {
             ),
             contentAlignment = Alignment.Center
         ) {
-            RaysIconButton(
+            ComponeIconButton(
                 painter = painterResource(id = R.drawable.ic_discord_24),
                 contentDescription = stringResource(id = R.string.about_screen_join_discord),
                 onClick = { openBrowser("https://discord.gg/pEWEjeJTa3") }

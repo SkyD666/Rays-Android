@@ -37,14 +37,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.ext.plus
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
-import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.model.bean.MiniTool1Bean
-import com.skyd.rays.ui.component.RaysIconButton
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.minitool.selfiesegmentation.SelfieSegmentationRoute
 import com.skyd.rays.ui.screen.minitool.styletransfer.StyleTransferRoute
 import kotlinx.serialization.Serializable
@@ -64,12 +64,12 @@ fun MiniToolScreen() {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(id = R.string.mini_tool_screen_name)) },
                 navigationIcon = {
-                    RaysIconButton(
+                    ComponeIconButton(
                         imageVector = Icons.Outlined.Extension,
                         onClick = {
                             snackbarHostState.showSnackbar(

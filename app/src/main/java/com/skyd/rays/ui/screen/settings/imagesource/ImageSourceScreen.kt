@@ -3,7 +3,6 @@ package com.skyd.rays.ui.screen.settings.imagesource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ImageSearch
@@ -24,13 +23,14 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
 import com.skyd.rays.R
 import com.skyd.rays.model.preference.PickImageMethodPreference
-import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.RadioTextItem
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.ui.local.LocalPickImageMethod
+import com.skyd.settings.BaseSettingsItem
+import com.skyd.settings.SettingsLazyColumn
 import kotlinx.serialization.Serializable
 
 
@@ -44,26 +44,28 @@ fun ImageSourceScreen() {
 
     Scaffold(
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.image_source_screen_name)) },
             )
         }
     ) { paddingValues ->
-        LazyColumn(
+        SettingsLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = paddingValues,
         ) {
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Outlined.ImageSearch),
-                    text = stringResource(R.string.image_screen_picker),
-                    descriptionText = stringResource(R.string.image_screen_picker_description),
-                    onClick = { openPickImageMethodBottomSheet = true }
-                )
+            group {
+                item {
+                    BaseSettingsItem(
+                        icon = rememberVectorPainter(image = Icons.Outlined.ImageSearch),
+                        text = stringResource(R.string.image_screen_picker),
+                        descriptionText = stringResource(R.string.image_screen_picker_description),
+                        onClick = { openPickImageMethodBottomSheet = true }
+                    )
+                }
             }
         }
 

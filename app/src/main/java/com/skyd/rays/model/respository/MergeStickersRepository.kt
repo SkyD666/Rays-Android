@@ -11,9 +11,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
 
-class MergeStickersRepository @Inject constructor(
+class MergeStickersRepository(
     private val stickerDao: StickerDao,
     private val addRepo: AddRepository,
     private val searchRepo: SearchRepository,

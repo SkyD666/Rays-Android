@@ -6,8 +6,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CreateNewFolder
 import androidx.compose.material.icons.outlined.Lightbulb
@@ -33,30 +31,31 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.component.dialog.DeleteWarningDialog
+import com.skyd.compone.component.dialog.WaitingDialog
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.safeLaunch
 import com.skyd.rays.model.bean.ModelBean
 import com.skyd.rays.model.preference.StickerClassificationModelPreference
-import com.skyd.rays.ui.component.BaseSettingsItem
-import com.skyd.rays.ui.component.RadioSettingsItem
 import com.skyd.rays.ui.component.RaysSwipeToDismiss
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
-import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalStickerClassificationModel
+import com.skyd.settings.BaseSettingsItem
+import com.skyd.settings.RadioSettingsItem
+import com.skyd.settings.SettingsLazyColumn
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
 data object ClassificationModelRoute
 
 @Composable
-fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltViewModel()) {
+fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = koinViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -67,8 +66,8 @@ fun ClassificationModelScreen(viewModel: ClassificationModelViewModel = hiltView
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.classification_model_screen_name)) },
             )
@@ -146,62 +145,65 @@ private fun ModelList(
     } else {
         emptyList()
     }
-    LazyColumn(
+    SettingsLazyColumn(
         modifier = modifier,
         contentPadding = contentPadding,
     ) {
-        item {
-            RadioSettingsItem(
-                selected = classificationModel.isBlank(),
-                imageVector = Icons.Outlined.LightbulbCircle,
-                text = stringResource(id = R.string.classification_model_screen_default),
-                description = stringResource(id = R.string.classification_model_screen_default_name),
-                onClick = {
-                    if (classificationModel.isNotBlank()) {
-                        StickerClassificationModelPreference.put(
-                            context = context,
-                            scope = scope,
-                            value = StickerClassificationModelPreference.default
-                        )
-                    }
-                }
-            )
-        }
-        item {
-            BaseSettingsItem(
-                painter = rememberVectorPainter(image = Icons.Outlined.CreateNewFolder),
-                text = stringResource(id = R.string.classification_model_screen_select),
-                descriptionText = stringResource(
-                    R.string.classification_model_screen_select_description,
-                ),
-                onClick = { pickModelLauncher.safeLaunch("application/octet-stream") }
-            )
-        }
-        itemsIndexed(models) { _, item ->
-            RaysSwipeToDismiss(
-                state = rememberSwipeToDismissBoxState(
-                    confirmValueChange = { dismissValue ->
-                        if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
-                            onDelete(item)
-                        }
-                        false
-                    }
-                ),
-                enableDismissFromStartToEnd = false,
-                enableDismissFromEndToStart = true,
-            ) {
+        group {
+            item {
                 RadioSettingsItem(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                    selected = item.name == classificationModelName,
-                    painter = rememberVectorPainter(image = Icons.Outlined.Lightbulb),
-                    text = item.name,
-                    description = item.path,
+                    selected = classificationModel.isBlank(),
+                    imageVector = Icons.Outlined.LightbulbCircle,
+                    text = stringResource(id = R.string.classification_model_screen_default),
+                    description = stringResource(id = R.string.classification_model_screen_default_name),
                     onClick = {
-                        if (item.name != classificationModelName) {
-                            onSetModel(item)
+                        if (classificationModel.isNotBlank()) {
+                            StickerClassificationModelPreference.put(
+                                context = context,
+                                scope = scope,
+                                value = StickerClassificationModelPreference.default
+                            )
                         }
                     }
                 )
+            }
+            item {
+                BaseSettingsItem(
+                    icon = rememberVectorPainter(image = Icons.Outlined.CreateNewFolder),
+                    text = stringResource(id = R.string.classification_model_screen_select),
+                    descriptionText = stringResource(
+                        R.string.classification_model_screen_select_description,
+                    ),
+                    onClick = { pickModelLauncher.safeLaunch("application/octet-stream") }
+                )
+            }
+            items(count = models.size, isBaseItem = { true }) { index ->
+                val item = models[index]
+                RaysSwipeToDismiss(
+                    state = rememberSwipeToDismissBoxState(
+                        confirmValueChange = { dismissValue ->
+                            if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
+                                onDelete(item)
+                            }
+                            false
+                        }
+                    ),
+                    enableDismissFromStartToEnd = false,
+                    enableDismissFromEndToStart = true,
+                ) {
+                    RadioSettingsItem(
+                        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                        selected = item.name == classificationModelName,
+                        painter = rememberVectorPainter(image = Icons.Outlined.Lightbulb),
+                        text = item.name,
+                        description = item.path,
+                        onClick = {
+                            if (item.name != classificationModelName) {
+                                onSetModel(item)
+                            }
+                        }
+                    )
+                }
             }
         }
     }

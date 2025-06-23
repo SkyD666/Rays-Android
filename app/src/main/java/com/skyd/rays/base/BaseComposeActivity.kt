@@ -11,9 +11,7 @@ import com.skyd.rays.model.preference.SettingsProvider
 import com.skyd.rays.ui.local.LocalDarkMode
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.theme.RaysTheme
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 open class BaseComposeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

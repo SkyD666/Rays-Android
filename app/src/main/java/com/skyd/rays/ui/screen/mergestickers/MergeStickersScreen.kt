@@ -51,26 +51,26 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeExtendedFloatingActionButton
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.dialog.ComponeDialog
+import com.skyd.compone.component.dialog.WaitingDialog
+import com.skyd.compone.ext.popBackStackWithLifecycle
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.ui.component.CircularProgressPlaceholder
 import com.skyd.rays.ui.component.ErrorPlaceholder
-import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
-import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.dialog.RaysDialog
-import com.skyd.rays.ui.component.dialog.WaitingDialog
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.fullimage.FullImageRoute
 import com.skyd.rays.util.stickerUuidToUri
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 import java.util.UUID
 
 
@@ -106,7 +106,7 @@ fun MergeStickersScreenRoute(stickerUuids: List<String>) {
             openDialog = null
             onDismiss()
         }
-        RaysDialog(
+        ComponeDialog(
             title = { Text(stringResource(R.string.info)) },
             text = { Text(openDialog.orEmpty()) },
             onDismissRequest = onDismissRequest,
@@ -122,7 +122,7 @@ fun MergeStickersScreenRoute(stickerUuids: List<String>) {
 @Composable
 fun MergeStickersScreen(
     stickerUuids: List<String>,
-    viewModel: MergeStickersViewModel = hiltViewModel(),
+    viewModel: MergeStickersViewModel = koinViewModel(),
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val navController = LocalNavController.current
@@ -145,7 +145,7 @@ fun MergeStickersScreen(
             if (stickersState is StickersState.Success &&
                 selectedStickerUuid.isNotBlank()
             ) {
-                RaysExtendedFloatingActionButton(
+                ComponeExtendedFloatingActionButton(
                     text = { Text(text = stringResource(R.string.merge_stickers_screen_merge)) },
                     icon = { Icon(Icons.Outlined.Merge, contentDescription = null) },
                     onClick = {
@@ -175,7 +175,7 @@ fun MergeStickersScreen(
             }
         },
         topBar = {
-            RaysTopBar(
+            ComponeTopBar(
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.merge_stickers_screen_name)) },
             )
@@ -222,7 +222,7 @@ fun MergeStickersScreen(
         }
 
         if (openMergeSuccessDialog) {
-            RaysDialog(
+            ComponeDialog(
                 title = { Text(stringResource(R.string.merge_stickers_screen_merge_successful)) },
                 confirmButton = {
                     TextButton(onClick = { navController.popBackStackWithLifecycle() }) {
@@ -324,7 +324,7 @@ fun StickerImages(
                                 .fillMaxHeight(),
                         )
                         val navController = LocalNavController.current
-                        RaysIconButton(
+                        ComponeIconButton(
                             modifier = Modifier.align(Alignment.TopEnd),
                             onClick = {
                                 navController.navigate(FullImageRoute(image = stickerUuidToUri(item.sticker.uuid)))

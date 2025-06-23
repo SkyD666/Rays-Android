@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.CloudDownload
@@ -47,8 +46,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.component.dialog.ComponeDialog
+import com.skyd.compone.component.dialog.DeleteWarningDialog
+import com.skyd.compone.component.dialog.TextFieldDialog
+import com.skyd.compone.component.dialog.WaitingDialog
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
@@ -57,20 +62,16 @@ import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.bean.BackupInfo
 import com.skyd.rays.model.bean.WebDavWaitingInfo
 import com.skyd.rays.model.preference.WebDavServerPreference
-import com.skyd.rays.ui.component.BaseSettingsItem
-import com.skyd.rays.ui.component.CategorySettingsItem
-import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysLottieAnimation
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.TipSettingsItem
-import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
-import com.skyd.rays.ui.component.dialog.RaysDialog
-import com.skyd.rays.ui.component.dialog.TextFieldDialog
-import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalWebDavServer
+import com.skyd.settings.BaseSettingsItem
+import com.skyd.settings.CategorySettingsItem
+import com.skyd.settings.SettingsLazyColumn
+import com.skyd.settings.TipSettingsItem
+import com.skyd.settings.dsl.SettingsLazyListScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
@@ -80,7 +81,7 @@ private const val WEBDAV_ACCOUNT_KEY = "webDavAccount"
 private const val WEBDAV_PASSWORD_KEY = "webDavPassword"
 
 @Composable
-fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
+fun WebDavScreen(viewModel: WebDavViewModel = koinViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -100,12 +101,12 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.webdav_screen_name)) },
                 actions = {
-                    RaysIconButton(
+                    ComponeIconButton(
                         onClick = { openWarningDialog = true },
                         imageVector = Icons.Outlined.Info,
                         contentDescription = stringResource(R.string.info)
@@ -134,7 +135,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
             }
         }
 
-        LazyColumn(
+        SettingsLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -281,7 +282,7 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
                 openDeleteWarningDialog = null
             }
         )
-        RaysDialog(
+        ComponeDialog(
             visible = openWarningDialog,
             onDismissRequest = { openWarningDialog = false },
             title = {
@@ -298,13 +299,13 @@ fun WebDavScreen(viewModel: WebDavViewModel = hiltViewModel()) {
         )
         TextFieldDialog(
             visible = openInputDialog,
-            title = inputDialogInfo.first,
+            titleText = inputDialogInfo.first,
             value = inputDialogInfo.second,
             maxLines = 1,
             isPassword = inputDialogIsPassword,
             onDismissRequest = { openInputDialog = false },
             onConfirm = inputDialogInfo.third,
-            disableConfirmWhenBlank = false,
+            enableConfirm = { true },
             onValueChange = {
                 inputDialogInfo = inputDialogInfo.copy(second = it)
             },
@@ -419,12 +420,12 @@ private fun RecycleBinBottomSheet(
                         },
                         trailingContent = {
                             Row {
-                                RaysIconButton(
+                                ComponeIconButton(
                                     imageVector = Icons.Outlined.RestoreFromTrash,
                                     contentDescription = stringResource(R.string.webdav_screen_restore),
                                     onClick = { onRestore(list[it].uuid) }
                                 )
-                                RaysIconButton(
+                                ComponeIconButton(
                                     imageVector = Icons.Outlined.DeleteForever,
                                     contentDescription = stringResource(R.string.webdav_screen_delete),
                                     onClick = { onDelete(list[it].uuid) }
@@ -459,7 +460,7 @@ private fun RecycleBinBottomSheet(
     }
 }
 
-private fun LazyListScope.webDavItem(
+private fun SettingsLazyListScope.webDavItem(
     server: String,
     account: String,
     password: String,
@@ -467,65 +468,71 @@ private fun LazyListScope.webDavItem(
     onAccountItemClick: () -> Unit,
     onPasswordItemClick: () -> Unit,
 ) {
-    item {
-        CategorySettingsItem(text = stringResource(id = R.string.webdav_screen_service_category))
-    }
-    item {
-        BaseSettingsItem(
-            painter = rememberVectorPainter(image = Icons.Outlined.Dns),
-            text = stringResource(id = R.string.webdav_screen_server),
-            descriptionText = server.ifBlank {
-                stringResource(id = R.string.webdav_screen_server_description)
-            },
-            onClick = onServerItemClick
-        )
-        BaseSettingsItem(
-            painter = rememberVectorPainter(image = Icons.Outlined.AccountCircle),
-            text = stringResource(id = R.string.webdav_screen_account),
-            descriptionText = account.ifBlank {
-                stringResource(id = R.string.webdav_screen_account_description)
-            },
-            onClick = onAccountItemClick
-        )
-        BaseSettingsItem(
-            painter = rememberVectorPainter(image = Icons.Outlined.Key),
-            text = stringResource(id = R.string.webdav_screen_password),
-            descriptionText = stringResource(
-                id = if (password.isBlank()) R.string.webdav_screen_password_description
-                else R.string.webdav_screen_password_entered
-            ),
-            onClick = onPasswordItemClick
-        )
+    group(category = { CategorySettingsItem(text = stringResource(id = R.string.webdav_screen_service_category)) }) {
+        item {
+            BaseSettingsItem(
+                icon = rememberVectorPainter(image = Icons.Outlined.Dns),
+                text = stringResource(id = R.string.webdav_screen_server),
+                descriptionText = server.ifBlank {
+                    stringResource(id = R.string.webdav_screen_server_description)
+                },
+                onClick = onServerItemClick
+            )
+        }
+        item {
+            BaseSettingsItem(
+                icon = rememberVectorPainter(image = Icons.Outlined.AccountCircle),
+                text = stringResource(id = R.string.webdav_screen_account),
+                descriptionText = account.ifBlank {
+                    stringResource(id = R.string.webdav_screen_account_description)
+                },
+                onClick = onAccountItemClick
+            )
+        }
+        item {
+            BaseSettingsItem(
+                icon = rememberVectorPainter(image = Icons.Outlined.Key),
+                text = stringResource(id = R.string.webdav_screen_password),
+                descriptionText = stringResource(
+                    id = if (password.isBlank()) R.string.webdav_screen_password_description
+                    else R.string.webdav_screen_password_entered
+                ),
+                onClick = onPasswordItemClick
+            )
+        }
     }
 }
 
-private fun LazyListScope.syncItem(
+private fun SettingsLazyListScope.syncItem(
     onPullItemClick: () -> Unit,
     onPushItemClick: () -> Unit,
     onRemoteRecycleBinItemClick: () -> Unit,
 ) {
-    item {
-        CategorySettingsItem(text = stringResource(id = R.string.webdav_screen_sync_category))
-    }
-    item {
-        BaseSettingsItem(
-            painter = rememberVectorPainter(image = Icons.Outlined.CloudDownload),
-            text = stringResource(id = R.string.webdav_screen_download),
-            descriptionText = stringResource(id = R.string.webdav_screen_download_description),
-            onClick = onPullItemClick
-        )
-        BaseSettingsItem(
-            painter = rememberVectorPainter(image = Icons.Outlined.CloudUpload),
-            text = stringResource(id = R.string.webdav_screen_upload),
-            descriptionText = stringResource(id = R.string.webdav_screen_upload_description),
-            onClick = onPushItemClick
-        )
-        BaseSettingsItem(
-            painter = rememberVectorPainter(image = Icons.Outlined.Recycling),
-            text = stringResource(id = R.string.webdav_screen_remote_recycle_bin),
-            descriptionText = stringResource(id = R.string.webdav_screen_remote_recycle_bin_description),
-            onClick = onRemoteRecycleBinItemClick
-        )
+    group(category = { CategorySettingsItem(text = stringResource(id = R.string.webdav_screen_sync_category)) }) {
+        item {
+            BaseSettingsItem(
+                icon = rememberVectorPainter(image = Icons.Outlined.CloudDownload),
+                text = stringResource(id = R.string.webdav_screen_download),
+                descriptionText = stringResource(id = R.string.webdav_screen_download_description),
+                onClick = onPullItemClick
+            )
+        }
+        item {
+            BaseSettingsItem(
+                icon = rememberVectorPainter(image = Icons.Outlined.CloudUpload),
+                text = stringResource(id = R.string.webdav_screen_upload),
+                descriptionText = stringResource(id = R.string.webdav_screen_upload_description),
+                onClick = onPushItemClick
+            )
+        }
+        item {
+            BaseSettingsItem(
+                icon = rememberVectorPainter(image = Icons.Outlined.Recycling),
+                text = stringResource(id = R.string.webdav_screen_remote_recycle_bin),
+                descriptionText = stringResource(id = R.string.webdav_screen_remote_recycle_bin_description),
+                onClick = onRemoteRecycleBinItemClick
+            )
+        }
     }
     item {
         TipSettingsItem(

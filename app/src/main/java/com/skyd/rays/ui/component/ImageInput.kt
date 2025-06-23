@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import coil3.EventListener
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.ComponeIconButtonStyle
 import com.skyd.rays.R
 
 @Composable
@@ -142,11 +144,11 @@ fun ImageInput(
                     )
                 }
                 if (onRemoveClick != null) {
-                    RaysIconButton(
+                    ComponeIconButton(
                         modifier = Modifier.align(Alignment.TopEnd),
                         onClick = onRemoveClick,
                         imageVector = Icons.Outlined.Close,
-                        style = RaysIconButtonStyle.Filled,
+                        style = ComponeIconButtonStyle.Filled,
                     )
                 }
             }

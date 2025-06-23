@@ -11,14 +11,12 @@ import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.model.db.AppDatabase
 import com.skyd.rays.model.preference.ApiGrantPreference
 import com.skyd.rays.model.respository.SearchRepository
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-@AndroidEntryPoint
 class ApiService : Service() {
     @Inject
     lateinit var searchRepository: SearchRepository

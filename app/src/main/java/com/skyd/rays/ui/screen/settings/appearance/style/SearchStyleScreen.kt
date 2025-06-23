@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ManageSearch
 import androidx.compose.material.icons.outlined.LocalOffer
@@ -21,14 +20,15 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
 import com.skyd.rays.R
 import com.skyd.rays.model.preference.ShowPopularTagsPreference
 import com.skyd.rays.model.preference.search.ShowLastQueryPreference
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.SwitchSettingsItem
 import com.skyd.rays.ui.local.LocalShowLastQuery
 import com.skyd.rays.ui.local.LocalShowPopularTags
+import com.skyd.settings.SettingsLazyColumn
+import com.skyd.settings.SwitchSettingsItem
 import kotlinx.serialization.Serializable
 
 
@@ -43,14 +43,14 @@ fun SearchStyleScreen() {
 
     Scaffold(
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.search_style_screen_name)) },
             )
         }
     ) { paddingValues ->
-        LazyColumn(
+        SettingsLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -69,35 +69,37 @@ fun SearchStyleScreen() {
                     }
                 }
             }
-            item {
-                SwitchSettingsItem(
-                    imageVector = Icons.Outlined.LocalOffer,
-                    checked = LocalShowPopularTags.current,
-                    text = stringResource(R.string.home_style_screen_show_popular_tags),
-                    description = stringResource(R.string.home_style_screen_show_popular_tags_description),
-                    onCheckedChange = {
-                        ShowPopularTagsPreference.put(
-                            context = context,
-                            scope = scope,
-                            value = it,
-                        )
-                    },
-                )
-            }
-            item {
-                SwitchSettingsItem(
-                    imageVector = Icons.AutoMirrored.Outlined.ManageSearch,
-                    checked = LocalShowLastQuery.current,
-                    text = stringResource(R.string.home_style_screen_show_last_query),
-                    description = stringResource(R.string.home_style_screen_show_last_query_description),
-                    onCheckedChange = {
-                        ShowLastQueryPreference.put(
-                            context = context,
-                            scope = scope,
-                            value = it,
-                        )
-                    },
-                )
+            group {
+                item {
+                    SwitchSettingsItem(
+                        imageVector = Icons.Outlined.LocalOffer,
+                        checked = LocalShowPopularTags.current,
+                        text = stringResource(R.string.home_style_screen_show_popular_tags),
+                        description = stringResource(R.string.home_style_screen_show_popular_tags_description),
+                        onCheckedChange = {
+                            ShowPopularTagsPreference.put(
+                                context = context,
+                                scope = scope,
+                                value = it,
+                            )
+                        },
+                    )
+                }
+                item {
+                    SwitchSettingsItem(
+                        imageVector = Icons.AutoMirrored.Outlined.ManageSearch,
+                        checked = LocalShowLastQuery.current,
+                        text = stringResource(R.string.home_style_screen_show_last_query),
+                        description = stringResource(R.string.home_style_screen_show_last_query_description),
+                        onCheckedChange = {
+                            ShowLastQueryPreference.put(
+                                context = context,
+                                scope = scope,
+                                value = it,
+                            )
+                        },
+                    )
+                }
             }
         }
     }

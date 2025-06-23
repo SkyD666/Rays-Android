@@ -5,7 +5,6 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.MoveDown
@@ -26,18 +25,19 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.component.dialog.TextFieldDialog
 import com.skyd.rays.R
 import com.skyd.rays.ext.safeLaunch
 import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
-import com.skyd.rays.ui.component.BannerItem
-import com.skyd.rays.ui.component.BaseSettingsItem
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.SwitchSettingsItem
-import com.skyd.rays.ui.component.TipSettingsItem
-import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.local.LocalAutoShareIgnoreStrategy
 import com.skyd.rays.ui.service.isAccessibilityServiceRunning
+import com.skyd.settings.BannerItem
+import com.skyd.settings.BaseSettingsItem
+import com.skyd.settings.SettingsLazyColumn
+import com.skyd.settings.SwitchSettingsItem
+import com.skyd.settings.TipSettingsItem
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
@@ -59,8 +59,8 @@ fun AutoShareScreen() {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.auto_share_screen_name)) },
             )
@@ -81,7 +81,7 @@ fun AutoShareScreen() {
             }
         }
 
-        LazyColumn(
+        SettingsLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -91,7 +91,7 @@ fun AutoShareScreen() {
                 BannerItem {
                     SwitchSettingsItem(
                         imageVector = Icons.Outlined.MoveDown,
-                        text = stringResource(id = R.string.enable),
+                        text = stringResource(R.string.enable),
                         checked = autoShareEnabled,
                         onCheckedChange = {
                             accessibleLauncher.safeLaunch(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
@@ -99,25 +99,27 @@ fun AutoShareScreen() {
                     )
                 }
             }
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Outlined.Block),
-                    text = stringResource(id = R.string.auto_share_screen_ignore),
-                    descriptionText = stringResource(id = R.string.auto_share_screen_ignore_description),
-                    enabled = autoShareEnabled,
-                    onClick = { openIgnoreStrategyDialog = true }
-                )
+            group {
+                item {
+                    BaseSettingsItem(
+                        icon = rememberVectorPainter(image = Icons.Outlined.Block),
+                        text = stringResource(R.string.auto_share_screen_ignore),
+                        descriptionText = stringResource(R.string.auto_share_screen_ignore_description),
+                        enabled = autoShareEnabled,
+                        onClick = { openIgnoreStrategyDialog = true }
+                    )
+                }
             }
             item {
                 TipSettingsItem(
-                    text = stringResource(id = R.string.auto_share_screen_supported_app)
+                    text = stringResource(R.string.auto_share_screen_supported_app)
                 )
             }
         }
 
         TextFieldDialog(
             visible = openIgnoreStrategyDialog,
-            title = stringResource(id = R.string.auto_share_screen_ignore_input_dialog_title),
+            titleText = stringResource(id = R.string.auto_share_screen_ignore_input_dialog_title),
             value = ignoreStrategyValue,
             onDismissRequest = { openIgnoreStrategyDialog = false },
             onValueChange = { ignoreStrategyValue = it },

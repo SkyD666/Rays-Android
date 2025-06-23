@@ -1,20 +1,10 @@
 package com.skyd.rays.di
 
 import androidx.paging.PagingConfig
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object PagingModule {
-    @Provides
-    @Singleton
+val pagingModule = module {
     // enablePlaceholders must be true
     // https://issuetracker.google.com/issues/214253526
-    fun providePagingConfig(): PagingConfig = PagingConfig(
-        pageSize = 20, enablePlaceholders = true
-    )
+    single { PagingConfig(pageSize = 20, enablePlaceholders = true) }
 }

@@ -2,7 +2,6 @@ package com.skyd.rays.ui.local
 
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.compositionLocalOf
-import androidx.navigation.NavHostController
 import com.skyd.rays.model.preference.ApiGrantPreference
 import com.skyd.rays.model.preference.AutoShareIgnoreStrategyPreference
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
@@ -38,10 +37,6 @@ import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
-
-val LocalNavController = compositionLocalOf<NavHostController> {
-    error("LocalNavController not initialized!")
-}
 
 val LocalWindowSizeClass = compositionLocalOf<WindowSizeClass> {
     error("LocalWindowSizeClass not initialized!")

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
@@ -36,31 +35,32 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeExtendedFloatingActionButton
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.component.dialog.ComponeDialog
+import com.skyd.compone.component.dialog.WaitingDialog
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.safeLaunch
 import com.skyd.rays.model.bean.ImportExportResultInfo
 import com.skyd.rays.model.bean.ImportExportWaitingInfo
 import com.skyd.rays.model.db.dao.sticker.HandleImportedStickerStrategy
-import com.skyd.rays.ui.component.BaseSettingsItem
-import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.TipSettingsItem
-import com.skyd.rays.ui.component.dialog.RaysDialog
-import com.skyd.rays.ui.component.dialog.WaitingDialog
+import com.skyd.settings.BaseSettingsItem
+import com.skyd.settings.SettingsLazyColumn
+import com.skyd.settings.TipSettingsItem
+import com.skyd.settings.plus
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
 data object ImportFilesRoute
 
 @Composable
-fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
+fun ImportFilesScreen(viewModel: ImportFilesViewModel = koinViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -91,14 +91,14 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.import_files_screen_name)) },
             )
         },
         floatingActionButton = {
-            RaysExtendedFloatingActionButton(
+            ComponeExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.import_files_screen_import)) },
                 icon = { Icon(imageVector = Icons.Outlined.Done, contentDescription = null) },
                 onClick = {
@@ -114,46 +114,48 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
             )
         },
     ) { paddingValues ->
-        LazyColumn(
+        SettingsLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = paddingValues + PaddingValues(bottom = fabHeight),
             state = lazyListState,
         ) {
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Outlined.FolderZip),
-                    text = stringResource(id = R.string.import_files_screen_select_file),
-                    descriptionText = fileUri.toString().ifBlank { null },
-                    onClick = { pickFileLauncher.safeLaunch("application/zip") }
-                )
-            }
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.AutoMirrored.Filled.Help),
-                    text = stringResource(R.string.import_files_screen_on_conflict),
-                    description = {
-                        SingleChoiceSegmentedButtonRow(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp)
-                        ) {
-                            importedStickerProxyList.forEachIndexed { index, proxy ->
-                                SegmentedButton(
-                                    shape = SegmentedButtonDefaults.itemShape(
-                                        index = index,
-                                        count = importedStickerProxyList.size
-                                    ),
-                                    onClick = { selectedImportedStickerProxyIndex = index },
-                                    selected = index == selectedImportedStickerProxyIndex
-                                ) {
-                                    Text(text = proxy.displayName)
+            group {
+                item {
+                    BaseSettingsItem(
+                        icon = rememberVectorPainter(image = Icons.Outlined.FolderZip),
+                        text = stringResource(id = R.string.import_files_screen_select_file),
+                        descriptionText = fileUri.toString().ifBlank { null },
+                        onClick = { pickFileLauncher.safeLaunch("application/zip") }
+                    )
+                }
+                item {
+                    BaseSettingsItem(
+                        icon = rememberVectorPainter(image = Icons.AutoMirrored.Filled.Help),
+                        text = stringResource(R.string.import_files_screen_on_conflict),
+                        description = {
+                            SingleChoiceSegmentedButtonRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 6.dp)
+                            ) {
+                                importedStickerProxyList.forEachIndexed { index, proxy ->
+                                    SegmentedButton(
+                                        shape = SegmentedButtonDefaults.itemShape(
+                                            index = index,
+                                            count = importedStickerProxyList.size
+                                        ),
+                                        onClick = { selectedImportedStickerProxyIndex = index },
+                                        selected = index == selectedImportedStickerProxyIndex
+                                    ) {
+                                        Text(text = proxy.displayName)
+                                    }
                                 }
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
             item {
                 TipSettingsItem(
@@ -170,7 +172,7 @@ fun ImportFilesScreen(viewModel: ImportFilesViewModel = hiltViewModel()) {
         msg = waitingDialogData?.msg.orEmpty() + "\n\n" + stringResource(id = R.string.data_sync_warning),
     )
 
-    RaysDialog(
+    ComponeDialog(
         visible = openImportDialog != null,
         title = { Text(text = stringResource(id = R.string.import_files_screen_successful)) },
         text = {

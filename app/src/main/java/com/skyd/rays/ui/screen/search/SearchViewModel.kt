@@ -5,7 +5,6 @@ import com.skyd.rays.base.mvi.AbstractMviViewModel
 import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.SearchRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
@@ -22,10 +21,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import javax.inject.Inject
 
-@HiltViewModel
-class SearchViewModel @Inject constructor(
+class SearchViewModel(
     private val searchRepo: SearchRepository,
 ) : AbstractMviViewModel<SearchIntent, SearchState, SearchEvent>() {
 

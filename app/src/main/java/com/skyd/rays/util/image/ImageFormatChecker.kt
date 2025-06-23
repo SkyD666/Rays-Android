@@ -1,20 +1,16 @@
 package com.skyd.rays.util.image
 
-import com.skyd.rays.appContext
+import com.skyd.rays.di.get
 import com.skyd.rays.model.db.dao.sticker.MimeTypeDao
 import com.skyd.rays.util.image.format.FormatStandard.Companion.formatStandards
 import com.skyd.rays.util.image.format.ImageFormat
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.runBlocking
 import java.io.InputStream
 
 object ImageFormatChecker {
     private suspend fun check(stickerUuid: String?): ImageFormat? {
         stickerUuid ?: return null
-        val mimeType = hiltEntryPoint.mimeTypeDao.getMimeTypeOrNull(stickerUuid)
+        val mimeType = get<MimeTypeDao>().getMimeTypeOrNull(stickerUuid)
         return if (mimeType == null) null else ImageFormat.fromMimeType(mimeType)
     }
 
@@ -45,17 +41,8 @@ object ImageFormatChecker {
         ImageFormat.UNDEFINED
     }
 
-    @EntryPoint
-    @InstallIn(SingletonComponent::class)
-    interface ImageFormatEntryPoint {
-        val mimeTypeDao: MimeTypeDao
-    }
-
-    private val hiltEntryPoint =
-        EntryPointAccessors.fromApplication(appContext, ImageFormatEntryPoint::class.java)
-
     suspend fun saveMimeType(format: ImageFormat, stickerUuid: String) = runCatching {
-        with(hiltEntryPoint.mimeTypeDao) {
+        with(get<MimeTypeDao>()) {
             if (getMd5(stickerUuid = stickerUuid) != null) {
                 setMimeType(stickerUuid = stickerUuid, mimeType = format.toMimeType())
             }

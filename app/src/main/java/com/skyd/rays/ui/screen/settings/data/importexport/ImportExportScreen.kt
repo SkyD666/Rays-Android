@@ -1,7 +1,6 @@
 package com.skyd.rays.ui.screen.settings.data.importexport
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CloudSync
 import androidx.compose.material.icons.outlined.Download
@@ -13,16 +12,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
-import com.skyd.rays.ui.component.BaseSettingsItem
-import com.skyd.rays.ui.component.CategorySettingsItem
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.settings.data.importexport.cloud.webdav.WebDavRoute
 import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.ExportFilesRoute
 import com.skyd.rays.ui.screen.settings.data.importexport.file.importfiles.ImportFilesRoute
+import com.skyd.settings.BaseSettingsItem
+import com.skyd.settings.SettingsLazyColumn
 import kotlinx.serialization.Serializable
 
 
@@ -33,55 +33,50 @@ data object ImportExportRoute
 fun ImportExportScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val navController = LocalNavController.current
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.import_export_screen_name)) },
             )
         }
     ) { paddingValues ->
-        LazyColumn(
+        SettingsLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = paddingValues,
         ) {
-            item {
-                CategorySettingsItem(
-                    text = stringResource(id = R.string.import_export_screen_using_cloud_category)
-                )
+            group(text = { context.getString(R.string.import_export_screen_using_cloud_category) }) {
+                item {
+                    BaseSettingsItem(
+                        icon = rememberVectorPainter(image = Icons.Outlined.CloudSync),
+                        text = stringResource(id = R.string.webdav_screen_name),
+                        descriptionText = stringResource(id = R.string.import_export_screen_webdav_description),
+                        onClick = { navController.navigate(WebDavRoute) }
+                    )
+                }
             }
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Outlined.CloudSync),
-                    text = stringResource(id = R.string.webdav_screen_name),
-                    descriptionText = stringResource(id = R.string.import_export_screen_webdav_description),
-                    onClick = { navController.navigate(WebDavRoute) }
-                )
-            }
-            item {
-                CategorySettingsItem(
-                    text = stringResource(id = R.string.import_export_screen_using_file_category)
-                )
-            }
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Outlined.Download),
-                    text = stringResource(id = R.string.import_files_screen_name),
-                    descriptionText = stringResource(id = R.string.import_files_screen_description),
-                    onClick = { navController.navigate(ImportFilesRoute) }
-                )
-            }
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Outlined.Upload),
-                    text = stringResource(id = R.string.export_files_screen_name),
-                    descriptionText = stringResource(id = R.string.export_files_screen_description),
-                    onClick = { navController.navigate(ExportFilesRoute(exportStickers = null)) }
-                )
+            group(text = { context.getString(R.string.import_export_screen_using_file_category) }) {
+                item {
+                    BaseSettingsItem(
+                        icon = rememberVectorPainter(image = Icons.Outlined.Download),
+                        text = stringResource(id = R.string.import_files_screen_name),
+                        descriptionText = stringResource(id = R.string.import_files_screen_description),
+                        onClick = { navController.navigate(ImportFilesRoute) }
+                    )
+                }
+                item {
+                    BaseSettingsItem(
+                        icon = rememberVectorPainter(image = Icons.Outlined.Upload),
+                        text = stringResource(id = R.string.export_files_screen_name),
+                        descriptionText = stringResource(id = R.string.export_files_screen_description),
+                        onClick = { navController.navigate(ExportFilesRoute(exportStickers = null)) }
+                    )
+                }
             }
         }
     }

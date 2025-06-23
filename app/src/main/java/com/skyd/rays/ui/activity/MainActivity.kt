@@ -33,6 +33,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
+import com.skyd.compone.local.LocalGlobalNavController
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.base.BaseComposeActivity
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
@@ -42,7 +44,6 @@ import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
 import com.skyd.rays.model.preference.privacy.DisableScreenshotPreference
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.about.AboutRoute
 import com.skyd.rays.ui.screen.about.AboutScreen
 import com.skyd.rays.ui.screen.about.license.LicenseRoute
@@ -115,7 +116,6 @@ import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.UriStringShar
 import com.skyd.rays.ui.screen.settings.shareconfig.uristringshare.UriStringShareScreen
 import com.skyd.rays.ui.screen.stickerslist.StickersListRoute
 import com.skyd.rays.ui.screen.stickerslist.StickersListScreen
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -125,7 +125,6 @@ import kotlinx.coroutines.launch
 import kotlin.reflect.typeOf
 
 
-@AndroidEntryPoint
 class MainActivity : BaseComposeActivity() {
     private lateinit var navController: NavHostController
     private val viewModel: MainViewModel by viewModels()
@@ -178,7 +177,10 @@ class MainActivity : BaseComposeActivity() {
                 onDispose { removeOnNewIntentListener(listener) }
             }
 
-            CompositionLocalProvider(LocalNavController provides navController) {
+            CompositionLocalProvider(
+                LocalGlobalNavController provides navController,
+                LocalNavController provides navController,
+            ) {
                 AppContent()
             }
         }

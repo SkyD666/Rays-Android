@@ -34,30 +34,30 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeExtendedFloatingActionButton
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.dialog.WaitingDialog
+import com.skyd.compone.ext.plus
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ui.component.ImageInput
-import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysImage
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
 import com.skyd.rays.util.sendSticker
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
 data object StyleTransferRoute
 
 @Composable
-fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
+fun StyleTransferScreen(viewModel: StyleTransferViewModel = koinViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -78,7 +78,7 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
-            RaysExtendedFloatingActionButton(
+            ComponeExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.style_transfer_screen_transfer)) },
                 icon = { Icon(imageVector = Icons.Outlined.Transform, contentDescription = null) },
                 onClick = {
@@ -89,7 +89,7 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
                             scope = scope,
                             message = context.getString(R.string.style_transfer_screen_image_not_selected)
                         )
-                        return@RaysExtendedFloatingActionButton
+                        return@ComponeExtendedFloatingActionButton
                     }
                     dispatch(StyleTransferIntent.Transfer(style = style, content = content))
                 },
@@ -98,7 +98,7 @@ fun StyleTransferScreen(viewModel: StyleTransferViewModel = hiltViewModel()) {
             )
         },
         topBar = {
-            RaysTopBar(title = { Text(text = stringResource(id = R.string.style_transfer_screen_name)) })
+            ComponeTopBar(title = { Text(text = stringResource(id = R.string.style_transfer_screen_name)) })
         }
     ) { paddingValues ->
         val isCompact = LocalWindowSizeClass.current.isCompact

@@ -23,11 +23,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.suspendCancellableCoroutine
-import javax.inject.Inject
 import kotlin.coroutines.resumeWithException
 
 
-class SelfieSegmentationRepository @Inject constructor() : BaseRepository() {
+class SelfieSegmentationRepository : BaseRepository() {
     fun requestExport(
         foregroundBitmap: Bitmap,
         backgroundUri: Uri?,

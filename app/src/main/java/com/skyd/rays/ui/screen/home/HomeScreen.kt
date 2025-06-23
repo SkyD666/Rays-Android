@@ -56,21 +56,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeExtendedFloatingActionButton
+import com.skyd.compone.component.ComponeFloatingActionButton
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.dialog.WaitingDialog
+import com.skyd.compone.ext.minus
+import com.skyd.compone.ext.plus
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.minus
-import com.skyd.rays.ext.plus
 import com.skyd.rays.model.preference.privacy.shouldBlur
 import com.skyd.rays.ui.component.EmptyPlaceholder
-import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
-import com.skyd.rays.ui.component.RaysFloatingActionButton
-import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
-import com.skyd.rays.ui.component.dialog.WaitingDialog
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.AddRoute
 import com.skyd.rays.ui.screen.detail.DetailRoute
@@ -79,13 +78,14 @@ import com.skyd.rays.ui.screen.search.imagesearch.ImageSearchRoute
 import com.skyd.rays.ui.screen.stickerslist.StickersListRoute
 import com.skyd.rays.util.sendStickerByUuid
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
 data object HomeRoute
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalNavController.current
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -141,7 +141,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                RaysIconButton(
+                ComponeIconButton(
                     onClick = { navController.navigate(ImageSearchRoute(baseImage = null)) },
                     imageVector = Icons.Outlined.ImageSearch,
                     tint = MaterialTheme.colorScheme.onSurface,
@@ -469,14 +469,14 @@ private fun HomeScreenFloatingActionButton(
     }
 
     if (windowSizeClass.isCompact) {
-        RaysFloatingActionButton(
+        ComponeFloatingActionButton(
             content = { content() },
             onClick = onClick,
             onSizeWithSinglePaddingChanged = onSizeWithSinglePaddingChanged,
             contentDescription = stringResource(R.string.home_screen_add),
         )
     } else {
-        RaysExtendedFloatingActionButton(
+        ComponeExtendedFloatingActionButton(
             text = { Text(text = stringResource(R.string.home_screen_add)) },
             icon = content,
             onClick = onClick,

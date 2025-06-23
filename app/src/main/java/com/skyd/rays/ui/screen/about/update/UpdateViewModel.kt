@@ -9,7 +9,6 @@ import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.respository.UpdateRepository
 import com.skyd.rays.util.CommonUtil.getAppVersionCode
 import com.skyd.rays.util.CommonUtil.openBrowser
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,10 +27,8 @@ import okhttp3.internal.toLongOrDefault
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
-import javax.inject.Inject
 
-@HiltViewModel
-class UpdateViewModel @Inject constructor(private var updateRepo: UpdateRepository) :
+class UpdateViewModel(private var updateRepo: UpdateRepository) :
     AbstractMviViewModel<UpdateIntent, UpdateState, UpdateEvent>() {
 
     override val viewState: StateFlow<UpdateState>

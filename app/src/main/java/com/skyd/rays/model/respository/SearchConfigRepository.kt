@@ -7,9 +7,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
 
-class SearchConfigRepository @Inject constructor(
+class SearchConfigRepository(
     private val searchDomainDao: SearchDomainDao
 ) : BaseRepository() {
     fun requestGetSearchDomain(): Flow<Map<String, Boolean>> = flow {

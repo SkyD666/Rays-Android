@@ -26,9 +26,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class ImageSearchRepository @Inject constructor(
+class ImageSearchRepository(
     private val stickerDao: StickerDao,
     private val boxStore: BoxStore,
 ) : BaseRepository() {

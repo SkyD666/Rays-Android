@@ -7,7 +7,6 @@ import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.SearchRepository
 import com.skyd.rays.util.sendStickersByUuids
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,16 +22,13 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 
-@HiltViewModel
-class MultiSelectViewModel @Inject constructor(
+class MultiSelectViewModel(
     private val searchRepo: SearchRepository
-) :
-    AbstractMviViewModel<MultiSelectIntent, MultiSelectState, MultiSelectEvent>() {
+) : AbstractMviViewModel<MultiSelectIntent, MultiSelectState, MultiSelectEvent>() {
 
     override val viewState: StateFlow<MultiSelectState>
 

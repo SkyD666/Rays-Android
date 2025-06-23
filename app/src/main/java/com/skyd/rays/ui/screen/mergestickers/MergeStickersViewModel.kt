@@ -5,7 +5,6 @@ import com.skyd.rays.base.mvi.AbstractMviViewModel
 import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.MergeStickersRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,11 +19,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import javax.inject.Inject
 
 
-@HiltViewModel
-class MergeStickersViewModel @Inject constructor(
+class MergeStickersViewModel(
     private var mergeStickersRepo: MergeStickersRepository
 ) : AbstractMviViewModel<MergeStickersIntent, MergeStickersState, MergeStickersEvent>() {
 

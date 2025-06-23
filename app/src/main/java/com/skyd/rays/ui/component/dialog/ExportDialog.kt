@@ -15,10 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.dialog.ComponeDialog
 import com.skyd.rays.R
 import com.skyd.rays.ext.safeLaunch
 import com.skyd.rays.model.preference.ExportStickerDirPreference
-import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.local.LocalExportStickerDir
 
 
@@ -46,7 +47,7 @@ fun ExportDialog(
             )
         }
     }
-    RaysDialog(
+    ComponeDialog(
         visible = visible,
         title = { Text(text = stringResource(R.string.home_screen_export)) },
         text = {
@@ -57,7 +58,7 @@ fun ExportDialog(
                         stringResource(id = R.string.home_screen_select_export_folder_tip)
                     }
                 )
-                RaysIconButton(
+                ComponeIconButton(
                     onClick = {
                         pickExportDirLauncher.safeLaunch(exportStickerDir.toUri())
                     },

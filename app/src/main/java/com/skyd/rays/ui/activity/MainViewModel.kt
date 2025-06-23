@@ -14,7 +14,6 @@ import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
 import com.skyd.rays.util.stickerUuidToFile
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,13 +28,9 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.lang.Integer.max
-import javax.inject.Inject
 
 
-@HiltViewModel
-class MainViewModel @Inject constructor() :
-    AbstractMviViewModel<MainIntent, MviViewState, MviSingleEvent>() {
-
+class MainViewModel : AbstractMviViewModel<MainIntent, MviViewState, MviSingleEvent>() {
 
     override val viewState: StateFlow<MviViewState>
 

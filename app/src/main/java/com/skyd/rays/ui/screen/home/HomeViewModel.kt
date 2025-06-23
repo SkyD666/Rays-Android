@@ -5,7 +5,6 @@ import com.skyd.rays.base.mvi.AbstractMviViewModel
 import com.skyd.rays.base.mvi.MviSingleEvent
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.HomeRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,10 +17,8 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import javax.inject.Inject
 
-@HiltViewModel
-class HomeViewModel @Inject constructor(
+class HomeViewModel(
     private val homeRepo: HomeRepository,
 ) : AbstractMviViewModel<HomeIntent, HomeState, MviSingleEvent>() {
 

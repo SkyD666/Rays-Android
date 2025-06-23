@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Deselect
 import androidx.compose.material.icons.outlined.JoinLeft
 import androidx.compose.material.icons.outlined.SelectAll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -38,36 +37,36 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.ComponeIconToggleButton
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.dialog.WaitingDialog
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.ui.component.PagingRefreshStateIndicator
-import com.skyd.rays.ui.component.RaysIconButton
-import com.skyd.rays.ui.component.RaysIconToggleButton
-import com.skyd.rays.ui.component.RaysTopBar
 import com.skyd.rays.ui.component.ScalableLazyVerticalStaggeredGrid
-import com.skyd.rays.ui.component.dialog.WaitingDialog
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.detail.DetailRoute
 import com.skyd.rays.ui.screen.search.SearchResultItem
 import com.skyd.rays.ui.screen.search.SearchResultItemPlaceholder
 import com.skyd.rays.ui.screen.search.multiselect.MultiSelectActionBar
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
 data class StickersListRoute(val query: String)
 
 @Composable
-fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltViewModel()) {
+fun StickersListScreen(query: String, viewModel: StickersListViewModel = koinViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -80,7 +79,7 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            RaysTopBar(
+            ComponeTopBar(
                 scrollBehavior = scrollBehavior,
                 title = {
                     Text(
@@ -96,7 +95,7 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
                 },
                 actions = {
                     if (multiSelect) {
-                        RaysIconButton(
+                        ComponeIconButton(
                             onClick = {
                                 dispatcher(
                                     StickersListIntent.InverseSelectedStickers(
@@ -107,7 +106,7 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
                             imageVector = Icons.Outlined.JoinLeft
                         )
                     }
-                    RaysIconToggleButton(
+                    ComponeIconToggleButton(
                         checked = multiSelect,
                         onCheckedChange = {
                             multiSelect = it
@@ -117,12 +116,8 @@ fun StickersListScreen(query: String, viewModel: StickersListViewModel = hiltVie
                                 )
                             }
                         },
-                    ) {
-                        Icon(
-                            if (multiSelect) Icons.Outlined.SelectAll else Icons.Outlined.Deselect,
-                            contentDescription = null,
-                        )
-                    }
+                        imageVector = if (multiSelect) Icons.Outlined.SelectAll else Icons.Outlined.Deselect,
+                    )
                 }
             )
         }

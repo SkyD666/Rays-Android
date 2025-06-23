@@ -14,9 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
 
-class ApiGrantRepository @Inject constructor(
+class ApiGrantRepository(
     private val apiGrantPackageDao: ApiGrantPackageDao
 ) : BaseRepository() {
     fun requestUpdate(bean: ApiGrantPackageBean): Flow<IApiGrantData> = flow {

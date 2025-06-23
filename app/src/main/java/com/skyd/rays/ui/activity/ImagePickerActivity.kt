@@ -35,7 +35,7 @@
 //import com.skyd.rays.base.BaseComposeActivity
 //import com.skyd.rays.model.preference.search.QueryPreference
 //import com.skyd.rays.ui.component.BackIcon
-//import com.skyd.rays.ui.component.RaysFloatingActionButton
+//import com.skyd.rays.ui.component.ComponeFloatingActionButton
 //import com.skyd.rays.ui.local.LocalWindowSizeClass
 //import com.skyd.rays.ui.screen.search.SearchBarInputField
 //import com.skyd.rays.ui.screen.search.TrailingIcon
@@ -70,7 +70,7 @@
 //                    derivedStateOf { searchResultListState.firstVisibleItemIndex > 2 }
 //                }.value
 //            ) {
-//                RaysFloatingActionButton(
+//                ComponeFloatingActionButton(
 //                    onClick = { scope.launch { searchResultListState.animateScrollToItem(0) } },
 //                    onSizeWithSinglePaddingChanged = { _, height -> fabHeight = height },
 //                    contentDescription = stringResource(R.string.home_screen_search_result_list_to_top),

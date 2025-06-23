@@ -19,14 +19,14 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.ext.popBackStackWithLifecycle
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
-import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
-import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.local.LocalCurrentStickerUuid
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalShowLastQuery
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.screen.search.PopularTagsBar
@@ -64,7 +64,7 @@ private fun RaysSearchBarPreview() {
                         onExpandedChange = onActiveChange,
                         placeholder = { Text(text = stringResource(R.string.home_screen_search_hint)) },
                         leadingIcon = {
-                            RaysIconButton(
+                            ComponeIconButton(
                                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                                 contentDescription = stringResource(id = R.string.home_screen_close_search),
                                 onClick = { }

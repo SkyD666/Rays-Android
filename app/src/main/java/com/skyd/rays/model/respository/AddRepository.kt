@@ -42,13 +42,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 import java.util.Locale
-import javax.inject.Inject
 import kotlin.coroutines.resumeWithException
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 
 
-class AddRepository @Inject constructor(
+class AddRepository(
     private val stickerDao: StickerDao,
     private val json: Json
 ) : BaseRepository() {

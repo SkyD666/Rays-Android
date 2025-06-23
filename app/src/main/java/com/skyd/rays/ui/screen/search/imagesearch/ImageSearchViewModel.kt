@@ -5,7 +5,6 @@ import com.skyd.rays.base.mvi.AbstractMviViewModel
 import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.respository.ImageSearchRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,13 +19,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import javax.inject.Inject
 
 
-@HiltViewModel
-class ImageSearchViewModel @Inject constructor(
-    private val imageSearchRepo: ImageSearchRepository,
-) :
+class ImageSearchViewModel(private val imageSearchRepo: ImageSearchRepository) :
     AbstractMviViewModel<ImageSearchIntent, ImageSearchState, ImageSearchEvent>() {
 
     override val viewState: StateFlow<ImageSearchState>

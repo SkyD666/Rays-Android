@@ -15,9 +15,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import java.io.File
-import javax.inject.Inject
 
-class ClassificationModelRepository @Inject constructor() : BaseRepository() {
+class ClassificationModelRepository : BaseRepository() {
     fun requestGetModels(): Flow<List<ModelBean>> = flow {
         emit(getModels())
     }.flowOn(Dispatchers.IO)

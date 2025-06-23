@@ -1,21 +1,10 @@
 package com.skyd.rays.ext
 
 import android.os.Bundle
-import androidx.lifecycle.Lifecycle
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.NavType
 import kotlinx.serialization.json.Json
 import kotlin.reflect.KClass
 
-fun NavBackStackEntry.lifecycleIsResumed() =
-    this.lifecycle.currentState == Lifecycle.State.RESUMED
-
-fun NavController.popBackStackWithLifecycle() {
-    if (currentBackStackEntry?.lifecycleIsResumed() == true) {
-        popBackStack()
-    }
-}
 
 inline fun <reified T : Any> serializableType(
     isNullableAllowed: Boolean = false,

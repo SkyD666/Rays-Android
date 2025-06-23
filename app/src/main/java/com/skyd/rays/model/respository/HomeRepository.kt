@@ -9,9 +9,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
 
-class HomeRepository @Inject constructor(
+class HomeRepository(
     private val stickerDao: StickerDao,
     private val tagDao: TagDao
 ) : BaseRepository() {

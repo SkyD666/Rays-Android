@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
@@ -59,6 +58,10 @@ import com.materialkolor.ktx.from
 import com.materialkolor.ktx.toneColor
 import com.materialkolor.palettes.CorePalette
 import com.materialkolor.palettes.TonalPalette
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.component.dialog.TextFieldDialog
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
 import com.skyd.rays.ext.checkColorHex
 import com.skyd.rays.ext.dataStore
@@ -69,24 +72,20 @@ import com.skyd.rays.model.preference.theme.CustomPrimaryColorPreference
 import com.skyd.rays.model.preference.theme.DarkModePreference
 import com.skyd.rays.model.preference.theme.StickerColorThemePreference
 import com.skyd.rays.model.preference.theme.ThemeNamePreference
-import com.skyd.rays.ui.component.BaseSettingsItem
 import com.skyd.rays.ui.component.BlockRadioButton
 import com.skyd.rays.ui.component.BlockRadioGroupButtonItem
-import com.skyd.rays.ui.component.CategorySettingsItem
 import com.skyd.rays.ui.component.RadioTextItem
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.SwitchSettingsItem
-import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.local.LocalAmoledDarkMode
 import com.skyd.rays.ui.local.LocalCustomPrimaryColor
 import com.skyd.rays.ui.local.LocalDarkMode
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerColorTheme
 import com.skyd.rays.ui.local.LocalThemeName
 import com.skyd.rays.ui.screen.settings.appearance.style.SearchStyleRoute
 import com.skyd.rays.ui.theme.extractColors
 import com.skyd.rays.ui.theme.extractColorsFromWallpaper
+import com.skyd.settings.BaseSettingsItem
+import com.skyd.settings.SettingsLazyColumn
+import com.skyd.settings.SwitchSettingsItem
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
@@ -111,14 +110,14 @@ fun AppearanceScreen() {
 
     Scaffold(
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.appearance_screen_name)) },
             )
         }
     ) { paddingValues ->
-        LazyColumn(
+        SettingsLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -146,53 +145,54 @@ fun AppearanceScreen() {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Outlined.DarkMode),
-                    text = stringResource(id = R.string.appearance_screen_dark_mode),
-                    descriptionText = stringResource(id = R.string.appearance_screen_dark_mode_description),
-                    onClick = { openDarkBottomSheet = true }
-                )
+            group {
+                item {
+                    BaseSettingsItem(
+                        icon = rememberVectorPainter(image = Icons.Outlined.DarkMode),
+                        text = stringResource(id = R.string.appearance_screen_dark_mode),
+                        descriptionText = stringResource(id = R.string.appearance_screen_dark_mode_description),
+                        onClick = { openDarkBottomSheet = true }
+                    )
+                }
+                item {
+                    SwitchSettingsItem(
+                        imageVector = Icons.Outlined.Contrast,
+                        text = stringResource(id = R.string.appearance_screen_amoled_dark),
+                        checked = LocalAmoledDarkMode.current,
+                        onCheckedChange = {
+                            AmoledDarkModePreference.put(
+                                context = context,
+                                scope = scope,
+                                value = it,
+                            )
+                        }
+                    )
+                }
+                item {
+                    SwitchSettingsItem(
+                        imageVector = Icons.Outlined.Palette,
+                        text = stringResource(R.string.appearance_screen_sticker_color_theme),
+                        description = stringResource(R.string.appearance_screen_sticker_color_theme_description),
+                        checked = LocalStickerColorTheme.current,
+                        onCheckedChange = {
+                            StickerColorThemePreference.put(
+                                context = context,
+                                scope = scope,
+                                value = it,
+                            )
+                        },
+                    )
+                }
             }
-            item {
-                SwitchSettingsItem(
-                    imageVector = Icons.Outlined.Contrast,
-                    text = stringResource(id = R.string.appearance_screen_amoled_dark),
-                    checked = LocalAmoledDarkMode.current,
-                    onCheckedChange = {
-                        AmoledDarkModePreference.put(
-                            context = context,
-                            scope = scope,
-                            value = it,
-                        )
-                    }
-                )
-            }
-            item {
-                SwitchSettingsItem(
-                    imageVector = Icons.Outlined.Palette,
-                    text = stringResource(R.string.appearance_screen_sticker_color_theme),
-                    description = stringResource(R.string.appearance_screen_sticker_color_theme_description),
-                    checked = LocalStickerColorTheme.current,
-                    onCheckedChange = {
-                        StickerColorThemePreference.put(
-                            context = context,
-                            scope = scope,
-                            value = it,
-                        )
-                    },
-                )
-            }
-            item {
-                CategorySettingsItem(text = stringResource(R.string.appearance_screen_style_category))
-            }
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Outlined.Search),
-                    text = stringResource(id = R.string.search_style_screen_name),
-                    descriptionText = null,
-                    onClick = { navController.navigate(SearchStyleRoute) }
-                )
+            group(text = { context.getString(R.string.appearance_screen_style_category) }) {
+                item {
+                    BaseSettingsItem(
+                        icon = rememberVectorPainter(image = Icons.Outlined.Search),
+                        text = stringResource(id = R.string.search_style_screen_name),
+                        descriptionText = null,
+                        onClick = { navController.navigate(SearchStyleRoute) }
+                    )
+                }
             }
         }
         if (openDarkBottomSheet) {
@@ -303,7 +303,7 @@ fun Palettes(
 
     TextFieldDialog(
         visible = addDialogVisible,
-        title = stringResource(R.string.primary_color),
+        titleText = stringResource(R.string.primary_color),
         value = customColorValue,
         maxLines = 1,
         onValueChange = {

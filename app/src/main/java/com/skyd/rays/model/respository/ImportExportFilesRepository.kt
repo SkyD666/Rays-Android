@@ -34,11 +34,10 @@ import kotlinx.serialization.json.decodeFromStream
 import okio.use
 import java.io.File
 import java.io.FileInputStream
-import javax.inject.Inject
 import kotlin.random.Random
 
 
-class ImportExportFilesRepository @Inject constructor(
+class ImportExportFilesRepository(
     private val stickerDao: StickerDao,
     private val json: Json
 ) : BaseRepository() {

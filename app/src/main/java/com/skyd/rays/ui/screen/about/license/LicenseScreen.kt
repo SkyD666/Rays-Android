@@ -22,11 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.ext.plus
 import com.skyd.rays.R
-import com.skyd.rays.ext.plus
 import com.skyd.rays.model.bean.LicenseBean
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
 import com.skyd.rays.util.CommonUtil.openBrowser
 import kotlinx.serialization.Serializable
 
@@ -39,8 +39,8 @@ fun LicenseScreen() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 title = { Text(text = stringResource(R.string.license_screen_name)) },
                 scrollBehavior = scrollBehavior,
             )
@@ -108,9 +108,9 @@ private fun getLicenseList(): List<LicenseBean> {
             url = "https://github.com/google/accompanist"
         ),
         LicenseBean(
-            name = "Hilt",
+            name = "Koin",
             license = "Apache-2.0",
-            url = "https://github.com/googlecodelabs/android-hilt"
+            url = "https://github.com/InsertKoinIO/koin"
         ),
         LicenseBean(
             name = "Coil",

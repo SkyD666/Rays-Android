@@ -32,17 +32,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.dialog.ComponeDialog
+import com.skyd.compone.component.dialog.WaitingDialog
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.model.bean.UpdateBean
 import com.skyd.rays.model.preference.IgnoreUpdateVersionPreference
-import com.skyd.rays.ui.component.dialog.RaysDialog
-import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalIgnoreUpdateVersion
 import okhttp3.internal.toLongOrDefault
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
@@ -52,7 +52,7 @@ fun UpdateDialog(
     onSuccess: () -> Unit = {},
     onClosed: () -> Unit = {},
     onError: (String) -> Unit = {},
-    viewModel: UpdateViewModel = hiltViewModel()
+    viewModel: UpdateViewModel = koinViewModel()
 ) {
     val uiState by viewModel.viewState.collectAsStateWithLifecycle()
     val dispatch = viewModel.getDispatcher(startWith = UpdateIntent.CheckUpdate(isRetry = false))
@@ -120,7 +120,7 @@ private fun NewerDialog(
         onDismissRequest()
     }
 
-    RaysDialog(
+    ComponeDialog(
         onDismissRequest = onDismissRequest,
         visible = visible,
         title = {
@@ -218,7 +218,7 @@ private fun NoUpdateDialog(
         onDismissRequest()
     }
 
-    RaysDialog(
+    ComponeDialog(
         onDismissRequest = onDismissRequest,
         visible = visible,
         title = {

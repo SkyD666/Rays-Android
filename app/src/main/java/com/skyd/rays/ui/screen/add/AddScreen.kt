@@ -93,25 +93,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.dialog.ComponeDialog
+import com.skyd.compone.component.dialog.WaitingDialog
+import com.skyd.compone.component.safeRequestFocus
+import com.skyd.compone.ext.plus
+import com.skyd.compone.ext.popBackStackWithLifecycle
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ext.plus
-import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.model.bean.StickerBean
 import com.skyd.rays.model.bean.StickerWithTags
 import com.skyd.rays.model.bean.TagBean
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
-import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.dialog.RaysDialog
-import com.skyd.rays.ui.component.dialog.WaitingDialog
-import com.skyd.rays.ui.component.safeRequestFocus
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.screen.detail.DetailRoute
 import com.skyd.rays.ui.screen.fullimage.FullImageRoute
 import com.skyd.rays.ui.screen.search.SearchResultItem
@@ -119,6 +118,7 @@ import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 import java.util.UUID
 
 
@@ -135,7 +135,7 @@ data object AddDeepLinkRoute
 fun AddScreen(
     initStickers: MutableList<UriWithStickerUuidBean>,
     isEdit: Boolean,
-    viewModel: AddViewModel = hiltViewModel()
+    viewModel: AddViewModel = koinViewModel()
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
@@ -193,7 +193,7 @@ fun AddScreen(
         modifier = Modifier.imePadding(),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            RaysTopBar(
+            ComponeTopBar(
                 title = {
                     Text(
                         stringResource(
@@ -203,12 +203,12 @@ fun AddScreen(
                     )
                 },
                 actions = {
-                    RaysIconButton(
+                    ComponeIconButton(
                         onClick = { processNext() },
                         contentDescription = stringResource(R.string.add_screen_skip_current_sticker),
                         imageVector = Icons.Outlined.EditOff,
                     )
-                    RaysIconButton(
+                    ComponeIconButton(
                         onClick = {
                             if (uiState.currentSticker == null) {
                                 snackbarHostState.showSnackbar(
@@ -248,7 +248,7 @@ fun AddScreen(
                         contentDescription = stringResource(R.string.add_screen_save_current_sticker),
                         imageVector = Icons.Outlined.Save,
                     )
-//                    RaysIconButton(
+//                    ComponeIconButton(
 //                        onClick = { openMoreMenu = true },
 //                        contentDescription = stringResource(R.string.more),
 //                        imageVector = Icons.Outlined.MoreVert,
@@ -351,7 +351,7 @@ fun AddScreen(
             }
         }
 
-        RaysDialog(
+        ComponeDialog(
             visible = !openErrorDialog.isNullOrBlank(),
             title = { Text(text = stringResource(R.string.dialog_warning)) },
             text = { Text(text = stringResource(R.string.failed_info, openErrorDialog.orEmpty())) },
@@ -365,7 +365,7 @@ fun AddScreen(
             }
         )
 
-        RaysDialog(
+        ComponeDialog(
             visible = openDuplicateDialog,
             title = { Text(text = stringResource(R.string.info)) },
             text = { Text(text = stringResource(R.string.add_screen_sticker_duplicate)) },
@@ -400,7 +400,7 @@ private fun LazyListScope.titleInputFieldItem(
             singleLine = true,
             trailingIcon = {
                 if (value.isNotEmpty()) {
-                    RaysIconButton(
+                    ComponeIconButton(
                         onClick = { onValueChange("") },
                         imageVector = Icons.Outlined.Cancel,
                         contentDescription = stringResource(R.string.cancel),
@@ -442,7 +442,7 @@ private fun LazyListScope.tagsInputFieldItem(
             trailingIcon = {
                 if (value.isNotEmpty()) {
                     Row {
-                        RaysIconButton(
+                        ComponeIconButton(
                             onClick = {
                                 onAddClick()
                                 onValueChange("")
@@ -450,12 +450,12 @@ private fun LazyListScope.tagsInputFieldItem(
                             imageVector = Icons.Outlined.AddBox,
                             contentDescription = stringResource(R.string.add_screen_add_tag),
                         )
-                        RaysIconButton(
+                        ComponeIconButton(
                             onClick = onAddToAllClick,
                             imageVector = Icons.Outlined.AddToPhotos,
                             contentDescription = stringResource(R.string.add_screen_add_tag_to_all),
                         )
-                        RaysIconButton(
+                        ComponeIconButton(
                             onClick = { onValueChange("") },
                             imageVector = Icons.Outlined.Cancel,
                             contentDescription = stringResource(R.string.clear_input_text),
@@ -511,13 +511,13 @@ private fun AddToAllList(list: List<String>, onDeleteTag: (String) -> Unit) {
                     },
                     state = tooltipState,
                 ) {
-                    RaysIconButton(
+                    ComponeIconButton(
                         onClick = { scope.launch { tooltipState.show(MutatePriority.PreventUserInput) } },
                         imageVector = Icons.AutoMirrored.Outlined.Help,
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                RaysIconButton(
+                ComponeIconButton(
                     onClick = { expandFlowRow = !expandFlowRow },
                     imageVector = if (expandFlowRow) Icons.Outlined.ExpandLess
                     else Icons.Outlined.ExpandMore,
@@ -580,7 +580,7 @@ private fun WaitingRow(
                 textAlign = TextAlign.Center,
             )
             if (!isEdit) {
-                RaysIconButton(
+                ComponeIconButton(
                     onClick = onSelectStickersClick,
                     imageVector = Icons.Outlined.AddPhotoAlternate,
                     contentDescription = stringResource(R.string.add_screen_add_stickers),
@@ -627,7 +627,7 @@ private fun WaitingRow(
                                     disabledContainerColor = Color.Black.copy(alpha = 0.2f),
                                     disabledContentColor = Color.White,
                                 )
-                                RaysIconButton(
+                                ComponeIconButton(
                                     modifier = iconButtonModifier,
                                     colors = iconButtonColors,
                                     onClick = { onRemoveStickerFromWaitingListClick(index) },
@@ -635,7 +635,7 @@ private fun WaitingRow(
                                     contentDescription = stringResource(R.string.add_screen_remove_sticker_from_waiting_list),
                                 )
                                 Spacer(modifier = Modifier.width(3.dp))
-                                RaysIconButton(
+                                ComponeIconButton(
                                     modifier = iconButtonModifier,
                                     colors = iconButtonColors,
                                     onClick = { onReplaceStickerClick(index) },

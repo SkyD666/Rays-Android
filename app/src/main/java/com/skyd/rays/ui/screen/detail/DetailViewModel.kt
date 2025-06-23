@@ -6,7 +6,6 @@ import com.skyd.rays.base.mvi.AbstractMviViewModel
 import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.preference.CurrentStickerUuidPreference
 import com.skyd.rays.model.respository.DetailRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,11 +19,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import javax.inject.Inject
 
 
-@HiltViewModel
-class DetailViewModel @Inject constructor(private var detailRepo: DetailRepository) :
+class DetailViewModel(private var detailRepo: DetailRepository) :
     AbstractMviViewModel<DetailIntent, DetailState, DetailEvent>() {
 
     override val viewState: StateFlow<DetailState>

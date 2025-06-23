@@ -11,10 +11,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import java.io.File
-import javax.inject.Inject
 import kotlin.system.measureTimeMillis
 
-class DataRepository @Inject constructor(
+class DataRepository(
     private val stickerDao: StickerDao,
     private val stickerShareTimeDao: StickerShareTimeDao,
     private val mimeTypeDao: MimeTypeDao,

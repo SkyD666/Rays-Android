@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
 import androidx.compose.material.icons.outlined.Code
@@ -36,8 +35,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.component.dialog.WaitingDialog
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
@@ -47,25 +48,24 @@ import com.skyd.rays.model.preference.search.IntersectSearchBySpacePreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import com.skyd.rays.model.preference.search.imagesearch.AddScreenImageSearchPreference
 import com.skyd.rays.model.preference.search.imagesearch.ImageSearchMaxResultCountPreference
-import com.skyd.rays.ui.component.BaseSettingsItem
-import com.skyd.rays.ui.component.CategorySettingsItem
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.SliderSettingsItem
-import com.skyd.rays.ui.component.SwitchSettingsItem
-import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalAddScreenImageSearch
 import com.skyd.rays.ui.local.LocalImageSearchMaxResultCount
 import com.skyd.rays.ui.local.LocalIntersectSearchBySpace
 import com.skyd.rays.ui.local.LocalUseRegexSearch
+import com.skyd.settings.BaseSettingsItem
+import com.skyd.settings.SettingsLazyColumn
+import com.skyd.settings.SliderSettingsItem
+import com.skyd.settings.SwitchSettingsItem
+import com.skyd.settings.dsl.SettingsBaseItemScope
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
 data object SearchConfigRoute
 
 @Composable
-fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
+fun SearchConfigScreen(viewModel: SearchConfigViewModel = koinViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val scope = rememberCoroutineScope()
@@ -79,8 +79,8 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.search_config_screen_name)) },
             )
@@ -89,101 +89,78 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
         val selected = remember { mutableStateMapOf<Int, SnapshotStateMap<Int, Boolean>>() }
         val tables = remember { allSearchDomain.keys.toList() }
 
-        LazyColumn(
+        SettingsLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = paddingValues,
         ) {
-            item {
-                CategorySettingsItem(
-                    text = stringResource(id = R.string.search_config_screen_common_category)
-                )
+            group(text = { context.getString(R.string.search_config_screen_common_category) }) {
+                item {
+                    SwitchSettingsItem(
+                        imageVector = Icons.Outlined.Code,
+                        text = stringResource(id = R.string.search_config_screen_use_regex),
+                        description = stringResource(id = R.string.search_config_screen_use_regex_description),
+                        checked = useRegexSearch,
+                        onCheckedChange = { UseRegexSearchPreference.put(context, scope, it) },
+                    )
+                }
+                item {
+                    SwitchSettingsItem(
+                        imageVector = Icons.Outlined.JoinInner,
+                        text = stringResource(id = R.string.search_config_screen_intersect_search_by_space),
+                        description = stringResource(id = R.string.search_config_screen_intersect_search_by_space_description),
+                        checked = intersectSearchBySpace,
+                        onCheckedChange = {
+                            IntersectSearchBySpacePreference.put(context, scope, it)
+                        },
+                    )
+                }
             }
-            item {
-                SwitchSettingsItem(
-                    imageVector = Icons.Outlined.Code,
-                    text = stringResource(id = R.string.search_config_screen_use_regex),
-                    description = stringResource(id = R.string.search_config_screen_use_regex_description),
-                    checked = useRegexSearch,
-                    onCheckedChange = {
-                        UseRegexSearchPreference.put(
-                            context = context,
-                            scope = scope,
-                            value = it
-                        )
-                    },
-                )
-            }
-            item {
-                SwitchSettingsItem(
-                    imageVector = Icons.Outlined.JoinInner,
-                    text = stringResource(id = R.string.search_config_screen_intersect_search_by_space),
-                    description = stringResource(id = R.string.search_config_screen_intersect_search_by_space_description),
-                    checked = intersectSearchBySpace,
-                    onCheckedChange = {
-                        IntersectSearchBySpacePreference.put(
-                            context = context, scope = scope, value = it
-                        )
-                    },
-                )
-            }
-            item {
-                CategorySettingsItem(
-                    text = stringResource(id = R.string.search_config_screen_domain_category)
-                )
-            }
-            val searchDomainResultUiState = uiState.searchDomainResultState
-            if (searchDomainResultUiState is SearchDomainResultState.Success) {
-                repeat(tables.size) { tableIndex ->
-                    selected[tableIndex] = mutableStateMapOf()
-                    item {
-                        SearchDomainItem(
-                            selected = selected[tableIndex]!!,
-                            table = tables[tableIndex],
-                            searchDomain = searchDomainResultUiState.searchDomainMap,
-                            onSetSearchDomain = { dispatch(SearchConfigIntent.SetSearchDomain(it)) }
-                        )
+            group(text = { context.getString(R.string.search_config_screen_domain_category) }) {
+                val searchDomainResultUiState = uiState.searchDomainResultState
+                if (searchDomainResultUiState is SearchDomainResultState.Success) {
+                    repeat(tables.size) { tableIndex ->
+                        selected[tableIndex] = mutableStateMapOf()
+                        item {
+                            SearchDomainItem(
+                                selected = selected[tableIndex]!!,
+                                table = tables[tableIndex],
+                                searchDomain = searchDomainResultUiState.searchDomainMap,
+                                onSetSearchDomain = { dispatch(SearchConfigIntent.SetSearchDomain(it)) }
+                            )
+                        }
                     }
                 }
             }
-            item {
-                CategorySettingsItem(text = stringResource(id = R.string.image_search_screen_name))
-            }
-            item {
-                SwitchSettingsItem(
-                    imageVector = Icons.Outlined.AddPhotoAlternate,
-                    text = stringResource(id = R.string.search_config_screen_enable_add_screen_image_search),
-                    description = stringResource(id = R.string.search_config_screen_enable_add_screen_image_search_description),
-                    checked = LocalAddScreenImageSearch.current,
-                    onCheckedChange = {
-                        AddScreenImageSearchPreference.put(
-                            context = context,
-                            scope = scope,
-                            value = it
-                        )
-                        if (it) dispatch(SearchConfigIntent.EnableAddScreenImageSearch)
-                    },
-                )
-            }
-            item {
-                val maxCount = LocalImageSearchMaxResultCount.current
-                var maxCountFloat by rememberSaveable { mutableFloatStateOf(maxCount.toFloat()) }
-                SliderSettingsItem(
-                    imageVector = Icons.Outlined.Code,
-                    value = maxCountFloat,
-                    valueFormater = { it.toInt().toString() },
-                    text = stringResource(id = R.string.search_config_screen_image_search_max_result_count),
-                    valueRange = 1f..100f,
-                    onValueChange = {
-                        ImageSearchMaxResultCountPreference.put(
-                            context = context,
-                            scope = scope,
-                            value = it.toInt(),
-                        )
-                        maxCountFloat = it
-                    },
-                )
+            group(text = { context.getString(R.string.image_search_screen_name) }) {
+                item {
+                    SwitchSettingsItem(
+                        imageVector = Icons.Outlined.AddPhotoAlternate,
+                        text = stringResource(id = R.string.search_config_screen_enable_add_screen_image_search),
+                        description = stringResource(id = R.string.search_config_screen_enable_add_screen_image_search_description),
+                        checked = LocalAddScreenImageSearch.current,
+                        onCheckedChange = {
+                            AddScreenImageSearchPreference.put(context, scope, it)
+                            if (it) dispatch(SearchConfigIntent.EnableAddScreenImageSearch)
+                        },
+                    )
+                }
+                item {
+                    val maxCount = LocalImageSearchMaxResultCount.current
+                    var maxCountFloat by rememberSaveable { mutableFloatStateOf(maxCount.toFloat()) }
+                    SliderSettingsItem(
+                        imageVector = Icons.Outlined.Code,
+                        value = maxCountFloat,
+                        labelFormatter = { it.toInt().toString() },
+                        text = stringResource(id = R.string.search_config_screen_image_search_max_result_count),
+                        valueRange = 1f..100f,
+                        onValueChange = {
+                            ImageSearchMaxResultCountPreference.put(context, scope, it.toInt())
+                            maxCountFloat = it
+                        },
+                    )
+                }
             }
         }
 
@@ -200,7 +177,7 @@ fun SearchConfigScreen(viewModel: SearchConfigViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun SearchDomainItem(
+fun SettingsBaseItemScope.SearchDomainItem(
     selected: SnapshotStateMap<Int, Boolean>,
     table: Pair<String, Int>,
     searchDomain: Map<String, Boolean>,
@@ -209,7 +186,7 @@ fun SearchDomainItem(
 ) {
     val (tableName, tableDisplayName) = table
     BaseSettingsItem(
-        painter = icon,
+        icon = icon,
         text = stringResource(id = tableDisplayName),
         onClick = {},
         description = {

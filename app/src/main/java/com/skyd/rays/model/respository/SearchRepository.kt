@@ -8,6 +8,7 @@ import androidx.sqlite.db.SimpleSQLiteQuery
 import com.skyd.rays.appContext
 import com.skyd.rays.base.BaseRepository
 import com.skyd.rays.config.allSearchDomain
+import com.skyd.rays.di.get
 import com.skyd.rays.ext.catchMap
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.flowOf
@@ -27,10 +28,6 @@ import com.skyd.rays.model.preference.search.SearchResultReversePreference
 import com.skyd.rays.model.preference.search.SearchResultSortPreference
 import com.skyd.rays.model.preference.search.UseRegexSearchPreference
 import com.skyd.rays.util.exportSticker
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -44,10 +41,9 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
 import kotlin.math.pow
 
-class SearchRepository @Inject constructor(
+class SearchRepository(
     private val stickerDao: StickerDao,
     private val stickerShareTimeDao: StickerShareTimeDao,
     private val pagingConfig: PagingConfig,
@@ -239,20 +235,12 @@ class SearchRepository @Inject constructor(
     class SearchRegexInvalidException(message: String?) : IllegalArgumentException(message)
 
     companion object {
-        @EntryPoint
-        @InstallIn(SingletonComponent::class)
-        interface HomeRepositoryEntryPoint {
-            val searchDomainDao: SearchDomainDao
-        }
-
         suspend fun genSql(
             k: String,
             field: String = "*",
             useSearchDomain: suspend (tableName: String, columnName: String) -> Boolean =
                 { tableName, columnName ->
-                    EntryPointAccessors.fromApplication(
-                        appContext, HomeRepositoryEntryPoint::class.java
-                    ).searchDomainDao.getSearchDomain(tableName, columnName)
+                    get<SearchDomainDao>().getSearchDomain(tableName, columnName)
                 },
             intersectSearchBySpace: Boolean = appContext.dataStore.getOrDefault(
                 IntersectSearchBySpacePreference

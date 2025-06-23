@@ -7,8 +7,8 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
     alias(libs.plugins.objectbox)
 }
 
@@ -28,9 +28,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
-        }
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
         }
     }
 
@@ -127,6 +124,10 @@ android {
     }
 }
 
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
 tasks.withType(KotlinCompile::class.java).configureEach {
     compilerOptions {
         freeCompilerArgs.addAll(
@@ -158,9 +159,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.palette.ktx)
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.security.crypto)
     implementation(libs.accompanist.drawablepainter)
@@ -172,6 +170,13 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+    implementation(libs.koin.compose.viewmodel)
+    implementation(libs.koin.compose.viewmodel.navigation)
+
     implementation(libs.sardine.android) {
         exclude(group = "xpp3", module = "xpp3")
     }
@@ -197,6 +202,9 @@ dependencies {
     // TF Lite
     implementation(libs.ai.edge.litert)
     implementation(libs.ai.edge.litert.support)
+
+    implementation(libs.skyd666.settings)
+    implementation(libs.skyd666.compone)
 
     implementation(libs.apng)
 

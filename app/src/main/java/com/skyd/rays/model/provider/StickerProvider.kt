@@ -25,11 +25,8 @@ import com.skyd.rays.model.db.dao.sticker.StickerDao
 import com.skyd.rays.model.respository.SearchRepository
 import com.skyd.rays.util.image.ImageFormatChecker
 import com.skyd.rays.util.image.format.ImageFormat
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.runBlocking
+import org.koin.android.ext.android.get
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -40,12 +37,6 @@ import java.text.SimpleDateFormat
 
 
 class StickerProvider : DocumentsProvider() {
-    private val entryPoint: StickerProviderEntryPoint
-        get() = EntryPointAccessors.fromApplication(
-            context!!,
-            StickerProviderEntryPoint::class.java
-        )
-
     override fun onCreate(): Boolean = true
 
     override fun queryRoots(projection: Array<out String>?): Cursor {
@@ -145,17 +136,17 @@ class StickerProvider : DocumentsProvider() {
 
     private suspend fun getModifiedMap(stickerUuids: List<String>): MutableMap<String, Long> {
         return stickerUuids.safeDbVariableNumber {
-            entryPoint.stickerDao().getStickerModified(it).toMutableMap()
+            get<StickerDao>().getStickerModified(it).toMutableMap()
         }.reduceOrNull { acc, mutableMap -> acc.apply { putAll(mutableMap) } } ?: mutableMapOf()
     }
 
     private suspend fun getDisplayMap(stickerUuids: List<String>): MutableMap<String, String> {
         val titles = stickerUuids.safeDbVariableNumber {
-            entryPoint.stickerDao().getStickerTitles(it).toMutableMap()
+            get<StickerDao>().getStickerTitles(it).toMutableMap()
         }.reduceOrNull { acc, mutableMap -> acc.apply { putAll(mutableMap) } } ?: mutableMapOf()
 
         titles.filterValues { it.isBlank() }.map { it.key }.safeDbVariableNumber { noTitles ->
-            entryPoint.tagDao().getTagStringMap(noTitles).forEach { (t, u) ->
+            get<TagDao>().getTagStringMap(noTitles).forEach { (t, u) ->
                 titles[t] = u.ifBlank { t }
             }
         }
@@ -165,7 +156,7 @@ class StickerProvider : DocumentsProvider() {
 
     private suspend fun getMimeTypeMap(stickerUuids: List<String>): MutableMap<String, String> {
         return stickerUuids.safeDbVariableNumber {
-            entryPoint.mimeTypeDao().getStickerMimeTypes(it).toMutableMap()
+            get<MimeTypeDao>().getStickerMimeTypes(it).toMutableMap()
         }.reduceOrNull { acc, mutableMap -> acc.apply { putAll(mutableMap) } } ?: mutableMapOf()
     }
 
@@ -305,7 +296,7 @@ class StickerProvider : DocumentsProvider() {
         rootId: String?, projection: Array<out String>?
     ): Cursor = runBlocking {
         return@runBlocking MatrixCursor(projection ?: DEFAULT_DOCUMENT_COLUMNS).apply {
-            val stickers = entryPoint.stickerDao().getRecentModifiedStickers()
+            val stickers = get<StickerDao>().getRecentModifiedStickers()
                 .associateBy { it.sticker.uuid }
             val listFiles = stickers.values
                 .map { File(context!!.STICKER_DIR, it.sticker.uuid) }
@@ -333,7 +324,7 @@ class StickerProvider : DocumentsProvider() {
         projection: Array<out String>?
     ): Cursor = runBlocking {
         return@runBlocking MatrixCursor(projection ?: DEFAULT_DOCUMENT_COLUMNS).apply {
-            val stickers = entryPoint.searchRepo().requestStickerWithTagsList(query.orEmpty())
+            val stickers = get<SearchRepository>().requestStickerWithTagsList(query.orEmpty())
                 .associateBy { it.sticker.uuid }
             val listFiles = stickers.values
                 .map { File(context!!.STICKER_DIR, it.sticker.uuid) }
@@ -353,15 +344,6 @@ class StickerProvider : DocumentsProvider() {
                 )
             }
         }
-    }
-
-    @EntryPoint
-    @InstallIn(SingletonComponent::class)
-    interface StickerProviderEntryPoint {
-        fun searchRepo(): SearchRepository
-        fun stickerDao(): StickerDao
-        fun tagDao(): TagDao
-        fun mimeTypeDao(): MimeTypeDao
     }
 
     companion object {

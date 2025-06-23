@@ -7,7 +7,6 @@ import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.WebDavResultInfo
 import com.skyd.rays.model.bean.WebDavWaitingInfo
 import com.skyd.rays.model.respository.WebDavRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,10 +20,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import javax.inject.Inject
 
-@HiltViewModel
-class WebDavViewModel @Inject constructor(private var webDavRepo: WebDavRepository) :
+class WebDavViewModel(private var webDavRepo: WebDavRepository) :
     AbstractMviViewModel<WebDavIntent, WebDavState, WebDavEvent>() {
 
     override val viewState: StateFlow<WebDavState>

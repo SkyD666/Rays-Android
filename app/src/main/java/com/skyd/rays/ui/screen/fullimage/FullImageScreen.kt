@@ -22,8 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.skyd.compone.component.ComponeTopBar
 import com.skyd.rays.model.serializer.UriSerializer
-import com.skyd.rays.ui.component.RaysTopBar
 import kotlinx.serialization.Serializable
 import me.saket.telephoto.subsamplingimage.SubSamplingImage
 import me.saket.telephoto.subsamplingimage.SubSamplingImageSource
@@ -60,7 +60,7 @@ fun FullImageScreen(image: Uri) {
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically(),
             ) {
-                RaysTopBar(
+                ComponeTopBar(
                     scrollBehavior = scrollBehavior,
                     title = { },
                     colors = TopAppBarDefaults.topAppBarColors(

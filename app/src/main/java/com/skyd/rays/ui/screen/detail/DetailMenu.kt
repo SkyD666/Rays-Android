@@ -3,7 +3,6 @@ package com.skyd.rays.ui.screen.detail
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Help
 import androidx.compose.material.icons.outlined.AspectRatio
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Fullscreen
 import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material.icons.outlined.Info
@@ -15,9 +14,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.menu.DropdownMenuDeleteItem
 import com.skyd.rays.R
 import com.skyd.rays.config.IMAGE_CONTENT_SCALE_HELP_URL
-import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.util.CommonUtil.openBrowser
 
 
@@ -46,21 +46,20 @@ fun DetailMenu(
             },
             leadingIcon = { Icon(Icons.Outlined.AspectRatio, contentDescription = null) },
             trailingIcon = {
-                RaysIconButton(
+                ComponeIconButton(
                     onClick = { openBrowser(IMAGE_CONTENT_SCALE_HELP_URL) },
                     imageVector = Icons.AutoMirrored.Outlined.Help,
                 )
             }
         )
         HorizontalDivider()
-        DropdownMenuItem(
+        DropdownMenuDeleteItem(
             enabled = stickerMenuItemEnabled,
             text = { Text(stringResource(R.string.home_screen_delete)) },
             onClick = {
                 onDismissRequest()
                 onDeleteClick()
             },
-            leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) }
         )
         DropdownMenuItem(
             enabled = stickerMenuItemEnabled,

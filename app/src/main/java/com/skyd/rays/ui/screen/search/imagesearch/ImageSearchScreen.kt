@@ -44,21 +44,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeFloatingActionButton
+import com.skyd.compone.component.ComponeIconToggleButton
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.dialog.WaitingDialog
+import com.skyd.compone.ext.plus
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.plus
 import com.skyd.rays.model.preference.search.imagesearch.ImageSearchMaxResultCountPreference
 import com.skyd.rays.ui.component.ImageInput
-import com.skyd.rays.ui.component.RaysFloatingActionButton
-import com.skyd.rays.ui.component.RaysIconToggleButton
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalImageSearchMaxResultCount
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.detail.DetailRoute
 import com.skyd.rays.ui.screen.fullimage.WrappedUriNullable
@@ -67,6 +66,7 @@ import com.skyd.rays.ui.screen.stickerslist.StickerList
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
@@ -75,7 +75,7 @@ data class ImageSearchRoute(val uri: WrappedUriNullable) {
 }
 
 @Composable
-fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltViewModel()) {
+fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = koinViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val navController = LocalNavController.current
@@ -94,7 +94,7 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
             val maxCount = LocalImageSearchMaxResultCount.current
-            RaysFloatingActionButton(
+            ComponeFloatingActionButton(
                 onClick = {
                     if (currentBaseImage != null) {
                         dispatch(ImageSearchIntent.Search(currentBaseImage!!, maxCount))
@@ -110,10 +110,10 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
             }
         },
         topBar = {
-            RaysTopBar(
+            ComponeTopBar(
                 title = { Text(text = stringResource(id = R.string.image_search_screen_name)) },
                 actions = {
-                    RaysIconToggleButton(
+                    ComponeIconToggleButton(
                         checked = multiSelect,
                         onCheckedChange = {
                             multiSelect = it
@@ -121,12 +121,8 @@ fun ImageSearchScreen(baseImage: Uri?, viewModel: ImageSearchViewModel = hiltVie
                                 dispatch(ImageSearchIntent.RemoveSelectedStickers(uiState.selectedStickers))
                             }
                         },
-                    ) {
-                        Icon(
-                            if (multiSelect) Icons.Outlined.SelectAll else Icons.Outlined.Deselect,
-                            contentDescription = null,
-                        )
-                    }
+                        imageVector = if (multiSelect) Icons.Outlined.SelectAll else Icons.Outlined.Deselect,
+                    )
                 }
             )
         }

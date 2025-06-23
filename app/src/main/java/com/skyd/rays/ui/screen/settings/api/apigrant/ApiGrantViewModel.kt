@@ -6,7 +6,6 @@ import com.skyd.rays.ext.startWith
 import com.skyd.rays.model.bean.ApiGrantDataBean
 import com.skyd.rays.model.bean.EmptyApiGrantDataBean
 import com.skyd.rays.model.respository.ApiGrantRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,12 +19,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import javax.inject.Inject
 
-@HiltViewModel
-class ApiGrantViewModel @Inject constructor(
-    private var apiGrantRepo: ApiGrantRepository
-) : AbstractMviViewModel<ApiGrantIntent, ApiGrantState, ApiGrantEvent>() {
+class ApiGrantViewModel(private var apiGrantRepo: ApiGrantRepository) :
+    AbstractMviViewModel<ApiGrantIntent, ApiGrantState, ApiGrantEvent>() {
 
     override val viewState: StateFlow<ApiGrantState>
 

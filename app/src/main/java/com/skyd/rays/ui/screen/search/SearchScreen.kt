@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -30,8 +29,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowUpward
@@ -40,13 +37,10 @@ import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -60,35 +54,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.BackIcon
+import com.skyd.compone.component.ComponeFloatingActionButton
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.SearchBarInputField
+import com.skyd.compone.component.dialog.WaitingDialog
+import com.skyd.compone.ext.plus
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.dataStore
 import com.skyd.rays.ext.getOrDefault
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.plus
 import com.skyd.rays.model.preference.search.QueryPreference
 import com.skyd.rays.model.preference.search.ShowLastQueryPreference
-import com.skyd.rays.ui.component.BackIcon
-import com.skyd.rays.ui.component.RaysFloatingActionButton
-import com.skyd.rays.ui.component.RaysIconButton
-import com.skyd.rays.ui.component.dialog.WaitingDialog
-import com.skyd.rays.ui.component.safeRequestFocus
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalShowPopularTags
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.detail.DetailRoute
@@ -96,13 +83,14 @@ import com.skyd.rays.ui.screen.search.multiselect.MultiSelectActionBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
 data object SearchRoute
 
 @Composable
-fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
+fun SearchScreen(viewModel: SearchViewModel = koinViewModel()) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -134,7 +122,7 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                     derivedStateOf { searchResultListState.firstVisibleItemIndex > 2 }
                 }.value
             ) {
-                RaysFloatingActionButton(
+                ComponeFloatingActionButton(
                     onClick = { scope.launch { searchResultListState.animateScrollToItem(0) } },
                     onSizeWithSinglePaddingChanged = { width, height ->
                         fabWidth = width
@@ -159,12 +147,9 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                     WindowInsets.systemBars
                         .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
                 ),
-                onQueryChange = { searchFieldValueState = it },
                 query = searchFieldValueState,
-                onSearch = { state ->
-                    keyboardController?.hide()
-                    searchFieldValueState = state
-                },
+                onQueryChange = { searchFieldValueState = it },
+                onSearch = { keyboardController?.hide() },
                 placeholder = { Text(text = stringResource(R.string.home_screen_search_hint)) },
                 leadingIcon = { BackIcon() },
                 trailingIcon = {
@@ -278,7 +263,7 @@ fun TrailingIcon(
     onClick: (() -> Unit)? = null
 ) {
     if (showClearButton) {
-        RaysIconButton(
+        ComponeIconButton(
             imageVector = Icons.Outlined.Clear,
             contentDescription = stringResource(R.string.home_screen_clear_search_text),
             onClick = { onClick?.invoke() }
@@ -355,7 +340,7 @@ fun PopularTagsBar(
                 }
             }
 
-            RaysIconButton(
+            ComponeIconButton(
                 imageVector = if (expand) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
                 contentDescription = if (expand) stringResource(R.string.collapse)
                 else stringResource(R.string.expand),
@@ -368,49 +353,5 @@ fun PopularTagsBar(
                 .align(Alignment.BottomStart)
                 .padding(horizontal = 16.dp)
         )
-    }
-}
-
-@Composable
-private fun SearchBarInputField(
-    query: TextFieldValue,
-    onQueryChange: (TextFieldValue) -> Unit,
-    onSearch: (TextFieldValue) -> Unit,
-    modifier: Modifier = Modifier,
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-) {
-    val focusRequester = remember { FocusRequester() }
-    TextField(
-        modifier = modifier
-            .focusRequester(focusRequester)
-            .fillMaxWidth()
-            .padding(horizontal = 4.dp)
-            .height(72.dp),
-        value = query,
-        onValueChange = onQueryChange,
-        colors = TextFieldDefaults.colors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            errorIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-        ),
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        placeholder = placeholder,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(onSearch = { onSearch(query) }),
-        interactionSource = interactionSource,
-        singleLine = true,
-        shape = RectangleShape,
-    )
-
-    val windowInfo = LocalWindowInfo.current
-    LaunchedEffect(windowInfo) {
-        focusRequester.safeRequestFocus(windowInfo)
     }
 }

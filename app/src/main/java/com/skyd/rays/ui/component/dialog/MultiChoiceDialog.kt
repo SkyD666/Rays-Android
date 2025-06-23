@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.skyd.compone.component.dialog.ComponeDialog
 import com.skyd.rays.R
 
 @Composable
@@ -37,7 +38,7 @@ fun MultiChoiceDialog(
     dismissText: String? = stringResource(id = R.string.cancel),
 ) {
     val selectedIndexList = remember(visible) { checkedIndexList.toMutableStateList() }
-    RaysDialog(
+    ComponeDialog(
         modifier = modifier,
         visible = visible,
         onDismissRequest = onDismissRequest,

@@ -1,7 +1,6 @@
 package com.skyd.rays.ui.screen.settings.data.cache
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Gif
 import androidx.compose.material.icons.outlined.Image
@@ -18,23 +17,24 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.component.dialog.WaitingDialog
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
-import com.skyd.rays.ui.component.BaseSettingsItem
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.dialog.WaitingDialog
+import com.skyd.settings.BaseSettingsItem
+import com.skyd.settings.SettingsLazyColumn
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
 data object CacheRoute
 
 @Composable
-fun CacheScreen(viewModel: CacheViewModel = hiltViewModel()) {
+fun CacheScreen(viewModel: CacheViewModel = koinViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -44,34 +44,36 @@ fun CacheScreen(viewModel: CacheViewModel = hiltViewModel()) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.cache_screen_name)) },
             )
         }
     ) { paddingValues ->
-        LazyColumn(
+        SettingsLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = paddingValues,
         ) {
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Outlined.Image),
-                    text = stringResource(id = R.string.cache_screen_delete_provider_thumbnails),
-                    descriptionText = stringResource(id = R.string.cache_screen_delete_provider_thumbnails_description),
-                    onClick = { dispatch(CacheIntent.DeleteDocumentsProviderThumbnails) }
-                )
-            }
-            item {
-                BaseSettingsItem(
-                    painter = rememberVectorPainter(image = Icons.Outlined.Gif),
-                    text = stringResource(id = R.string.cache_screen_delete_all_mimetypes),
-                    descriptionText = stringResource(id = R.string.cache_screen_delete_all_mimetypes_description),
-                    onClick = { dispatch(CacheIntent.DeleteAllMimetypes) }
-                )
+            group {
+                item {
+                    BaseSettingsItem(
+                        icon = rememberVectorPainter(image = Icons.Outlined.Image),
+                        text = stringResource(id = R.string.cache_screen_delete_provider_thumbnails),
+                        descriptionText = stringResource(id = R.string.cache_screen_delete_provider_thumbnails_description),
+                        onClick = { dispatch(CacheIntent.DeleteDocumentsProviderThumbnails) }
+                    )
+                }
+                item {
+                    BaseSettingsItem(
+                        icon = rememberVectorPainter(image = Icons.Outlined.Gif),
+                        text = stringResource(id = R.string.cache_screen_delete_all_mimetypes),
+                        descriptionText = stringResource(id = R.string.cache_screen_delete_all_mimetypes_description),
+                        onClick = { dispatch(CacheIntent.DeleteAllMimetypes) }
+                    )
+                }
             }
         }
 

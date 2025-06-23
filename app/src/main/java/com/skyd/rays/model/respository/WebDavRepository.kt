@@ -22,10 +22,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
-import javax.inject.Inject
 
 
-class WebDavRepository @Inject constructor(
+class WebDavRepository(
     private val stickerDao: StickerDao,
     private val json: Json
 ) : BaseRepository() {

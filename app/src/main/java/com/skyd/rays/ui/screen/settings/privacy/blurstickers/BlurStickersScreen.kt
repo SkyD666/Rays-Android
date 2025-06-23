@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.BlurLinear
@@ -30,22 +29,24 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.ComponeTopBarStyle
+import com.skyd.compone.component.dialog.TextFieldDialog
 import com.skyd.rays.R
 import com.skyd.rays.model.preference.privacy.BlurStickerKeywordsPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerPreference
 import com.skyd.rays.model.preference.privacy.BlurStickerRadiusPreference
-import com.skyd.rays.ui.component.BannerItem
-import com.skyd.rays.ui.component.BaseSettingsItem
-import com.skyd.rays.ui.component.RaysIconButton
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.RaysTopBarStyle
-import com.skyd.rays.ui.component.SliderSettingsItem
-import com.skyd.rays.ui.component.SwitchSettingsItem
-import com.skyd.rays.ui.component.TipSettingsItem
-import com.skyd.rays.ui.component.dialog.TextFieldDialog
 import com.skyd.rays.ui.local.LocalBlurSticker
 import com.skyd.rays.ui.local.LocalBlurStickerKeywords
 import com.skyd.rays.ui.local.LocalBlurStickerRadius
+import com.skyd.settings.BannerItem
+import com.skyd.settings.BaseSettingsItem
+import com.skyd.settings.SettingsLazyColumn
+import com.skyd.settings.SliderSettingsItem
+import com.skyd.settings.SwitchSettingsItem
+import com.skyd.settings.TipSettingsItem
+import com.skyd.settings.dsl.SettingsBaseItemScope
 import kotlinx.serialization.Serializable
 
 
@@ -60,14 +61,14 @@ fun BlurStickersScreen() {
 
     Scaffold(
         topBar = {
-            RaysTopBar(
-                style = RaysTopBarStyle.Large,
+            ComponeTopBar(
+                style = ComponeTopBarStyle.LargeFlexible,
                 scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(R.string.blur_stickers_screen_name)) },
             )
         }
     ) { paddingValues ->
-        LazyColumn(
+        SettingsLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -79,29 +80,25 @@ fun BlurStickersScreen() {
                         imageVector = Icons.Outlined.BlurOn,
                         checked = LocalBlurSticker.current,
                         text = stringResource(R.string.enable),
-                        onCheckedChange = {
-                            BlurStickerPreference.put(
-                                context = context,
-                                scope = scope,
-                                value = it
-                            )
-                        }
+                        onCheckedChange = { BlurStickerPreference.put(context, scope, it) },
                     )
                 }
             }
-            item { BlurStickerRadiusSettingItem() }
-            item { BlurStickersKeywordsSettingItem() }
-            item {
-                TipSettingsItem(
-                    text = stringResource(id = R.string.blur_stickers_screen_tip)
-                )
+            group {
+                item { BlurStickerRadiusSettingItem() }
+                item { BlurStickersKeywordsSettingItem() }
+                otherItem {
+                    TipSettingsItem(
+                        text = stringResource(R.string.blur_stickers_screen_tip)
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun BlurStickersKeywordsSettingItem() {
+private fun SettingsBaseItemScope.BlurStickersKeywordsSettingItem() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -110,11 +107,11 @@ private fun BlurStickersKeywordsSettingItem() {
     val blurStickersKeywords = LocalBlurStickerKeywords.current
 
     BaseSettingsItem(
-        painter = rememberVectorPainter(Icons.Outlined.Tag),
+        icon = rememberVectorPainter(Icons.Outlined.Tag),
         text = stringResource(R.string.blur_stickers_screen_blur_keywords),
         enabled = LocalBlurSticker.current,
         content = {
-            RaysIconButton(
+            ComponeIconButton(
                 enabled = LocalBlurSticker.current,
                 onClick = { openAddDialog = true },
                 imageVector = Icons.Outlined.Add,
@@ -153,7 +150,7 @@ private fun BlurStickersKeywordsSettingItem() {
 
     TextFieldDialog(
         visible = openAddDialog,
-        title = stringResource(id = R.string.blur_stickers_screen_add_blur_keyword),
+        titleText = stringResource(id = R.string.blur_stickers_screen_add_blur_keyword),
         maxLines = 1,
         onDismissRequest = { openAddDialog = false },
         value = addDialogText,
@@ -171,7 +168,7 @@ private fun BlurStickersKeywordsSettingItem() {
 }
 
 @Composable
-private fun BlurStickerRadiusSettingItem() {
+private fun SettingsBaseItemScope.BlurStickerRadiusSettingItem() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -181,12 +178,7 @@ private fun BlurStickerRadiusSettingItem() {
         enabled = LocalBlurSticker.current,
         valueRange = 0.01f..25f,
         value = LocalBlurStickerRadius.current,
-        onValueChange = {
-            BlurStickerRadiusPreference.put(
-                context = context,
-                scope = scope,
-                value = it,
-            )
-        },
+        onValueChange = { BlurStickerRadiusPreference.put(context, scope, it) },
+        labelFormatter = { "%.2f".format(it) },
     )
 }

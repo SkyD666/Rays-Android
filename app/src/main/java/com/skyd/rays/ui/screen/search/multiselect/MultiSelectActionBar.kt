@@ -25,25 +25,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.dialog.DeleteWarningDialog
+import com.skyd.compone.component.dialog.WaitingDialog
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
 import com.skyd.rays.model.bean.UriWithStickerUuidBean
-import com.skyd.rays.ui.component.RaysIconButton
-import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.ExportDialog
-import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.component.showToast
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.AddRoute
 import com.skyd.rays.ui.screen.mergestickers.MergeStickersRoute
 import com.skyd.rays.ui.screen.search.imagesearch.ImageSearchRoute
 import com.skyd.rays.ui.screen.settings.data.importexport.file.exportfiles.ExportFilesRoute
 import com.skyd.rays.util.stickerUuidToUri
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MultiSelectActionBar(
@@ -52,7 +52,7 @@ fun MultiSelectActionBar(
     contentPadding: PaddingValues = PaddingValues(),
     onRemoveSelectedStickers: (Collection<String>) -> Unit,
     onMessage: (String) -> Unit = { it.showToast() },
-    viewModel: MultiSelectViewModel = hiltViewModel(),
+    viewModel: MultiSelectViewModel = koinViewModel(),
 ) {
     val navController = LocalNavController.current
     val context = LocalContext.current
@@ -66,7 +66,7 @@ fun MultiSelectActionBar(
     val items = remember {
         arrayOf<@Composable () -> Unit>(
             @Composable {
-                RaysIconButton(
+                ComponeIconButton(
                     onClick = {
                         dispatch(MultiSelectIntent.SendStickers(currentSelectedStickers))
                         onRemoveSelectedStickers(currentSelectedStickers)
@@ -77,7 +77,7 @@ fun MultiSelectActionBar(
                 )
             },
             @Composable {
-                RaysIconButton(
+                ComponeIconButton(
                     onClick = {
                         navController.navigate(
                             AddRoute(
@@ -98,7 +98,7 @@ fun MultiSelectActionBar(
                 )
             },
             @Composable {
-                RaysIconButton(
+                ComponeIconButton(
                     onClick = { openMultiStickersExportPathDialog = true },
                     enabled = currentSelectedStickers.isNotEmpty(),
                     imageVector = Icons.Outlined.Save,
@@ -106,7 +106,7 @@ fun MultiSelectActionBar(
                 )
             },
             @Composable {
-                RaysIconButton(
+                ComponeIconButton(
                     onClick = {
                         navController.navigate(ExportFilesRoute(exportStickers = currentSelectedStickers.toList()))
                         onRemoveSelectedStickers(currentSelectedStickers)
@@ -117,7 +117,7 @@ fun MultiSelectActionBar(
                 )
             },
             @Composable {
-                RaysIconButton(
+                ComponeIconButton(
                     onClick = { openDeleteMultiStickersDialog = true },
                     enabled = currentSelectedStickers.isNotEmpty(),
                     imageVector = Icons.Outlined.Delete,
@@ -125,7 +125,7 @@ fun MultiSelectActionBar(
                 )
             },
             @Composable {
-                RaysIconButton(
+                ComponeIconButton(
                     onClick = {
                         currentSelectedStickers.firstOrNull()?.let {
                             navController.navigate(ImageSearchRoute(baseImage = stickerUuidToUri(it)))
@@ -138,7 +138,7 @@ fun MultiSelectActionBar(
                 )
             },
             @Composable {
-                RaysIconButton(
+                ComponeIconButton(
                     onClick = {
                         navController.navigate(MergeStickersRoute(stickerUuids = currentSelectedStickers.toList()))
                         onRemoveSelectedStickers(currentSelectedStickers)

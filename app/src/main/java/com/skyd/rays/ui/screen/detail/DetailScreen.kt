@@ -61,13 +61,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeExtendedFloatingActionButton
+import com.skyd.compone.component.ComponeFloatingActionButton
+import com.skyd.compone.component.ComponeIconButton
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.dialog.ComponeDialog
+import com.skyd.compone.component.dialog.DeleteWarningDialog
+import com.skyd.compone.ext.popBackStackWithLifecycle
+import com.skyd.compone.local.LocalNavController
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.popBackStackWithLifecycle
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ext.toDateTimeString
 import com.skyd.rays.model.bean.StickerWithTags
@@ -77,15 +83,8 @@ import com.skyd.rays.model.preference.privacy.rememberShouldBlur
 import com.skyd.rays.ui.component.CircularProgressPlaceholder
 import com.skyd.rays.ui.component.EmptyPlaceholder
 import com.skyd.rays.ui.component.RadioTextItem
-import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
-import com.skyd.rays.ui.component.RaysFloatingActionButton
-import com.skyd.rays.ui.component.RaysIconButton
 import com.skyd.rays.ui.component.RaysImage
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.dialog.DeleteWarningDialog
 import com.skyd.rays.ui.component.dialog.ExportDialog
-import com.skyd.rays.ui.component.dialog.RaysDialog
-import com.skyd.rays.ui.local.LocalNavController
 import com.skyd.rays.ui.local.LocalStickerScale
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.ui.screen.add.AddRoute
@@ -98,13 +97,14 @@ import com.skyd.rays.util.stickerUuidToUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
 data class DetailRoute(val stickerUuid: String)
 
 @Composable
-fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel()) {
+fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = koinViewModel()) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val scope = rememberCoroutineScope()
     val navController = LocalNavController.current
@@ -146,7 +146,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
             )
         },
         topBar = {
-            RaysTopBar(
+            ComponeTopBar(
                 scrollBehavior = scrollBehavior,
                 title = {
                     val stickerDetailState = uiState.stickerDetailState
@@ -159,7 +159,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                     )
                 },
                 actions = {
-                    RaysIconButton(
+                    ComponeIconButton(
                         imageVector = Icons.Outlined.Share,
                         contentDescription = stringResource(R.string.send_sticker),
                         enabled = uiState.stickerDetailState is StickerDetailState.Success,
@@ -175,7 +175,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                             )
                         },
                     )
-                    RaysIconButton(
+                    ComponeIconButton(
                         imageVector = Icons.Outlined.ContentCopy,
                         contentDescription = stringResource(id = R.string.detail_screen_copy),
                         enabled = uiState.stickerDetailState is StickerDetailState.Success,
@@ -189,7 +189,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                             )
                         }
                     )
-                    RaysIconButton(
+                    ComponeIconButton(
                         onClick = { openMenu = true },
                         enabled = uiState.stickerDetailState is StickerDetailState.Success,
                         imageVector = Icons.Outlined.MoreVert,
@@ -247,7 +247,7 @@ fun DetailScreen(stickerUuid: String, viewModel: DetailViewModel = hiltViewModel
                             scrollState = mainCardScrollState,
                             bottomPadding = if (windowSizeClass.isCompact) fabHeight else 0.dp,
                         )
-                        RaysDialog(
+                        ComponeDialog(
                             visible = openStickerInfoDialog,
                             title = { Text(text = stringResource(id = R.string.detail_screen_sticker_info)) },
                             text = { StickerDetailInfo(stickerWithTags = stickerWithTags) },
@@ -504,14 +504,14 @@ fun DetailScreenFloatingActionButton(
 
     if (visible) {
         if (windowSizeClass.isCompact) {
-            RaysFloatingActionButton(
+            ComponeFloatingActionButton(
                 content = { content() },
                 onClick = onClick,
                 onSizeWithSinglePaddingChanged = onSizeWithSinglePaddingChanged,
                 contentDescription = stringResource(R.string.detail_screen_edit),
             )
         } else {
-            RaysExtendedFloatingActionButton(
+            ComponeExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.detail_screen_edit)) },
                 icon = content,
                 onClick = onClick,

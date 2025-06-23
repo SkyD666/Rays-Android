@@ -48,31 +48,31 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.skyd.compone.component.ComponeExtendedFloatingActionButton
+import com.skyd.compone.component.ComponeTopBar
+import com.skyd.compone.component.dialog.WaitingDialog
+import com.skyd.compone.ext.plus
 import com.skyd.rays.R
 import com.skyd.rays.base.mvi.MviEventListener
 import com.skyd.rays.base.mvi.getDispatcher
 import com.skyd.rays.ext.isCompact
-import com.skyd.rays.ext.plus
 import com.skyd.rays.ext.showSnackbar
 import com.skyd.rays.ui.component.ImageInput
-import com.skyd.rays.ui.component.RaysExtendedFloatingActionButton
 import com.skyd.rays.ui.component.RaysImage
-import com.skyd.rays.ui.component.RaysTopBar
-import com.skyd.rays.ui.component.dialog.WaitingDialog
 import com.skyd.rays.ui.local.LocalWindowSizeClass
 import com.skyd.rays.util.launchImagePicker
 import com.skyd.rays.util.rememberImagePicker
 import com.skyd.rays.util.sendSticker
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
 data object SelfieSegmentationRoute
 
 @Composable
-fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewModel()) {
+fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = koinViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -93,7 +93,7 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
-            RaysExtendedFloatingActionButton(
+            ComponeExtendedFloatingActionButton(
                 text = { Text(text = stringResource(R.string.selfie_segmentation_screen_segment)) },
                 icon = { Icon(imageVector = Icons.Outlined.ContentCut, contentDescription = null) },
                 onClick = {
@@ -103,7 +103,7 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
                             scope = scope,
                             message = context.getString(R.string.selfie_segmentation_screen_image_not_selected)
                         )
-                        return@RaysExtendedFloatingActionButton
+                        return@ComponeExtendedFloatingActionButton
                     }
                     dispatch(SelfieSegmentationIntent.Segment(foregroundUri = foreground))
                 },
@@ -112,7 +112,7 @@ fun SelfieSegmentationScreen(viewModel: SelfieSegmentationViewModel = hiltViewMo
             )
         },
         topBar = {
-            RaysTopBar(title = { Text(text = stringResource(id = R.string.selfie_segmentation_screen_name)) })
+            ComponeTopBar(title = { Text(text = stringResource(id = R.string.selfie_segmentation_screen_name)) })
         }
     ) { paddingValues ->
         val isCompact = LocalWindowSizeClass.current.isCompact
